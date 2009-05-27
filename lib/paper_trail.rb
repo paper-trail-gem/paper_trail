@@ -3,8 +3,6 @@ require 'paper_trail/has_paper_trail'
 require 'paper_trail/version'
 
 module PaperTrail
-  VERSION = '1.0.0'
-
   @@whodunnit = nil
 
   def self.included(base)
