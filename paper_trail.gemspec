@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
      "lib/paper_trail.rb",
      "lib/paper_trail/has_paper_trail.rb",
      "lib/paper_trail/version.rb",
+     "paper_trail.gemspec",
      "rails/init.rb",
      "tasks/paper_trail_tasks.rake",
      "test/database.yml",
