@@ -140,6 +140,11 @@ And on again like this:
 4. Add `has_paper_trail` to the models you want to track.
 
 
+## Testing
+
+PaperTrail has a thorough suite of tests.  However they only run when PaperTrail is sitting in a Rails app's `vendor/plugins` directory.  If anyone can tell me how to get them to run outside of a Rails app, I'd love to hear it.
+
+
 ## Inspirations
 
 * [Simply Versioned](http://github.com/github/simply_versioned)
