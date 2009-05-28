@@ -125,17 +125,17 @@ And on again like this:
 
 1. Install PaperTrail either as a gem or as a plugin:
 
-    config.gem 'airblade-paper_trail', :lib => 'paper_trail', :source => 'http://gems.github.com'
+    `config.gem 'airblade-paper_trail', :lib => 'paper_trail', :source => 'http://gems.github.com'`
 
-    script/plugin install git://github.com/airblade/paper_trail.git
+    `script/plugin install git://github.com/airblade/paper_trail.git`
 
 2. Generate a migration which wll add a `versions` table to your database.
 
-    script/generate paper_trail
+    `script/generate paper_trail`
 
 3. Run the migration.
 
-    rake db:migrate
+    `rake db:migrate`
 
 4. Add `has_paper_trail` to the models you want to track.
 
