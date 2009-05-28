@@ -127,9 +127,11 @@ And on again like this:
 
     `config.gem 'airblade-paper_trail', :lib => 'paper_trail', :source => 'http://gems.github.com'`
 
+    or:
+
     `script/plugin install git://github.com/airblade/paper_trail.git`
 
-2. Generate a migration which wll add a `versions` table to your database.
+2. Generate a migration which will add a `versions` table to your database.
 
     `script/generate paper_trail`
 
