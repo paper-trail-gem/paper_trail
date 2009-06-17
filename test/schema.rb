@@ -12,11 +12,7 @@ ActiveRecord::Schema.define(:version => 0) do
     t.boolean   :a_boolean
     t.datetime  :created_at, :updated_at
     t.string    :sacrificial_column
-  end
-
-  create_table :users, :force => true do |t|
-    t.string   :name
-    t.datetime :created_at, :updated_at
+    #t.string    :type
   end
 
   create_table :versions, :force => true do |t|
