@@ -12,7 +12,7 @@ ActiveRecord::Schema.define(:version => 0) do
     t.boolean   :a_boolean
     t.datetime  :created_at, :updated_at
     t.string    :sacrificial_column
-    #t.string    :type
+    t.string    :type
   end
 
   create_table :versions, :force => true do |t|

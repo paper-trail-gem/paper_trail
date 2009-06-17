@@ -4,6 +4,10 @@ class Widget < ActiveRecord::Base
   has_paper_trail
 end
 
+class FooWidget < Widget
+  # Note we don't need to declare has_paper_trail here.
+end
+
 
 class HasPaperTrailModelTest < Test::Unit::TestCase
   load_schema
@@ -246,6 +250,19 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
           end
         end
       end
+    end
+  end
+
+
+  context 'A subclass' do
+    setup do
+      @foo = FooWidget.create
+      @foo.update_attributes :name => 'Fooey'
+    end
+
+    should 'reify with the correct type' do
+      thing = @foo.versions.last.reify
+      assert_kind_of FooWidget, thing
     end
   end
 end
