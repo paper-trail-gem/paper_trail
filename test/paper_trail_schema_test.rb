@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class PaperTrailTest < ActiveSupport::TestCase
+class PaperTrailSchemaTest < ActiveSupport::TestCase
   def setup
     load_schema
   end
@@ -8,5 +8,6 @@ class PaperTrailTest < ActiveSupport::TestCase
   def test_schema_has_loaded_correctly
     assert_equal [], Widget.all
     assert_equal [], Version.all
+    assert_equal [], Wotsit.all
   end
 end

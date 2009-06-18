@@ -2,10 +2,15 @@ require File.dirname(__FILE__) + '/test_helper.rb'
 
 class Widget < ActiveRecord::Base
   has_paper_trail
+  has_one :wotsit
 end
 
 class FooWidget < Widget
   # Note we don't need to declare has_paper_trail here.
+end
+
+class Wotsit < ActiveRecord::Base
+  belongs_to :widget
 end
 
 
@@ -67,6 +72,15 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
 
         should 'record the correct event' do
           assert_match /update/i, @widget.versions.last.event
+        end
+
+        
+        context 'and has one associated object' do
+          setup { @wotsit = @widget.create_wotsit :name => 'John' }
+
+          should 'preserve the association when reified' do
+            assert_equal @wotsit, @widget.versions.last.reify.wotsit
+          end
         end
 
 
@@ -265,4 +279,5 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
       assert_kind_of FooWidget, thing
     end
   end
+
 end

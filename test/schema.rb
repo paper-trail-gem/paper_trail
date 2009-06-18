@@ -24,4 +24,9 @@ ActiveRecord::Schema.define(:version => 0) do
     t.datetime :created_at
   end
 
+  create_table :wotsits, :force => true do |t|
+    t.integer :widget_id
+    t.string  :name
+  end
+
 end
