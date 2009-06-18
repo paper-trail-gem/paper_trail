@@ -29,4 +29,9 @@ ActiveRecord::Schema.define(:version => 0) do
     t.string  :name
   end
 
+  create_table :fluxors, :force => true do |t|
+    t.integer :widget_id
+    t.string  :name
+  end
+
 end

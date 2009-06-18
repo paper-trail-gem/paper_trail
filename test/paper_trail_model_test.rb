@@ -3,13 +3,17 @@ require File.dirname(__FILE__) + '/test_helper.rb'
 class Widget < ActiveRecord::Base
   has_paper_trail
   has_one :wotsit
+  has_many :fluxors, :order => :name
 end
 
 class FooWidget < Widget
-  # Note we don't need to declare has_paper_trail here.
 end
 
 class Wotsit < ActiveRecord::Base
+  belongs_to :widget
+end
+
+class Fluxor < ActiveRecord::Base
   belongs_to :widget
 end
 
@@ -76,15 +80,44 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
 
         
         context 'and has one associated object' do
-          setup { @wotsit = @widget.create_wotsit :name => 'John' }
-
-          should 'not save the associated object when reifying' do
-            assert_nil @widget.versions.last.reify.wotsit.id
+          setup do
+            @wotsit = @widget.create_wotsit :name => 'John'
+            @reified_widget = @widget.versions.last.reify
           end
 
-          should "preserve the associated object's values when reifying" do
+          should 'not save the associated object when reifying' do
+            assert @reified_widget.wotsit.new_record?
+          end
+
+          should "copy the associated object's values when reifying" do
             assert_equal @wotsit.attributes.reject{ |k,v| k == 'id' },
-              @widget.versions.last.reify.wotsit.attributes.reject{ |k,v| k == 'id'}
+                         @reified_widget.wotsit.attributes.reject{ |k,v| k == 'id'}
+          end
+        end
+
+
+        context 'and has many associated objects' do
+          setup do
+            @f0 = @widget.fluxors.create :name => 'f-zero'
+            @f1 = @widget.fluxors.create :name => 'f-one'
+            @reified_widget = @widget.versions.last.reify
+          end
+
+          should 'copy the associations' do
+            assert_equal @widget.fluxors.length, @reified_widget.fluxors.length
+          end
+
+          should 'not save the associated objects when reifying' do
+            @reified_widget.fluxors.each do |fluxor|
+              assert fluxor.new_record?
+            end
+          end
+
+          should "copy the associated objects' values when reifying" do
+            @reified_widget.fluxors.each_with_index do |fluxor, index|
+              assert_equal @widget.fluxors[index].attributes.reject{ |k,v| k == 'id' },
+                           fluxor.attributes.reject{ |k,v| k == 'id' }
+            end
           end
         end
 
