@@ -37,12 +37,18 @@ class Version < ActiveRecord::Base
 
       # Associations
 
-      # set the reified model's has_one associations to the current item's if possible.
+      # Set the reified model's has_one associations to the current item's if possible.
       # NOTE: with this implementation we can't restore a destroyed item's associations.
-      # TODO: test
       if item
         klass.send(:reflect_on_all_associations, :has_one).map(&:name).each do |assoc|
-          model.send "#{assoc}=", item.send(assoc)
+          # The only way to assign an object to a has_one association without saving
+          # it is to use +build_association(attributes = {})+.
+          associated = item.send assoc
+          model.send "build_#{assoc}", associated.attributes if associated
+        end
+
+        klass.send(:reflect_on_all_associations, :has_many).map(&:name).each do |assoc|
+          #model.send "#{assoc}=", item.send(assoc)
         end
       end
 

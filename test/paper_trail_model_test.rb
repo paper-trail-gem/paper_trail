@@ -78,8 +78,13 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
         context 'and has one associated object' do
           setup { @wotsit = @widget.create_wotsit :name => 'John' }
 
-          should 'preserve the association when reified' do
-            assert_equal @wotsit, @widget.versions.last.reify.wotsit
+          should 'not save the associated object when reifying' do
+            assert_nil @widget.versions.last.reify.wotsit.id
+          end
+
+          should "preserve the associated object's values when reifying" do
+            assert_equal @wotsit.attributes.reject{ |k,v| k == 'id' },
+              @widget.versions.last.reify.wotsit.attributes.reject{ |k,v| k == 'id'}
           end
         end
 
