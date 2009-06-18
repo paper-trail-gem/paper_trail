@@ -85,13 +85,8 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
             @reified_widget = @widget.versions.last.reify
           end
 
-          should 'not save the associated object when reifying' do
-            assert @reified_widget.wotsit.new_record?
-          end
-
-          should "copy the associated object's values when reifying" do
-            assert_equal @wotsit.attributes.reject{ |k,v| k == 'id' },
-                         @reified_widget.wotsit.attributes.reject{ |k,v| k == 'id'}
+          should 'copy the has_one association when reifying' do
+            assert_equal @wotsit, @reified_widget.wotsit
           end
         end
 
@@ -103,22 +98,12 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
             @reified_widget = @widget.versions.last.reify
           end
 
-          should 'only copy the versions associations' do
-            assert_equal 0, @reified_widget.fluxors.length
+          should 'copy the has_many associations when reifying' do
+            assert_equal @widget.fluxors.length, @reified_widget.fluxors.length
+            assert_same_elements @widget.fluxors, @reified_widget.fluxors
+
             assert_equal @widget.versions.length, @reified_widget.versions.length
-          end
-
-          should 'not save the associated versions objects when reifying' do
-            @reified_widget.versions.each do |version|
-              assert version.new_record?
-            end
-          end
-
-          should "copy the associated versions objects' values when reifying" do
-            @reified_widget.versions.each_with_index do |version, index|
-              assert_equal @widget.versions[index].attributes.reject{ |k,v| k == 'id' },
-                           version.attributes.reject{ |k,v| k == 'id' }
-            end
+            assert_same_elements @widget.versions, @reified_widget.versions
           end
         end
 
@@ -316,6 +301,16 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
     should 'reify with the correct type' do
       thing = @foo.versions.last.reify
       assert_kind_of FooWidget, thing
+    end
+
+
+    context 'when destroyed' do
+      setup { @foo.destroy }
+
+      should 'reify with the correct type' do
+        thing = @foo.versions.last.reify
+        assert_kind_of FooWidget, thing
+      end
     end
   end
 
