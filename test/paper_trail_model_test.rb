@@ -103,20 +103,21 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
             @reified_widget = @widget.versions.last.reify
           end
 
-          should 'copy the associations' do
-            assert_equal @widget.fluxors.length, @reified_widget.fluxors.length
+          should 'only copy the versions associations' do
+            assert_equal 0, @reified_widget.fluxors.length
+            assert_equal @widget.versions.length, @reified_widget.versions.length
           end
 
-          should 'not save the associated objects when reifying' do
-            @reified_widget.fluxors.each do |fluxor|
-              assert fluxor.new_record?
+          should 'not save the associated versions objects when reifying' do
+            @reified_widget.versions.each do |version|
+              assert version.new_record?
             end
           end
 
-          should "copy the associated objects' values when reifying" do
-            @reified_widget.fluxors.each_with_index do |fluxor, index|
-              assert_equal @widget.fluxors[index].attributes.reject{ |k,v| k == 'id' },
-                           fluxor.attributes.reject{ |k,v| k == 'id' }
+          should "copy the associated versions objects' values when reifying" do
+            @reified_widget.versions.each_with_index do |version, index|
+              assert_equal @widget.versions[index].attributes.reject{ |k,v| k == 'id' },
+                           version.attributes.reject{ |k,v| k == 'id' }
             end
           end
         end

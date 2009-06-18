@@ -47,12 +47,15 @@ class Version < ActiveRecord::Base
           end
         end
 
-        klass.send(:reflect_on_all_associations, :has_many).map(&:name).each do |collection|
+        # NOTE: for now we only copy the item's +versions+ because that's all I need.
+        # Copying the other associations leads down the path to deep cloning:
+        # http://github.com/DefV/deep_cloning
+        klass.send(:reflect_on_all_associations, :has_many).map(&:name).select{ |name| name == :versions }.each do |collection|
           # The only way to assign an object to a has_many association without saving
           # it is to use +collection.build(attributes = {})+.
           item.send(collection).each do |obj|
             model.send(collection).send :build, obj.try(:attributes)
-          end
+          end 
         end
       end
 
