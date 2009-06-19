@@ -41,4 +41,14 @@ class Version < ActiveRecord::Base
     end
   end
 
+  def next
+    Version.first :conditions => ["id > ? AND item_type = ? AND item_id = ?", id, item_type, item_id],
+                  :order => 'id ASC'
+  end
+
+  def previous
+    Version.first :conditions => ["id < ? AND item_type = ? AND item_id = ?", id, item_type, item_id],
+                  :order => 'id DESC'
+  end
+
 end

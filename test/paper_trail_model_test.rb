@@ -326,4 +326,37 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
     end
   end
 
+
+  context 'An item with versions' do
+    setup do
+      @widget = Widget.create :name => 'Widget'
+      @widget.update_attributes :name => 'Fidget'
+      @widget.update_attributes :name => 'Digit'
+    end
+
+    context 'on the first version' do
+      setup { @version = @widget.versions.first }
+
+      should 'have a nil previous version' do
+        assert_nil @version.previous
+      end
+
+      should 'return the next version' do
+        assert_equal @widget.versions[1], @version.next
+      end
+    end
+
+    context 'on the last version' do
+      setup { @version = @widget.versions.last }
+
+      should 'return the previous version' do
+        assert_equal @widget.versions[@widget.versions.length - 2], @version.previous
+      end
+
+      should 'have a nil next version' do
+        assert_nil @version.next
+      end
+    end
+  end
+
 end
