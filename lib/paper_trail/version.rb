@@ -39,6 +39,6 @@ class Version < ActiveRecord::Base
 
       model
     end
-
   end
+
 end
