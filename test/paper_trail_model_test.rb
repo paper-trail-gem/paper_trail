@@ -109,20 +109,32 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
 
 
         context 'and then destroyed' do
-          setup { @widget.destroy }
+          setup do
+            @fluxor = @widget.fluxors.create :name => 'flux'
+            @widget.destroy
+            @reified_widget = @widget.versions.last.reify
+          end
+
+          should 'record the correct event' do
+            assert_match /destroy/i, @widget.versions.last.event
+          end
 
           should 'have three previous versions' do
             assert_equal 3, @widget.versions.length
           end
 
           should 'be available in its previous version' do
-            widget = @widget.versions.last.reify
-            assert_equal @widget.id, widget.id
-            assert_equal @widget.attributes, widget.attributes
+            assert_equal @widget.id, @reified_widget.id
+            assert_equal @widget.attributes, @reified_widget.attributes
           end
 
-          should 'record the correct event' do
-            assert_match /destroy/i, @widget.versions.last.event
+          should 'be re-creatable from its previous version' do
+            assert @reified_widget.save
+          end
+
+          should 'restore its associations on its previous version' do
+            @reified_widget.save
+            assert_equal 1, @reified_widget.fluxors.length
           end
         end
       end
@@ -130,7 +142,7 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
   end
 
 
-  # Test the serialisation and unserialisation.
+  # Test the serialisation and deserialisation.
   # TODO: binary
   context "A record's papertrail" do
     setup do
