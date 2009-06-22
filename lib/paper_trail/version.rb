@@ -51,4 +51,9 @@ class Version < ActiveRecord::Base
                   :order => 'id DESC'
   end
 
+  def index
+    Version.all(:conditions => ["item_type = ? AND item_id = ?", item_type, item_id],
+                :order => 'id ASC').index(self)
+  end
+  
 end

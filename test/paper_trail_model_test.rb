@@ -344,6 +344,10 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
       should 'return the next version' do
         assert_equal @widget.versions[1], @version.next
       end
+
+      should 'return the correct index' do
+        assert_equal 0, @version.index
+      end
     end
 
     context 'on the last version' do
@@ -355,6 +359,10 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
 
       should 'have a nil next version' do
         assert_nil @version.next
+      end
+
+      should 'return the correct index' do
+        assert_equal @widget.versions.length - 1, @version.index
       end
     end
   end
