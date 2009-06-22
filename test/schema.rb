@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(:version => 0) do
     t.text     :object
     t.datetime :created_at
   end
+  add_index :versions, [:item_type, :item_id]
 
   create_table :wotsits, :force => true do |t|
     t.integer :widget_id
