@@ -1,6 +1,6 @@
 # PaperTrail
 
-Track changes to your models' data.  Good for auditing or versioning.
+PaperTrail lets you track changes to your models' data.  It's good for auditing or versioning.  You can see how a model looked at any stage in its lifecycle, revert it to any version, and even undelete it after it's been destroyed.
 
 
 ## Features
@@ -87,15 +87,21 @@ Here's a helpful table showing what PaperTrail stores:
 PaperTrail stores the values in the Model Before column.  Most other auditing/versioning plugins store the After column.
 
 
-## Undeleting A Model
+## Reverting And Undeleting A Model
 
-PaperTrail makes undeleting easy:
+PaperTrail makes reverting to a previous version easy:
+
+    >> widget = Widget.find 42
+    >> widget.update_attributes :name => 'Blah blah'
+    # Time passes....
+    >> widget = widget.versions.last.reify  # the widget as it was before the update
+    >> widget.save                          # reverted
+
+Undeleting is just as simple:
 
     >> widget = Widget.find 42
     >> widget.destroy
-
     # Time passes....
-
     >> widget = Version.find(153).reify    # the widget as it was before it was destroyed
     >> widget.save                         # the widget lives!
 
