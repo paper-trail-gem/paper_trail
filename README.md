@@ -24,8 +24,7 @@ Known to work on Rails 2.3.  Probably works on Rails 2.2 and 2.1.
 
 ## Basic Usage
 
-PaperTrail is simple to use.  Just add 15 characters to a model to get a paper trail of every
-`create`, `update`, and `destroy`.
+PaperTrail is simple to use.  Just add 15 characters to a model to get a paper trail of every `create`, `update`, and `destroy`.
 
     class Widget < ActiveRecord::Base
       has_paper_trail
@@ -47,20 +46,19 @@ Once you have a version, you can find out what happened:
     >> widget = v.reify            # the widget as it was before the update;
                                    # would be nil for a create event
 
-PaperTrail stores the pre-change version of the model, unlike some other auditing/versioning
-plugins, so you can retrieve the original version.  This is useful when you start keeping a
-paper trail for models that already have records in the database.
+PaperTrail stores the pre-change version of the model, unlike some other auditing/versioning plugins, so you can retrieve the original version.  This is useful when you start keeping a paper trail for models that already have records in the database.
 
     >> widget = Widget.find 153
     >> widget.name                                 # 'Doobly'
+
+    # Add has_paper_trail to Widget model.
+
     >> widget.versions                             # []
     >> widget.update_attributes :name => 'Wotsit'
     >> widget.versions.first.reify.name            # 'Doobly'
     >> widget.versions.first.event                 # 'update'
 
-This also means that PaperTrail does not waste space storing a version of the object as it
-currently stands.  The `versions` method lets you get at previous versions only; after all,
-you already know what the object currently looks like.
+This also means that PaperTrail does not waste space storing a version of the object as it currently stands.  The `versions` method gives you previous versions; to get the current one just call a finder on your `Widget` model as usual.
 
 Here's a helpful table showing what PaperTrail stores:
 
@@ -86,15 +84,27 @@ Here's a helpful table showing what PaperTrail stores:
   </tr>
 </table>
 
-PaperTrail stores the Before column.  Most other auditing/versioning plugins store the After
-column.
+PaperTrail stores the values in the Model Before column.  Most other auditing/versioning plugins store the After column.
+
+
+## Undeleting A Model
+
+PaperTrail makes undeleting easy:
+
+    >> widget = Widget.find 42
+    >> widget.destroy
+
+    # Time passes....
+
+    >> widget = Version.find(153).reify    # the widget as it was before it was destroyed
+    >> widget.save                         # the widget lives!
+
+In fact you could use PaperTrail to implement an undo system, though I haven't had the opportunity yet to do it myself.
 
 
 ## Finding Out Who Was Responsible For A Change
 
-If your `ApplicationController` has a `current_user` method, PaperTrail will store the value it
-returns in the `version`'s `whodunnit` column.  Note that this column is a string so you will have
-to convert it to an integer if it's an id and you want to look up the user later on:
+If your `ApplicationController` has a `current_user` method, PaperTrail will store the value it returns in the `version`'s `whodunnit` column.  Note that this column is a string so you will have to convert it to an integer if it's an id and you want to look up the user later on:
 
     >> last_change = Widget.versions.last
     >> user_who_made_the_change = User.find last_change.whodunnit.to_i
@@ -145,6 +155,11 @@ And on again like this:
 ## Testing
 
 PaperTrail has a thorough suite of tests.  However they only run when PaperTrail is sitting in a Rails app's `vendor/plugins` directory.  If anyone can tell me how to get them to run outside of a Rails app, I'd love to hear it.
+
+
+## Problems
+
+Please use GitHub's [issue tracker](http://github.com/airblade/paper_trail/issues).
 
 
 ## Inspirations
