@@ -21,7 +21,7 @@ module PaperTrail
 
   def set_whodunnit
     @@whodunnit = lambda {
-      self.respond_to?(:current_user) ? self.current_user : nil
+      self.send :current_user rescue nil
     }
   end
 end
