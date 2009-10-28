@@ -17,9 +17,28 @@ class Fluxor < ActiveRecord::Base
   belongs_to :widget
 end
 
+class Article < ActiveRecord::Base
+  has_paper_trail :ignore => [:title]
+end
+
 
 class HasPaperTrailModelTest < Test::Unit::TestCase
   load_schema
+
+  context 'A record' do
+    setup { @article = Article.create }
+    
+    context 'which updates an ignored column' do
+      setup { @article.update_attributes :title => 'My first title' }
+      should_not_change('the number of versions') { Version.count }
+    end
+
+    context 'which updates an ignored column and a non-ignored column' do
+      setup { @article.update_attributes :title => 'My first title', :content => 'Some text here.' }
+      should_change('the number of versions', :by => 1) { Version.count }
+    end
+
+  end
 
   context 'A new record' do
     setup { @widget = Widget.new }
