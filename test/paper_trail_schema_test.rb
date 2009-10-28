@@ -10,5 +10,6 @@ class PaperTrailSchemaTest < ActiveSupport::TestCase
     assert_equal [], Version.all
     assert_equal [], Wotsit.all
     assert_equal [], Fluxor.all
+    assert_equal [], Article.all
   end
 end

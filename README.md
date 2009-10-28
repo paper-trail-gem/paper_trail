@@ -6,7 +6,7 @@ PaperTrail lets you track changes to your models' data.  It's good for auditing 
 ## Features
 
 * Stores every create, update and destroy.
-* Does not store updates which don't change anything.
+* Does not store updates which don't change anything (or which only change attributes you are ignoring).
 * Allows you to get at every version, including the original, even once destroyed.
 * Allows you to get at every version even if the schema has since changed.
 * Automatically records who was responsible if your controller has a `current_user` method.
@@ -85,6 +85,25 @@ Here's a helpful table showing what PaperTrail stores:
 </table>
 
 PaperTrail stores the values in the Model Before column.  Most other auditing/versioning plugins store the After column.
+
+
+## Ignoring changes to certain attributes
+
+You can ignore changes to certain attributes like this:
+
+    class Article < ActiveRecord::Base
+      has_paper_trail :ignore => [:title, :rating]
+    end
+
+This means that changes to just the `title` or `rating` will not store another version of the article.  It does not mean that the `title` and `rating` attributes will be ignored if some other change causes a new `Version` to be crated.  For example:
+
+    >> a = Article.create
+    >> a.versions.length                         # 1
+    >> a.update_attributes :title => 'My Title', :rating => 3
+    >> a.versions.length                         # 1
+    >> a.update_attributes :content => 'Hello'
+    >> a.versions.length                         # 2
+    >> a.versions.last.reify.title               # 'My Title'
 
 
 ## Reverting And Undeleting A Model
