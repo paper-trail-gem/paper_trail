@@ -1,6 +1,4 @@
 require File.dirname(__FILE__) + '/test_helper.rb'
-require 'application_controller'
-require 'action_controller/test_process'
 
 class ApplicationController
   def rescue_action(e)
