@@ -1,22 +1,18 @@
-sqlite:
-  :adapter: sqlite
-  :dbfile: vendor/plugins/paper_trail/test/paper_trail_plugin.sqlite.db
-
 sqlite3:
-  :adapter: sqlite3
-  :dbfile: vendor/plugins/paper_trail/test/paper_trail_plugin.sqlite3.db
+  adapter: sqlite3
+  database: ":memory:"
 
 postgresql:
-  :adapter: postgresql
-  :username: postgres
-  :password: postgres
-  :database: paper_trail_plugin_test
-  :min_messages: ERROR
+  adapter: postgresql
+  username: postgres
+  password: postgres
+  database: paper_trail_plugin_test
+  min_messages: ERROR
 
 mysql:
-  :adapter: mysql
-  :host: localhost
-  :username: andy
-  :password: 
-  :database: paper_trail_plugin_test
-  :socket: /tmp/mysql.sock
+  adapter: mysql
+  host: localhost
+  username: andy
+  password: 
+  database: paper_trail_plugin_test
+  socket: /tmp/mysql.sock
