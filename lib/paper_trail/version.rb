@@ -33,7 +33,7 @@ class Version < ActiveRecord::Base
         begin
           model.send "#{k}=", v
         rescue NoMethodError
-          RAILS_DEFAULT_LOGGER.warn "Attribute #{k} does not exist on #{item_type} (Version id: #{id})."
+          logger.warn "Attribute #{k} does not exist on #{item_type} (Version id: #{id})."
         end
       end
 
