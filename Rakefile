@@ -11,8 +11,9 @@ begin
     gemspec.homepage = 'http://github.com/airblade/paper_trail'
     gemspec.authors = ['Andy Stewart']
   end
+  Jeweler::GemcutterTasks.new
 rescue LoadError
-  puts "Jeweler not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"
+  puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
 end
 
 desc 'Test the paper_trail plugin.'
