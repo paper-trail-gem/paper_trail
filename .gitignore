@@ -1,2 +1,3 @@
 test/debug.log
 test/paper_trail_plugin.sqlite3.db
+coverage
