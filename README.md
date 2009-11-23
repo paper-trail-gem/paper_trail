@@ -179,12 +179,19 @@ And on again like this:
 
 ## Testing
 
-PaperTrail has a thorough suite of tests.  However they only run when PaperTrail is sitting in a Rails app's `vendor/plugins` directory.  If anyone can tell me how to get them to run outside of a Rails app, I'd love to hear it.
+PaperTrail has a thorough suite of tests.  Thanks to [Zachery Hostens](http://github.com/zacheryph) for making them able to run standalone, i.e. without needing PaperTrail to be sitting in a Rails app.
 
 
 ## Problems
 
 Please use GitHub's [issue tracker](http://github.com/airblade/paper_trail/issues).
+
+
+## Contributors
+
+Many thanks to:
+
+* [Zachery Hostens](http://github.com/zacheryph)
 
 
 ## Inspirations
