@@ -158,9 +158,9 @@ And on again like this:
 
 ## Installation
 
-1. Install PaperTrail either as a gem or as a plugin:
+1. Install PaperTrail either as a gem (from Gemcutter; the ones on GitHub are obsolete) or as a plugin:
 
-    `config.gem 'airblade-paper_trail', :lib => 'paper_trail', :source => 'http://gems.github.com'`
+    `config.gem 'paper_trail', :source => 'http://gemcutter.org'`
 
     or:
 
