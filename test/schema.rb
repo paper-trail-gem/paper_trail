@@ -22,6 +22,11 @@ ActiveRecord::Schema.define(:version => 0) do
     t.string   :whodunnit
     t.text     :object
     t.datetime :created_at
+
+    # Metadata columns.
+    t.integer :answer
+    t.string  :question
+    t.integer :article_id
   end
   add_index :versions, [:item_type, :item_id]
 

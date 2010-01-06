@@ -18,7 +18,10 @@ class Fluxor < ActiveRecord::Base
 end
 
 class Article < ActiveRecord::Base
-  has_paper_trail :ignore => [:title]
+  has_paper_trail :ignore => [:title],
+                  :meta   => {:answer => 42,
+                              :question => Proc.new { "31 + 11 = #{31 + 11}" },
+                              :article_id => Proc.new { |article| article.id } }
 end
 
 
@@ -37,8 +40,8 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
       setup { @article.update_attributes :title => 'My first title', :content => 'Some text here.' }
       should_change('the number of versions', :by => 1) { Version.count }
     end
-
   end
+
 
   context 'A new record' do
     setup { @widget = Widget.new }
@@ -382,6 +385,62 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
 
       should 'return the correct index' do
         assert_equal @widget.versions.length - 1, @version.index
+      end
+    end
+  end
+
+
+  context 'An item' do
+    setup { @article = Article.new }
+
+    context 'which is created' do
+      setup { @article.save }
+
+      should 'store fixed meta data' do
+        assert_equal 42, @article.versions.last.answer
+      end
+
+      should 'store dynamic meta data which is independent of the item' do
+        assert_equal '31 + 11 = 42', @article.versions.last.question
+      end
+
+      should 'store dynamic meta data which depends on the item' do
+        assert_equal @article.id, @article.versions.last.article_id
+      end
+
+
+      context 'and updated' do
+        setup { @article.update_attributes! :content => 'Better text.' }
+
+        should 'store fixed meta data' do
+          assert_equal 42, @article.versions.last.answer
+        end
+
+        should 'store dynamic meta data which is independent of the item' do
+          assert_equal '31 + 11 = 42', @article.versions.last.question
+        end
+
+        should 'store dynamic meta data which depends on the item' do
+          assert_equal @article.id, @article.versions.last.article_id
+        end
+      end
+
+
+      context 'and destroyd' do
+        setup { @article.destroy }
+
+        should 'store fixed meta data' do
+          assert_equal 42, @article.versions.last.answer
+        end
+
+        should 'store dynamic meta data which is independent of the item' do
+          assert_equal '31 + 11 = 42', @article.versions.last.question
+        end
+
+        should 'store dynamic meta data which depends on the item' do
+          assert_equal @article.id, @article.versions.last.article_id
+        end
+
       end
     end
   end

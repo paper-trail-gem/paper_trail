@@ -6,11 +6,13 @@ PaperTrail lets you track changes to your models' data.  It's good for auditing 
 ## Features
 
 * Stores every create, update and destroy.
-* Does not store updates which don't change anything (or which only change attributes you are ignoring).
+* Does not store updates which don't change anything.
+* Does not store updates which only change attributes you are ignoring.
 * Allows you to get at every version, including the original, even once destroyed.
 * Allows you to get at every version even if the schema has since changed.
 * Automatically records who was responsible if your controller has a `current_user` method.
 * Allows you to set who is responsible at model-level (useful for migrations).
+* Allows you to store arbitrary metadata with each version (useful for filtering versions).
 * Can be turned off/on (useful for migrations).
 * No configuration necessary.
 * Stores everything in a single database table (generates migration for you).
@@ -139,6 +141,23 @@ In a migration or in `script/console` you can set who is responsible like this:
     >> PaperTrail.whodunnit = 'Andy Stewart'
     >> widget.update_attributes :name => 'Wibble'
     >> widget.versions.last.whodunnit              # Andy Stewart
+
+
+## Storing metadata
+
+You can store arbitrary metadata alongside each version like this:
+
+    class Article < ActiveRecord::Base
+      belongs_to :author
+      has_paper_trail :meta => { :author_id => Proc.new { |article| article.author_id },
+                                 :answer    => 42 }
+    end
+
+PaperTrail will call your proc with the current article and store the result in the `author_id` column of the `versions` table.  (Remember to add your metadata columns to the table.)
+
+Why would you do this?  In this example, `author_id` is an attribute of `Article` and PaperTrail will store it anyway in serialized (YAML) form in the `object` column of the `version` record.  But let's say you wanted to pull out all versions for a particular author; without the metadata you would have to deserialize (reify) each `version` object to see if belonged to the author in question.  Clearly this is inefficient.  Using the metadata you can find just those versions you want:
+
+    Version.all(:conditions => ['author_id = ?', author_id])
 
 
 ## Turning PaperTrail Off/On

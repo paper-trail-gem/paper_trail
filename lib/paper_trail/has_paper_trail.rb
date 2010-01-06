@@ -8,11 +8,17 @@ module PaperTrail
   module ClassMethods
     # Options:
     # :ignore    an array of attributes for which a new +Version+ will not be created if only they change.
+    # :meta      a hash of extra data to store.  You must add a column to the versions table for each key.
+    #            Values are objects or procs (which are called with +self+, i.e. the model with the paper
+    #            trail).
     def has_paper_trail(options = {})
       send :include, InstanceMethods
 
       cattr_accessor :ignore
       self.ignore = (options[:ignore] || []).map &:to_s
+
+      cattr_accessor :meta
+      self.meta = options[:meta] || {}
       
       cattr_accessor :paper_trail_active
       self.paper_trail_active = true
@@ -36,25 +42,35 @@ module PaperTrail
 
   module InstanceMethods
     def record_create
-      versions.create(:event     => 'create',
-                      :whodunnit => PaperTrail.whodunnit) if self.class.paper_trail_active
+      if self.class.paper_trail_active
+        versions.create merge_metadata(:event => 'create', :whodunnit => PaperTrail.whodunnit)
+      end
     end
 
     def record_update
       if changed_and_we_care? and self.class.paper_trail_active
-        versions.build :event     => 'update',
-                       :object    => object_to_string(previous_version),
-                       :whodunnit => PaperTrail.whodunnit
+        versions.build merge_metadata(:event     => 'update',
+                                      :object    => object_to_string(previous_version),
+                                      :whodunnit => PaperTrail.whodunnit)
       end
     end
 
     def record_destroy
-      versions.create(:event     => 'destroy',
-                      :object    => object_to_string(previous_version),
-                      :whodunnit => PaperTrail.whodunnit) if self.class.paper_trail_active
+      if self.class.paper_trail_active
+        versions.create merge_metadata(:event     => 'destroy',
+                                       :object    => object_to_string(previous_version),
+                                       :whodunnit => PaperTrail.whodunnit)
+      end
     end
 
     private
+
+    def merge_metadata(data)
+      meta.each do |k,v|
+        data[k] = v.respond_to?(:call) ? v.call(self) : v
+      end
+      data
+    end
 
     def previous_version
       previous = self.clone
