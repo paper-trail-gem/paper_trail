@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{paper_trail}
-  s.version = "1.3.1"
+  s.version = "1.4.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Andy Stewart"]
-  s.date = %q{2009-11-23}
+  s.date = %q{2010-01-06}
   s.email = %q{boss@airbladesoftware.com}
   s.extra_rdoc_files = [
     "README.md"
