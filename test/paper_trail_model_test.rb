@@ -354,42 +354,47 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
       @widget = Widget.create :name => 'Widget'
       @widget.update_attributes :name => 'Fidget'
       @widget.update_attributes :name => 'Digit'
-      @widget.reload # database loses sub-second resolution
     end
 
-    context 'where the first version was created much earlier' do
+    context 'which were created over time' do
       setup do
-        @oldest = 2.days.ago
-        @older = 1.day.ago
-        @widget.versions[0].update_attributes :created_at => @oldest
-        @widget.versions[1].update_attributes :created_at => @older
-
-        @current_version = @widget.versions.last
+        @created       = 2.days.ago
+        @first_update  = 1.day.ago
+        @second_update = 1.hour.ago
+        @widget.versions[0].update_attributes :created_at => @created
+        @widget.versions[1].update_attributes :created_at => @first_update
+        @widget.versions[2].update_attributes :created_at => @second_update
+        @widget.update_attribute :updated_at, @second_update
       end
 
-      should 'return nil for version_at before object created' do
-        assert_nil @widget.version_at(@oldest - 1)
+      should 'return nil for version_at before it was created' do
+        assert_nil @widget.version_at(@created - 1)
       end
 
-      should 'return the object as of the second version for version_at before current version' do
-        assert_equal 'Fidget', @widget.version_at(@current_version.created_at - 1).name
+      should 'return how it looked when created for version_at its creation' do
+        assert_equal 'Widget', @widget.version_at(@created).name
       end
 
-      should "return the object as of the second version for version_at of second version's created_at" do
-        assert_equal 'Fidget', @widget.version_at(@older).name
+      should "return how it looked when created for version_at just before its first update" do
+        assert_equal 'Widget', @widget.version_at(@first_update - 1).name
       end
 
-      should 'return the current object for version_at of current version' do
-        assert_equal 'Digit', @widget.version_at(@current_version.created_at).name
+      should "return how it looked when first updated for version_at its first update" do
+        assert_equal 'Fidget', @widget.version_at(@first_update).name
+      end
+
+      should 'return how it looked when first updated for version_at just before its second update' do
+        assert_equal 'Fidget', @widget.version_at(@second_update - 1).name
+      end
+
+      should 'return how it looked when subsequently updated for version_at its second update' do
+        assert_equal 'Digit', @widget.version_at(@second_update).name
       end
 
       should 'return the current object for version_at after latest update' do
         assert_equal 'Digit', @widget.version_at(1.day.from_now).name
       end
     end
-
-
-
 
 
     context 'on the first version' do
