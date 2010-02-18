@@ -64,13 +64,13 @@ module PaperTrail
     end
     
     # Returns the object at the version that was valid at the given timestamp.
-    def version_at timestamp
+    def version_at(timestamp)
       # short-circuit if the current state is valid
-      return self if self.updated_at < timestamp
+      return self if self.updated_at <= timestamp
       
       version = versions.first(
-        :conditions => ['created_at < ?', timestamp], 
-        :order => 'created_at DESC')
+        :conditions => ['created_at > ?', timestamp], 
+        :order => 'created_at ASC')
       version.reify if version
     end
 
