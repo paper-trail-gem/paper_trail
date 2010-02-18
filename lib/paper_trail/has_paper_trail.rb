@@ -19,7 +19,7 @@ module PaperTrail
 
       cattr_accessor :meta
       self.meta = options[:meta] || {}
-      
+
       cattr_accessor :paper_trail_active
       self.paper_trail_active = true
 
@@ -62,15 +62,16 @@ module PaperTrail
                                        :whodunnit => PaperTrail.whodunnit)
       end
     end
-    
-    # Returns the object at the version that was valid at the given timestamp.
+
+    # Returns the object (not a Version) as it was at the given timestamp.
     def version_at(timestamp)
-      # short-circuit if the current state is valid
+      # Short-circuit if the current state is applicable.
       return self if self.updated_at <= timestamp
-      
-      version = versions.first(
-        :conditions => ['created_at > ?', timestamp], 
-        :order => 'created_at ASC')
+      # Look for the first version created after, rather than before, the
+      # timestamp because a version stores how the object looked before the
+      # change.
+      version = versions.first :conditions => ['created_at > ?', timestamp],
+                               :order      => 'created_at ASC'
       version.reify if version
     end
 
