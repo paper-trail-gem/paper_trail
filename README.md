@@ -10,6 +10,7 @@ PaperTrail lets you track changes to your models' data.  It's good for auditing 
 * Does not store updates which only change attributes you are ignoring.
 * Allows you to get at every version, including the original, even once destroyed.
 * Allows you to get at every version even if the schema has since changed.
+* Allows you to get at the version as of a particular time.
 * Automatically records who was responsible if your controller has a `current_user` method.
 * Allows you to set who is responsible at model-level (useful for migrations).
 * Allows you to store arbitrary metadata with each version (useful for filtering versions).
@@ -118,6 +119,13 @@ PaperTrail makes reverting to a previous version easy:
     >> widget = widget.versions.last.reify  # the widget as it was before the update
     >> widget.save                          # reverted
 
+Alternatively you can find the version at a given time:
+
+    >> widget = widget.version_at(1.day.ago)  # the widget as it was one day ago
+    >> widget.save                            # reverted
+
+Note `version_at` gives you the object, not a version, so you don't need to call `reify`.
+
 Undeleting is just as simple:
 
     >> widget = Widget.find 42
@@ -211,6 +219,7 @@ Please use GitHub's [issue tracker](http://github.com/airblade/paper_trail/issue
 Many thanks to:
 
 * [Zachery Hostens](http://github.com/zacheryph)
+* [Jeremy Weiskotten](http://github.com/jeremyw)
 
 
 ## Inspirations
