@@ -209,6 +209,11 @@ And on again like this:
 PaperTrail has a thorough suite of tests.  Thanks to [Zachery Hostens](http://github.com/zacheryph) for making them able to run standalone, i.e. without needing PaperTrail to be sitting in a Rails app.
 
 
+## Articles
+
+[Keep a Paper Trail with PaperTrail](http://www.linux-mag.com/id/7528), Linux Magazine, 16th September 2009.
+
+
 ## Problems
 
 Please use GitHub's [issue tracker](http://github.com/airblade/paper_trail/issues).
