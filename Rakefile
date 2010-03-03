@@ -5,11 +5,11 @@ require 'rake/rdoctask'
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gemspec|
-    gemspec.name = 'paper_trail'
+    gemspec.name = 'revo-paper_trail'
     gemspec.summary = "Track changes to your models' data.  Good for auditing or versioning."
-    gemspec.email = 'boss@airbladesoftware.com'
+    gemspec.email = 'boss@airbladesoftware.com, ge_developers@playup.com'
     gemspec.homepage = 'http://github.com/airblade/paper_trail'
-    gemspec.authors = ['Andy Stewart']
+    gemspec.authors = ['Andy Stewart', 'Revo Developers']
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
