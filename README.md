@@ -17,6 +17,7 @@ PaperTrail lets you track changes to your models' data.  It's good for auditing 
 * No configuration necessary.
 * Stores everything in a single database table (generates migration for you).
 * Thoroughly tested.
+* Thread safe
 
 
 ## Rails Version
