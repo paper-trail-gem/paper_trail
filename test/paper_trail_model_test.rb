@@ -296,7 +296,8 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
 
   context 'A papertrail with somebody making changes' do
     setup do
-      PaperTrail.whodunnit = 'Colonel Mustard'
+      # Maybe better using mock?
+      Thread.current[:whodunnit] = 'Colonel Mustard'
       @widget = Widget.new :name => 'Fidget'
     end
 
