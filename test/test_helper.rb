@@ -1,5 +1,5 @@
 require 'test/unit'
-RAILS_ROOT = File.join(File.dirname(__FILE__), %w{.. .. .. ..})
+RAILS_ROOT = File.join(File.dirname(__FILE__), %w{.. .. .. ..}) unless defined?(RAILS_ROOT)
 $:.unshift(File.join(File.dirname(__FILE__), %w{.. lib}))
 
 unless defined?(ActiveRecord)
