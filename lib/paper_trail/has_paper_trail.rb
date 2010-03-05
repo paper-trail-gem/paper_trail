@@ -43,7 +43,7 @@ module PaperTrail
   module InstanceMethods
     def record_create
       if self.class.paper_trail_active
-        versions.create merge_metadata(:event => 'create', :whodunnit => PaperTrail.whodunnit)
+        versions.create merge_metadata(:event => 'create', :whodunnit => PaperTrail.whodunnit, :diff => changes.to_yaml)
       end
     end
 
@@ -51,7 +51,8 @@ module PaperTrail
       if changed_and_we_care? and self.class.paper_trail_active
         versions.build merge_metadata(:event     => 'update',
                                       :object    => object_to_string(previous_version),
-                                      :whodunnit => PaperTrail.whodunnit)
+                                      :whodunnit => PaperTrail.whodunnit,
+                                      :diff => changes.to_yaml)
       end
     end
 
@@ -59,12 +60,12 @@ module PaperTrail
       if self.class.paper_trail_active
         versions.create merge_metadata(:event     => 'destroy',
                                        :object    => object_to_string(previous_version),
-                                       :whodunnit => PaperTrail.whodunnit)
+                                       :whodunnit => PaperTrail.whodunnit,
+                                       :diff      => changes.to_yaml)
       end
     end
 
     private
-
     def merge_metadata(data)
       meta.each do |k,v|
         data[k] = v.respond_to?(:call) ? v.call(self) : v

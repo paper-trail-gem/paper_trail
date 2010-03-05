@@ -21,6 +21,7 @@ ActiveRecord::Schema.define(:version => 0) do
     t.string   :event,     :null => false
     t.string   :whodunnit
     t.text     :object
+    t.text     :diff
     t.datetime :created_at
 
     # Metadata columns.
