@@ -40,6 +40,10 @@ class Version < ActiveRecord::Base
       model
     end
   end
+  
+  def differences
+    diff ? YAML.load(diff) : {}
+  end
 
   def next
     Version.first :conditions => ["id > ? AND item_type = ? AND item_id = ?", id, item_type, item_id],

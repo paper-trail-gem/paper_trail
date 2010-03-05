@@ -64,7 +64,7 @@ module PaperTrail
                                        :diff      => changes.to_yaml)
       end
     end
-
+   
     private
     def merge_metadata(data)
       meta.each do |k,v|
