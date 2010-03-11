@@ -1,1 +1,1 @@
-# Install hook code here
+puts 'You have chosen wisely.'
