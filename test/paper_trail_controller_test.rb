@@ -1,5 +1,9 @@
 require 'test_helper'
 
+ActionController::Routing::Routes.draw do |map|
+  map.resources :widgets
+end
+
 class ApplicationController < ActionController::Base
   def rescue_action(e)
     raise e
@@ -32,11 +36,6 @@ end
 
 class PaperTrailControllerTest < ActionController::TestCase
   tests WidgetsController
-  def setup
-    ActionController::Routing::Routes.draw do |map|
-      map.resources :widgets
-    end
-  end
 
   test 'create' do
     post :create, :widget => { :name => 'Flugel' }
