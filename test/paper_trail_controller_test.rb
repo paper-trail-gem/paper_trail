@@ -30,14 +30,9 @@ class WidgetsController < ApplicationController
   end
 end
 
-
-class PaperTrailControllerTest < ActionController::TestCase #Test::Unit::TestCase
+class PaperTrailControllerTest < ActionController::TestCase
   tests WidgetsController
   def setup
-    #@controller = WidgetsController.new
-    #@request = ActionController::TestRequest.new
-    #@response = ActionController::TestResponse.new
-
     ActionController::Routing::Routes.draw do |map|
       map.resources :widgets
     end
@@ -68,4 +63,3 @@ class PaperTrailControllerTest < ActionController::TestCase #Test::Unit::TestCas
     assert_equal 153, widget.versions.last.whodunnit.to_i
   end
 end
-
