@@ -1,1 +1,0 @@
-require 'paper_trail'

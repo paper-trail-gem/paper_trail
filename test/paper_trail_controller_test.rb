@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/test_helper.rb'
+require 'test_helper'
 
 class ApplicationController < ActionController::Base
   def rescue_action(e)
@@ -32,10 +32,11 @@ end
 
 
 class PaperTrailControllerTest < ActionController::TestCase #Test::Unit::TestCase
+  tests WidgetsController
   def setup
-    @controller = WidgetsController.new
-    @request = ActionController::TestRequest.new
-    @response = ActionController::TestResponse.new
+    #@controller = WidgetsController.new
+    #@request = ActionController::TestRequest.new
+    #@response = ActionController::TestResponse.new
 
     ActionController::Routing::Routes.draw do |map|
       map.resources :widgets

@@ -1,43 +1,37 @@
+require 'rubygems'
+
 require 'test/unit'
-RAILS_ROOT = File.join(File.dirname(__FILE__), %w{.. .. .. ..})
-$:.unshift(File.join(File.dirname(__FILE__), %w{.. lib}))
-
-unless defined?(ActiveRecord)
-  if File.directory? RAILS_ROOT + 'config'
-    puts 'using config/boot.rb'
-    ENV['RAILS_ENV'] = 'test'
-    require File.join(RAILS_ROOT, 'config', 'boot.rb')
-  else
-    # simply use installed gems if available
-    puts 'using rubygems'
-    require 'rubygems'
-    gem 'actionpack'; gem 'activerecord'; gem 'activesupport'; gem 'rails'
-  end
-
-  %w(action_pack action_controller active_record active_support initializer).each {|f| require f}
-end
 require 'shoulda'
-require 'paper_trail'
+
+require 'active_record'
+require 'action_controller'
+require 'action_controller/test_process'
+require 'active_support'
+require 'active_support/test_case'
+
+require 'lib/paper_trail'
 
 def connect_to_database
-  config = YAML::load(IO.read(File.dirname(__FILE__) + '/database.yml'))
-  ActiveRecord::Base.logger = Logger.new(File.dirname(__FILE__) + "/debug.log")
-
-  db_adapter = ENV['DB'] || 'sqlite3'
-
-  if db_adapter.nil?
-    raise "No DB Adapter selected. Pass the DB= option to pick one, or install Sqlite or Sqlite3."
-  end
-
-  ActiveRecord::Base.establish_connection(config[db_adapter])
+  ActiveRecord::Base.establish_connection(
+    :adapter  => "sqlite3",
+    :database => ":memory:"
+  )
+  ActiveRecord::Migration.verbose = false
 end
 
 def load_schema
   connect_to_database
-  load(File.dirname(__FILE__) + "/schema.rb")
-  require File.dirname(__FILE__) + '/../rails/init.rb'
+  load File.dirname(__FILE__) + '/schema.rb'
 end
 
 def change_schema
-  load(File.dirname(__FILE__) + "/schema_change.rb")
+  load File.dirname(__FILE__) + '/schema_change.rb'
 end
+
+class ActiveRecord::Base
+  def logger
+    @logger ||= Logger.new(nil)
+  end
+end
+
+load_schema

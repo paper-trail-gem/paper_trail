@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/test_helper.rb'
+require 'test_helper'
 
 class Widget < ActiveRecord::Base
   has_paper_trail
@@ -30,7 +30,7 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
 
   context 'A record' do
     setup { @article = Article.create }
-    
+
     context 'which updates an ignored column' do
       setup { @article.update_attributes :title => 'My first title' }
       should_not_change('the number of versions') { Version.count }
@@ -100,7 +100,7 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
           assert_match /update/i, @widget.versions.last.event
         end
 
-        
+
         context 'and has one associated object' do
           setup do
             @wotsit = @widget.create_wotsit :name => 'John'
