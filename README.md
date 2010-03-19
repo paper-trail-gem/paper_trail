@@ -217,13 +217,9 @@ And then use it in your tests like this:
 
 ## Installation
 
-1. Install PaperTrail either as a gem (from Gemcutter; the ones on GitHub are obsolete) or as a plugin:
+1. Install PaperTrail as a gem via your `config/environment.rb`:
 
-    `config.gem 'paper_trail', :source => 'http://gemcutter.org'`
-
-    or:
-
-    `script/plugin install git://github.com/airblade/paper_trail.git`
+    `config.gem 'paper_trail'
 
 2. Generate a migration which will add a `versions` table to your database.
 
