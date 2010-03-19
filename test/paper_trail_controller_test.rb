@@ -1,5 +1,9 @@
 require 'test_helper'
 
+ActionController::Routing::Routes.draw do |map|
+  map.resources :widgets
+end
+
 class ApplicationController < ActionController::Base
   def rescue_action(e)
     raise e
@@ -30,18 +34,8 @@ class WidgetsController < ApplicationController
   end
 end
 
-
-class PaperTrailControllerTest < ActionController::TestCase #Test::Unit::TestCase
+class PaperTrailControllerTest < ActionController::TestCase
   tests WidgetsController
-  def setup
-    #@controller = WidgetsController.new
-    #@request = ActionController::TestRequest.new
-    #@response = ActionController::TestResponse.new
-
-    ActionController::Routing::Routes.draw do |map|
-      map.resources :widgets
-    end
-  end
 
   test 'create' do
     post :create, :widget => { :name => 'Flugel' }
@@ -68,4 +62,3 @@ class PaperTrailControllerTest < ActionController::TestCase #Test::Unit::TestCas
     assert_equal 153, widget.versions.last.whodunnit.to_i
   end
 end
-
