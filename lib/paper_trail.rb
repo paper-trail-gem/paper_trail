@@ -1,18 +1,11 @@
 require 'yaml'
 require 'paper_trail/config'
+require 'paper_trail/controller'
 require 'paper_trail/has_paper_trail'
 require 'paper_trail/version'
 
+# PaperTrail's module methods can be called in both models and controllers.
 module PaperTrail
-
-  def self.included(base)
-    base.before_filter :set_whodunnit
-  end
-
-  # Returns PaperTrail's configuration object.
-  def self.config
-    @@config ||= PaperTrail::Config.instance
-  end
 
   # Switches PaperTrail on or off.
   def self.enabled=(value)
@@ -23,6 +16,11 @@ module PaperTrail
   # PaperTrail is enabled by default.
   def self.enabled?
     !!PaperTrail.config.enabled
+  end
+
+  # Returns PaperTrail's configuration object.
+  def self.config
+    @@config ||= PaperTrail::Config.instance
   end
 
   # Returns who is reponsible for any changes that occur.
@@ -38,13 +36,4 @@ module PaperTrail
     Thread.current[:whodunnit] = value
   end
 
-  protected
-
-  # Sets who is responsible for any changes that occur: the controller's
-  # `current_user`.
-  def set_whodunnit
-    Thread.current[:whodunnit] = self.send :current_user rescue nil
-  end
 end
-
-ActionController::Base.send :include, PaperTrail
