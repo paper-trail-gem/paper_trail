@@ -14,7 +14,8 @@ PaperTrail lets you track changes to your models' data.  It's good for auditing 
 * Automatically records who was responsible if your controller has a `current_user` method.
 * Allows you to set who is responsible at model-level (useful for migrations).
 * Allows you to store arbitrary metadata with each version (useful for filtering versions).
-* Can be turned off/on (useful for migrations).
+* Can be turned off/on per class (useful for migrations).
+* Can be turned off/on globally (useful for testing).
 * No configuration necessary.
 * Stores everything in a single database table (generates migration for you).
 * Thoroughly tested.
@@ -171,17 +172,47 @@ Why would you do this?  In this example, `author_id` is an attribute of `Article
 
 ## Turning PaperTrail Off/On
 
-Sometimes you don't want to store changes.  Perhaps you are only interested in changes made
-by your users and don't need to store changes you make yourself in, say, a migration.
+Sometimes you don't want to store changes.  Perhaps you are only interested in changes made by your users and don't need to store changes you make yourself in, say, a migration -- or when testing your application.
 
-If you are about change some widgets and you don't want a paper trail of your changes, you can
-turn PaperTrail off like this:
+If you are about change some widgets and you don't want a paper trail of your changes, you can turn PaperTrail off like this:
 
     >> Widget.paper_trail_off
 
 And on again like this:
 
     >> Widget.paper_trail_on
+
+You can also disable PaperTrail for all models:
+
+    >> PaperTrail.enabled = false
+
+For example, you might want to disable PaperTrail in your Rails application's test environment to speed up your tests.  This will do it:
+
+    # in config/environments/test.rb
+    config.after_initialize do
+      PaperTrail.enabled = false
+    end
+
+If you disable PaperTrail in your test environment but want to enable it for specific tests, you can add a helper like this to your test helper:
+
+    # in test/test_helper.rb
+    def with_versioning
+      was_enabled = PaperTrail.enabled?
+      PaperTrail.enabled = true
+      begin
+        yield
+      ensure
+        PaperTrail.enabled = was_enabled
+      end
+    end
+
+And then use it in your tests like this:
+
+    test "something that needs versioning" do
+      with_versioning do
+        # your test
+      end
+    end
 
 
 ## Installation

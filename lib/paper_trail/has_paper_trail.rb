@@ -20,6 +20,8 @@ module PaperTrail
       cattr_accessor :meta
       self.meta = options[:meta] || {}
 
+      # Indicates whether or not PaperTrail is active for this class.
+      # This is independent of whether PaperTrail is globally enabled or disabled.
       cattr_accessor :paper_trail_active
       self.paper_trail_active = true
 
@@ -30,10 +32,12 @@ module PaperTrail
       after_destroy :record_destroy
     end
 
+    # Switches PaperTrail off for this class.
     def paper_trail_off
       self.paper_trail_active = false
     end
 
+    # Switches PaperTrail on for this class.
     def paper_trail_on
       self.paper_trail_active = true
     end
@@ -42,13 +46,13 @@ module PaperTrail
 
   module InstanceMethods
     def record_create
-      if self.class.paper_trail_active
+      if switched_on?
         versions.create merge_metadata(:event => 'create', :whodunnit => PaperTrail.whodunnit)
       end
     end
 
     def record_update
-      if changed_and_we_care? and self.class.paper_trail_active
+      if switched_on? && changed_and_we_care?
         versions.build merge_metadata(:event     => 'update',
                                       :object    => object_to_string(previous_version),
                                       :whodunnit => PaperTrail.whodunnit)
@@ -56,7 +60,7 @@ module PaperTrail
     end
 
     def record_destroy
-      if self.class.paper_trail_active
+      if switched_on?
         versions.create merge_metadata(:event     => 'destroy',
                                        :object    => object_to_string(previous_version),
                                        :whodunnit => PaperTrail.whodunnit)
@@ -99,6 +103,12 @@ module PaperTrail
 
     def changed_and_we_care?
       changed? and !(changed - self.class.ignore).empty?
+    end
+
+    # Returns `true` if PaperTrail is globally enabled and active for this class,
+    # `false` otherwise.
+    def switched_on?
+      PaperTrail.enabled? && self.class.paper_trail_active
     end
   end
 

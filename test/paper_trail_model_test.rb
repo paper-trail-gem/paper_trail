@@ -260,6 +260,23 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
   context 'A record' do
     setup { @widget = Widget.create :name => 'Zaphod' }
 
+    context 'with PaperTrail globally disabled' do
+      setup do
+        PaperTrail.enabled = false
+        @count = @widget.versions.length
+      end
+
+      teardown { PaperTrail.enabled = true }
+
+      context 'when updated' do
+        setup { @widget.update_attributes :name => 'Beeblebrox' }
+
+        should 'not add to its trail' do
+          assert_equal @count, @widget.versions.length
+        end
+      end
+    end
+
     context 'with its paper trail turned off' do
       setup do
         Widget.paper_trail_off
@@ -482,5 +499,6 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
       end
     end
   end
+
 
 end
