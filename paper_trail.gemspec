@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{paper_trail}
-  s.version = "1.4.2"
+  s.version = "1.4.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Andy Stewart"]
@@ -36,6 +36,7 @@ Gem::Specification.new do |s|
      "test/schema.rb",
      "test/schema_change.rb",
      "test/test_helper.rb",
+     "test/thread_safe_test.rb",
      "uninstall.rb"
   ]
   s.homepage = %q{http://github.com/airblade/paper_trail}
