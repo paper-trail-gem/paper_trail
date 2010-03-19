@@ -13,6 +13,10 @@ class ApplicationController < ActionController::Base
   def current_user
     153
   end
+
+  def info_for_paper_trail
+    {:ip => request.remote_ip, :user_agent => request.user_agent}
+  end
 end
 
 class WidgetsController < ApplicationController
@@ -37,11 +41,17 @@ end
 class PaperTrailControllerTest < ActionController::TestCase
   tests WidgetsController
 
+  def setup
+    @request.env['REMOTE_ADDR'] = '127.0.0.1'
+  end
+
   test 'create' do
     post :create, :widget => { :name => 'Flugel' }
     widget = assigns(:widget)
     assert_equal 1, widget.versions.length
     assert_equal 153, widget.versions.last.whodunnit.to_i
+    assert_equal '127.0.0.1', widget.versions.last.ip
+    assert_equal 'Rails Testing', widget.versions.last.user_agent
   end
 
   test 'update' do
@@ -51,6 +61,8 @@ class PaperTrailControllerTest < ActionController::TestCase
     widget = assigns(:widget)
     assert_equal 2, widget.versions.length
     assert_equal 153, widget.versions.last.whodunnit.to_i
+    assert_equal '127.0.0.1', widget.versions.last.ip
+    assert_equal 'Rails Testing', widget.versions.last.user_agent
   end
 
   test 'destroy' do
@@ -60,5 +72,7 @@ class PaperTrailControllerTest < ActionController::TestCase
     widget = assigns(:widget)
     assert_equal 2, widget.versions.length
     assert_equal 153, widget.versions.last.whodunnit.to_i
+    assert_equal '127.0.0.1', widget.versions.last.ip
+    assert_equal 'Rails Testing', widget.versions.last.user_agent
   end
 end

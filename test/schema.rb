@@ -27,6 +27,10 @@ ActiveRecord::Schema.define(:version => 0) do
     t.integer :answer
     t.string  :question
     t.integer :article_id
+
+    # Controller info columns.
+    t.string :ip
+    t.string :user_agent
   end
   add_index :versions, [:item_type, :item_id]
 

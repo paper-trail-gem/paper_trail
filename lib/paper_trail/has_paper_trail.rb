@@ -7,11 +7,16 @@ module PaperTrail
 
 
     module ClassMethods
+
+      # Declare this in your model to track every create, update, and destroy.  Each version of
+      # the model is available in the `versions` association.
+      #
       # Options:
-      # :ignore    an array of attributes for which a new +Version+ will not be created if only they change.
-      # :meta      a hash of extra data to store.  You must add a column to the versions table for each key.
-      #            Values are objects or procs (which are called with +self+, i.e. the model with the paper
-      #            trail).
+      # :ignore    an array of attributes for which a new `Version` will not be created if only they change.
+      # :meta      a hash of extra data to store.  You must add a column to the `versions` table for each key.
+      #            Values are objects or procs (which are called with `self`, i.e. the model with the paper
+      #            trail).  See `PaperTrail::Controller.info_for_paper_trail` for how to store data from
+      #            the controller.
       def has_paper_trail(options = {})
         send :include, InstanceMethods
 
@@ -83,10 +88,12 @@ module PaperTrail
       private
 
       def merge_metadata(data)
+        # First we merge the model-level metadata in `meta`.
         meta.each do |k,v|
           data[k] = v.respond_to?(:call) ? v.call(self) : v
         end
-        data
+        # Second we merge any extra data from the controller (if available).
+        data.merge(PaperTrail.controller_info || {})
       end
 
       def previous_version

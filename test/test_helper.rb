@@ -34,4 +34,10 @@ class ActiveRecord::Base
   end
 end
 
+class ActionController::Base
+  def logger
+    @logger ||= Logger.new(nil)
+  end
+end
+
 load_schema

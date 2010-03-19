@@ -11,9 +11,10 @@ PaperTrail lets you track changes to your models' data.  It's good for auditing 
 * Allows you to get at every version, including the original, even once destroyed.
 * Allows you to get at every version even if the schema has since changed.
 * Allows you to get at the version as of a particular time.
-* Automatically records who was responsible if your controller has a `current_user` method.
+* Automatically records who was responsible via your controller.  PaperTrail calls `current_user` by default, if it exists, but you can have it call any method you like.
 * Allows you to set who is responsible at model-level (useful for migrations).
-* Allows you to store arbitrary metadata with each version (useful for filtering versions).
+* Allows you to store arbitrary model-level metadata with each version (useful for filtering versions).
+* Allows you to store arbitrary controller-level information with each version, e.g. remote IP.
 * Can be turned off/on per class (useful for migrations).
 * Can be turned off/on globally (useful for testing).
 * No configuration necessary.
@@ -146,6 +147,14 @@ If your `ApplicationController` has a `current_user` method, PaperTrail will sto
     >> last_change = Widget.versions.last
     >> user_who_made_the_change = User.find last_change.whodunnit.to_i
 
+You may want PaperTrail to call a different method to find out who is responsible.  To do so, override the `user_for_paper_trail` method in your controller like this:
+
+    class ApplicationController
+      def user_for_paper_trail
+        logged_in? ? current_member : 'Public user'  # or whatever
+      end
+    end
+
 In a migration or in `script/console` you can set who is responsible like this:
 
     >> PaperTrail.whodunnit = 'Andy Stewart'
@@ -155,7 +164,7 @@ In a migration or in `script/console` you can set who is responsible like this:
 
 ## Storing metadata
 
-You can store arbitrary metadata alongside each version like this:
+You can store arbitrary model-level metadata alongside each version like this:
 
     class Article < ActiveRecord::Base
       belongs_to :author
@@ -168,6 +177,16 @@ PaperTrail will call your proc with the current article and store the result in 
 Why would you do this?  In this example, `author_id` is an attribute of `Article` and PaperTrail will store it anyway in serialized (YAML) form in the `object` column of the `version` record.  But let's say you wanted to pull out all versions for a particular author; without the metadata you would have to deserialize (reify) each `version` object to see if belonged to the author in question.  Clearly this is inefficient.  Using the metadata you can find just those versions you want:
 
     Version.all(:conditions => ['author_id = ?', author_id])
+
+You can also store any information you like from your controller.  Just override the `info_for_paper_trail` method in your controller to return a hash whose keys correspond to columns in your `versions` table.  E.g.:
+
+    class ApplicationController
+      def info_for_paper_trail
+        { :ip => request.remote_ip, :user_agent => request.user_agent }
+      end
+    end
+
+Remember to add those extra columns to your `versions` table ;)
 
 
 ## Turning PaperTrail Off/On
