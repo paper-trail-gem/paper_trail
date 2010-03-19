@@ -27,6 +27,7 @@ Gem::Specification.new do |s|
      "install.rb",
      "lib/paper_trail.rb",
      "lib/paper_trail/config.rb",
+     "lib/paper_trail/controller.rb",
      "lib/paper_trail/has_paper_trail.rb",
      "lib/paper_trail/version.rb",
      "paper_trail.gemspec",
