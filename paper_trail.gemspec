@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{paper_trail}
-  s.version = "1.4.3"
+  s.version = "1.4.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Andy Stewart"]
@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
      "init.rb",
      "install.rb",
      "lib/paper_trail.rb",
+     "lib/paper_trail/config.rb",
      "lib/paper_trail/has_paper_trail.rb",
      "lib/paper_trail/version.rb",
      "paper_trail.gemspec",
