@@ -7,7 +7,6 @@ module PaperTrail
 
 
     module ClassMethods
-
       # Declare this in your model to track every create, update, and destroy.  Each version of
       # the model is available in the `versions` association.
       #
@@ -18,6 +17,8 @@ module PaperTrail
       #            trail).  See `PaperTrail::Controller.info_for_paper_trail` for how to store data from
       #            the controller.
       def has_paper_trail(options = {})
+        # Lazily include the instance methods so we don't clutter up
+        # any more ActiveRecord models than we have to.
         send :include, InstanceMethods
 
         cattr_accessor :ignore
@@ -49,7 +50,8 @@ module PaperTrail
       end
     end
 
-
+    # Wrap the following methods in a module so we can include them only in the
+    # ActiveRecord models that declare `has_paper_trail`.
     module InstanceMethods
       def record_create
         if switched_on?
