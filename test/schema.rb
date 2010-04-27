@@ -45,8 +45,8 @@ ActiveRecord::Schema.define(:version => 0) do
   end
 
   create_table :articles, :force => true do |t|
-    t.integer :title
-    t.string  :content
+    t.string :title
+    t.string :content
   end
 
 end
