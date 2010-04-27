@@ -1,3 +1,4 @@
+require 'singleton'
 require 'yaml'
 require 'paper_trail/config'
 require 'paper_trail/controller'
