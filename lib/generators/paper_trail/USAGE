@@ -1,0 +1,2 @@
+Description:
+  Generates (but does not run) a migration to add a versions table.
