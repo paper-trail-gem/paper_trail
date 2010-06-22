@@ -512,6 +512,58 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
       assert_equal @version, @widget.version
     end
 
+    should 'return its previous self' do
+      assert_equal @widget.versions[-2].reify, @widget.previous_version
+    end
+
+  end
+
+
+  context 'A non-reified item' do
+    setup { @widget = Widget.new }
+
+    should 'not have a previous version' do
+      assert_nil @widget.previous_version
+    end
+
+    should 'not have a next version' do
+      assert_nil @widget.next_version
+    end
+
+    context 'with versions' do
+      setup do
+        @widget.save
+        %w( Tom Dick Jane ).each { |name| @widget.update_attributes :name => name }
+      end
+
+      should 'have a previous version' do
+        assert_equal @widget.versions.last.reify, @widget.previous_version
+      end
+
+      should 'have a next version' do
+        assert_nil @widget.next_version
+      end
+    end
+  end
+
+  context 'A reified item' do
+    setup do
+      widget = Widget.create :name => 'Bob'
+      %w( Tom Dick Jane ).each { |name| widget.update_attributes :name => name }
+      @versions      = widget.versions
+      @second_widget = @versions[1].reify  # first widget is null
+      @last_widget   = @versions.last.reify
+    end
+
+    should 'have a previous version' do
+      assert_nil @second_widget.previous_version
+      assert_equal @versions[-2].reify, @last_widget.previous_version
+    end
+
+    should 'have a next version' do
+      assert_equal @versions[2].reify, @second_widget.next_version
+      assert_nil @last_widget.next_version
+    end
   end
 
 

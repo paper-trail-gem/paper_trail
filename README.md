@@ -142,7 +142,18 @@ In fact you could use PaperTrail to implement an undo system, though I haven't h
 
 ## Navigating Versions
 
-Once you have a particular `version` of an item you can navigate to the previous and next versions.
+You can call `previous_version` and `next_version` on an item to get it as it was/became.  Note that these methods reify the item for you.
+
+    >> widget = Widget.find 42
+    >> widget.versions.length              # 4 for example
+    >> widget = widget.previous_version    # => widget == widget.versions.last.reify
+    >> widget = widget.previous_version    # => widget == widget.versions[-2].reify
+    >> widget.next_version                 # => widget == widget.versions.last.reify
+    >> widget.next_version                 # nil
+
+As an aside, I'm undecided about whether `widget.versions.last.next_version` should return `nil` or `self` (i.e. `widget`).  Let me know if you have a view.
+
+If instead you have a particular `version` of an item you can navigate to the previous and next versions.
 
     >> widget = Widget.find 42
     >> version = widget.versions[-2]    # assuming widget has several versions

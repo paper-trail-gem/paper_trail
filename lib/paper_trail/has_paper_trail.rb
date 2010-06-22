@@ -65,7 +65,7 @@ module PaperTrail
       def record_update
         if switched_on? && changed_and_we_care?
           versions.build merge_metadata(:event     => 'update',
-                                        :object    => object_to_string(previous_version),
+                                        :object    => object_to_string(item_before_change),
                                         :whodunnit => PaperTrail.whodunnit)
         end
       end
@@ -73,7 +73,7 @@ module PaperTrail
       def record_destroy
         if switched_on?
           versions.create merge_metadata(:event     => 'destroy',
-                                         :object    => object_to_string(previous_version),
+                                         :object    => object_to_string(item_before_change),
                                          :whodunnit => PaperTrail.whodunnit)
         end
       end
@@ -90,6 +90,20 @@ module PaperTrail
         version.reify if version
       end
 
+      # Returns the object (not a Version) as it was most recently.
+      def previous_version
+        last_version = version ? version.previous : versions.last
+        last_version.reify if last_version
+      end
+
+      # Returns the object (not a Version) as it became next.
+      def next_version
+        # NOTE: if self (the item) was not reified from a version, i.e. it is the
+        # "live" item, we return nil.  Perhaps we should return self instead?
+        subsequent_version = version ? version.next : nil
+        subsequent_version.reify if subsequent_version
+      end
+
       private
 
       def merge_metadata(data)
@@ -101,7 +115,7 @@ module PaperTrail
         data.merge(PaperTrail.controller_info || {})
       end
 
-      def previous_version
+      def item_before_change
         previous = self.clone
         previous.id = id
         changes.each do |attr, ary|
