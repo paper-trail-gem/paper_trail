@@ -481,7 +481,7 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
       end
 
 
-      context 'and destroyd' do
+      context 'and destroyed' do
         setup { @article.destroy }
 
         should 'store fixed meta data' do
