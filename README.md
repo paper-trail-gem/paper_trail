@@ -140,6 +140,26 @@ Undeleting is just as simple:
 In fact you could use PaperTrail to implement an undo system, though I haven't had the opportunity yet to do it myself.
 
 
+## Navigating Versions
+
+Once you have a particular `version` of an item you can navigate to the previous and next versions.
+
+    >> widget = Widget.find 42
+    >> version = widget.versions[-2]    # assuming widget has several versions
+    >> previous = version.previous
+    >> next = version.next
+
+You can find out which of an item's versions yours is:
+
+    >> current_version_number = version.index    # 0-based
+
+Finally, if you got an item by reifying one of its versions, you can navigate back to the version it came from:
+
+    >> latest_version = Widget.find(42).versions.last
+    >> widget = latest_version.reify
+    >> widget.version == latest_version    # true
+
+
 ## Finding Out Who Was Responsible For A Change
 
 If your `ApplicationController` has a `current_user` method, PaperTrail will store the value it returns in the `version`'s `whodunnit` column.  Note that this column is a string so you will have to convert it to an integer if it's an id and you want to look up the user later on:

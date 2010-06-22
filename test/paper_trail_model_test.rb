@@ -500,5 +500,19 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
     end
   end
 
+  context 'A reified item' do
+    setup do
+      widget = Widget.create :name => 'Bob'
+      %w( Tom Dick Jane ).each { |name| widget.update_attributes :name => name }
+      @version = widget.versions.last
+      @widget = @version.reify
+    end
+
+    should 'know which version it came from' do
+      assert_equal @version, @widget.version
+    end
+
+  end
+
 
 end

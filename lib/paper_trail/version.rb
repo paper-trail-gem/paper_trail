@@ -4,8 +4,6 @@ class Version < ActiveRecord::Base
 
   def reify
     unless object.nil?
-      # Attributes
-
       attrs = YAML::load object
 
       # Normally a polymorphic belongs_to relationship allows us
@@ -37,6 +35,7 @@ class Version < ActiveRecord::Base
         end
       end
 
+      model.version = self
       model
     end
   end

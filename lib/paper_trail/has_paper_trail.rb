@@ -3,6 +3,9 @@ module PaperTrail
 
     def self.included(base)
       base.send :extend, ClassMethods
+
+      # The version this instance was reified from.
+      attr_accessor :version
     end
 
 
