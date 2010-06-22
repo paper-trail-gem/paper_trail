@@ -86,7 +86,7 @@ module PaperTrail
         # timestamp because a version stores how the object looked before the
         # change.
         version = versions.first :conditions => ['created_at > ?', timestamp],
-          :order      => 'created_at ASC'
+                                 :order      => 'created_at ASC'
         version.reify if version
       end
 
