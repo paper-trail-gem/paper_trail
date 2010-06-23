@@ -285,6 +285,15 @@ And then use it in your tests like this:
     end
 
 
+## Deleting Old Versions
+
+Over time your `versions` table will grow to an unwieldy size.  Because each version is self-contained (see the Diffing section above for more) you can simply delete any records you don't want any more.  For example:
+
+    sql> delete from versions where created_at < 2010-06-01;
+
+    >> Version.delete_all ["created_at < ?", 1.week.ago]
+
+
 ## Installation
 
 1. Install PaperTrail as a gem via your `config/environment.rb`:
