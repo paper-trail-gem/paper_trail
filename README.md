@@ -25,7 +25,7 @@ PaperTrail lets you track changes to your models' data.  It's good for auditing 
 
 ## Rails Version
 
-Known to work on Rails 2.3.  Probably works on Rails 2.2 and 2.1.
+Reported to work on Rails 3 (though I haven't yet tried myself).  Known to work on Rails 2.3.  Probably works on Rails 2.2 and 2.1.
 
 
 ## Basic Usage
