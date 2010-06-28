@@ -310,29 +310,49 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
 
   context 'A papertrail with somebody making changes' do
     setup do
-      PaperTrail.whodunnit = 'Colonel Mustard'
       @widget = Widget.new :name => 'Fidget'
     end
 
     context 'when a record is created' do
-      setup { @widget.save }
+      setup do
+        PaperTrail.whodunnit = 'Alice'
+        @widget.save
+        @version = @widget.versions.last  # only 1 version
+      end
 
       should 'track who made the change' do
-        assert_equal 'Colonel Mustard', @widget.versions.last.whodunnit
+        assert_equal 'Alice', @version.whodunnit
+        assert_nil   @version.originator
+        assert_equal 'Alice', @version.terminator
+        assert_equal 'Alice', @widget.originator
       end
 
       context 'when a record is updated' do
-        setup { @widget.update_attributes :name => 'Rivet' }
+        setup do
+          PaperTrail.whodunnit = 'Bob'
+          @widget.update_attributes :name => 'Rivet'
+          @version = @widget.versions.last
+        end
 
         should 'track who made the change' do
-          assert_equal 'Colonel Mustard', @widget.versions.last.whodunnit
+          assert_equal 'Bob',   @version.whodunnit
+          assert_equal 'Alice', @version.originator
+          assert_equal 'Bob',   @version.terminator
+          assert_equal 'Bob',   @widget.originator
         end
 
         context 'when a record is destroyed' do
-          setup { @widget.destroy }
+          setup do
+            PaperTrail.whodunnit = 'Charlie'
+            @widget.destroy
+            @version = @widget.versions.last
+          end
 
           should 'track who made the change' do
-            assert_equal 'Colonel Mustard', @widget.versions.last.whodunnit
+            assert_equal 'Charlie', @version.whodunnit
+            assert_equal 'Bob',     @version.originator
+            assert_equal 'Charlie', @version.terminator
+            assert_equal 'Charlie', @widget.originator
           end
         end
       end

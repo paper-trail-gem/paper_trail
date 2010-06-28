@@ -78,6 +78,11 @@ module PaperTrail
         end
       end
 
+      # Returns who put the object into its current state.
+      def originator
+        versions.last.try :whodunnit
+      end
+
       # Returns the object (not a Version) as it was at the given timestamp.
       def version_at(timestamp)
         # Short-circuit if the current state is applicable.

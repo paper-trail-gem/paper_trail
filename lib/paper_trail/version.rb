@@ -40,6 +40,17 @@ class Version < ActiveRecord::Base
     end
   end
 
+  # Returns who put the item into the state stored in this version.
+  def originator
+    previous.try :whodunnit
+  end
+
+  # Returns who changed the item from the state it had in this version.
+  # This is an alias for `whodunnit`.
+  def terminator
+    whodunnit
+  end
+
   def next
     Version.first :conditions => ["id > ? AND item_type = ? AND item_id = ?", id, item_type, item_id],
                   :order => 'id ASC'
@@ -54,5 +65,5 @@ class Version < ActiveRecord::Base
     Version.all(:conditions => ["item_type = ? AND item_id = ?", item_type, item_id],
                 :order => 'id ASC').index(self)
   end
-  
+
 end

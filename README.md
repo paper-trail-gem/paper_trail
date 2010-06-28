@@ -192,6 +192,25 @@ In a migration or in `script/console` you can set who is responsible like this:
     >> widget.update_attributes :name => 'Wibble'
     >> widget.versions.last.whodunnit              # Andy Stewart
 
+N.B. A `version`'s `whodunnit` records who changed the object causing the `version` to be stored.  Because a `version` stores the object as it looked before the change (see the table above), `whodunnit` returns who stopped the object looking like this -- not who made it look like this.  Hence `whodunnit` is aliased as `terminator`.
+
+To find out who made a `version`'s object look that way, use `version.originator`.  And to find out who made a "live" object look like it does, use `originator` on the object.
+
+    >> widget = Widget.find 153                    # assume widget has 0 versions
+    >> PaperTrail.whodunnit = 'Alice'
+    >> widget.update_attributes :name => 'Yankee'
+    >> widget.originator                           # 'Alice'
+    >> PaperTrail.whodunnit = 'Bob'
+    >> widget.update_attributes :name => 'Zulu'
+    >> widget.originator                           # 'Bob'
+    >> first_version, last_version = widget.versions.first, widget.versions.last
+    >> first_version.whodunnit                     # 'Alice'
+    >> first_version.originator                    # nil
+    >> first_version.terminator                    # 'Alice'
+    >> last_version.whodunnit                      # 'Bob'
+    >> last_version.originator                     # 'Alice'
+    >> last_version.terminator                     # 'Bob'
+
 
 ## Storing metadata
 
