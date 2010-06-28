@@ -87,13 +87,13 @@ module PaperTrail
         # change.
         version = versions.first :conditions => ['created_at > ?', timestamp],
                                  :order      => 'created_at ASC'
-        version.reify if version
+        version.try :reify
       end
 
       # Returns the object (not a Version) as it was most recently.
       def previous_version
         last_version = version ? version.previous : versions.last
-        last_version.reify if last_version
+        last_version.try :reify
       end
 
       # Returns the object (not a Version) as it became next.
