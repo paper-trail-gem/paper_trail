@@ -24,6 +24,24 @@ class Article < ActiveRecord::Base
                               :article_id => Proc.new { |article| article.id } }
 end
 
+class Book < ActiveRecord::Base
+  has_many :authorships, :dependent => :destroy
+  has_many :authors, :through => :authorships, :source => :person
+  has_paper_trail
+end
+
+class Authorship < ActiveRecord::Base
+  belongs_to :book
+  belongs_to :person
+  has_paper_trail
+end
+
+class Person < ActiveRecord::Base
+  has_many :authorships, :dependent => :destroy
+  has_many :books, :through => :authorships
+  has_paper_trail
+end
+
 
 class HasPaperTrailModelTest < Test::Unit::TestCase
   load_schema
@@ -586,5 +604,44 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
     end
   end
 
+  context ":has_many :through" do
+    setup do
+      @book = Book.create :title => 'War and Peace'
+      @dostoyevsky  = Person.create :name => 'Dostoyevsky'
+      @solzhenitsyn = Person.create :name => 'Solzhenitsyn'
+    end
+
+    should 'store version on source <<' do
+      count = Version.count
+      @book.authors << @dostoyevsky
+      assert_equal 1, Version.count - count
+      assert_equal Version.last, @book.authorships.first.versions.first
+    end
+
+    should 'store version on source create' do
+      count = Version.count
+      @book.authors.create :name => 'Tolstoy'
+      assert_equal 2, Version.count - count
+      assert_same_elements [Person.last, Authorship.last], [Version.all[-2].item, Version.last.item]
+    end
+
+    should 'store version on join destroy' do
+      @book.authors << @dostoyevsky
+      count = Version.count
+      @book.authorships(true).last.destroy
+      assert_equal 1, Version.count - count
+      assert_equal @book, Version.last.reify.book
+      assert_equal @dostoyevsky, Version.last.reify.person
+    end
+
+    should 'store version on join clear' do
+      @book.authors << @dostoyevsky
+      count = Version.count
+      @book.authorships(true).clear
+      assert_equal 1, Version.count - count
+      assert_equal @book, Version.last.reify.book
+      assert_equal @dostoyevsky, Version.last.reify.person
+    end
+  end
 
 end

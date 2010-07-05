@@ -49,4 +49,17 @@ ActiveRecord::Schema.define(:version => 0) do
     t.string :content
   end
 
+  create_table :books, :force => true do |t|
+    t.string :title
+  end
+
+  create_table :authorships, :force => true do |t|
+    t.integer :book_id
+    t.integer :person_id
+  end
+
+  create_table :people, :force => true do |t|
+    t.string :name
+  end
+
 end

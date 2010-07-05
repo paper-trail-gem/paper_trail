@@ -212,6 +212,46 @@ To find out who made a `version`'s object look that way, use `version.originator
     >> last_version.terminator                     # 'Bob'
 
 
+## Has-Many-Through Associations
+
+PaperTrail can track most changes to the join table.  Specifically it can track all additions but it can only track removals which fire the `after_destroy` callback on the join table.  Here are some examples:
+
+Given these models:
+
+    class Book < ActiveRecord::Base
+      has_many :authorships, :dependent => :destroy
+      has_many :authors, :through => :authorships, :source => :person
+      has_paper_trail
+    end
+    
+    class Authorship < ActiveRecord::Base
+      belongs_to :book
+      belongs_to :person
+      has_paper_trail      # NOTE
+    end
+    
+    class Person < ActiveRecord::Base
+      has_many :authorships, :dependent => :destroy
+      has_many :books, :through => :authorships
+      has_paper_trail
+    end
+
+Then each of the following will store authorship versions:
+
+    >> @book.authors << @dostoyevsky
+    >> @book.authors.create :name => 'Tolstoy'
+    >> @book.authorships.last.destroy
+    >> @book.authorships.clear
+
+But none of these will:
+
+    >> @book.authors.delete @tolstoy
+    >> @book.author_ids = [@solzhenistyn.id, @dostoyevsky.id]
+    >> @book.authors = []
+
+There may be a way to store authorship versions, probably using association callbacks, no matter how the collection is manipulated but I haven't found it yet.  Let me know if you do.
+
+
 ## Storing metadata
 
 You can store arbitrary model-level metadata alongside each version like this:
