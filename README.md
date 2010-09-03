@@ -249,6 +249,8 @@ But none of these will:
     >> @book.author_ids = [@solzhenistyn.id, @dostoyevsky.id]
     >> @book.authors = []
 
+Having said that, you can get the first one (`@book.authors.delete @tolstoy`) working with this [monkey patch](http://stackoverflow.com/questions/2381033/how-to-create-a-full-audit-log-in-rails-for-every-table/2381411#2381411).  Many thanks to Danny Trelogan for pointing it out.
+
 There may be a way to store authorship versions, probably using association callbacks, no matter how the collection is manipulated but I haven't found it yet.  Let me know if you do.
 
 
