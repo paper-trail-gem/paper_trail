@@ -51,8 +51,6 @@ module PaperTrail
   private
 
   # Thread-safe hash to hold PaperTrail's data.
-  #
-  # TODO: is this a memory leak?
   def self.paper_trail_store
     Thread.current[:paper_trail] ||= {}
   end
