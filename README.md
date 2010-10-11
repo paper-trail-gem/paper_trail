@@ -395,6 +395,7 @@ Many thanks to:
 * [Jeremy Weiskotten](http://github.com/jeremyw)
 * [Phan Le](http://github.com/revo)
 * [jdrucza](http://github.com/jdrucza)
+* [conickal](http://github.com/conickal)
 
 
 ## Inspirations
