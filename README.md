@@ -25,7 +25,7 @@ PaperTrail lets you track changes to your models' data.  It's good for auditing 
 
 ## Rails Version
 
-Reported to work on Rails 3 (though I haven't yet tried myself).  Known to work on Rails 2.3.  Probably works on Rails 2.2 and 2.1.
+Works on Rails 3 and Rails 2.3.  Probably works on Rails 2.2 and 2.1.
 
 
 ## Basic Usage
@@ -357,9 +357,27 @@ Over time your `versions` table will grow to an unwieldy size.  Because each ver
 
 ## Installation
 
+### Rails 3
+
+1. Install PaperTrail as a gem via your `Gemfile`:
+
+    `gem 'paper_trail'`
+
+2. Generate a migration which will add a `versions` table to your database.
+
+    `rails generate paper_trail`
+
+3. Run the migration.
+
+    `rake db:migrate`
+
+4. Add `has_paper_trail` to the models you want to track.
+
+### Rails 2
+
 1. Install PaperTrail as a gem via your `config/environment.rb`:
 
-    `config.gem 'paper_trail'
+    `config.gem 'paper_trail'`
 
 2. Generate a migration which will add a `versions` table to your database.
 
