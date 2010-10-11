@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{paper_trail}
-  s.version = "1.5.2"
+  s.version = "1.5.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Andy Stewart"]
-  s.date = %q{2010-06-28}
+  s.date = %q{2010-10-11}
   s.email = %q{boss@airbladesoftware.com}
   s.extra_rdoc_files = [
     "README.md"
@@ -25,6 +25,9 @@ Gem::Specification.new do |s|
      "generators/paper_trail/templates/create_versions.rb",
      "init.rb",
      "install.rb",
+     "lib/generators/paper_trail/USAGE",
+     "lib/generators/paper_trail/paper_trail_generator.rb",
+     "lib/generators/paper_trail/templates/create_versions.rb",
      "lib/paper_trail.rb",
      "lib/paper_trail/config.rb",
      "lib/paper_trail/controller.rb",
