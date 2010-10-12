@@ -1,9 +1,14 @@
 require 'singleton'
 require 'yaml'
+
+require 'action_controller'
+require 'active_record'
+
 require 'paper_trail/config'
 require 'paper_trail/controller'
 require 'paper_trail/has_paper_trail'
 require 'paper_trail/version'
+
 
 # PaperTrail's module methods can be called in both models and controllers.
 module PaperTrail
