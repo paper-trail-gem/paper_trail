@@ -16,8 +16,13 @@ Gem::Specification.new do |s|
   s.require_path     = 'lib'
   s.test_files       = Dir.glob("test/**/*")
 
-  s.add_dependency 'activerecord'
-  s.add_dependency 'actionpack'
-  s.add_development_dependency 'shoulda'
-  s.add_development_dependency 'activesupport'
+  s.add_development_dependency 'bundler',       '~> 1.0'
+  s.add_development_dependency 'rake',          '0.8.7'  # TODO: why do we need to list rake?
+  s.add_development_dependency 'shoulda',       '2.10.3'
+  s.add_development_dependency 'activesupport', '~> 2.3'
+  s.add_development_dependency 'sqlite3-ruby',  '~> 1.2'
+
+  s.add_dependency 'activerecord',  '~> 2.3'
+  s.add_dependency 'activerecord',  '~> 2.3'
+  s.add_dependency 'actionpack',    '~> 2.3'
 end

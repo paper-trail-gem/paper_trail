@@ -392,7 +392,7 @@ Over time your `versions` table will grow to an unwieldy size.  Because each ver
 
 ## Testing
 
-PaperTrail has a thorough suite of tests.
+PaperTrail uses Bundler to manage its dependencies (in development and testing).  You can run the tests with `bundle exec rake test`.  (You may need to `bundle install` first.)
 
 
 ## Articles
