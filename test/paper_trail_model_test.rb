@@ -10,6 +10,7 @@ class FooWidget < Widget
 end
 
 class Wotsit < ActiveRecord::Base
+  has_paper_trail
   belongs_to :widget
 end
 
@@ -45,7 +46,8 @@ end
 
 class HasPaperTrailModelTest < Test::Unit::TestCase
   load_schema
-
+=begin
+=end
   context 'A record' do
     setup { @article = Article.create }
 
@@ -126,7 +128,8 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
           end
 
           should 'copy the has_one association when reifying' do
-            assert_equal @wotsit, @reified_widget.wotsit
+            assert_nil @reified_widget.wotsit  # wotsit wasn't there at the last version
+            assert_equal @wotsit, @widget.wotsit  # wotsit came into being on the live object
           end
         end
 
@@ -641,6 +644,63 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
       assert_equal 1, Version.count - count
       assert_equal @book, Version.last.reify.book
       assert_equal @dostoyevsky, Version.last.reify.person
+    end
+  end
+
+
+  context 'A model with a has_one association' do
+    setup { @widget = Widget.create :name => 'widget_0' }
+    context 'before the associated was created' do
+      setup do
+        @widget.update_attributes :name => 'widget_1'
+        @wotsit = @widget.create_wotsit :name => 'wotsit_0'
+      end
+      context 'when reified' do
+        setup { @widget_0 = @widget.versions.last.reify }
+        should 'see the associated as it was at the time' do
+          assert_nil @widget_0.wotsit
+        end
+      end
+    end
+
+    context 'where the associated is created between model versions' do
+      setup do
+        @wotsit = @widget.create_wotsit :name => 'wotsit_0'
+        @widget.update_attributes :name => 'widget_1'
+      end
+      context 'when reified' do
+        setup { @widget_0 = @widget.versions.last.reify }
+        should 'see the associated as it was at the time' do
+          assert_equal 'wotsit_0', @widget_0.wotsit.name
+        end
+      end
+
+      context 'and then the associated is updated between model versions' do
+        setup do
+          @wotsit.update_attributes :name => 'wotsit_1'
+          @wotsit.update_attributes :name => 'wotsit_2'
+          @widget.update_attributes :name => 'widget_2'
+        end
+        context 'when reified' do
+          setup { @widget_1 = @widget.versions.last.reify }
+          should 'see the associated as it was at the time' do
+            assert_equal 'wotsit_2', @widget_1.wotsit.name
+          end
+        end
+      end
+
+      context 'and then the associated is destroyed between model versions' do
+        setup do
+          @wotsit.destroy
+          @widget.update_attributes :name => 'widget_3'
+        end
+        context 'when reified' do
+          setup { @widget_2 = @widget.versions.last.reify }
+          should 'see the associated as it was at the time' do
+            assert_nil @widget_2.wotsit
+          end
+        end
+      end
     end
   end
 

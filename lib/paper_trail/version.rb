@@ -36,6 +36,10 @@ class Version < ActiveRecord::Base
       end
 
       model.version = self
+      # Restore the model's has_one associations as they were when this version was
+      # superseded by the next (because that's what the user was looking at when they
+      # made the change).
+      reify_has_ones model
       model
     end
   end
@@ -64,6 +68,23 @@ class Version < ActiveRecord::Base
   def index
     Version.all(:conditions => ["item_type = ? AND item_id = ?", item_type, item_id],
                 :order => 'id ASC').index(self)
+  end
+
+  private
+
+  def reify_has_ones(model)
+    model.class.reflect_on_all_associations(:has_one).each do |assoc|
+      child = model.send assoc.name
+      if child.respond_to? :version_until
+        if (version_until = child.version_until(id))
+          version_until.attributes.each do |k,v|
+            model.send(assoc.name).send "#{k}=", v rescue nil
+          end
+        else
+          model.send "#{assoc.name}=", nil
+        end
+      end
+    end
   end
 
 end

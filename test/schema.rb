@@ -37,6 +37,7 @@ ActiveRecord::Schema.define(:version => 0) do
   create_table :wotsits, :force => true do |t|
     t.integer :widget_id
     t.string  :name
+    t.datetime :created_at, :updated_at
   end
 
   create_table :fluxors, :force => true do |t|

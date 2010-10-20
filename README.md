@@ -11,6 +11,7 @@ PaperTrail lets you track changes to your models' data.  It's good for auditing 
 * Allows you to get at every version, including the original, even once destroyed.
 * Allows you to get at every version even if the schema has since changed.
 * Allows you to get at the version as of a particular time.
+* Automatically restores the `has_one` associations as they were at the time.
 * Automatically records who was responsible via your controller.  PaperTrail calls `current_user` by default, if it exists, but you can have it call any method you like.
 * Allows you to set who is responsible at model-level (useful for migrations).
 * Allows you to store arbitrary model-level metadata with each version (useful for filtering versions).
@@ -210,6 +211,27 @@ To find out who made a `version`'s object look that way, use `version.originator
     >> last_version.whodunnit                      # 'Bob'
     >> last_version.originator                     # 'Alice'
     >> last_version.terminator                     # 'Bob'
+
+
+## Has-One Associations
+
+PaperTrail automatically restores `:has_one` associations as they were at the time.
+
+    class Treasure < ActiveRecord::Base
+      has_one :location
+    end
+
+    >> treasure.amount                  # 100
+    >> treasure.location.latitude       # 12.345
+
+    >> treasure.update_attributes :amount => 153
+    >> treasure.location.update_attributes :latitude => 54.321
+    
+    >> t = treasure.versions.last.reify
+    >> t.amount                         # 100
+    >> t.location.latitude              # 12.345
+    
+Unfortunately PaperTrail doesn't do this for `:has_many` associations (I can't get it to work) or `:belongs_to` (I ran out of time looking at `:has_many`).
 
 
 ## Has-Many-Through Associations

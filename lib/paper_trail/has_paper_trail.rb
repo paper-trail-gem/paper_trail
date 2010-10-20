@@ -85,14 +85,10 @@ module PaperTrail
 
       # Returns the object (not a Version) as it was at the given timestamp.
       def version_at(timestamp)
-        # Short-circuit if the current state is applicable.
-        return self if self.updated_at <= timestamp
-        # Look for the first version created after, rather than before, the
-        # timestamp because a version stores how the object looked before the
-        # change.
-        version = versions.first :conditions => ['created_at > ?', timestamp],
-                                 :order      => 'created_at ASC'
-        version.try :reify
+        # Because a version stores how its object looked *before* the change,
+        # we need to look for the first version created *after* the timestamp.
+        version = versions.first :conditions => ['created_at > ?', timestamp], :order => 'created_at ASC, id ASC'
+        version ? version.reify : self
       end
 
       # Returns the object (not a Version) as it was most recently.
@@ -107,6 +103,17 @@ module PaperTrail
         # "live" item, we return nil.  Perhaps we should return self instead?
         subsequent_version = version ? version.next : nil
         subsequent_version.reify if subsequent_version
+      end
+
+      protected
+
+      # Returns the object (not a Version) as it was until the version record
+      # with the given id.
+      def version_until(id)
+        # Because a version stores how its object looked *before* the change,
+        # we need to look for the first version created *on or after* the id.
+        version = versions.first :conditions => ['id >= ?', id], :order => 'id ASC'
+        version ? version.reify : self
       end
 
       private
