@@ -230,8 +230,10 @@ PaperTrail automatically restores `:has_one` associations as they were at the ti
     >> t = treasure.versions.last.reify
     >> t.amount                         # 100
     >> t.location.latitude              # 12.345
+
+Note if you update the parent and child record in one go (in the same database transaction), and later reify the parent as it was before that update, you may not get the child as it was before the update.  This is rather annoying.  The problem is that PaperTrail doesn't know which records in the `versions` table are "together", i.e. which were in the same database transaction.  So if the child's version record was created before the parent's, PaperTrail will think the parent was looking at the post-update version of the child when it (the parent) was updated.  The solution is to make PaperTrail aware of transactions, or perhaps requests/actions (e.g. [Efficiency's transaction ID middleware](http://github.com/efficiency20/ops_middleware/blob/master/lib/e20/ops/middleware/transaction_id_middleware.rb)).
     
-Unfortunately PaperTrail doesn't do this for `:has_many` associations (I can't get it to work) or `:belongs_to` (I ran out of time looking at `:has_many`).
+Unfortunately PaperTrail doesn't auto-restore `:has_many` associations (I can't get it to work) or `:belongs_to` (I ran out of time looking at `:has_many`).
 
 
 ## Has-Many-Through Associations
