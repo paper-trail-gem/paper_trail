@@ -46,8 +46,7 @@ end
 
 class HasPaperTrailModelTest < Test::Unit::TestCase
   load_schema
-=begin
-=end
+
   context 'A record' do
     setup { @article = Article.create }
 
@@ -70,6 +69,10 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
       assert_equal [], @widget.versions
     end
 
+    should 'be live' do
+      assert @widget.live?
+    end
+
 
     context 'which is then created' do
       setup { @widget.update_attributes :name => 'Henry' }
@@ -85,6 +88,10 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
 
       should 'record the correct event' do
         assert_match /create/i, @widget.versions.first.event
+      end
+
+      should 'be live' do
+        assert @widget.live?
       end
 
 
@@ -118,6 +125,10 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
 
         should 'record the correct event' do
           assert_match /update/i, @widget.versions.last.event
+        end
+
+        should 'have versions that are not live' do
+          assert @widget.versions.map(&:reify).compact.all? { |w| !w.live? }
         end
 
 

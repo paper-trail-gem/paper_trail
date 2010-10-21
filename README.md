@@ -171,6 +171,13 @@ Finally, if you got an item by reifying one of its versions, you can navigate ba
     >> widget = latest_version.reify
     >> widget.version == latest_version    # true
 
+You can find out whether a model instance is the current, live one -- or whether it came instead from a previous version -- with `live?`:
+
+    >> widget = Widget.find 42
+    >> widget.live?                        # true
+    >> widget = widget.versions.last.reify
+    >> widget.live?                        # false
+
 
 ## Finding Out Who Was Responsible For A Change
 

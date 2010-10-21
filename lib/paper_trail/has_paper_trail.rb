@@ -78,6 +78,12 @@ module PaperTrail
         end
       end
 
+      # Returns true if this instance is the current, live one;
+      # returns false if this instance came from a previous version.
+      def live?
+        version.nil?
+      end
+
       # Returns who put the object into its current state.
       def originator
         versions.last.try :whodunnit
