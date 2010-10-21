@@ -669,7 +669,7 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
       end
 
       context 'when reified' do
-        setup { @widget_0 = @widget.versions.last.reify }
+        setup { @widget_0 = @widget.versions.last.reify(:has_one => 1) }
 
         should 'see the associated as it was at the time' do
           assert_nil @widget_0.wotsit
@@ -680,11 +680,13 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
     context 'where the associated is created between model versions' do
       setup do
         @wotsit = @widget.create_wotsit :name => 'wotsit_0'
+        make_last_version_earlier @wotsit
+
         @widget.update_attributes :name => 'widget_1'
       end
 
       context 'when reified' do
-        setup { @widget_0 = @widget.versions.last.reify }
+        setup { @widget_0 = @widget.versions.last.reify(:has_one => 1) }
 
         should 'see the associated as it was at the time' do
           assert_equal 'wotsit_0', @widget_0.wotsit.name
@@ -694,15 +696,27 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
       context 'and then the associated is updated between model versions' do
         setup do
           @wotsit.update_attributes :name => 'wotsit_1'
+          make_last_version_earlier @wotsit
           @wotsit.update_attributes :name => 'wotsit_2'
+          make_last_version_earlier @wotsit
+
           @widget.update_attributes :name => 'widget_2'
+          @wotsit.update_attributes :name => 'wotsit_3'
         end
 
         context 'when reified' do
-          setup { @widget_1 = @widget.versions.last.reify }
+          setup { @widget_1 = @widget.versions.last.reify(:has_one => 1) }
 
           should 'see the associated as it was at the time' do
             assert_equal 'wotsit_2', @widget_1.wotsit.name
+          end
+        end
+
+        context 'when reified opting out of has_one reification' do
+          setup { @widget_1 = @widget.versions.last.reify(:has_one => false) }
+
+          should 'see the associated as it is live' do
+            assert_equal 'wotsit_3', @widget_1.wotsit.name
           end
         end
       end
@@ -710,11 +724,13 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
       context 'and then the associated is destroyed between model versions' do
         setup do
           @wotsit.destroy
+          make_last_version_earlier @wotsit
+
           @widget.update_attributes :name => 'widget_3'
         end
 
         context 'when reified' do
-          setup { @widget_2 = @widget.versions.last.reify }
+          setup { @widget_2 = @widget.versions.last.reify(:has_one => 1) }
 
           should 'see the associated as it was at the time' do
             assert_nil @widget_2.wotsit
@@ -722,6 +738,16 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
         end
       end
     end
+  end
+
+  private
+
+  # Updates `model`'s last version so it looks like the version was
+  # created 2 seconds ago.
+  def make_last_version_earlier(model)
+    Version.record_timestamps = false
+    model.versions.last.update_attributes :created_at => 2.seconds.ago
+    Version.record_timestamps = true
   end
 
 end

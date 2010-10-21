@@ -111,17 +111,6 @@ module PaperTrail
         subsequent_version.reify if subsequent_version
       end
 
-      protected
-
-      # Returns the object (not a Version) as it was until the version record
-      # with the given id.
-      def version_until(id)
-        # Because a version stores how its object looked *before* the change,
-        # we need to look for the first version created *on or after* the id.
-        version = versions.first :conditions => ['id >= ?', id], :order => 'id ASC'
-        version ? version.reify : self
-      end
-
       private
 
       def merge_metadata(data)
