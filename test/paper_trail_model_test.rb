@@ -661,13 +661,16 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
 
   context 'A model with a has_one association' do
     setup { @widget = Widget.create :name => 'widget_0' }
+
     context 'before the associated was created' do
       setup do
         @widget.update_attributes :name => 'widget_1'
         @wotsit = @widget.create_wotsit :name => 'wotsit_0'
       end
+
       context 'when reified' do
         setup { @widget_0 = @widget.versions.last.reify }
+
         should 'see the associated as it was at the time' do
           assert_nil @widget_0.wotsit
         end
@@ -679,8 +682,10 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
         @wotsit = @widget.create_wotsit :name => 'wotsit_0'
         @widget.update_attributes :name => 'widget_1'
       end
+
       context 'when reified' do
         setup { @widget_0 = @widget.versions.last.reify }
+
         should 'see the associated as it was at the time' do
           assert_equal 'wotsit_0', @widget_0.wotsit.name
         end
@@ -692,8 +697,10 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
           @wotsit.update_attributes :name => 'wotsit_2'
           @widget.update_attributes :name => 'widget_2'
         end
+
         context 'when reified' do
           setup { @widget_1 = @widget.versions.last.reify }
+
           should 'see the associated as it was at the time' do
             assert_equal 'wotsit_2', @widget_1.wotsit.name
           end
@@ -705,8 +712,10 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
           @wotsit.destroy
           @widget.update_attributes :name => 'widget_3'
         end
+
         context 'when reified' do
           setup { @widget_2 = @widget.versions.last.reify }
+
           should 'see the associated as it was at the time' do
             assert_nil @widget_2.wotsit
           end
