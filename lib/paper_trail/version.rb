@@ -42,7 +42,7 @@ class Version < ActiveRecord::Base
 
       attrs.each do |k, v|
         begin
-          model.send "#{k}=", v
+          model.send "write_attribute", k.to_sym , v
         rescue NoMethodError
           logger.warn "Attribute #{k} does not exist on #{item_type} (Version id: #{id})."
         end
