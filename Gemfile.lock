@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    paper_trail (1.6.0)
+    paper_trail (1.6.1)
       actionpack (>= 2.3)
       activerecord (>= 2.3)
 

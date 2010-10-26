@@ -9,7 +9,7 @@ require 'action_controller/test_process'
 require 'active_support'
 require 'active_support/test_case'
 
-require 'lib/paper_trail'
+require File.expand_path('../../lib/paper_trail', __FILE__)
 
 def connect_to_database
   ActiveRecord::Base.establish_connection(
