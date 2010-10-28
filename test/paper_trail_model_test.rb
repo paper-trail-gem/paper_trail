@@ -769,6 +769,17 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
   end
 
 
+  context 'An unsaved record' do
+    setup do
+      @widget = Widget.new
+      @widget.destroy
+    end
+    should 'not have a version created on destroy' do
+      assert @widget.versions.empty?
+    end
+  end
+
+
   private
 
   # Updates `model`'s last version so it looks like the version was
