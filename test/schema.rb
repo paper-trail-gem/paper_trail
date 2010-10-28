@@ -63,4 +63,8 @@ ActiveRecord::Schema.define(:version => 0) do
     t.string :name
   end
 
+  create_table :songs, :force => true do |t|
+    t.integer :length
+  end
+
 end

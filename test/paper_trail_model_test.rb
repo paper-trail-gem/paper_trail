@@ -43,6 +43,19 @@ class Person < ActiveRecord::Base
   has_paper_trail
 end
 
+# Example from 'Overwriting default accessors' in ActiveRecord::Base.
+class Song < ActiveRecord::Base
+  has_paper_trail
+
+  # Uses an integer of seconds to hold the length of the song
+  def length=(minutes)
+    write_attribute(:length, minutes.to_i * 60)
+  end
+  def length
+    read_attribute(:length) / 60
+  end
+end
+
 
 class HasPaperTrailModelTest < Test::Unit::TestCase
   load_schema
@@ -739,6 +752,22 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
       end
     end
   end
+
+
+  context 'An overwritten default accessor' do
+    setup do
+      @song = Song.create :length => 4
+      @song.update_attributes :length => 5
+    end
+
+    should 'return "overwritten" value on live instance' do
+      assert_equal 5, @song.length
+    end
+    should 'return "overwritten" value on reified instance' do
+      assert_equal 4, @song.versions.last.reify.length
+    end
+  end
+
 
   private
 

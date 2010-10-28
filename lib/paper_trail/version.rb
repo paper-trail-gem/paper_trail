@@ -102,7 +102,7 @@ class Version < ActiveRecord::Base
         # and therefore impossible to know when "just before" was.
         if (child_as_it_was = child.version_at(created_at - lookback.seconds))
           child_as_it_was.attributes.each do |k,v|
-            model.send(assoc.name).send "#{k}=", v rescue nil
+            model.send(assoc.name).send :write_attribute, k.to_sym, v rescue nil
           end
         else
           model.send "#{assoc.name}=", nil

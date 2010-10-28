@@ -126,7 +126,7 @@ module PaperTrail
         previous = self.clone
         previous.id = id
         changes.each do |attr, ary|
-          previous.send "#{attr}=", ary.first
+          previous.send :write_attribute, attr.to_sym, ary.first
         end
         previous
       end
