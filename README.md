@@ -289,7 +289,20 @@ But none of these will:
     >> @book.author_ids = [@solzhenistyn.id, @dostoyevsky.id]
     >> @book.authors = []
 
-Having said that, you can probably (I haven't tested it myself) get the first one (`@book.authors.delete @tolstoy`) working with this [monkey patch](http://stackoverflow.com/questions/2381033/how-to-create-a-full-audit-log-in-rails-for-every-table/2381411#2381411).  Many thanks to Danny Trelogan for pointing it out.
+Having said that, you can apparently get all these working (I haven't tested it myself) with this [monkey patch](http://stackoverflow.com/questions/2381033/how-to-create-a-full-audit-log-in-rails-for-every-table/2381411#2381411):
+
+    # In config/initializers/core_extensions.rb or lib/core_extensions.rb
+    ActiveRecord::Associations::HasManyThroughAssociation.class_eval do 
+      def delete_records(records)
+        klass = @reflection.through_reflection.klass
+        records.each do |associate|
+          klass.destroy_all(construct_join_attributes(associate))
+        end
+      end
+    end
+
+The difference is the call to `destroy_all` instead of `delete_all` in [the original](http://github.com/rails/rails/blob/master/activerecord/lib/active_record/associations/has_many_through_association.rb#L76-81).
+    
 
 There may be a way to store authorship versions, probably using association callbacks, no matter how the collection is manipulated but I haven't found it yet.  Let me know if you do.
 
@@ -454,6 +467,8 @@ Many thanks to:
 * [Phan Le](http://github.com/revo)
 * [jdrucza](http://github.com/jdrucza)
 * [conickal](http://github.com/conickal)
+* [Thibaud Guillaume-Gentil](http://github.com/thibaudgg)
+* Danny Trelogan
 
 
 ## Inspirations
