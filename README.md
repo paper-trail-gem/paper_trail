@@ -29,6 +29,76 @@ PaperTrail lets you track changes to your models' data.  It's good for auditing 
 Works on Rails 3 and Rails 2.3.  Probably works on Rails 2.2 and 2.1.
 
 
+## API Summary
+
+When you declare `has_paper_trail` in your model, you get these methods:
+
+    class Widget < ActiveRecord::Base
+      has_paper_trail   # you can pass various options here
+    end
+
+    # Returns this widget's versions.
+    widget.versions
+
+    # Return the version this widget was reified from, or nil if it is live.
+    widget.version
+
+    # Returns true if this widget is the current, live one; or false if it is from a previous version.
+    widget.live?
+
+    # Returns who put the widget into its current state.
+    widget.originator
+
+    # Returns the widget (not a version) as it looked at the given timestamp.
+    widget.version_at(timestamp)
+
+    # Returns the widget (not a version) as it was most recently.
+    widget.previous_version
+
+    # Returns the widget (not a version) as it became next.
+    widget.next_version
+
+    # Turn PaperTrail off for all widgets.
+    Widget.paper_trail_off
+
+    # Turn PaperTrail on for all widgets.
+    Widget.paper_trail_on
+
+And a `Version` instance has these methods:
+
+    # Returns the item restored from this version.
+    version.reify(options = {})
+
+    # Returns who put the item into the state stored in this version.
+    version.originator
+
+    # Returns who changed the item from the state it had in this version.
+    version.terminator
+    version.whodunnit
+
+    # Returns the next version.
+    version.next
+
+    # Returns the previous version.
+    version.previous
+
+    # Returns the index of this version in all the versions.
+    version.index
+
+    # Returns the event that caused this version (create|update|destroy).
+    version.event
+
+In your controllers you can override these methods:
+
+    # Returns the user who is responsible for any changes that occur.
+    # Defaults to current_user.
+    user_for_paper_trail
+
+    # Returns any information about the controller or request that you want
+    # PaperTrail to store alongside any changes that occur.
+    info_for_paper_trail
+
+
 ## Basic Usage
 
 PaperTrail is simple to use.  Just add 15 characters to a model to get a paper trail of every `create`, `update`, and `destroy`.
