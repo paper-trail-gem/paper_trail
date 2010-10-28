@@ -539,6 +539,7 @@ Many thanks to:
 * [conickal](http://github.com/conickal)
 * [Thibaud Guillaume-Gentil](http://github.com/thibaudgg)
 * Danny Trelogan
+* [Mikl Kurkov](http://github.com/mkurkov)
 
 
 ## Inspirations
