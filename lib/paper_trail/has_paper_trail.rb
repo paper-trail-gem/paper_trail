@@ -56,28 +56,6 @@ module PaperTrail
     # Wrap the following methods in a module so we can include them only in the
     # ActiveRecord models that declare `has_paper_trail`.
     module InstanceMethods
-      def record_create
-        if switched_on?
-          versions.create merge_metadata(:event => 'create', :whodunnit => PaperTrail.whodunnit)
-        end
-      end
-
-      def record_update
-        if switched_on? && changed_and_we_care?
-          versions.build merge_metadata(:event     => 'update',
-                                        :object    => object_to_string(item_before_change),
-                                        :whodunnit => PaperTrail.whodunnit)
-        end
-      end
-
-      def record_destroy
-        if switched_on?
-          versions.create merge_metadata(:event     => 'destroy',
-                                         :object    => object_to_string(item_before_change),
-                                         :whodunnit => PaperTrail.whodunnit)
-        end
-      end
-
       # Returns true if this instance is the current, live one;
       # returns false if this instance came from a previous version.
       def live?
@@ -112,6 +90,28 @@ module PaperTrail
       end
 
       private
+
+      def record_create
+        if switched_on?
+          versions.create merge_metadata(:event => 'create', :whodunnit => PaperTrail.whodunnit)
+        end
+      end
+
+      def record_update
+        if switched_on? && changed_and_we_care?
+          versions.build merge_metadata(:event     => 'update',
+                                        :object    => object_to_string(item_before_change),
+                                        :whodunnit => PaperTrail.whodunnit)
+        end
+      end
+
+      def record_destroy
+        if switched_on?
+          versions.create merge_metadata(:event     => 'destroy',
+                                         :object    => object_to_string(item_before_change),
+                                         :whodunnit => PaperTrail.whodunnit)
+        end
+      end
 
       def merge_metadata(data)
         # First we merge the model-level metadata in `meta`.
