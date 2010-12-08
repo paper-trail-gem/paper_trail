@@ -15,6 +15,7 @@ module PaperTrail
       #
       # Options:
       # :ignore    an array of attributes for which a new `Version` will not be created if only they change.
+      # :only      inverse of `ignore` - a new `Version` will be created only for these attributes if supplied
       # :meta      a hash of extra data to store.  You must add a column to the `versions` table for each key.
       #            Values are objects or procs (which are called with `self`, i.e. the model with the paper
       #            trail).  See `PaperTrail::Controller.info_for_paper_trail` for how to store data from
@@ -25,8 +26,11 @@ module PaperTrail
         send :include, InstanceMethods
 
         cattr_accessor :ignore
-        self.ignore = (options[:ignore] || []).map &:to_s
+        self.ignore = ([options[:ignore]].flatten.compact || []).map &:to_s
 
+        cattr_accessor :only
+        self.only = ([options[:only]].flatten.compact || []).map &:to_s
+        
         cattr_accessor :meta
         self.meta = options[:meta] || {}
 
@@ -137,7 +141,9 @@ module PaperTrail
       end
 
       def changed_and_we_care?
-        changed? and !(changed - self.class.ignore).empty?
+        care_about = changed - self.class.ignore
+        care_about = (care_about & self.class.only) unless self.class.only.empty?
+        changed? and !care_about.empty?
       end
 
       # Returns `true` if PaperTrail is globally enabled and active for this class,

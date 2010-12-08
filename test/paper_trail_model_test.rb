@@ -19,7 +19,8 @@ class Fluxor < ActiveRecord::Base
 end
 
 class Article < ActiveRecord::Base
-  has_paper_trail :ignore => [:title],
+  has_paper_trail :ignore => :title,
+                  :only => [:content],
                   :meta   => {:answer => 42,
                               :question => Proc.new { "31 + 11 = #{31 + 11}" },
                               :article_id => Proc.new { |article| article.id } }
@@ -68,10 +69,21 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
       should_not_change('the number of versions') { Version.count }
     end
 
-    context 'which updates an ignored column and a non-ignored column' do
+    context 'which updates an ignored column and a selected column' do
       setup { @article.update_attributes :title => 'My first title', :content => 'Some text here.' }
       should_change('the number of versions', :by => 1) { Version.count }
     end
+    
+    context 'which updates a selected column' do
+      setup { @article.update_attributes :content => 'Some text here.' }
+      should_change('the number of versions', :by => 1) { Version.count }
+    end
+
+    context 'which updates a non-ignored and non-selected column' do
+      setup { @article.update_attributes :abstract => 'Other abstract'}
+      should_not_change('the number of versions') { Version.count }
+    end
+    
   end
 
 
