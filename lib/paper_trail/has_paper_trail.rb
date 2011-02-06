@@ -98,7 +98,7 @@ module PaperTrail
       end
 
       def record_update
-        if switched_on? && changed_and_we_care?
+        if switched_on? && changed_notably?
           versions.build merge_metadata(:event     => 'update',
                                         :object    => object_to_string(item_before_change),
                                         :whodunnit => PaperTrail.whodunnit)
@@ -124,20 +124,22 @@ module PaperTrail
       end
 
       def item_before_change
-        previous = self.clone
-        previous.id = id
-        changes.each do |attr, ary|
-          previous.send :write_attribute, attr.to_sym, ary.first
+        self.clone.tap do |previous|
+          previous.id = id
+          changed_attributes.each { |attr, before| previous[attr] = before }
         end
-        previous
       end
 
       def object_to_string(object)
         object.attributes.to_yaml
       end
 
-      def changed_and_we_care?
-        changed? and !(changed - self.class.ignore).empty?
+      def changed_notably?
+        notably_changed.any?
+      end
+
+      def notably_changed
+        changed - self.class.ignore
       end
 
       # Returns `true` if PaperTrail is globally enabled and active for this class,
