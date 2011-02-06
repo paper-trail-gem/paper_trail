@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(:version => 0) do
 
     # Metadata columns.
     t.integer :answer
+    t.string :action
     t.string  :question
     t.integer :article_id
 

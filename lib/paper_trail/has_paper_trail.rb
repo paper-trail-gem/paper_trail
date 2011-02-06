@@ -117,7 +117,14 @@ module PaperTrail
       def merge_metadata(data)
         # First we merge the model-level metadata in `meta`.
         meta.each do |k,v|
-          data[k] = v.respond_to?(:call) ? v.call(self) : v
+          data[k] = 
+            if v.respond_to?(:call)
+              v.call(self)
+            elsif v.is_a?(Symbol) && respond_to?(v)
+              send(v)
+            else
+              v
+            end
         end
         # Second we merge any extra data from the controller (if available).
         data.merge(PaperTrail.controller_info || {})

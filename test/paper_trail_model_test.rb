@@ -21,8 +21,13 @@ end
 class Article < ActiveRecord::Base
   has_paper_trail :ignore => [:title],
                   :meta   => {:answer => 42,
+                              :action => :action_data_provider_method,
                               :question => Proc.new { "31 + 11 = #{31 + 11}" },
                               :article_id => Proc.new { |article| article.id } }
+
+  def action_data_provider_method
+    self.object_id.to_s
+  end
 end
 
 class Book < ActiveRecord::Base
@@ -526,6 +531,10 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
 
       should 'store dynamic meta data which depends on the item' do
         assert_equal @article.id, @article.versions.last.article_id
+      end
+
+      should 'store dynamic meta data based on a method of the item' do
+        assert_equal @article.action_data_provider_method, @article.versions.last.action
       end
 
 
