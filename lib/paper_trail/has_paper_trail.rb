@@ -71,7 +71,7 @@ module PaperTrail
       def version_at(timestamp)
         # Because a version stores how its object looked *before* the change,
         # we need to look for the first version created *after* the timestamp.
-        version = versions.first :conditions => ['created_at > ?', timestamp], :order => 'created_at ASC, id ASC'
+        version = versions.after(timestamp).first
         version ? version.reify : self
       end
 

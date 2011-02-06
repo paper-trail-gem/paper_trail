@@ -16,6 +16,12 @@ class Version < ActiveRecord::Base
     :order      => "id DESC",
   } }
 
+  named_scope :after, lambda { |timestamp| {
+    :conditions => ['created_at > ?', timestamp],
+    # TODO: is this :order necessary, considering its presence on the has_many :versions association?
+    :order      => 'created_at ASC, id ASC'
+  } }
+
   # Restore the item from this version.
   #
   # This will automatically restore all :has_one associations as they were "at the time",
