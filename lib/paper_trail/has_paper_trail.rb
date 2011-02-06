@@ -77,8 +77,8 @@ module PaperTrail
 
       # Returns the object (not a Version) as it was most recently.
       def previous_version
-        last_version = version ? version.previous : versions.last
-        last_version.try :reify
+        preceding_version = version ? version.previous : versions.last
+        preceding_version.try :reify
       end
 
       # Returns the object (not a Version) as it became next.
