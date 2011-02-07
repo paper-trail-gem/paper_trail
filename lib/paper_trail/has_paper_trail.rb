@@ -3,9 +3,6 @@ module PaperTrail
 
     def self.included(base)
       base.send :extend, ClassMethods
-
-      # The version this instance was reified from.
-      attr_accessor :version
     end
 
 
@@ -23,6 +20,9 @@ module PaperTrail
         # Lazily include the instance methods so we don't clutter up
         # any more ActiveRecord models than we have to.
         send :include, InstanceMethods
+
+        # The version this instance was reified from.
+        attr_accessor :version
 
         cattr_accessor :ignore
         self.ignore = (options[:ignore] || []).map &:to_s
