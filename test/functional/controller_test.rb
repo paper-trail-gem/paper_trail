@@ -1,47 +1,9 @@
 require 'test_helper'
 
-ActionController::Routing::Routes.draw do |map|
-  map.resources :widgets
-end
-
-class ApplicationController < ActionController::Base
-  def rescue_action(e)
-    raise e
-  end
-
-  # Returns id of hypothetical current user
-  def current_user
-    153
-  end
-
-  def info_for_paper_trail
-    {:ip => request.remote_ip, :user_agent => request.user_agent}
-  end
-end
-
-class WidgetsController < ApplicationController
-  def create
-    @widget = Widget.create params[:widget]
-    head :ok
-  end
-
-  def update
-    @widget = Widget.find params[:id]
-    @widget.update_attributes params[:widget]
-    head :ok
-  end
-
-  def destroy
-    @widget = Widget.find params[:id]
-    @widget.destroy
-    head :ok
-  end
-end
-
-class PaperTrailControllerTest < ActionController::TestCase
+class ControllerTest < ActionController::TestCase
   tests WidgetsController
 
-  def setup
+  setup do
     @request.env['REMOTE_ADDR'] = '127.0.0.1'
   end
 
@@ -70,9 +32,10 @@ class PaperTrailControllerTest < ActionController::TestCase
     assert_equal 1, w.versions.length
     delete :destroy, :id => w.id
     widget = assigns(:widget)
-    assert_equal 2, widget.versions.length
-    assert_equal 153, widget.versions.last.whodunnit.to_i
-    assert_equal '127.0.0.1', widget.versions.last.ip
-    assert_equal 'Rails Testing', widget.versions.last.user_agent
+    versions_for_widget = Version.with_item_keys('Widget', w.id)
+    assert_equal 2,               versions_for_widget.length
+    assert_equal 153,             versions_for_widget.last.whodunnit.to_i
+    assert_equal '127.0.0.1',     versions_for_widget.last.ip
+    assert_equal 'Rails Testing', versions_for_widget.last.user_agent
   end
 end

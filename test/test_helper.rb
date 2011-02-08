@@ -1,43 +1,37 @@
-require 'rubygems'
+# Configure Rails Envinronment
+ENV["RAILS_ENV"] = "test"
 
-require 'test/unit'
+require File.expand_path("../dummy/config/environment.rb",  __FILE__)
+require "rails/test_help"
+
+#ActionMailer::Base.delivery_method = :test
+#ActionMailer::Base.perform_deliveries = true
+#ActionMailer::Base.default_url_options[:host] = "test.com"
+
+Rails.backtrace_cleaner.remove_silencers!
+
 require 'shoulda'
 
-require 'active_record'
-require 'action_controller'
-require 'action_controller/test_process'
-require 'active_support'
-require 'active_support/test_case'
+# Configure capybara for integration testing
+require "capybara/rails"
+Capybara.default_driver   = :rack_test
+Capybara.default_selector = :css
 
-require File.expand_path('../../lib/paper_trail', __FILE__)
+# Run any available migration
+ActiveRecord::Migrator.migrate File.expand_path("../dummy/db/migrate/", __FILE__)
 
-def connect_to_database
-  ActiveRecord::Base.establish_connection(
-    :adapter  => "sqlite3",
-    :database => ":memory:"
-  )
-  ActiveRecord::Migration.verbose = false
-end
+# Load support files
+Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
-def load_schema
-  connect_to_database
-  load File.dirname(__FILE__) + '/schema.rb'
-end
+
+#
+# Helpers
+#
 
 def change_schema
-  load File.dirname(__FILE__) + '/schema_change.rb'
-end
-
-class ActiveRecord::Base
-  def logger
-    @logger ||= Logger.new(nil)
+  ActiveRecord::Migration.verbose = false
+  ActiveRecord::Schema.define do
+    remove_column :widgets, :sacrificial_column
   end
+  ActiveRecord::Migration.verbose = true
 end
-
-class ActionController::Base
-  def logger
-    @logger ||= Logger.new(nil)
-  end
-end
-
-load_schema

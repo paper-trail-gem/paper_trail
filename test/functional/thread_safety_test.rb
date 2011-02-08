@@ -1,12 +1,6 @@
 require 'test_helper'
 
-class TestController < ActionController::Base
-  def current_user
-    Thread.current.object_id
-  end
-end
-
-class ThreadSafeTest < Test::Unit::TestCase
+class ThreadSafetyTest < ActionController::TestCase
   should "be thread safe" do
     blocked = true
 

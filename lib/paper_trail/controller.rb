@@ -59,5 +59,3 @@ module PaperTrail
 
   end
 end
-
-ActionController::Base.send :include, PaperTrail::Controller

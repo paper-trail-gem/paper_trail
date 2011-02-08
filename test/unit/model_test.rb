@@ -1,69 +1,6 @@
 require 'test_helper'
 
-class Widget < ActiveRecord::Base
-  has_paper_trail
-  has_one :wotsit
-  has_many :fluxors, :order => :name
-end
-
-class FooWidget < Widget
-end
-
-class Wotsit < ActiveRecord::Base
-  has_paper_trail
-  belongs_to :widget
-end
-
-class Fluxor < ActiveRecord::Base
-  belongs_to :widget
-end
-
-class Article < ActiveRecord::Base
-  has_paper_trail :ignore => [:title],
-                  :meta   => {:answer => 42,
-                              :action => :action_data_provider_method,
-                              :question => Proc.new { "31 + 11 = #{31 + 11}" },
-                              :article_id => Proc.new { |article| article.id } }
-
-  def action_data_provider_method
-    self.object_id.to_s
-  end
-end
-
-class Book < ActiveRecord::Base
-  has_many :authorships, :dependent => :destroy
-  has_many :authors, :through => :authorships, :source => :person
-  has_paper_trail
-end
-
-class Authorship < ActiveRecord::Base
-  belongs_to :book
-  belongs_to :person
-  has_paper_trail
-end
-
-class Person < ActiveRecord::Base
-  has_many :authorships, :dependent => :destroy
-  has_many :books, :through => :authorships
-  has_paper_trail
-end
-
-# Example from 'Overwriting default accessors' in ActiveRecord::Base.
-class Song < ActiveRecord::Base
-  has_paper_trail
-
-  # Uses an integer of seconds to hold the length of the song
-  def length=(minutes)
-    write_attribute(:length, minutes.to_i * 60)
-  end
-  def length
-    read_attribute(:length) / 60
-  end
-end
-
-
-class HasPaperTrailModelTest < Test::Unit::TestCase
-  load_schema
+class HasPaperTrailModelTest < ActiveSupport::TestCase
 
   context 'A record' do
     setup { @article = Article.create }
@@ -184,15 +121,15 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
           setup do
             @fluxor = @widget.fluxors.create :name => 'flux'
             @widget.destroy
-            @reified_widget = @widget.versions.last.reify
+            @reified_widget = Version.last.reify
           end
 
           should 'record the correct event' do
-            assert_match /destroy/i, @widget.versions.last.event
+            assert_match /destroy/i, Version.last.event
           end
 
           should 'have three previous versions' do
-            assert_equal 3, @widget.versions.length
+            assert_equal 3, Version.with_item_keys('Widget', @widget.id).length
           end
 
           should 'be available in its previous version' do
@@ -395,7 +332,7 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
           setup do
             PaperTrail.whodunnit = 'Charlie'
             @widget.destroy
-            @version = @widget.versions.last
+            @version = Version.last
           end
 
           should 'track who made the change' do

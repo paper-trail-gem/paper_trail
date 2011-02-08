@@ -64,7 +64,7 @@ module PaperTrail
 
       # Returns who put the object into its current state.
       def originator
-        versions.last.try :whodunnit
+        Version.with_item_keys(self.class.name, id).last.try :whodunnit
       end
 
       # Returns the object (not a Version) as it was at the given timestamp.
@@ -112,6 +112,7 @@ module PaperTrail
                                         :object    => object_to_string(item_before_change),
                                         :whodunnit => PaperTrail.whodunnit)
         end
+        versions.send :load_target
       end
 
       def merge_metadata(data)
@@ -158,5 +159,3 @@ module PaperTrail
 
   end
 end
-
-ActiveRecord::Base.send :include, PaperTrail::Model

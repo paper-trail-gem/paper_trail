@@ -1,0 +1,2 @@
+class FooWidget < Widget
+end
