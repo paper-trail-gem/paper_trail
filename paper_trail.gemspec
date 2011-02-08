@@ -19,12 +19,12 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'bundler',       '~> 1.0'
   s.add_development_dependency 'rake',          '0.8.7'  # TODO: why do we need to list rake?
   s.add_development_dependency 'shoulda',       '2.10.3'
-  s.add_development_dependency 'activesupport', '~> 2.3'
+  s.add_development_dependency 'activesupport', '~> 3'
   s.add_development_dependency 'sqlite3-ruby',  '~> 1.2'
   # Repeated here to make bundler happy
-  s.add_development_dependency 'activerecord',  '~> 2.3'
-  s.add_development_dependency 'actionpack',    '~> 2.3'
+  s.add_development_dependency 'activerecord',  '~> 3'
+  s.add_development_dependency 'actionpack',    '~> 3'
 
-  s.add_dependency 'activerecord',  '~> 2.3'
-  s.add_dependency 'actionpack',    '~> 2.3'
+  s.add_dependency 'activerecord',  '~> 3'
+  s.add_dependency 'actionpack',    '~> 3'
 end
