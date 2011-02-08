@@ -2,8 +2,8 @@ PATH
   remote: .
   specs:
     paper_trail (1.6.4)
-      actionpack (>= 2.3)
-      activerecord (>= 2.3)
+      actionpack (~> 2.3)
+      activerecord (~> 2.3)
 
 GEM
   remote: http://rubygems.org/
@@ -23,8 +23,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  actionpack (>= 2.3)
-  activerecord (>= 2.3)
+  actionpack (~> 2.3)
+  activerecord (~> 2.3)
   activesupport (~> 2.3)
   bundler (~> 1.0)
   paper_trail!
