@@ -2,25 +2,22 @@ class Version < ActiveRecord::Base
   belongs_to :item, :polymorphic => true
   validates_presence_of :event
 
-  named_scope :with_item_keys, lambda { |item_type, item_id| {
-    :conditions => { :item_type => item_type, :item_id => item_id }
-  } }
+  scope :with_item_keys, lambda { |item_type, item_id|
+    where(:item_type => item_type, :item_id => item_id)
+  }
 
-  named_scope :subsequent, lambda { |version| {
-    :conditions => ["id > ?", version.is_a?(ActiveRecord::Base) ? version.id : version],
-    :order      => "id ASC",
-  } }
+  scope :subsequent, lambda { |version|
+    where(["id > ?", version.is_a?(Version) ? version.id : version]).order("id ASC")
+  }
 
-  named_scope :preceding, lambda { |version| {
-    :conditions => ["id < ?", version.is_a?(ActiveRecord::Base) ? version.id : version],
-    :order      => "id DESC",
-  } }
+  scope :preceding, lambda { |version|
+    where(["id < ?", version.is_a?(Version) ? version.id : version]).order("id DESC")
+  }
 
-  named_scope :after, lambda { |timestamp| {
-    :conditions => ['created_at > ?', timestamp],
+  scope :after, lambda { |timestamp|
     # TODO: is this :order necessary, considering its presence on the has_many :versions association?
-    :order      => 'created_at ASC, id ASC'
-  } }
+    where(['created_at > ?', timestamp]).order('created_at ASC, id ASC')
+  }
 
   # Restore the item from this version.
   #
