@@ -383,8 +383,12 @@ You can store arbitrary model-level metadata alongside each version like this:
 
     class Article < ActiveRecord::Base
       belongs_to :author
-      has_paper_trail :meta => { :author_id => Proc.new { |article| article.author_id },
-                                 :answer    => 42 }
+      has_paper_trail :meta => { :author_id  => Proc.new { |article| article.author_id },
+                                 :word_count => :count_words,
+                                 :answer     => 42 }
+      def count_words
+        153
+      end
     end
 
 PaperTrail will call your proc with the current article and store the result in the `author_id` column of the `versions` table.  (Remember to add your metadata columns to the table.)
@@ -392,6 +396,8 @@ PaperTrail will call your proc with the current article and store the result in 
 Why would you do this?  In this example, `author_id` is an attribute of `Article` and PaperTrail will store it anyway in serialized (YAML) form in the `object` column of the `version` record.  But let's say you wanted to pull out all versions for a particular author; without the metadata you would have to deserialize (reify) each `version` object to see if belonged to the author in question.  Clearly this is inefficient.  Using the metadata you can find just those versions you want:
 
     Version.all(:conditions => ['author_id = ?', author_id])
+
+Note you can pass a symbol as a value in the `meta` hash to signal a method to call.
 
 You can also store any information you like from your controller.  Just override the `info_for_paper_trail` method in your controller to return a hash whose keys correspond to columns in your `versions` table.  E.g.:
 
