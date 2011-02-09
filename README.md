@@ -546,5 +546,5 @@ Many thanks to:
 
 ## Intellectual Property
 
-Copyright (c) 2009 Andy Stewart (boss@airbladesoftware.com).
+Copyright (c) 2011 Andy Stewart (boss@airbladesoftware.com).
 Released under the MIT licence.
