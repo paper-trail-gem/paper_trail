@@ -494,11 +494,11 @@ Over time your `versions` table will grow to an unwieldy size.  Because each ver
 
 2. Generate a migration which will add a `versions` table to your database.
 
-    `rails generate paper_trail:install`
+    `bundle exec rails generate paper_trail:install`
 
 3. Run the migration.
 
-    `rake db:migrate`
+    `bundle exec rake db:migrate`
 
 4. Add `has_paper_trail` to the models you want to track.
 
