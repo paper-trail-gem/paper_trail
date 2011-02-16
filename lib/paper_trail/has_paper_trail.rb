@@ -68,11 +68,11 @@ module PaperTrail
       end
 
       # Returns the object (not a Version) as it was at the given timestamp.
-      def version_at(timestamp)
+      def version_at(timestamp, reify_options={})
         # Because a version stores how its object looked *before* the change,
         # we need to look for the first version created *after* the timestamp.
         version = versions.after(timestamp).first
-        version ? version.reify : self
+        version ? version.reify(reify_options) : self
       end
 
       # Returns the object (not a Version) as it was most recently.
