@@ -99,7 +99,7 @@ class Version < ActiveRecord::Base
   end
 
   def index
-    sibling_versions.all(:select => :id, :order => "id ASC").map(&:id).index(self.id)
+    sibling_versions.select(:id).order("id ASC").map(&:id).index(self.id)
   end
 
   private
