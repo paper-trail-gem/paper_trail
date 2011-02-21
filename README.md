@@ -535,7 +535,7 @@ Many thanks to:
 * Danny Trelogan
 * [Mikl Kurkov](http://github.com/mkurkov)
 * [Franco Catena](https://github.com/francocatena)
-* [Emmanuel](https://github.com/emmanuel)
+* [Emmanuel Gomez](https://github.com/emmanuel)
 
 
 ## Inspirations
