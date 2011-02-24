@@ -35,7 +35,7 @@ module PaperTrail
         cattr_accessor :paper_trail_active
         self.paper_trail_active = true
 
-        has_many :versions, :as => :item, :order => 'created_at ASC, id ASC'
+        has_many :versions, :as => :item, :order => (options[:order] || 'created_at ASC, id ASC')
 
         after_create  :record_create
         before_update :record_update
@@ -118,7 +118,7 @@ module PaperTrail
       def merge_metadata(data)
         # First we merge the model-level metadata in `meta`.
         meta.each do |k,v|
-          data[k] = 
+          data[k] =
             if v.respond_to?(:call)
               v.call(self)
             elsif v.is_a?(Symbol) && respond_to?(v)
