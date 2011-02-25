@@ -190,14 +190,15 @@ Or, you can specify a list of all attributes you care about:
 
 This means that only changes to the `title` will save a version of the article:
 
-	>> a = Article.create
+    >> a = Article.create
     >> a.versions.length                         # 1
     >> a.update_attributes :title => 'My Title'
     >> a.versions.length                         # 2
     >> a.update_attributes :content => 'Hello'
     >> a.versions.length                         # 2
-    
+
 Passing both `:ignore` and `:only` options will result in the article being saved if a changed attribute is included in `:only` but not in `:ignore`.
+
 
 ## Reverting And Undeleting A Model
 
