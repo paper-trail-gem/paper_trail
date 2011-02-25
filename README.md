@@ -26,7 +26,7 @@ PaperTrail lets you track changes to your models' data.  It's good for auditing 
 
 ## Rails Version
 
-Works on Rails 3 and Rails 2.3.  Probably works on Rails 2.2 and 2.1.
+Works on Rails 3 and Rails 2.3.  The Rails 3 code is on the `master` branch and tagged `v2.x`.  The Rails 2.3 code is on the `rails2` branch and tagged `v1.x`.
 
 
 ## API Summary
@@ -383,8 +383,12 @@ You can store arbitrary model-level metadata alongside each version like this:
 
     class Article < ActiveRecord::Base
       belongs_to :author
-      has_paper_trail :meta => { :author_id => Proc.new { |article| article.author_id },
-                                 :answer    => 42 }
+      has_paper_trail :meta => { :author_id  => Proc.new { |article| article.author_id },
+                                 :word_count => :count_words,
+                                 :answer     => 42 }
+      def count_words
+        153
+      end
     end
 
 PaperTrail will call your proc with the current article and store the result in the `author_id` column of the `versions` table.  (Remember to add your metadata columns to the table.)
@@ -392,6 +396,8 @@ PaperTrail will call your proc with the current article and store the result in 
 Why would you do this?  In this example, `author_id` is an attribute of `Article` and PaperTrail will store it anyway in serialized (YAML) form in the `object` column of the `version` record.  But let's say you wanted to pull out all versions for a particular author; without the metadata you would have to deserialize (reify) each `version` object to see if belonged to the author in question.  Clearly this is inefficient.  Using the metadata you can find just those versions you want:
 
     Version.all(:conditions => ['author_id = ?', author_id])
+
+Note you can pass a symbol as a value in the `meta` hash to signal a method to call.
 
 You can also store any information you like from your controller.  Just override the `info_for_paper_trail` method in your controller to return a hash whose keys correspond to columns in your `versions` table.  E.g.:
 
@@ -484,33 +490,21 @@ Over time your `versions` table will grow to an unwieldy size.  Because each ver
 
 1. Install PaperTrail as a gem via your `Gemfile`:
 
-    `gem 'paper_trail'`
+    `gem 'paper_trail', '~> 2'`
 
 2. Generate a migration which will add a `versions` table to your database.
 
-    `rails generate paper_trail`
+    `bundle exec rails generate paper_trail`
 
 3. Run the migration.
 
-    `rake db:migrate`
+    `bundle exec rake db:migrate`
 
 4. Add `has_paper_trail` to the models you want to track.
 
 ### Rails 2
 
-1. Install PaperTrail as a gem via your `config/environment.rb`:
-
-    `config.gem 'paper_trail'`
-
-2. Generate a migration which will add a `versions` table to your database.
-
-    `script/generate paper_trail`
-
-3. Run the migration.
-
-    `rake db:migrate`
-
-4. Add `has_paper_trail` to the models you want to track.
+Please see the `rails2` branch.
 
 
 ## Testing
@@ -541,6 +535,7 @@ Many thanks to:
 * Danny Trelogan
 * [Mikl Kurkov](http://github.com/mkurkov)
 * [Franco Catena](https://github.com/francocatena)
+* [Emmanuel Gomez](https://github.com/emmanuel)
 
 
 ## Inspirations
@@ -551,5 +546,5 @@ Many thanks to:
 
 ## Intellectual Property
 
-Copyright (c) 2009 Andy Stewart (boss@airbladesoftware.com).
+Copyright (c) 2011 Andy Stewart (boss@airbladesoftware.com).
 Released under the MIT licence.

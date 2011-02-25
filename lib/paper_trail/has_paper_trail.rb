@@ -3,9 +3,6 @@ module PaperTrail
 
     def self.included(base)
       base.send :extend, ClassMethods
-
-      # The version this instance was reified from.
-      attr_accessor :version
     end
 
 
@@ -24,6 +21,9 @@ module PaperTrail
         # Lazily include the instance methods so we don't clutter up
         # any more ActiveRecord models than we have to.
         send :include, InstanceMethods
+
+        # The version this instance was reified from.
+        attr_accessor :version
 
         cattr_accessor :ignore
         self.ignore = ([options[:ignore]].flatten.compact || []).map &:to_s
@@ -68,21 +68,21 @@ module PaperTrail
 
       # Returns who put the object into its current state.
       def originator
-        versions.last.try :whodunnit
+        Version.with_item_keys(self.class.name, id).last.try :whodunnit
       end
 
       # Returns the object (not a Version) as it was at the given timestamp.
-      def version_at(timestamp)
+      def version_at(timestamp, reify_options={})
         # Because a version stores how its object looked *before* the change,
         # we need to look for the first version created *after* the timestamp.
-        version = versions.first :conditions => ['created_at > ?', timestamp], :order => 'created_at ASC, id ASC'
-        version ? version.reify : self
+        version = versions.after(timestamp).first
+        version ? version.reify(reify_options) : self
       end
 
       # Returns the object (not a Version) as it was most recently.
       def previous_version
-        last_version = version ? version.previous : versions.last
-        last_version.try :reify
+        preceding_version = version ? version.previous : versions.last
+        preceding_version.try :reify
       end
 
       # Returns the object (not a Version) as it became next.
@@ -102,7 +102,7 @@ module PaperTrail
       end
 
       def record_update
-        if switched_on? && changed_and_we_care?
+        if switched_on? && changed_notably?
           versions.build merge_metadata(:event     => 'update',
                                         :object    => object_to_string(item_before_change),
                                         :whodunnit => PaperTrail.whodunnit)
@@ -116,34 +116,42 @@ module PaperTrail
                                         :object    => object_to_string(item_before_change),
                                         :whodunnit => PaperTrail.whodunnit)
         end
+        versions.send :load_target
       end
 
       def merge_metadata(data)
         # First we merge the model-level metadata in `meta`.
         meta.each do |k,v|
-          data[k] = v.respond_to?(:call) ? v.call(self) : v
+          data[k] = 
+            if v.respond_to?(:call)
+              v.call(self)
+            elsif v.is_a?(Symbol) && respond_to?(v)
+              send(v)
+            else
+              v
+            end
         end
         # Second we merge any extra data from the controller (if available).
         data.merge(PaperTrail.controller_info || {})
       end
 
       def item_before_change
-        previous = self.clone
-        previous.id = id
-        changes.each do |attr, ary|
-          previous.send :write_attribute, attr.to_sym, ary.first
+        self.clone.tap do |previous|
+          previous.id = id
+          changed_attributes.each { |attr, before| previous[attr] = before }
         end
-        previous
       end
 
       def object_to_string(object)
         object.attributes.to_yaml
       end
 
-      def changed_and_we_care?
-        care_about = changed - self.class.ignore
-        care_about = (care_about & self.class.only) unless self.class.only.empty?
-        changed? and !care_about.empty?
+      def changed_notably?
+        notably_changed.any?
+      end
+
+      def notably_changed
+        self.class.only.empty? ? (changed - self.class.ignore) : (changed & self.class.only)
       end
 
       # Returns `true` if PaperTrail is globally enabled and active for this class,
@@ -155,5 +163,3 @@ module PaperTrail
 
   end
 end
-
-ActiveRecord::Base.send :include, PaperTrail::Model

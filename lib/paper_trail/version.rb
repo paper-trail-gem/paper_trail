@@ -2,6 +2,23 @@ class Version < ActiveRecord::Base
   belongs_to :item, :polymorphic => true
   validates_presence_of :event
 
+  scope :with_item_keys, lambda { |item_type, item_id|
+    where(:item_type => item_type, :item_id => item_id)
+  }
+
+  scope :subsequent, lambda { |version|
+    where(["id > ?", version.is_a?(Version) ? version.id : version]).order("id ASC")
+  }
+
+  scope :preceding, lambda { |version|
+    where(["id < ?", version.is_a?(Version) ? version.id : version]).order("id DESC")
+  }
+
+  scope :after, lambda { |timestamp|
+    # TODO: is this :order necessary, considering its presence on the has_many :versions association?
+    where(['created_at > ?', timestamp]).order('created_at ASC, id ASC')
+  }
+
   # Restore the item from this version.
   #
   # This will automatically restore all :has_one associations as they were "at the time",
@@ -69,19 +86,20 @@ class Version < ActiveRecord::Base
     whodunnit
   end
 
+  def sibling_versions
+    Version.with_item_keys(item_type, item_id)
+  end
+
   def next
-    Version.first :conditions => ["id > ? AND item_type = ? AND item_id = ?", id, item_type, item_id],
-                  :order => 'id ASC'
+    sibling_versions.subsequent(self).first
   end
 
   def previous
-    Version.first :conditions => ["id < ? AND item_type = ? AND item_id = ?", id, item_type, item_id],
-                  :order => 'id DESC'
+    sibling_versions.preceding(self).first
   end
 
   def index
-    Version.all(:conditions => ["item_type = ? AND item_id = ?", item_type, item_id],
-                :order => 'id ASC').index(self)
+    sibling_versions.select(:id).order("id ASC").map(&:id).index(self.id)
   end
 
   private
