@@ -553,6 +553,7 @@ Many thanks to:
 * [Mikl Kurkov](http://github.com/mkurkov)
 * [Franco Catena](https://github.com/francocatena)
 * [Emmanuel Gomez](https://github.com/emmanuel)
+* [Matthew MacLeod](https://github.com/mattmacleod)
 
 
 ## Inspirations
