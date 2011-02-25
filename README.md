@@ -164,7 +164,7 @@ Here's a helpful table showing what PaperTrail stores:
 PaperTrail stores the values in the Model Before column.  Most other auditing/versioning plugins store the After column.
 
 
-## Ignoring changes to certain attributes
+## Choosing Attributes To Monitor
 
 You can ignore changes to certain attributes like this:
 
@@ -182,6 +182,22 @@ This means that changes to just the `title` or `rating` will not store another v
     >> a.versions.length                         # 2
     >> a.versions.last.reify.title               # 'My Title'
 
+Or, you can specify a list of all attributes you care about:
+
+    class Article < ActiveRecord::Base
+      has_paper_trail :only => [:title]
+    end
+
+This means that only changes to the `title` will save a version of the article:
+
+	>> a = Article.create
+    >> a.versions.length                         # 1
+    >> a.update_attributes :title => 'My Title'
+    >> a.versions.length                         # 2
+    >> a.update_attributes :content => 'Hello'
+    >> a.versions.length                         # 2
+    
+Passing both `:ignore` and `:only` options will result in the article being saved if a changed attribute is included in `:only` but not in `:ignore`.
 
 ## Reverting And Undeleting A Model
 

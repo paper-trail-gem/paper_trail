@@ -151,7 +151,11 @@ module PaperTrail
       end
 
       def notably_changed
-        self.class.only.empty? ? (changed - self.class.ignore) : (changed & self.class.only)
+        self.class.only.empty? ? changed_and_not_ignored : (changed_and_not_ignored & self.class.only)
+      end
+      
+      def changed_and_not_ignored
+        changed - self.class.ignore
       end
 
       # Returns `true` if PaperTrail is globally enabled and active for this class,
