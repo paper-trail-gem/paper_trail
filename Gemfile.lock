@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    paper_trail (2.0.0)
+    paper_trail (2.0.1)
       rails (~> 3)
 
 GEM
