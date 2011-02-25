@@ -7,7 +7,7 @@ PaperTrail lets you track changes to your models' data.  It's good for auditing 
 
 * Stores every create, update and destroy.
 * Does not store updates which don't change anything.
-* Does not store updates which only change attributes you are ignoring.
+* Allows you to specify attributes (by inclusion or exclusion) which must change for a Version to be stored.
 * Allows you to get at every version, including the original, even once destroyed.
 * Allows you to get at every version even if the schema has since changed.
 * Allows you to get at the version as of a particular time.
