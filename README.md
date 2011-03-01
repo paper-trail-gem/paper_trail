@@ -2,6 +2,7 @@
 
 PaperTrail lets you track changes to your models' data.  It's good for auditing or versioning.  You can see how a model looked at any stage in its lifecycle, revert it to any version, and even undelete it after it's been destroyed.
 
+There's an excellent [Railscast on implementing Undo with Paper Trail](http://railscasts.com/episodes/255-undo-with-paper-trail).
 
 ## Features
 
@@ -225,7 +226,7 @@ Undeleting is just as simple:
     >> widget = Version.find(153).reify    # the widget as it was before it was destroyed
     >> widget.save                         # the widget lives!
 
-In fact you could use PaperTrail to implement an undo system, though I haven't had the opportunity yet to do it myself.
+In fact you could use PaperTrail to implement an undo system, though I haven't had the opportunity yet to do it myself.  However [Ryan Bates has](http://railscasts.com/episodes/255-undo-with-paper-trail)!
 
 
 ## Navigating Versions
