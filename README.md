@@ -308,6 +308,13 @@ To find out who made a `version`'s object look that way, use `version.originator
     >> last_version.terminator                     # 'Bob'
 
 
+## Associations
+
+I haven't yet found a good way to get PaperTrail to automatically restore associations when you reify a model.  See [here for a little more info](http://airbladesoftware.com/notes/undo-and-redo-with-papertrail).
+
+If you can think of a good way to achieve this, please let me know.
+
+
 ## Has-One Associations
 
 PaperTrail automatically restores `:has_one` associations as they were at (actually, 3 seconds before) the time.
