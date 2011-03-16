@@ -111,11 +111,11 @@ module PaperTrail
 
       def record_destroy
         if switched_on? and not new_record?
-          Version.create merge_metadata(:item_id      => self.id,
-                                        :item_type    => self.class.name,
-                                        :event_     => 'destroy',
-                                        :object    => object_to_string(item_before_change),
-                                        :whodunnit => PaperTrail.whodunnit)
+          Version.create merge_metadata(:item_id    => self.id,
+                                        :item_type  => self.class.name,
+                                        :event     => 'destroy',
+                                        :object     => object_to_string(item_before_change),
+                                        :whodunnit  => PaperTrail.whodunnit)
         end
         versions.send :load_target
       end
