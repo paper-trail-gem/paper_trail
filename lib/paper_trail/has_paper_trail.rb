@@ -30,7 +30,7 @@ module PaperTrail
 
         cattr_accessor :only
         self.only = ([options[:only]].flatten.compact || []).map &:to_s
-        
+
         cattr_accessor :meta
         self.meta = options[:meta] || {}
 
@@ -122,7 +122,7 @@ module PaperTrail
       def merge_metadata(data)
         # First we merge the model-level metadata in `meta`.
         meta.each do |k,v|
-          data[k] = 
+          data[k] =
             if v.respond_to?(:call)
               v.call(self)
             elsif v.is_a?(Symbol) && respond_to?(v)
@@ -153,7 +153,7 @@ module PaperTrail
       def notably_changed
         self.class.only.empty? ? changed_and_not_ignored : (changed_and_not_ignored & self.class.only)
       end
-      
+
       def changed_and_not_ignored
         changed - self.class.ignore
       end
