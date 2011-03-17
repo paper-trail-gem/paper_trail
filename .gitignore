@@ -4,3 +4,4 @@ coverage
 pkg/*
 *.gem
 .bundle
+Gemfile.lock
