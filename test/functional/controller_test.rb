@@ -6,6 +6,36 @@ class ControllerTest < ActionController::TestCase
   setup do
     @request.env['REMOTE_ADDR'] = '127.0.0.1'
   end
+  
+  teardown do
+    PaperTrail.request_disabled = false
+  end
+  
+  test 'disable on create' do
+    @request.env['HTTP_USER_AGENT'] = 'Disable User-Agent'
+    post :create, :widget => { :name => 'Flugel' }
+    assert_equal 0, assigns(:widget).versions.length
+  end
+  
+  test 'disable on update' do
+    @request.env['HTTP_USER_AGENT'] = 'Disable User-Agent'
+    post :create, :widget => { :name => 'Flugel' }
+    w = assigns(:widget)
+    assert_equal 0, w.versions.length
+    put :update, :id => w.id, :widget => { :name => 'Bugle' }
+    widget = assigns(:widget)
+    assert_equal 0, widget.versions.length
+  end
+  
+  test 'disable on destroy' do
+    @request.env['HTTP_USER_AGENT'] = 'Disable User-Agent'
+    post :create, :widget => { :name => 'Flugel' }
+    w = assigns(:widget)
+    assert_equal 0, w.versions.length
+    delete :destroy, :id => w.id
+    widget = assigns(:widget)
+    assert_equal 0, Version.with_item_keys('Widget', w.id).size
+  end
 
   test 'create' do
     post :create, :widget => { :name => 'Flugel' }

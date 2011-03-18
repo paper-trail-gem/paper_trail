@@ -162,7 +162,7 @@ module PaperTrail
       # Returns `true` if PaperTrail is globally enabled and active for this class,
       # `false` otherwise.
       def switched_on?
-        PaperTrail.enabled? && self.class.paper_trail_active
+        PaperTrail.enabled? && self.class.paper_trail_active && !PaperTrail.request_disabled
       end
     end
 

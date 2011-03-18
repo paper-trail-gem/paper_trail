@@ -1,3 +1,14 @@
+# Extended
+
+Added the possibility to dissable/enable PaperTrail from a controller.
+
+  class ApplicationController
+    def paper_trail_enabled_if
+      proc{ request.user_agent != 'Disabled User-Agent' }
+    end
+  end
+
+
 # PaperTrail
 
 PaperTrail lets you track changes to your models' data.  It's good for auditing or versioning.  You can see how a model looked at any stage in its lifecycle, revert it to any version, and even undelete it after it's been destroyed.
