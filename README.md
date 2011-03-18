@@ -1,10 +1,10 @@
 # Extended
 
-Added the possibility to dissable/enable PaperTrail from a controller.
+Added the possibility to disable/enable PaperTrail from a controller.
 
   class ApplicationController
     def paper_trail_enabled_if
-      proc{ request.user_agent != 'Disabled User-Agent' }
+      request.user_agent != 'Disable User-Agent'
     end
   end
 
