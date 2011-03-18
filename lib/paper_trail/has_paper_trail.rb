@@ -159,10 +159,10 @@ module PaperTrail
         changed - self.class.ignore
       end
 
-      # Returns `true` if PaperTrail is globally enabled and active for this class,
-      # `false` otherwise.
+      # Returns `true` if controller method paper_trail_enabled_if doesn't return false, 
+      # PaperTrail is globally enabled and active for this class, `false` otherwise.
       def switched_on?
-        PaperTrail.enabled? && self.class.paper_trail_active && !PaperTrail.request_disabled
+        !PaperTrail.request_disabled? && PaperTrail.enabled? && self.class.paper_trail_active
       end
     end
 
