@@ -78,13 +78,12 @@ class Version < ActiveRecord::Base
 
   def rollback
     #rollback all changes with in transaction
-    PaperTrail.start_transaction
-    transact.reverse_each do |version|
-      version.reify.save
+    transaction do
+      transact.reverse_each do |version|
+        version.reify.save!
+      end
     end
-    PaperTrail.end_transaction
-  end
-
+	end
   # Returns who put the item into the state stored in this version.
   def originator
     previous.try :whodunnit
