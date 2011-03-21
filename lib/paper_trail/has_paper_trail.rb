@@ -44,6 +44,7 @@ module PaperTrail
         after_create  :record_create
         before_update :record_update
         after_destroy :record_destroy
+        after_commit :reset_transaction_id
       end
 
       # Switches PaperTrail off for this class.
@@ -54,6 +55,12 @@ module PaperTrail
       # Switches PaperTrail on for this class.
       def paper_trail_on
         self.paper_trail_active = true
+      end
+
+      protected
+
+      def reset_transaction_id
+	    PaperTrail.transaction_id=nil
       end
     end
 
@@ -97,27 +104,42 @@ module PaperTrail
 
       def record_create
         if switched_on?
-          versions.create merge_metadata(:event => 'create', :whodunnit => PaperTrail.whodunnit)
+          version=versions.create merge_metadata(:event => 'create', 
+                                        :whodunnit => PaperTrail.whodunnit,
+                                        :transaction_id => PaperTrail.transaction_id)
+          set_transaction_id(version)
         end
       end
 
       def record_update
         if switched_on? && changed_notably?
-          versions.build merge_metadata(:event     => 'update',
+          version=versions.build merge_metadata(:event     => 'update',
                                         :object    => object_to_string(item_before_change),
-                                        :whodunnit => PaperTrail.whodunnit)
+                                        :whodunnit => PaperTrail.whodunnit,
+                                        :transaction_id => PaperTrail.transaction_id)
+          set_transaction_id(version)
         end
       end
 
       def record_destroy
         if switched_on? and not new_record?
-          Version.create merge_metadata(:item_id   => self.id,
+          version=Version.create merge_metadata(:item_id   => self.id,
                                         :item_type => self.class.name,
                                         :event     => 'destroy',
                                         :object    => object_to_string(item_before_change),
-                                        :whodunnit => PaperTrail.whodunnit)
+                                        :whodunnit => PaperTrail.whodunnit,
+                                        :transaction_id => PaperTrail.transaction_id)
+          set_transaction_id(version)
         end
         versions.send :load_target
+      end
+
+      def set_transaction_id(version)
+        if(PaperTrail.transaction?&&PaperTrail.transaction_id.nil?)
+           PaperTrail.transaction_id=version.id
+           version.transaction_id=version.id
+           version.save
+        end
       end
 
       def merge_metadata(data)
