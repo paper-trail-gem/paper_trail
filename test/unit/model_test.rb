@@ -710,6 +710,30 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
   end
 
+  context 'A new model instance which uses a custom Version class' do
+    setup { @post = Post.new }
+    
+    context 'which is then saved' do
+      setup { @post.save }
+      should_change('the number of post versions') { PostVersion.count }
+      should_not_change('the number of versions') { Version.count }
+    end
+  end
+    
+  context 'An existing model instance which uses a custom Version class' do
+    setup { @post = Post.create }
+    
+    should 'should have versions of the custom class' do
+      assert_equal "PostVersion", @post.versions.first.class.name
+    end
+    
+    context 'which is modified' do
+      setup { @post.update_attributes({ :content => "Some new content" }) }
+      should_change('the number of post versions') { PostVersion.count }
+      should_not_change('the number of versions') { Version.count }
+    end
+  end
+    
 
   context 'An overwritten default accessor' do
     setup do
