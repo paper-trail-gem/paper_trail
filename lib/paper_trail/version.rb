@@ -7,11 +7,11 @@ class Version < ActiveRecord::Base
   }
 
   scope :subsequent, lambda { |version|
-    where(["id > ?", version.is_a?(Version) ? version.id : version]).order("id ASC")
+    where(["id > ?", version.is_a?(self) ? version.id : version]).order("id ASC")
   }
 
   scope :preceding, lambda { |version|
-    where(["id < ?", version.is_a?(Version) ? version.id : version]).order("id DESC")
+    where(["id < ?", version.is_a?(self) ? version.id : version]).order("id DESC")
   }
 
   scope :after, lambda { |timestamp|
@@ -87,7 +87,7 @@ class Version < ActiveRecord::Base
   end
 
   def sibling_versions
-    Version.with_item_keys(item_type, item_id)
+    self.class.with_item_keys(item_type, item_id)
   end
 
   def next
