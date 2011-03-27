@@ -723,6 +723,14 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
   context 'An existing model instance which uses a custom Version class' do
     setup { @post = Post.create }
     
+    context 'on the first version' do
+      setup { @version = @post.versions.first }
+      
+      should 'have the correct index' do
+        assert_equal 0, @version.index
+      end
+    end
+    
     should 'should have versions of the custom class' do
       assert_equal "PostVersion", @post.versions.first.class.name
     end
