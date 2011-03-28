@@ -2,9 +2,9 @@ class Version < ActiveRecord::Base
   belongs_to :item, :polymorphic => true
   validates_presence_of :event
 
-  scope :with_item_keys, lambda { |item_type, item_id|
-    where(:item_type => item_type, :item_id => item_id)
-  }
+  def self.with_item_keys(item_type, item_id)
+    scoped(:conditions => { :item_type => item_type, :item_id => item_id })
+  end
 
   scope :subsequent, lambda { |version|
     where(["id > ?", version.is_a?(self) ? version.id : version]).order("id ASC")
