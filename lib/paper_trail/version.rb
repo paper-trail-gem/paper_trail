@@ -52,7 +52,8 @@ class Version < ActiveRecord::Base
       if item
         model = item
       else
-        class_name = attrs['type'].blank? ? item_type : attrs['type']
+        inheritance_column_name = item_type.constantize.inheritance_column
+        class_name = attrs[inheritance_column_name].blank? ? item_type : attrs[inheritance_column_name]
         klass = class_name.constantize
         model = klass.new
       end

@@ -82,14 +82,20 @@ class SetUpTestTables < ActiveRecord::Migration
     create_table :songs, :force => true do |t|
       t.integer :length
     end
-    
+
     create_table :posts, :force => true do |t|
       t.string :title
       t.string :content
     end
+
+    create_table :animals, :force => true do |t|
+      t.string :name
+      t.string :species   # single table inheritance column
+    end
   end
 
   def self.down
+    drop_table :animals
     drop_table :posts
     drop_table :songs
     drop_table :people
