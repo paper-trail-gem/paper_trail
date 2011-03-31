@@ -581,6 +581,7 @@ Many thanks to:
 * [Franco Catena](https://github.com/francocatena)
 * [Emmanuel Gomez](https://github.com/emmanuel)
 * [Matthew MacLeod](https://github.com/mattmacleod)
+* [benzittlau](https://github.com/benzittlau)
 
 
 ## Inspirations
