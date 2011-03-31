@@ -25,9 +25,9 @@ module PaperTrail
 
         # The version this instance was reified from.
         attr_accessor :version
-        
+
         cattr_accessor :version_class_name
-        self.version_class_name = options[:class_name] || "Version"
+        self.version_class_name = options[:class_name] || 'Version'
 
         cattr_accessor :ignore
         self.ignore = ([options[:ignore]].flatten.compact || []).map &:to_s
@@ -72,7 +72,7 @@ module PaperTrail
 
       # Returns who put the object into its current state.
       def originator
-        version_class_name.constantize.with_item_keys(self.class.name, id).last.try :whodunnit
+        version_class.with_item_keys(self.class.name, id).last.try :whodunnit
       end
 
       # Returns the object (not a Version) as it was at the given timestamp.
@@ -99,6 +99,10 @@ module PaperTrail
 
       private
 
+      def version_class
+        version_class_name.constantize
+      end
+
       def record_create
         if switched_on?
           versions.create merge_metadata(:event => 'create', :whodunnit => PaperTrail.whodunnit)
@@ -115,7 +119,7 @@ module PaperTrail
 
       def record_destroy
         if switched_on? and not new_record?
-          version_class_name.constantize.create merge_metadata(:item_id   => self.id,
+          version_class.create merge_metadata(:item_id   => self.id,
                                         :item_type => self.class.name,
                                         :event     => 'destroy',
                                         :object    => object_to_string(item_before_change),
