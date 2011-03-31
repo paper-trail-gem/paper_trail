@@ -82,6 +82,7 @@ module PaperTrail
       def version_at(timestamp, reify_options={})
         # Because a version stores how its object looked *before* the change,
         # we need to look for the first version created *after* the timestamp.
+        reify_options.merge(:version_at => timestamp)
         version = versions.after(timestamp).first
         version ? version.reify(reify_options) : self
       end
@@ -108,6 +109,7 @@ module PaperTrail
                                         :whodunnit => PaperTrail.whodunnit,
                                         :transaction_id => PaperTrail.transaction_id)
           set_transaction_id(version)
+          save_associations(version)
         end
       end
 
@@ -118,6 +120,7 @@ module PaperTrail
                                         :whodunnit => PaperTrail.whodunnit,
                                         :transaction_id => PaperTrail.transaction_id)
           set_transaction_id(version)
+          save_associations(version)
         end
       end
 
@@ -129,9 +132,17 @@ module PaperTrail
                                         :object    => object_to_string(item_before_change),
                                         :whodunnit => PaperTrail.whodunnit,
                                         :transaction_id => PaperTrail.transaction_id)
+
           set_transaction_id(version)
+          save_associations(version)
         end
         versions.send :load_target
+      end
+
+      def save_associations(version)
+        self.class.name.constantize.reflect_on_all_associations(:belongs_to).each do |assoc|
+          VersionAssociation.create(:version_id => version.id, :foreign_key_name => assoc.primary_key_name, :foreign_key_id => self.send(assoc.primary_key_name))
+        end
       end
 
       def set_transaction_id(version)

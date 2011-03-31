@@ -1,5 +1,7 @@
 class Version < ActiveRecord::Base
   belongs_to :item, :polymorphic => true
+  has_many :version_associations, :dependent => :destroy
+  
   validates_presence_of :event
 
   scope :with_item_keys, lambda { |item_type, item_id|
@@ -34,6 +36,7 @@ class Version < ActiveRecord::Base
   #              set to a float to change the lookback time (check whether your db supports
   #              sub-second datetimes if you want them).
   def reify(options = {})
+    options.reverse_merge!(:version_at => created_at)
     unless object.nil?
       attrs = YAML::load object
 
@@ -68,6 +71,15 @@ class Version < ActiveRecord::Base
       end
 
       model.version = self
+
+      unless options[:has_one] == false
+        reify_has_ones(model,options)
+      end
+
+      unless options[:has_many] == false
+        reify_has_manys(model,options)
+      end
+
       model
     end
   end
@@ -77,7 +89,7 @@ class Version < ActiveRecord::Base
   end
 
   def rollback
-    #rollback all changes with in transaction
+    #rollback all changes within transaction
     transaction do
       transact.reverse_each do |version|
         version.reify.save!
@@ -109,5 +121,41 @@ class Version < ActiveRecord::Base
 
   def index
     sibling_versions.select(:id).order("id ASC").map(&:id).index(self.id)
+  end
+
+  private
+  # Restore the `model`'s has_one associations as they were at version_at timestamp
+  # We lookup the first child version after version_at timestamp or in same transaction.
+  def reify_has_ones(model,options = {})
+    model.class.reflect_on_all_associations(:has_one).each do |assoc|
+      version_association=VersionAssociation.includes(:version).
+        where(["item_type = ?",assoc.class_name]).
+        where(["foreign_key_name = ?",assoc.primary_key_name]).
+        where(["foreign_key_id = ?", model.id]).
+        where(['created_at >= ? OR transaction_id = ?', options[:version_at], transaction_id]).
+        order('created_at ASC, versions.id ASC').
+        limit(1).first
+      child=version_association.version.reify(options)
+      model.send(assoc.name.to_s+"=",child)
+    end
+  end
+
+  # Restore the `model`'s has_many associations as they were at version_at timestamp
+  # We lookup the first child versions after version_at timestamp or in same transaction.
+  def reify_has_manys(model,options = {})
+    model.class.reflect_on_all_associations(:has_many).each do |assoc|
+      next if(assoc.name==:versions)
+      version_associations=VersionAssociation.includes(:version).
+        where(["item_type = ?",assoc.class_name]).
+        where(["foreign_key_name = ?",assoc.primary_key_name]).
+        where(["foreign_key_id = ?", model.id]).
+        where(['created_at >= ? OR transaction_id = ?', options[:version_at], transaction_id]).
+        group("versions.item_id").order('created_at ASC, versions.id ASC')
+      
+      version_associations.each do |version_association|
+        child=version_association.version.reify(options)
+        model.send(assoc.name) << child
+      end
+    end
   end
 end

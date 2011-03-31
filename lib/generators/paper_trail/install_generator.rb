@@ -13,6 +13,7 @@ module PaperTrail
 
     def create_migration_file
       migration_template 'create_versions.rb', 'db/migrate/create_versions.rb'
+      migration_template 'create_version_associations.rb', 'db/migrate/create_version_associations.rb'
     end
   end
 end
