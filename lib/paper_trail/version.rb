@@ -135,8 +135,10 @@ class Version < ActiveRecord::Base
         where(['created_at >= ? OR transaction_id = ?', options[:version_at], transaction_id]).
         order('created_at ASC, versions.id ASC').
         limit(1).first
-      child=version_association.version.reify(options)
-      model.send(assoc.name.to_s+"=",child)
+      if(version_association)
+        child=version_association.version.reify(options)
+        model.send(assoc.name.to_s+"=",child)
+      end
     end
   end
 
