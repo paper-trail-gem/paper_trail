@@ -40,14 +40,14 @@ module PaperTrail
     end
 
     private
-    
+
     # Tells PaperTrail if version should be saved.
     def set_paper_trail_enabled_if
       if respond_to? :paper_trail_enabled_if
         ::PaperTrail.request_disabled = !paper_trail_enabled_if
       end
     end
-    
+
     # Tells PaperTrail who is responsible for any changes that occur.
     def set_paper_trail_whodunnit
       ::PaperTrail.whodunnit = user_for_paper_trail
