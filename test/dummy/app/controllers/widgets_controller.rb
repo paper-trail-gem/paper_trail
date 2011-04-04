@@ -1,4 +1,9 @@
 class WidgetsController < ApplicationController
+  
+  def paper_trail_enabled_if
+    request.user_agent != 'Disable User-Agent'
+  end
+  
   def create
     @widget = Widget.create params[:widget]
     head :ok
