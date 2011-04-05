@@ -56,12 +56,6 @@ module PaperTrail
       def paper_trail_on
         self.paper_trail_active = true
       end
-
-      protected
-
-      def reset_transaction_id
-	    PaperTrail.transaction_id=nil
-      end
     end
 
     # Wrap the following methods in a module so we can include them only in the
@@ -153,6 +147,10 @@ module PaperTrail
         end
       end
 
+      def reset_transaction_id
+        PaperTrail.transaction_id=nil
+      end
+      
       def merge_metadata(data)
         # First we merge the model-level metadata in `meta`.
         meta.each do |k,v|
