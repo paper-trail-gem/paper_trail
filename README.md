@@ -607,6 +607,7 @@ Many thanks to:
 * [Matthew MacLeod](https://github.com/mattmacleod)
 * [benzittlau](https://github.com/benzittlau)
 * [Tom Derks](https://github.com/EgoH)
+* [Jonas Hoglund](https://github.com/jhoglund)
 
 
 ## Inspirations
