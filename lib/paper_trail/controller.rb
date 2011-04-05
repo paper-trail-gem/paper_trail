@@ -4,7 +4,7 @@ module PaperTrail
     def self.included(base)
       base.before_filter :set_paper_trail_whodunnit
       base.before_filter :set_paper_trail_controller_info
-      base.before_filter :set_paper_trail_enabled_if
+      base.before_filter :set_paper_trail_enabled_for_controller
     end
 
     protected
@@ -42,9 +42,9 @@ module PaperTrail
     private
 
     # Tells PaperTrail if version should be saved.
-    def set_paper_trail_enabled_if
-      if respond_to? :paper_trail_enabled_if
-        ::PaperTrail.request_disabled = !paper_trail_enabled_if
+    def set_paper_trail_enabled_for_controller
+      if respond_to? :paper_trail_enabled_for_controller
+        ::PaperTrail.enabled_for_controller = paper_trail_enabled_for_controller
       end
     end
 

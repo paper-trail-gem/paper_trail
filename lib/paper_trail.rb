@@ -20,19 +20,14 @@ module PaperTrail
     !!PaperTrail.config.enabled
   end
 
-  # Returns if PaperTrails is disabled by controller
-  def self.request_disabled
-    paper_trail_store[:request_disabled]
+  # Returns `true` if PaperTrail is enabled for the controller, `false` otherwise.
+  def self.enabled_for_controller?
+    !!paper_trail_store[:request_enabled_for_controller]
   end
 
   # Sets if PaperTrails is disabled by controller
-  def self.request_disabled=(value)
-    paper_trail_store[:request_disabled] = value
-  end
-
-  # Sets if PaperTrails is disabled by controller
-  def self.request_disabled?
-    paper_trail_store[:request_disabled] === true
+  def self.enabled_for_controller=(value)
+    paper_trail_store[:request_enabled_for_controller] = value
   end
 
   # Returns who is reponsible for any changes that occur.

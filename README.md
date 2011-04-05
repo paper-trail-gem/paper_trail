@@ -2,11 +2,6 @@
 
 Added the possibility to disable/enable PaperTrail from a controller.
 
-    class ApplicationController
-      def paper_trail_enabled_if
-        request.user_agent != 'Disable User-Agent'
-      end
-    end
 
 
 # PaperTrail
@@ -29,6 +24,7 @@ There's an excellent [Railscast on implementing Undo with Paper Trail](http://ra
 * Allows you to store arbitrary model-level metadata with each version (useful for filtering versions).
 * Allows you to store arbitrary controller-level information with each version, e.g. remote IP.
 * Can be turned off/on per class (useful for migrations).
+* Can be turned off/on per request (useful for testing with an external service).
 * Can be turned off/on globally (useful for testing).
 * No configuration necessary.
 * Stores everything in a single database table by default (generates migration for you), or can use separate tables for separate models.
@@ -489,15 +485,11 @@ For diffing two ActiveRecord objects:
 
 Sometimes you don't want to store changes.  Perhaps you are only interested in changes made by your users and don't need to store changes you make yourself in, say, a migration -- or when testing your application.
 
-If you are about change some widgets and you don't want a paper trail of your changes, you can turn PaperTrail off like this:
+You can turn PaperTrail on or off in three ways: globally, per request, or per class.
 
-    >> Widget.paper_trail_off
+### Globally
 
-And on again like this:
-
-    >> Widget.paper_trail_on
-
-You can also disable PaperTrail for all models:
+On a global level you can turn PaperTrail off like this:
 
     >> PaperTrail.enabled = false
 
@@ -528,6 +520,27 @@ And then use it in your tests like this:
         # your test
       end
     end
+
+### Per request
+
+You can turn PaperTrail on or off per request by adding a `paper_trail_enabled_for_controller` method to your controller which returns true or false:
+
+    class ApplicationController < ActionController::Base
+      def paper_trail_enabled_for_controller
+        request.user_agent != 'Disable User-Agent'
+      end
+    end
+
+### Per class
+
+If you are about change some widgets and you don't want a paper trail of your changes, you can turn PaperTrail off like this:
+
+    >> Widget.paper_trail_off
+
+And on again like this:
+
+    >> Widget.paper_trail_on
+
 
 
 ## Deleting Old Versions

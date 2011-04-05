@@ -8,7 +8,7 @@ class ControllerTest < ActionController::TestCase
   end
 
   teardown do
-    PaperTrail.request_disabled = false
+    PaperTrail.enabled_for_controller = true
   end
 
   test 'disable on create' do

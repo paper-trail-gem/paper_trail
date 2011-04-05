@@ -38,10 +38,8 @@ module PaperTrail
         cattr_accessor :meta
         self.meta = options[:meta] || {}
 
-        # Indicates whether or not PaperTrail is active for this class.
-        # This is independent of whether PaperTrail is globally enabled or disabled.
-        cattr_accessor :paper_trail_active
-        self.paper_trail_active = true
+        cattr_accessor :paper_trail_enabled_for_model
+        self.paper_trail_enabled_for_model = true
 
         has_many :versions, :class_name => version_class_name, :as => :item, :order => 'created_at ASC, id ASC'
 
@@ -52,12 +50,12 @@ module PaperTrail
 
       # Switches PaperTrail off for this class.
       def paper_trail_off
-        self.paper_trail_active = false
+        self.paper_trail_enabled_for_model = false
       end
 
       # Switches PaperTrail on for this class.
       def paper_trail_on
-        self.paper_trail_active = true
+        self.paper_trail_enabled_for_model = true
       end
     end
 
@@ -167,10 +165,8 @@ module PaperTrail
         changed - self.class.ignore
       end
 
-      # Returns `true` if controller method paper_trail_enabled_if doesn't return false, 
-      # PaperTrail is globally enabled and active for this class, `false` otherwise.
       def switched_on?
-        !PaperTrail.request_disabled? && PaperTrail.enabled? && self.class.paper_trail_active
+        PaperTrail.enabled? && PaperTrail.enabled_for_controller? && self.class.paper_trail_enabled_for_model
       end
     end
 
