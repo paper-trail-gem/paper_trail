@@ -39,13 +39,20 @@ module PaperTrail
       {}
     end
 
+    # Returns `true` (default) or `false` depending on whether PaperTrail should
+    # be active for the current request.
+    #
+    # Override this method in your controller to specify when PaperTrail should
+    # be off.
+    def paper_trail_enabled_for_controller
+      true
+    end
+
     private
 
-    # Tells PaperTrail if version should be saved.
+    # Tells PaperTrail whether versions should be saved in the current request.
     def set_paper_trail_enabled_for_controller
-      if respond_to? :paper_trail_enabled_for_controller
-        ::PaperTrail.enabled_for_controller = paper_trail_enabled_for_controller
-      end
+      ::PaperTrail.enabled_for_controller = paper_trail_enabled_for_controller
     end
 
     # Tells PaperTrail who is responsible for any changes that occur.
