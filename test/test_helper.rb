@@ -29,6 +29,12 @@ ActiveRecord::Migrator.migrate File.expand_path("../dummy/db/migrate/", __FILE__
 # Load support files
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
+# global setup block resetting Thread.current
+class ActiveSupport::TestCase
+  teardown do
+    Thread.current[:paper_trail] = nil
+  end
+end
 
 #
 # Helpers

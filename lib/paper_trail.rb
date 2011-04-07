@@ -63,8 +63,11 @@ module PaperTrail
   private
 
   # Thread-safe hash to hold PaperTrail's data.
+  # Initializing with needed default values.
   def self.paper_trail_store
-    Thread.current[:paper_trail] ||= {}
+    Thread.current[:paper_trail] ||= {
+      :request_enabled_for_controller => true
+    }
   end
 
   # Returns PaperTrail's configuration object.
