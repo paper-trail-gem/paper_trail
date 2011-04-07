@@ -602,6 +602,7 @@ Many thanks to:
 * [benzittlau](https://github.com/benzittlau)
 * [Tom Derks](https://github.com/EgoH)
 * [Jonas Hoglund](https://github.com/jhoglund)
+* [Stefan Huber](https://github.com/MSNexploder)
 
 
 ## Inspirations
