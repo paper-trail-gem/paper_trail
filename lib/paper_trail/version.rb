@@ -130,21 +130,23 @@ class Version < ActiveRecord::Base
   # We lookup the first child version after version_at timestamp or in same transaction.
   def reify_has_ones(model,options = {})
     model.class.reflect_on_all_associations(:has_one).each do |assoc|
-      version_association=VersionAssociation.includes(:version).
+      version=Version.joins(:version_associations).
         where(["item_type = ?",assoc.class_name]).
         where(["foreign_key_name = ?",assoc.primary_key_name]).
         where(["foreign_key_id = ?", model.id]).
         where(['created_at >= ? OR transaction_id = ?', options[:version_at], transaction_id]).
         order('versions.id ASC').
         limit(1).first
-      if(version_association)
+      if(version)
         if(version.event=='create')
-          child=version_association.item
-          child.mark_for_destruction
+          if(child=version.item)
+            child.mark_for_destruction
+            model.send(assoc.name.to_s+"=",child)
+          end
         else
-          child=version_association.version.reify(options)
+          child=version.reify(options)
+          model.send(assoc.name.to_s+"=",child)
         end
-        model.send(assoc.name.to_s+"=",child)
       end
     end
   end
@@ -165,12 +167,14 @@ class Version < ActiveRecord::Base
       
       versions.each do |version|
         if(version.event=='create')
-          child=version.item
-          child.mark_for_destruction
+          if(child=version.item)
+            child.mark_for_destruction
+            model.send(assoc.name) << child
+          end
         else
           child=version.reify(options)
+          model.send(assoc.name) << child
         end
-        model.send(assoc.name) << child
       end
     end
   end
