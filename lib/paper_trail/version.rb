@@ -36,7 +36,9 @@ class Version < ActiveRecord::Base
   #              set to a float to change the lookback time (check whether your db supports
   #              sub-second datetimes if you want them).
   def reify(options = {})
-    options.reverse_merge!(:version_at => created_at)
+    options.reverse_merge!(:version_at => created_at,
+      :has_one => false,
+      :has_many => false)
     unless object.nil?
       attrs = YAML::load object
 
