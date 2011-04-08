@@ -134,8 +134,8 @@ class Version < ActiveRecord::Base
         where(["item_type = ?",assoc.class_name]).
         where(["foreign_key_name = ?",assoc.primary_key_name]).
         where(["foreign_key_id = ?", model.id]).
-        where(['created_at >= ? OR transaction_id = ?', options[:version_at], transaction_id]).
-        order('versions.id ASC').
+        where(["created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id]).
+        order("#{self.class.table_name}.id ASC").
         limit(1).first
       if(version)
         if(version.event=='create')
