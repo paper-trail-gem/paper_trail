@@ -133,10 +133,15 @@ class Version < ActiveRecord::Base
         where(["foreign_key_name = ?",assoc.primary_key_name]).
         where(["foreign_key_id = ?", model.id]).
         where(['created_at >= ? OR transaction_id = ?', options[:version_at], transaction_id]).
-        order('created_at ASC, versions.id ASC').
+        order('versions.id ASC').
         limit(1).first
       if(version_association)
-        child=version_association.version.reify(options)
+        if(version.event=='create')
+          child=version_association.item
+          child.mark_for_destruction
+        else
+          child=version_association.version.reify(options)
+        end
         model.send(assoc.name.to_s+"=",child)
       end
     end
@@ -147,15 +152,22 @@ class Version < ActiveRecord::Base
   def reify_has_manys(model,options = {})
     model.class.reflect_on_all_associations(:has_many).each do |assoc|
       next if(assoc.name==:versions)
-      version_associations=VersionAssociation.includes(:version).
+      version_id_subquery=VersionAssociation.joins(:version).
+        select("MIN(version_id)").
         where(["item_type = ?",assoc.class_name]).
         where(["foreign_key_name = ?",assoc.primary_key_name]).
         where(["foreign_key_id = ?", model.id]).
-        where(['created_at >= ? OR transaction_id = ?', options[:version_at], transaction_id]).
-        group("versions.item_id").order('created_at ASC, versions.id ASC')
+        where(["created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id]).
+        group("item_id").to_sql
+      versions=Version.where("id IN (#{version_id_subquery})")
       
-      version_associations.each do |version_association|
-        child=version_association.version.reify(options)
+      versions.each do |version|
+        if(version.event=='create')
+          child=version.item
+          child.mark_for_destruction
+        else
+          child=version.reify(options)
+        end
         model.send(assoc.name) << child
       end
     end
