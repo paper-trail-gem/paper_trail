@@ -131,7 +131,6 @@ class Version < ActiveRecord::Base
   def reify_has_ones(model,options = {})
     model.class.reflect_on_all_associations(:has_one).each do |assoc|
       version=Version.joins(:version_associations).
-        select("#{self.class.table_name}.*")
         where(["item_type = ?",assoc.class_name]).
         where(["foreign_key_name = ?",assoc.primary_key_name]).
         where(["foreign_key_id = ?", model.id]).
