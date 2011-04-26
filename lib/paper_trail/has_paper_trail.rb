@@ -41,7 +41,7 @@ module PaperTrail
         cattr_accessor :paper_trail_enabled_for_model
         self.paper_trail_enabled_for_model = true
 
-        has_many :versions, :class_name => version_class_name, :as => :item, :order => 'created_at ASC, id ASC'
+        has_many :versions, :class_name => version_class_name, :as => :item, :order => "created_at ASC, #{self.primary_key} ASC"
 
         after_create  :record_create
         before_update :record_update
