@@ -7,16 +7,16 @@ class Version < ActiveRecord::Base
   end
 
   scope :subsequent, lambda { |version|
-    where(["id > ?", version.is_a?(self) ? version.id : version]).order("id ASC")
+    where(["#{self.primary_key} > ?", version.is_a?(self) ? version.id : version]).order("#{self.primary_key} ASC")
   }
 
   scope :preceding, lambda { |version|
-    where(["id < ?", version.is_a?(self) ? version.id : version]).order("id DESC")
+    where(["#{self.primary_key} < ?", version.is_a?(self) ? version.id : version]).order("#{self.primary_key} DESC")
   }
 
   scope :after, lambda { |timestamp|
     # TODO: is this :order necessary, considering its presence on the has_many :versions association?
-    where(['created_at > ?', timestamp]).order('created_at ASC, id ASC')
+    where(['created_at > ?', timestamp]).order("created_at ASC, #{self.primary_key} ASC")
   }
 
   # Restore the item from this version.
