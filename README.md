@@ -604,6 +604,7 @@ Many thanks to:
 * [Jonas Hoglund](https://github.com/jhoglund)
 * [Stefan Huber](https://github.com/MSNexploder)
 * [thinkcast](https://github.com/thinkcast)
+* [Dominik Sander](https://github.com/dsander)
 
 
 ## Inspirations
