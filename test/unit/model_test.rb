@@ -14,7 +14,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       setup { @article.update_attributes :title => 'My first title', :content => 'Some text here.' }
       should_change('the number of versions', :by => 1) { Version.count }
     end
-    
+
     context 'which updates a selected column' do
       setup { @article.update_attributes :content => 'Some text here.' }
       should_change('the number of versions', :by => 1) { Version.count }
@@ -24,7 +24,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       setup { @article.update_attributes :abstract => 'Other abstract'}
       should_not_change('the number of versions') { Version.count }
     end
-    
+
   end
 
 
@@ -212,11 +212,11 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
 
     should 'handle datetimes' do
-      assert_equal @date_time.to_time.utc, @previous.a_datetime.to_time.utc
+      assert_equal @date_time.to_time.utc.to_i, @previous.a_datetime.to_time.utc.to_i
     end
 
     should 'handle times' do
-      assert_equal @time, @previous.a_time
+      assert_equal @time.utc.to_i, @previous.a_time.utc.to_i
     end
 
     should 'handle dates' do
@@ -241,14 +241,14 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       end
 
       should 'restore all forward-compatible attributes' do
-        assert_equal    'Warble',               @last.reify.name
-        assert_equal    'The quick brown fox',  @last.reify.a_text
-        assert_equal    42,                     @last.reify.an_integer
-        assert_in_delta 153.01,                 @last.reify.a_float,   0.001
-        assert_in_delta 2.71828,                @last.reify.a_decimal, 0.00001
-        assert_equal    @date_time.to_time.utc, @last.reify.a_datetime.to_time.utc
-        assert_equal    @time,                  @last.reify.a_time
-        assert_equal    @date,                  @last.reify.a_date
+        assert_equal    'Warble',                    @last.reify.name
+        assert_equal    'The quick brown fox',       @last.reify.a_text
+        assert_equal    42,                          @last.reify.an_integer
+        assert_in_delta 153.01,                      @last.reify.a_float,   0.001
+        assert_in_delta 2.71828,                     @last.reify.a_decimal, 0.00001
+        assert_equal    @date_time.to_time.utc.to_i, @last.reify.a_datetime.to_time.utc.to_i
+        assert_equal    @time.utc.to_i,              @last.reify.a_time.utc.to_i
+        assert_equal    @date,                       @last.reify.a_date
         assert          @last.reify.a_boolean
       end
     end
@@ -707,6 +707,38 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           end
         end
       end
+    end
+  end
+
+  context 'A new model instance which uses a custom Version class' do
+    setup { @post = Post.new }
+
+    context 'which is then saved' do
+      setup { @post.save }
+      should_change('the number of post versions') { PostVersion.count }
+      should_not_change('the number of versions') { Version.count }
+    end
+  end
+
+  context 'An existing model instance which uses a custom Version class' do
+    setup { @post = Post.create }
+
+    context 'on the first version' do
+      setup { @version = @post.versions.first }
+
+      should 'have the correct index' do
+        assert_equal 0, @version.index
+      end
+    end
+
+    should 'should have versions of the custom class' do
+      assert_equal "PostVersion", @post.versions.first.class.name
+    end
+
+    context 'which is modified' do
+      setup { @post.update_attributes({ :content => "Some new content" }) }
+      should_change('the number of post versions') { PostVersion.count }
+      should_not_change('the number of versions') { Version.count }
     end
   end
 

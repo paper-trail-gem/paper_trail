@@ -4,21 +4,21 @@ class Version < ActiveRecord::Base
   
   validates_presence_of :event
 
-  scope :with_item_keys, lambda { |item_type, item_id|
-    where(:item_type => item_type, :item_id => item_id)
-  }
+  def self.with_item_keys(item_type, item_id)
+    scoped(:conditions => { :item_type => item_type, :item_id => item_id })
+  end
 
   scope :subsequent, lambda { |version|
-    where(["id > ?", version.is_a?(Version) ? version.id : version]).order("id ASC")
+    where(["#{self.primary_key} > ?", version.is_a?(self) ? version.id : version]).order("#{self.primary_key} ASC")
   }
 
   scope :preceding, lambda { |version|
-    where(["id < ?", version.is_a?(Version) ? version.id : version]).order("id DESC")
+    where(["#{self.primary_key} < ?", version.is_a?(self) ? version.id : version]).order("#{self.primary_key} DESC")
   }
 
   scope :after, lambda { |timestamp|
     # TODO: is this :order necessary, considering its presence on the has_many :versions association?
-    where(['created_at > ?', timestamp]).order('created_at ASC, id ASC')
+    where(['created_at > ?', timestamp]).order("created_at ASC, #{self.primary_key} ASC")
   }
 
   scope :transact, lambda { |id|
@@ -58,8 +58,8 @@ class Version < ActiveRecord::Base
       if item
         model = item
       else
-				sti=item_type.constantize.inheritance_column
-        class_name = attrs[sti].blank? ? item_type : attrs[sti]
+        inheritance_column_name = item_type.constantize.inheritance_column
+        class_name = attrs[inheritance_column_name].blank? ? item_type : attrs[inheritance_column_name]
         klass = class_name.constantize
         model = klass.new
       end
@@ -110,7 +110,7 @@ class Version < ActiveRecord::Base
   end
 
   def sibling_versions
-    Version.with_item_keys(item_type, item_id)
+    self.class.with_item_keys(item_type, item_id)
   end
 
   def next

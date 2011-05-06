@@ -34,6 +34,20 @@ class SetUpTestTables < ActiveRecord::Migration
       t.string :user_agent
     end
     add_index :versions, [:item_type, :item_id]
+    
+    create_table :post_versions, :force => true do |t|
+      t.string   :item_type, :null => false
+      t.integer  :item_id,   :null => false
+      t.string   :event,     :null => false
+      t.string   :whodunnit
+      t.text     :object
+      t.datetime :created_at
+
+      # Controller info columns.
+      t.string :ip
+      t.string :user_agent
+    end
+    add_index :post_versions, [:item_type, :item_id]
 
     create_table :wotsits, :force => true do |t|
       t.integer :widget_id
@@ -68,9 +82,21 @@ class SetUpTestTables < ActiveRecord::Migration
     create_table :songs, :force => true do |t|
       t.integer :length
     end
+
+    create_table :posts, :force => true do |t|
+      t.string :title
+      t.string :content
+    end
+
+    create_table :animals, :force => true do |t|
+      t.string :name
+      t.string :species   # single table inheritance column
+    end
   end
 
   def self.down
+    drop_table :animals
+    drop_table :posts
     drop_table :songs
     drop_table :people
     drop_table :authorships
@@ -78,6 +104,8 @@ class SetUpTestTables < ActiveRecord::Migration
     drop_table :articles
     drop_table :fluxors
     drop_table :wotsits
+    remove_index :post_versions, :column => [:item_type, :item_id]
+    drop_table :post_versions
     remove_index :versions, :column => [:item_type, :item_id]
     drop_table :versions
     drop_table :widgets

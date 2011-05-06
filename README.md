@@ -18,9 +18,11 @@ There's an excellent [Railscast on implementing Undo with Paper Trail](http://ra
 * Allows you to store arbitrary model-level metadata with each version (useful for filtering versions).
 * Allows you to store arbitrary controller-level information with each version, e.g. remote IP.
 * Can be turned off/on per class (useful for migrations).
+* Can be turned off/on per request (useful for testing with an external service).
 * Can be turned off/on globally (useful for testing).
 * No configuration necessary.
-* Stores everything in a single database table (generates migration for you).
+* Stores everything in a single database table by default (generates migration for you), or can use separate tables for separate models.
+* Supports custom version classes so different models' versions can have different behaviour.
 * Thoroughly tested.
 * Threadsafe.
 
@@ -308,6 +310,24 @@ To find out who made a `version`'s object look that way, use `version.originator
     >> last_version.terminator                     # 'Bob'
 
 
+## Custom Version Classes
+
+You can specify custom version subclasses with the `:class_name` option:
+
+    class Post < ActiveRecord::Base
+      has_paper_trail :class_name => 'PostVersion'
+    end
+
+    class PostVersion < Version
+      # custom behaviour, e.g:
+      set_table_name :post_versions
+    end
+
+This allows you to store each model's versions in a separate table, which is useful if you have a lot of versions being created.
+
+Alternatively you could store certain metadata for one type of version, and other metadata for other versions.
+
+
 ## Associations
 
 I haven't yet found a good way to get PaperTrail to automatically restore associations when you reify a model.  See [here for a little more info](http://airbladesoftware.com/notes/undo-and-redo-with-papertrail).
@@ -459,15 +479,11 @@ For diffing two ActiveRecord objects:
 
 Sometimes you don't want to store changes.  Perhaps you are only interested in changes made by your users and don't need to store changes you make yourself in, say, a migration -- or when testing your application.
 
-If you are about change some widgets and you don't want a paper trail of your changes, you can turn PaperTrail off like this:
+You can turn PaperTrail on or off in three ways: globally, per request, or per class.
 
-    >> Widget.paper_trail_off
+### Globally
 
-And on again like this:
-
-    >> Widget.paper_trail_on
-
-You can also disable PaperTrail for all models:
+On a global level you can turn PaperTrail off like this:
 
     >> PaperTrail.enabled = false
 
@@ -498,6 +514,27 @@ And then use it in your tests like this:
         # your test
       end
     end
+
+### Per request
+
+You can turn PaperTrail on or off per request by adding a `paper_trail_enabled_for_controller` method to your controller which returns true or false:
+
+    class ApplicationController < ActionController::Base
+      def paper_trail_enabled_for_controller
+        request.user_agent != 'Disable User-Agent'
+      end
+    end
+
+### Per class
+
+If you are about change some widgets and you don't want a paper trail of your changes, you can turn PaperTrail off like this:
+
+    >> Widget.paper_trail_off
+
+And on again like this:
+
+    >> Widget.paper_trail_on
+
 
 
 ## Deleting Old Versions
@@ -562,6 +599,12 @@ Many thanks to:
 * [Franco Catena](https://github.com/francocatena)
 * [Emmanuel Gomez](https://github.com/emmanuel)
 * [Matthew MacLeod](https://github.com/mattmacleod)
+* [benzittlau](https://github.com/benzittlau)
+* [Tom Derks](https://github.com/EgoH)
+* [Jonas Hoglund](https://github.com/jhoglund)
+* [Stefan Huber](https://github.com/MSNexploder)
+* [thinkcast](https://github.com/thinkcast)
+* [Dominik Sander](https://github.com/dsander)
 
 
 ## Inspirations

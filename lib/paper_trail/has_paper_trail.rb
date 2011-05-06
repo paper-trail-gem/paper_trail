@@ -11,12 +11,13 @@ module PaperTrail
       # the model is available in the `versions` association.
       #
       # Options:
-      # :ignore    an array of attributes for which a new `Version` will not be created if only they change.
-      # :only      inverse of `ignore` - a new `Version` will be created only for these attributes if supplied
-      # :meta      a hash of extra data to store.  You must add a column to the `versions` table for each key.
-      #            Values are objects or procs (which are called with `self`, i.e. the model with the paper
-      #            trail).  See `PaperTrail::Controller.info_for_paper_trail` for how to store data from
-      #            the controller.
+      # :class_name   the name of a custom Version class.  This class should inherit from Version.
+      # :ignore       an array of attributes for which a new `Version` will not be created if only they change.
+      # :only         inverse of `ignore` - a new `Version` will be created only for these attributes if supplied
+      # :meta         a hash of extra data to store.  You must add a column to the `versions` table for each key.
+      #               Values are objects or procs (which are called with `self`, i.e. the model with the paper
+      #               trail).  See `PaperTrail::Controller.info_for_paper_trail` for how to store data from
+      #               the controller.
       def has_paper_trail(options = {})
         # Lazily include the instance methods so we don't clutter up
         # any more ActiveRecord models than we have to.
@@ -24,6 +25,9 @@ module PaperTrail
 
         # The version this instance was reified from.
         attr_accessor :version
+
+        cattr_accessor :version_class_name
+        self.version_class_name = options[:class_name] || 'Version'
 
         cattr_accessor :ignore
         self.ignore = ([options[:ignore]].flatten.compact || []).map &:to_s
@@ -34,12 +38,10 @@ module PaperTrail
         cattr_accessor :meta
         self.meta = options[:meta] || {}
 
-        # Indicates whether or not PaperTrail is active for this class.
-        # This is independent of whether PaperTrail is globally enabled or disabled.
-        cattr_accessor :paper_trail_active
-        self.paper_trail_active = true
+        cattr_accessor :paper_trail_enabled_for_model
+        self.paper_trail_enabled_for_model = true
 
-        has_many :versions, :as => :item, :order => 'created_at ASC, id ASC'
+        has_many :versions, :class_name => version_class_name, :as => :item, :order => "created_at ASC, #{self.primary_key} ASC"
 
         after_create  :record_create
         before_update :record_update
@@ -49,12 +51,12 @@ module PaperTrail
 
       # Switches PaperTrail off for this class.
       def paper_trail_off
-        self.paper_trail_active = false
+        self.paper_trail_enabled_for_model = false
       end
 
       # Switches PaperTrail on for this class.
       def paper_trail_on
-        self.paper_trail_active = true
+        self.paper_trail_enabled_for_model = true
       end
     end
 
@@ -69,7 +71,7 @@ module PaperTrail
 
       # Returns who put the object into its current state.
       def originator
-        Version.with_item_keys(self.class.name, id).last.try :whodunnit
+        version_class.with_item_keys(self.class.name, id).last.try :whodunnit
       end
 
       # Returns the object (not a Version) as it was at the given timestamp.
@@ -97,6 +99,10 @@ module PaperTrail
 
       private
 
+      def version_class
+        version_class_name.constantize
+      end
+
       def record_create
         if switched_on?
           version=versions.create merge_metadata(:event => 'create', 
@@ -120,7 +126,7 @@ module PaperTrail
 
       def record_destroy
         if switched_on? and not new_record?
-          version=Version.create merge_metadata(:item_id   => self.id,
+          version=version_class.create merge_metadata(:item_id   => self.id,
                                         :item_type => self.class.name,
                                         :event     => 'destroy',
                                         :object    => object_to_string(item_before_change),
@@ -168,7 +174,7 @@ module PaperTrail
       end
 
       def item_before_change
-        self.clone.tap do |previous|
+        self.dup.tap do |previous|
           previous.id = id
           changed_attributes.each { |attr, before| previous[attr] = before }
         end
@@ -190,10 +196,8 @@ module PaperTrail
         changed - self.class.ignore
       end
 
-      # Returns `true` if PaperTrail is globally enabled and active for this class,
-      # `false` otherwise.
       def switched_on?
-        PaperTrail.enabled? && self.class.paper_trail_active
+        PaperTrail.enabled? && PaperTrail.enabled_for_controller? && self.class.paper_trail_enabled_for_model
       end
     end
 
