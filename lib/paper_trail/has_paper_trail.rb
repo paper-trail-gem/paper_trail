@@ -143,7 +143,7 @@ module PaperTrail
       end
 
       def item_before_change
-        self.clone.tap do |previous|
+        self.dup.tap do |previous|
           previous.id = id
           changed_attributes.each { |attr, before| previous[attr] = before }
         end
