@@ -19,6 +19,16 @@ class Version < ActiveRecord::Base
     where(['created_at > ?', timestamp]).order("created_at ASC, #{self.primary_key} ASC")
   }
 
+  # In Rails 3.1+, calling reify on a previous version confuses the
+  # IdentityMap, if enabled. This prevents insertion into the map.
+  def with_identity_map_disabled(&block)
+    if defined?(ActiveRecord::IdentityMap)
+      ActiveRecord::IdentityMap.without(&block)
+    else
+      block.call
+    end 
+  end 
+      
   # Restore the item from this version.
   #
   # This will automatically restore all :has_one associations as they were "at the time",
@@ -31,49 +41,51 @@ class Version < ActiveRecord::Base
   #              set to a float to change the lookback time (check whether your db supports
   #              sub-second datetimes if you want them).
   def reify(options = {})
-    options.reverse_merge! :has_one => 3
-
-    unless object.nil?
-      attrs = YAML::load object
-
-      # Normally a polymorphic belongs_to relationship allows us
-      # to get the object we belong to by calling, in this case,
-      # +item+.  However this returns nil if +item+ has been
-      # destroyed, and we need to be able to retrieve destroyed
-      # objects.
-      #
-      # In this situation we constantize the +item_type+ to get hold of
-      # the class...except when the stored object's attributes
-      # include a +type+ key.  If this is the case, the object
-      # we belong to is using single table inheritance and the
-      # +item_type+ will be the base class, not the actual subclass.
-      # If +type+ is present but empty, the class is the base class.
-
-      if item
-        model = item
-      else
-        inheritance_column_name = item_type.constantize.inheritance_column
-        class_name = attrs[inheritance_column_name].blank? ? item_type : attrs[inheritance_column_name]
-        klass = class_name.constantize
-        model = klass.new
-      end
-
-      attrs.each do |k, v|
-        begin
-          model.send :write_attribute, k.to_sym , v
-        rescue NoMethodError
-          logger.warn "Attribute #{k} does not exist on #{item_type} (Version id: #{id})."
+    with_identity_map_disabled do 
+      options.reverse_merge! :has_one => 3
+   
+      unless object.nil?
+        attrs = YAML::load object
+   
+        # Normally a polymorphic belongs_to relationship allows us
+        # to get the object we belong to by calling, in this case,
+        # +item+.  However this returns nil if +item+ has been
+        # destroyed, and we need to be able to retrieve destroyed
+        # objects.
+        #
+        # In this situation we constantize the +item_type+ to get hold of
+        # the class...except when the stored object's attributes
+        # include a +type+ key.  If this is the case, the object
+        # we belong to is using single table inheritance and the
+        # +item_type+ will be the base class, not the actual subclass.
+        # If +type+ is present but empty, the class is the base class.
+   
+        if item
+          model = item
+        else
+          inheritance_column_name = item_type.constantize.inheritance_column
+          class_name = attrs[inheritance_column_name].blank? ? item_type : attrs[inheritance_column_name]
+          klass = class_name.constantize
+          model = klass.new
         end
+   
+        attrs.each do |k, v|
+          begin
+            model.send :write_attribute, k.to_sym , v
+          rescue NoMethodError
+            logger.warn "Attribute #{k} does not exist on #{item_type} (Version id: #{id})."
+          end
+        end
+   
+        model.version = self
+   
+        unless options[:has_one] == false
+          reify_has_ones model, options[:has_one]
+        end
+   
+        model
       end
-
-      model.version = self
-
-      unless options[:has_one] == false
-        reify_has_ones model, options[:has_one]
-      end
-
-      model
-    end
+    end 
   end
 
   # Returns who put the item into the state stored in this version.
