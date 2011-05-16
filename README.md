@@ -605,6 +605,7 @@ Many thanks to:
 * [Stefan Huber](https://github.com/MSNexploder)
 * [thinkcast](https://github.com/thinkcast)
 * [Dominik Sander](https://github.com/dsander)
+* [Burke Libbey](https://github.com/burke)
 
 
 ## Inspirations
