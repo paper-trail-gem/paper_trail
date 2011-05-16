@@ -96,19 +96,22 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         should 'have versions that are not live' do
           assert @widget.versions.map(&:reify).compact.all? { |w| !w.live? }
         end
-        
-        should 'not clobber the IdentityMap when reifying' do
-          module ::ActiveRecord
-            class IdentityMap
-              def self.without(&block)
-                @unclobbered = true
-                block.call
-              end 
-            end
-          end
 
-          @widget.versions.last.reify
-          assert ActiveRecord::IdentityMap.instance_variable_get("@unclobbered")
+        if defined?(ActiveRecord::IdentityMap) && ActiveRecord::IdentityMap.respond_to?(:without)
+          should 'not clobber the IdentityMap when reifying' do
+            module ActiveRecord::IdentityMap
+              class << self
+                alias :__without :without
+                def without(&block)
+                  @unclobbered = true
+                  __without(&block)
+                end
+              end
+            end
+
+            @widget.versions.last.reify
+            assert ActiveRecord::IdentityMap.instance_variable_get("@unclobbered")
+          end
         end
 
         context 'and has one associated object' do
