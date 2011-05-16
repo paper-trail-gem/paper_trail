@@ -143,9 +143,14 @@ module PaperTrail
       end
 
       def item_before_change
-        self.dup.tap do |previous|
-          previous.id = id
-          changed_attributes.each { |attr, before| previous[attr] = before }
+        previous = self.dup
+        # `dup` clears timestamps so we add them back.
+        all_timestamp_attributes.each do |column|
+          previous[column] = send(column) if respond_to?(column) && !send(column).nil?
+        end
+        previous.tap do |prev|
+          prev.id = id
+          changed_attributes.each { |attr, before| prev[attr] = before }
         end
       end
 
