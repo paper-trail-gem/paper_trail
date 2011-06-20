@@ -12,7 +12,7 @@ There's an excellent [Railscast on implementing Undo with Paper Trail](http://ra
 * Allows you to get at every version, including the original, even once destroyed.
 * Allows you to get at every version even if the schema has since changed.
 * Allows you to get at the version as of a particular time.
-* Automatically restores the `has_one` associations as they were at the time.
+* Option to automatically restore `has_one` associations as they were at the time.
 * Automatically records who was responsible via your controller.  PaperTrail calls `current_user` by default, if it exists, but you can have it call any method you like.
 * Allows you to set who is responsible at model-level (useful for migrations).
 * Allows you to store arbitrary model-level metadata with each version (useful for filtering versions).
@@ -337,7 +337,7 @@ If you can think of a good way to achieve this, please let me know.
 
 ## Has-One Associations
 
-PaperTrail automatically restores `:has_one` associations as they were at (actually, 3 seconds before) the time.
+PaperTrail can restore `:has_one` associations as they were at (actually, 3 seconds before) the time.
 
     class Treasure < ActiveRecord::Base
       has_one :location
@@ -349,21 +349,17 @@ PaperTrail automatically restores `:has_one` associations as they were at (actua
     >> treasure.update_attributes :amount => 153
     >> treasure.location.update_attributes :latitude => 54.321
     
-    >> t = treasure.versions.last.reify
+    >> t = treasure.versions.last.reify(:has_one => true)
     >> t.amount                         # 100
     >> t.location.latitude              # 12.345
 
 The implementation is complicated by the edge case where the parent and child are updated in one go, e.g. in one web request or database transaction.  PaperTrail doesn't know about different models being updated "together", so you can't ask it definitively to get the child as it was before the joint parent-and-child update.
 
-The correct solution is to make PaperTrail aware of requests or transactions (c.f. [Efficiency's transaction ID middleware](http://github.com/efficiency20/ops_middleware/blob/master/lib/e20/ops/middleware/transaction_id_middleware.rb)).  In the meantime we work around the problem by finding the child as it was a few seconds before the parent was updated.  By default we go 3 seconds before but you can change this by passing the `:has_one` option to `reify`:
+The correct solution is to make PaperTrail aware of requests or transactions (c.f. [Efficiency's transaction ID middleware](http://github.com/efficiency20/ops_middleware/blob/master/lib/e20/ops/middleware/transaction_id_middleware.rb)).  In the meantime we work around the problem by finding the child as it was a few seconds before the parent was updated.  By default we go 3 seconds before but you can change this by passing the desired number of seconds to the `:has_one` option:
 
     >> t = treasure.versions.last.reify(:has_one => 1)       # look back 1 second instead of 3
 
-If you are shuddering, take solace from knowing you can opt out of these shenanigans:
-
-    >> t = treasure.versions.last.reify(:has_one => false)   # I say no to "workarounds"!
-
-Opting out means your `:has_one` associated objects will be the live ones, not the ones the user saw at the time.  Since PaperTrail doesn't auto-restore `:has_many` associations (I can't get it to work) or `:belongs_to` (I ran out of time looking at `:has_many`), this at least makes your associations wrong consistently ;)
+If you are shuddering, take solace from knowing PaperTrail opts out of these shenanigans by default. This means your `:has_one` associated objects will be the live ones, not the ones the user saw at the time.  Since PaperTrail doesn't auto-restore `:has_many` associations (I can't get it to work) or `:belongs_to` (I ran out of time looking at `:has_many`), this at least makes your associations wrong consistently ;)
 
 
 
