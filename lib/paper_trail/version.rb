@@ -32,7 +32,8 @@ class Version < ActiveRecord::Base
   #              sub-second datetimes if you want them).
   def reify(options = {})
     without_identity_map do
-      options.reverse_merge! :has_one => 3
+      options[:has_one] = 3 if options[:has_one] == true
+      options.reverse_merge! :has_one => false
 
       unless object.nil?
         attrs = YAML::load object

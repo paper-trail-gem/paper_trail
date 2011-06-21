@@ -117,11 +117,17 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         context 'and has one associated object' do
           setup do
             @wotsit = @widget.create_wotsit :name => 'John'
-            @reified_widget = @widget.versions.last.reify
+          end
+          
+          should 'not copy the has_one association by default when reifying' do
+            reified_widget = @widget.versions.last.reify
+            assert_equal @wotsit, reified_widget.wotsit  # association hasn't been affected by reifying
+            assert_equal @wotsit, @widget.wotsit  # confirm that the association is correct
           end
 
-          should 'copy the has_one association when reifying' do
-            assert_nil @reified_widget.wotsit  # wotsit wasn't there at the last version
+          should 'copy the has_one association when reifying with :has_one => true' do
+            reified_widget = @widget.versions.last.reify(:has_one => true)
+            assert_nil reified_widget.wotsit  # wotsit wasn't there at the last version
             assert_equal @wotsit, @widget.wotsit  # wotsit came into being on the live object
           end
         end
