@@ -602,6 +602,7 @@ Many thanks to:
 * [thinkcast](https://github.com/thinkcast)
 * [Dominik Sander](https://github.com/dsander)
 * [Burke Libbey](https://github.com/burke)
+* [6twenty](https://github.com/6twenty)
 
 
 ## Inspirations
