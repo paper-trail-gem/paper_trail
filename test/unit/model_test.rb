@@ -387,17 +387,20 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
 
     should 'reify with the correct type' do
-      thing = @foo.versions.last.reify
+      thing = Version.last.reify
       assert_kind_of FooWidget, thing
+      assert_equal @foo.versions.first, Version.last.previous
+      assert_nil Version.last.next
     end
-
 
     context 'when destroyed' do
       setup { @foo.destroy }
 
       should 'reify with the correct type' do
-        thing = @foo.versions.last.reify
+        thing = Version.last.reify
         assert_kind_of FooWidget, thing
+        assert_equal @foo.versions[1], Version.last.previous
+        assert_nil Version.last.next
       end
     end
   end
