@@ -21,6 +21,7 @@ class SetUpTestTables < ActiveRecord::Migration
       t.string   :event,     :null => false
       t.string   :whodunnit
       t.text     :object
+      t.text     :object_changes
       t.datetime :created_at
 
       # Metadata columns.
@@ -34,7 +35,7 @@ class SetUpTestTables < ActiveRecord::Migration
       t.string :user_agent
     end
     add_index :versions, [:item_type, :item_id]
-    
+
     create_table :post_versions, :force => true do |t|
       t.string   :item_type, :null => false
       t.integer  :item_id,   :null => false
