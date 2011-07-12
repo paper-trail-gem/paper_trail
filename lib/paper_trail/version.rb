@@ -2,6 +2,10 @@ class Version < ActiveRecord::Base
   belongs_to :item, :polymorphic => true
   validates_presence_of :event
 
+  def changeset
+    YAML::load(object_changes) if Version.method_defined?(:object_changes)
+  end
+
   def self.with_item_keys(item_type, item_id)
     scoped(:conditions => { :item_type => item_type, :item_id => item_id })
   end

@@ -99,6 +99,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
         should 'have stored changes' do
           assert_equal ({'name' => ['Henry', 'Harry']}), YAML::load(@widget.versions.last.object_changes)
+          assert_equal ({'name' => ['Henry', 'Harry']}), @widget.versions.last.changeset
         end
 
         if defined?(ActiveRecord::IdentityMap) && ActiveRecord::IdentityMap.respond_to?(:without)
