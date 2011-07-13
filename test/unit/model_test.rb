@@ -102,6 +102,12 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           assert_equal ({'name' => ['Henry', 'Harry']}), @widget.versions.last.changeset
         end
 
+        should 'return nil after call changeset method if object_changes column doesn\'t exist' do
+          remove_object_changes_column
+          Version.reset_column_information
+          assert_nil @widget.versions.last.changeset
+        end
+
         if defined?(ActiveRecord::IdentityMap) && ActiveRecord::IdentityMap.respond_to?(:without)
           should 'not clobber the IdentityMap when reifying' do
             module ActiveRecord::IdentityMap
