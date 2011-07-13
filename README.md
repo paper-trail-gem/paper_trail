@@ -453,11 +453,20 @@ Remember to add those extra columns to your `versions` table ;)
 
 ## Diffing Versions
 
-When you're storing every version of an object, as PaperTrail lets you do, you're almost certainly going to want to diff those versions against each other.  However I haven't built a diff method into PaperTrail because I think diffing is best left to dedicated libraries, and also it's hard to come up with a diff method to suit all the use cases.
+There are two scenarios: diffing adjacent versions and diffing non-adjacent versions.
 
-You might be surprised that PaperTrail doesn't use diffs internally anyway.  When I designed PaperTrail I wanted simplicity and robustness so I decided to make each version of an object self-contained.  A version stores all of its object's data, not a diff from the previous version.
+The best way to diff adjacent versions is to get PaperTrail to do it for you.  If you add an `object_changes` text column to your `versions` table, either at installation time with the `--with-changes` option or manually, PaperTrail will store the `changes` diff in each `update` version.  You can use the `version.changeset` method to retrieve it.  For example:
 
-So instead here are some specialised diffing libraries which you can use on top of PaperTrail.
+    >> widget = Widget.create :name => 'Bob'
+    >> widget.versions.last.changeset                # nil
+    >> widget.update_attributes :name => 'Robert'
+    >> widget.versions.last.changeset                # {'name' => ['Bob', 'Robert']}
+
+Note PaperTrail only stores the changes for updates; there's no point storing them for created or destroyed objects.
+
+Please be aware that PaperTrail doesn't use diffs internally.  When I designed PaperTrail I wanted simplicity and robustness so I decided to make each version of an object self-contained.  A version stores all of its object's data, not a diff from the previous version.  This means you can delete any version without affecting any other.
+
+To diff non-adjacent versions you'll have to write your own code.  These libraries may help:
 
 For diffing two strings:
 
