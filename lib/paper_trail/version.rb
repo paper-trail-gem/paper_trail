@@ -3,7 +3,7 @@ class Version < ActiveRecord::Base
   validates_presence_of :event
 
   def changeset
-    YAML::load(object_changes) if Version.method_defined?(:object_changes)
+    YAML::load(object_changes) if Version.method_defined?(:object_changes) && object_changes
   end
 
   def self.with_item_keys(item_type, item_id)
