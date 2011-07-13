@@ -114,7 +114,11 @@ module PaperTrail
             :object    => object_to_string(item_before_change),
             :whodunnit => PaperTrail.whodunnit
           }
-          data[:object_changes] = self.changes.to_yaml if Version.method_defined? :object_changes
+          if Version.method_defined? :object_changes
+            data[:object_changes] = self.changes.reject do |key, value|
+              !notably_changed.include?(key)
+            end.to_yaml
+          end
           versions.build merge_metadata(data)
         end
       end

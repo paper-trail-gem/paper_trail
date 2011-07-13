@@ -13,6 +13,10 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     context 'which updates an ignored column and a selected column' do
       setup { @article.update_attributes :title => 'My first title', :content => 'Some text here.' }
       should_change('the number of versions', :by => 1) { Version.count }
+
+      should 'have stored only non-ignored attributes' do
+        assert_equal ({'content' => [nil, 'Some text here.']}), @article.versions.last.changeset
+      end
     end
 
     context 'which updates a selected column' do
