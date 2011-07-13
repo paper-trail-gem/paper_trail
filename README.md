@@ -613,6 +613,7 @@ Many thanks to:
 * [Burke Libbey](https://github.com/burke)
 * [6twenty](https://github.com/6twenty)
 * [nir0](https://github.com/nir0)
+* [Eduard Tsech](https://github.com/edtsech)
 
 
 ## Inspirations
