@@ -61,7 +61,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       end
 
       should 'should not have changes' do
-        assert_nil @widget.versions.last.changeset
+        assert_equal Hash.new, @widget.versions.last.changeset
       end
 
       context 'and then updated without any changes' do
