@@ -8,7 +8,7 @@ module PaperTrail
     extend ActiveRecord::Generators::Migration
 
     source_root File.expand_path('../templates', __FILE__)
-    class_option :with_changes, :type => :boolean, :default => false, :description => "Storage changeset of objects"
+    class_option :with_changes, :type => :boolean, :default => false, :desc => "Store changeset (diff) with each version"
 
     desc 'Generates (but does not run) a migration to add a versions table.'
 
