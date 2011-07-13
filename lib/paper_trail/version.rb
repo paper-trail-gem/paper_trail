@@ -2,10 +2,6 @@ class Version < ActiveRecord::Base
   belongs_to :item, :polymorphic => true
   validates_presence_of :event
 
-  def changeset
-    YAML::load(object_changes) if Version.method_defined?(:object_changes) && object_changes
-  end
-
   def self.with_item_keys(item_type, item_id)
     scoped(:conditions => { :item_type => item_type, :item_id => item_id })
   end
@@ -81,6 +77,11 @@ class Version < ActiveRecord::Base
         model
       end
     end
+  end
+
+  # Returns what changed in this version of the item.  Cf. `ActiveModel::Dirty#changes`.
+  def changeset
+    YAML::load(object_changes) if Version.method_defined?(:object_changes) && object_changes
   end
 
   # Returns who put the item into the state stored in this version.
