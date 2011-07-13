@@ -60,6 +60,9 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         assert @widget.live?
       end
 
+      should 'should not have changes' do
+        assert_nil @widget.versions.last.changeset
+      end
 
       context 'and then updated without any changes' do
         setup { @widget.save }
@@ -97,6 +100,17 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           assert @widget.versions.map(&:reify).compact.all? { |w| !w.live? }
         end
 
+        should 'have stored changes' do
+          assert_equal ({'name' => ['Henry', 'Harry']}), YAML::load(@widget.versions.last.object_changes)
+          assert_equal ({'name' => ['Henry', 'Harry']}), @widget.versions.last.changeset
+        end
+
+        should 'not have stored changes if object_changes column doesn\'t exist' do
+          remove_object_changes_column
+          Version.reset_column_information
+          assert_nil @widget.versions.last.changeset
+        end
+
         if defined?(ActiveRecord::IdentityMap) && ActiveRecord::IdentityMap.respond_to?(:without)
           should 'not clobber the IdentityMap when reifying' do
             module ActiveRecord::IdentityMap
@@ -118,7 +132,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           setup do
             @wotsit = @widget.create_wotsit :name => 'John'
           end
-          
+
           should 'not copy the has_one association by default when reifying' do
             reified_widget = @widget.versions.last.reify
             assert_equal @wotsit, reified_widget.wotsit  # association hasn't been affected by reifying
