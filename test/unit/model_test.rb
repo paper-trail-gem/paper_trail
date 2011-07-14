@@ -109,7 +109,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           assert_equal ({'name' => ['Henry', 'Harry']}), @widget.versions.last.changeset
         end
 
-        should 'not have stored changes if object_changes column doesn\'t exist' do
+        should "not have stored changes if object_changes column doesn't exist" do
           remove_object_changes_column
           Version.reset_column_information
           assert_nil @widget.versions.last.changeset
