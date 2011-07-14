@@ -80,6 +80,7 @@ class Version < ActiveRecord::Base
   end
 
   # Returns what changed in this version of the item.  Cf. `ActiveModel::Dirty#changes`.
+  # Returns nil if your `versions` table does not have an `object_changes` text column.
   def changeset
     if Version.method_defined?(:object_changes)
       if changes = object_changes
