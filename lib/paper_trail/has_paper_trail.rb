@@ -115,6 +115,7 @@ module PaperTrail
             :whodunnit => PaperTrail.whodunnit
           }
           if Version.method_defined? :object_changes
+            # The double negative (reject, !include?) preserves the hash structure of self.changes.
             data[:object_changes] = self.changes.reject do |key, value|
               !notably_changed.include?(key)
             end.to_yaml
