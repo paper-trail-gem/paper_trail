@@ -458,7 +458,7 @@ There are two scenarios: diffing adjacent versions and diffing non-adjacent vers
 The best way to diff adjacent versions is to get PaperTrail to do it for you.  If you add an `object_changes` text column to your `versions` table, either at installation time with the `--with-changes` option or manually, PaperTrail will store the `changes` diff (excluding any attributes PaperTrail is ignoring) in each `update` version.  You can use the `version.changeset` method to retrieve it.  For example:
 
     >> widget = Widget.create :name => 'Bob'
-    >> widget.versions.last.changeset                # nil
+    >> widget.versions.last.changeset                # {}
     >> widget.update_attributes :name => 'Robert'
     >> widget.versions.last.changeset                # {'name' => ['Bob', 'Robert']}
 

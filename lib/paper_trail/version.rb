@@ -81,7 +81,13 @@ class Version < ActiveRecord::Base
 
   # Returns what changed in this version of the item.  Cf. `ActiveModel::Dirty#changes`.
   def changeset
-    YAML::load(object_changes) if Version.method_defined?(:object_changes) && object_changes
+    if Version.method_defined?(:object_changes)
+      if changes = object_changes
+        YAML::load(changes)
+      else
+        {}
+      end
+    end
   end
 
   # Returns who put the item into the state stored in this version.
