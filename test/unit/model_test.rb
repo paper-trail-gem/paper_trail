@@ -196,6 +196,10 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
             @reified_widget.save
             assert_equal 1, @reified_widget.fluxors.length
           end
+
+          should 'should not have changes' do
+            assert_equal Hash.new, @widget.versions.last.changeset
+          end
         end
       end
     end
