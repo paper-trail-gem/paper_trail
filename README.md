@@ -348,7 +348,7 @@ PaperTrail can restore `:has_one` associations as they were at (actually, 3 seco
 
     >> treasure.update_attributes :amount => 153
     >> treasure.location.update_attributes :latitude => 54.321
-    
+
     >> t = treasure.versions.last.reify(:has_one => true)
     >> t.amount                         # 100
     >> t.location.latitude              # 12.345
@@ -374,13 +374,13 @@ Given these models:
       has_many :authors, :through => :authorships, :source => :person
       has_paper_trail
     end
-    
+
     class Authorship < ActiveRecord::Base
       belongs_to :book
       belongs_to :person
       has_paper_trail      # NOTE
     end
-    
+
     class Person < ActiveRecord::Base
       has_many :authorships, :dependent => :destroy
       has_many :books, :through => :authorships
@@ -403,7 +403,7 @@ But none of these will:
 Having said that, you can apparently get all these working (I haven't tested it myself) with this [monkey patch](http://stackoverflow.com/questions/2381033/how-to-create-a-full-audit-log-in-rails-for-every-table/2381411#2381411):
 
     # In config/initializers/core_extensions.rb or lib/core_extensions.rb
-    ActiveRecord::Associations::HasManyThroughAssociation.class_eval do 
+    ActiveRecord::Associations::HasManyThroughAssociation.class_eval do
       def delete_records(records)
         klass = @reflection.through_reflection.klass
         records.each do |associate|
@@ -413,7 +413,7 @@ Having said that, you can apparently get all these working (I haven't tested it 
     end
 
 The difference is the call to `destroy_all` instead of `delete_all` in [the original](http://github.com/rails/rails/blob/master/activerecord/lib/active_record/associations/has_many_through_association.rb#L76-81).
-    
+
 
 There may be a way to store authorship versions, probably using association callbacks, no matter how the collection is manipulated but I haven't found it yet.  Let me know if you do.
 
