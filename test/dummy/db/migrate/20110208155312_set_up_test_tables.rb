@@ -93,6 +93,10 @@ class SetUpTestTables < ActiveRecord::Migration
       t.string :name
       t.string :species   # single table inheritance column
     end
+
+    create_table :documents, :force => true do |t|
+      t.string :name
+    end
   end
 
   def self.down
@@ -110,5 +114,6 @@ class SetUpTestTables < ActiveRecord::Migration
     remove_index :versions, :column => [:item_type, :item_id]
     drop_table :versions
     drop_table :widgets
+    drop_table :documents
   end
 end
