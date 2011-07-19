@@ -815,6 +815,26 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
   end
 
+  context 'An model with custom association' do
+    setup do
+      @doc = Document.create
+      @doc.update_attributes :name => 'Doc 1'
+    end
+
+    should 'should not respond on versions method' do
+      assert !@doc.respond_to?(:versions)
+    end
+
+    should 'should create new version record' do
+      assert_equal 2, @doc.paper_trail_versions.length
+    end
+
+    should 'should normally respond to prevous_version' do
+      @doc.update_attributes :name => 'Doc 2'
+      assert_equal 3, @doc.paper_trail_versions.length
+      assert_equal 'Doc 1', @doc.previous_version.name
+    end
+  end
 
   private
 
