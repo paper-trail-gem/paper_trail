@@ -82,7 +82,7 @@ class Version < ActiveRecord::Base
   # Returns what changed in this version of the item.  Cf. `ActiveModel::Dirty#changes`.
   # Returns nil if your `versions` table does not have an `object_changes` text column.
   def changeset
-    if self.class.column_names.include?('object_changes')
+    if self.class.column_names.include? 'object_changes'
       if changes = object_changes
         YAML::load(changes)
       else
