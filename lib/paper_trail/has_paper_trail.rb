@@ -121,7 +121,7 @@ module PaperTrail
             :object    => object_to_string(item_before_change),
             :whodunnit => PaperTrail.whodunnit
           }
-          if Version.method_defined? :object_changes
+          if self.class.version_class_name.constantize.column_names.include?('object_changes')
             # The double negative (reject, !include?) preserves the hash structure of self.changes.
             data[:object_changes] = self.changes.reject do |key, value|
               !notably_changed.include?(key)

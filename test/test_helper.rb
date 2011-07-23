@@ -47,11 +47,3 @@ def change_schema
   end
   ActiveRecord::Migration.verbose = true
 end
-
-def remove_object_changes_column
-  ActiveRecord::Migration.verbose = false
-  ActiveRecord::Schema.define do
-    remove_column :versions, :object_changes
-  end
-  ActiveRecord::Migration.verbose = true
-end
