@@ -41,10 +41,13 @@ module PaperTrail
         cattr_accessor :paper_trail_enabled_for_model
         self.paper_trail_enabled_for_model = true
 
-        cattr_accessor :paper_trail_assoc
-        self.paper_trail_assoc = options[:association] || :versions
+        cattr_accessor :versions_association_name
+        self.versions_association_name = options[:versions] || :versions
 
-        has_many self.paper_trail_assoc, :class_name => version_class_name, :as => :item, :order => "created_at ASC, #{self.primary_key} ASC"
+        has_many self.versions_association_name,
+                 :class_name => version_class_name,
+                 :as         => :item,
+                 :order      => "created_at ASC, #{self.primary_key} ASC"
 
         after_create  :record_create
         before_update :record_update
@@ -80,13 +83,13 @@ module PaperTrail
       def version_at(timestamp, reify_options={})
         # Because a version stores how its object looked *before* the change,
         # we need to look for the first version created *after* the timestamp.
-        version = send(self.class.paper_trail_assoc).after(timestamp).first
+        version = send(self.class.versions_association_name).after(timestamp).first
         version ? version.reify(reify_options) : self
       end
 
       # Returns the object (not a Version) as it was most recently.
       def previous_version
-        preceding_version = version ? version.previous : send(self.class.paper_trail_assoc).last
+        preceding_version = version ? version.previous : send(self.class.versions_association_name).last
         preceding_version.try :reify
       end
 
@@ -106,7 +109,7 @@ module PaperTrail
 
       def record_create
         if switched_on?
-          send(self.class.paper_trail_assoc).create merge_metadata(:event => 'create', :whodunnit => PaperTrail.whodunnit)
+          send(self.class.versions_association_name).create merge_metadata(:event => 'create', :whodunnit => PaperTrail.whodunnit)
         end
       end
 
@@ -123,7 +126,7 @@ module PaperTrail
               !notably_changed.include?(key)
             end.to_yaml
           end
-          send(self.class.paper_trail_assoc).build merge_metadata(data)
+          send(self.class.versions_association_name).build merge_metadata(data)
         end
       end
 
@@ -135,7 +138,7 @@ module PaperTrail
                                               :object    => object_to_string(item_before_change),
                                               :whodunnit => PaperTrail.whodunnit)
         end
-        send(self.class.paper_trail_assoc).send :load_target
+        send(self.class.versions_association_name).send :load_target
       end
 
       def merge_metadata(data)
