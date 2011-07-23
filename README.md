@@ -23,6 +23,7 @@ There's an excellent [Railscast on implementing Undo with Paper Trail](http://ra
 * No configuration necessary.
 * Stores everything in a single database table by default (generates migration for you), or can use separate tables for separate models.
 * Supports custom version classes so different models' versions can have different behaviour.
+* Supports custom name for versions association.
 * Thoroughly tested.
 * Threadsafe.
 
@@ -326,6 +327,17 @@ You can specify custom version subclasses with the `:class_name` option:
 This allows you to store each model's versions in a separate table, which is useful if you have a lot of versions being created.
 
 Alternatively you could store certain metadata for one type of version, and other metadata for other versions.
+
+You can also specify a custom name for the versions association.  This is useful if you already have a `versions` method on your model.  For example:
+
+    class Post < ActiveRecord::Base
+      has_paper_trail :versions_association_name => :paper_trail_versions
+
+      # Existing versions method.  We don't want to clash.
+      def versions
+        ...
+      end
+    end
 
 
 ## Associations
