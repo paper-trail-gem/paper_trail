@@ -18,7 +18,7 @@ module PaperTrail
       #               Values are objects or procs (which are called with `self`, i.e. the model with the paper
       #               trail).  See `PaperTrail::Controller.info_for_paper_trail` for how to store data from
       #               the controller.
-      # :versions_association_name    the name to use for the versions association.  Default is `:versions`.
+      # :versions     the name to use for the versions association.  Default is `:versions`.
       def has_paper_trail(options = {})
         # Lazily include the instance methods so we don't clutter up
         # any more ActiveRecord models than we have to.
