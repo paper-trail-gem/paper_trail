@@ -331,7 +331,7 @@ Alternatively you could store certain metadata for one type of version, and othe
 You can also specify a custom name for the versions association.  This is useful if you already have a `versions` method on your model.  For example:
 
     class Post < ActiveRecord::Base
-      has_paper_trail :versions_association_name => :paper_trail_versions
+      has_paper_trail :versions => :paper_trail_versions
 
       # Existing versions method.  We don't want to clash.
       def versions
