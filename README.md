@@ -1,8 +1,9 @@
-# PaperTrail
+# PaperTrail [![Build Status](http://travis-ci.org/airblade/paper_trail.png)](http://travis-ci.org/airblade/paper_trail)
 
 PaperTrail lets you track changes to your models' data.  It's good for auditing or versioning.  You can see how a model looked at any stage in its lifecycle, revert it to any version, and even undelete it after it's been destroyed.
 
 There's an excellent [Railscast on implementing Undo with Paper Trail](http://railscasts.com/episodes/255-undo-with-paper-trail).
+
 
 ## Features
 
