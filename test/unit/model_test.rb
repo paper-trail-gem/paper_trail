@@ -812,7 +812,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
   end
 
-  context 'A model with a custom association' do
+  context 'A model with a custom association and "on" option' do
     setup do
       @doc = Document.create
       @doc.update_attributes :name => 'Doc 1'
@@ -830,6 +830,11 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       @doc.update_attributes :name => 'Doc 2'
       assert_equal 3, @doc.paper_trail_versions.length
       assert_equal 'Doc 1', @doc.previous_version.name
+    end
+
+    should 'not create new version after destroy' do
+      @doc.destroy
+      assert_equal 2, @doc.paper_trail_versions.length
     end
   end
 
