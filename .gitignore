@@ -1,7 +1,9 @@
-test/debug.log
-test/paper_trail_plugin.sqlite3.db
 coverage
 pkg/*
+nbproject/*
 *.gem
+*.log
+*.db
+*.sqlite3
 .bundle
 Gemfile.lock
