@@ -54,6 +54,7 @@ module PaperTrail
         before_update :record_update
         after_destroy :record_destroy
         after_commit :reset_transaction_id
+        after_rollback :reset_transaction_id
       end
 
       # Switches PaperTrail off for this class.
@@ -145,6 +146,7 @@ module PaperTrail
                                               :object    => object_to_string(item_before_change),
                                               :whodunnit => PaperTrail.whodunnit,
                                               :transaction_id => PaperTrail.transaction_id)
+
           set_transaction_id(version)
           save_associations(version)
         end
