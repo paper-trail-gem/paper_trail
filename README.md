@@ -1,8 +1,9 @@
-# PaperTrail
+# PaperTrail [![Build Status](http://travis-ci.org/airblade/paper_trail.png)](http://travis-ci.org/airblade/paper_trail)
 
 PaperTrail lets you track changes to your models' data.  It's good for auditing or versioning.  You can see how a model looked at any stage in its lifecycle, revert it to any version, and even undelete it after it's been destroyed.
 
 There's an excellent [Railscast on implementing Undo with Paper Trail](http://railscasts.com/episodes/255-undo-with-paper-trail).
+
 
 ## Features
 
@@ -12,15 +13,18 @@ There's an excellent [Railscast on implementing Undo with Paper Trail](http://ra
 * Allows you to get at every version, including the original, even once destroyed.
 * Allows you to get at every version even if the schema has since changed.
 * Allows you to get at the version as of a particular time.
-* Automatically restores the `has_one` associations as they were at the time.
+* Option to automatically restore `has_one` associations as they were at the time.
 * Automatically records who was responsible via your controller.  PaperTrail calls `current_user` by default, if it exists, but you can have it call any method you like.
 * Allows you to set who is responsible at model-level (useful for migrations).
 * Allows you to store arbitrary model-level metadata with each version (useful for filtering versions).
 * Allows you to store arbitrary controller-level information with each version, e.g. remote IP.
 * Can be turned off/on per class (useful for migrations).
+* Can be turned off/on per request (useful for testing with an external service).
 * Can be turned off/on globally (useful for testing).
 * No configuration necessary.
-* Stores everything in a single database table (generates migration for you).
+* Stores everything in a single database table by default (generates migration for you), or can use separate tables for separate models.
+* Supports custom version classes so different models' versions can have different behaviour.
+* Supports custom name for versions association.
 * Thoroughly tested.
 * Threadsafe.
 
@@ -308,6 +312,35 @@ To find out who made a `version`'s object look that way, use `version.originator
     >> last_version.terminator                     # 'Bob'
 
 
+## Custom Version Classes
+
+You can specify custom version subclasses with the `:class_name` option:
+
+    class Post < ActiveRecord::Base
+      has_paper_trail :class_name => 'PostVersion'
+    end
+
+    class PostVersion < Version
+      # custom behaviour, e.g:
+      set_table_name :post_versions
+    end
+
+This allows you to store each model's versions in a separate table, which is useful if you have a lot of versions being created.
+
+Alternatively you could store certain metadata for one type of version, and other metadata for other versions.
+
+You can also specify a custom name for the versions association.  This is useful if you already have a `versions` method on your model.  For example:
+
+    class Post < ActiveRecord::Base
+      has_paper_trail :versions => :paper_trail_versions
+
+      # Existing versions method.  We don't want to clash.
+      def versions
+        ...
+      end
+    end
+
+
 ## Associations
 
 I haven't yet found a good way to get PaperTrail to automatically restore associations when you reify a model.  See [here for a little more info](http://airbladesoftware.com/notes/undo-and-redo-with-papertrail).
@@ -317,7 +350,7 @@ If you can think of a good way to achieve this, please let me know.
 
 ## Has-One Associations
 
-PaperTrail automatically restores `:has_one` associations as they were at (actually, 3 seconds before) the time.
+PaperTrail can restore `:has_one` associations as they were at (actually, 3 seconds before) the time.
 
     class Treasure < ActiveRecord::Base
       has_one :location
@@ -328,22 +361,18 @@ PaperTrail automatically restores `:has_one` associations as they were at (actua
 
     >> treasure.update_attributes :amount => 153
     >> treasure.location.update_attributes :latitude => 54.321
-    
-    >> t = treasure.versions.last.reify
+
+    >> t = treasure.versions.last.reify(:has_one => true)
     >> t.amount                         # 100
     >> t.location.latitude              # 12.345
 
 The implementation is complicated by the edge case where the parent and child are updated in one go, e.g. in one web request or database transaction.  PaperTrail doesn't know about different models being updated "together", so you can't ask it definitively to get the child as it was before the joint parent-and-child update.
 
-The correct solution is to make PaperTrail aware of requests or transactions (c.f. [Efficiency's transaction ID middleware](http://github.com/efficiency20/ops_middleware/blob/master/lib/e20/ops/middleware/transaction_id_middleware.rb)).  In the meantime we work around the problem by finding the child as it was a few seconds before the parent was updated.  By default we go 3 seconds before but you can change this by passing the `:has_one` option to `reify`:
+The correct solution is to make PaperTrail aware of requests or transactions (c.f. [Efficiency's transaction ID middleware](http://github.com/efficiency20/ops_middleware/blob/master/lib/e20/ops/middleware/transaction_id_middleware.rb)).  In the meantime we work around the problem by finding the child as it was a few seconds before the parent was updated.  By default we go 3 seconds before but you can change this by passing the desired number of seconds to the `:has_one` option:
 
     >> t = treasure.versions.last.reify(:has_one => 1)       # look back 1 second instead of 3
 
-If you are shuddering, take solace from knowing you can opt out of these shenanigans:
-
-    >> t = treasure.versions.last.reify(:has_one => false)   # I say no to "workarounds"!
-
-Opting out means your `:has_one` associated objects will be the live ones, not the ones the user saw at the time.  Since PaperTrail doesn't auto-restore `:has_many` associations (I can't get it to work) or `:belongs_to` (I ran out of time looking at `:has_many`), this at least makes your associations wrong consistently ;)
+If you are shuddering, take solace from knowing PaperTrail opts out of these shenanigans by default. This means your `:has_one` associated objects will be the live ones, not the ones the user saw at the time.  Since PaperTrail doesn't auto-restore `:has_many` associations (I can't get it to work) or `:belongs_to` (I ran out of time looking at `:has_many`), this at least makes your associations wrong consistently ;)
 
 
 
@@ -358,13 +387,13 @@ Given these models:
       has_many :authors, :through => :authorships, :source => :person
       has_paper_trail
     end
-    
+
     class Authorship < ActiveRecord::Base
       belongs_to :book
       belongs_to :person
       has_paper_trail      # NOTE
     end
-    
+
     class Person < ActiveRecord::Base
       has_many :authorships, :dependent => :destroy
       has_many :books, :through => :authorships
@@ -387,7 +416,7 @@ But none of these will:
 Having said that, you can apparently get all these working (I haven't tested it myself) with this [monkey patch](http://stackoverflow.com/questions/2381033/how-to-create-a-full-audit-log-in-rails-for-every-table/2381411#2381411):
 
     # In config/initializers/core_extensions.rb or lib/core_extensions.rb
-    ActiveRecord::Associations::HasManyThroughAssociation.class_eval do 
+    ActiveRecord::Associations::HasManyThroughAssociation.class_eval do
       def delete_records(records)
         klass = @reflection.through_reflection.klass
         records.each do |associate|
@@ -397,7 +426,7 @@ Having said that, you can apparently get all these working (I haven't tested it 
     end
 
 The difference is the call to `destroy_all` instead of `delete_all` in [the original](http://github.com/rails/rails/blob/master/activerecord/lib/active_record/associations/has_many_through_association.rb#L76-81).
-    
+
 
 There may be a way to store authorship versions, probably using association callbacks, no matter how the collection is manipulated but I haven't found it yet.  Let me know if you do.
 
@@ -437,11 +466,20 @@ Remember to add those extra columns to your `versions` table ;)
 
 ## Diffing Versions
 
-When you're storing every version of an object, as PaperTrail lets you do, you're almost certainly going to want to diff those versions against each other.  However I haven't built a diff method into PaperTrail because I think diffing is best left to dedicated libraries, and also it's hard to come up with a diff method to suit all the use cases.
+There are two scenarios: diffing adjacent versions and diffing non-adjacent versions.
 
-You might be surprised that PaperTrail doesn't use diffs internally anyway.  When I designed PaperTrail I wanted simplicity and robustness so I decided to make each version of an object self-contained.  A version stores all of its object's data, not a diff from the previous version.
+The best way to diff adjacent versions is to get PaperTrail to do it for you.  If you add an `object_changes` text column to your `versions` table, either at installation time with the `--with-changes` option or manually, PaperTrail will store the `changes` diff (excluding any attributes PaperTrail is ignoring) in each `update` version.  You can use the `version.changeset` method to retrieve it.  For example:
 
-So instead here are some specialised diffing libraries which you can use on top of PaperTrail.
+    >> widget = Widget.create :name => 'Bob'
+    >> widget.versions.last.changeset                # {}
+    >> widget.update_attributes :name => 'Robert'
+    >> widget.versions.last.changeset                # {'name' => ['Bob', 'Robert']}
+
+Note PaperTrail only stores the changes for updates; there's no point storing them for created or destroyed objects.
+
+Please be aware that PaperTrail doesn't use diffs internally.  When I designed PaperTrail I wanted simplicity and robustness so I decided to make each version of an object self-contained.  A version stores all of its object's data, not a diff from the previous version.  This means you can delete any version without affecting any other.
+
+To diff non-adjacent versions you'll have to write your own code.  These libraries may help:
 
 For diffing two strings:
 
@@ -459,15 +497,11 @@ For diffing two ActiveRecord objects:
 
 Sometimes you don't want to store changes.  Perhaps you are only interested in changes made by your users and don't need to store changes you make yourself in, say, a migration -- or when testing your application.
 
-If you are about change some widgets and you don't want a paper trail of your changes, you can turn PaperTrail off like this:
+You can turn PaperTrail on or off in three ways: globally, per request, or per class.
 
-    >> Widget.paper_trail_off
+### Globally
 
-And on again like this:
-
-    >> Widget.paper_trail_on
-
-You can also disable PaperTrail for all models:
+On a global level you can turn PaperTrail off like this:
 
     >> PaperTrail.enabled = false
 
@@ -498,6 +532,27 @@ And then use it in your tests like this:
         # your test
       end
     end
+
+### Per request
+
+You can turn PaperTrail on or off per request by adding a `paper_trail_enabled_for_controller` method to your controller which returns true or false:
+
+    class ApplicationController < ActionController::Base
+      def paper_trail_enabled_for_controller
+        request.user_agent != 'Disable User-Agent'
+      end
+    end
+
+### Per class
+
+If you are about change some widgets and you don't want a paper trail of your changes, you can turn PaperTrail off like this:
+
+    >> Widget.paper_trail_off
+
+And on again like this:
+
+    >> Widget.paper_trail_on
+
 
 
 ## Deleting Old Versions
@@ -562,6 +617,16 @@ Many thanks to:
 * [Franco Catena](https://github.com/francocatena)
 * [Emmanuel Gomez](https://github.com/emmanuel)
 * [Matthew MacLeod](https://github.com/mattmacleod)
+* [benzittlau](https://github.com/benzittlau)
+* [Tom Derks](https://github.com/EgoH)
+* [Jonas Hoglund](https://github.com/jhoglund)
+* [Stefan Huber](https://github.com/MSNexploder)
+* [thinkcast](https://github.com/thinkcast)
+* [Dominik Sander](https://github.com/dsander)
+* [Burke Libbey](https://github.com/burke)
+* [6twenty](https://github.com/6twenty)
+* [nir0](https://github.com/nir0)
+* [Eduard Tsech](https://github.com/edtsech)
 
 
 ## Inspirations

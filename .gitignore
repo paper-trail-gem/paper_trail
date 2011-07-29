@@ -1,3 +1,7 @@
+test/debug.log
+test/paper_trail_plugin.sqlite3.db
+test/dummy/log/*
+test/dummy/tmp/*
 coverage
 pkg/*
 nbproject/*
@@ -7,3 +11,4 @@ nbproject/*
 *.sqlite3
 .bundle
 Gemfile.lock
+vendor/*

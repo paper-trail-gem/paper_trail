@@ -4,21 +4,21 @@ class Version < ActiveRecord::Base
   
   validates_presence_of :event
 
-  scope :with_item_keys, lambda { |item_type, item_id|
-    where(:item_type => item_type, :item_id => item_id)
-  }
+  def self.with_item_keys(item_type, item_id)
+    scoped(:conditions => { :item_type => item_type, :item_id => item_id })
+  end
 
   scope :subsequent, lambda { |version|
-    where(["id > ?", version.is_a?(Version) ? version.id : version]).order("id ASC")
+    where(["#{self.primary_key} > ?", version.is_a?(self) ? version.id : version]).order("#{self.primary_key} ASC")
   }
 
   scope :preceding, lambda { |version|
-    where(["id < ?", version.is_a?(Version) ? version.id : version]).order("id DESC")
+    where(["#{self.primary_key} < ?", version.is_a?(self) ? version.id : version]).order("#{self.primary_key} DESC")
   }
 
   scope :after, lambda { |timestamp|
     # TODO: is this :order necessary, considering its presence on the has_many :versions association?
-    where(['created_at > ?', timestamp]).order('created_at ASC, id ASC')
+    where(['created_at > ?', timestamp]).order("created_at ASC, #{self.primary_key} ASC")
   }
 
   scope :transact, lambda { |id|
@@ -36,53 +36,66 @@ class Version < ActiveRecord::Base
   #              set to a float to change the lookback time (check whether your db supports
   #              sub-second datetimes if you want them).
   def reify(options = {})
-    options.reverse_merge!(:version_at => created_at,
+    without_identity_map do
+      options.reverse_merge!(:version_at => created_at,
       :has_one => false,
       :has_many => false)
-    unless object.nil?
-      attrs = YAML::load object
 
-      # Normally a polymorphic belongs_to relationship allows us
-      # to get the object we belong to by calling, in this case,
-      # +item+.  However this returns nil if +item+ has been
-      # destroyed, and we need to be able to retrieve destroyed
-      # objects.
-      #
-      # In this situation we constantize the +item_type+ to get hold of
-      # the class...except when the stored object's attributes
-      # include a +type+ key.  If this is the case, the object
-      # we belong to is using single table inheritance and the
-      # +item_type+ will be the base class, not the actual subclass.
-      # If +type+ is present but empty, the class is the base class.
+      unless object.nil?
+        attrs = YAML::load object
 
-      if item
-        model = item
-      else
-				sti=item_type.constantize.inheritance_column
-        class_name = attrs[sti].blank? ? item_type : attrs[sti]
-        klass = class_name.constantize
-        model = klass.new
-      end
+        # Normally a polymorphic belongs_to relationship allows us
+        # to get the object we belong to by calling, in this case,
+        # +item+.  However this returns nil if +item+ has been
+        # destroyed, and we need to be able to retrieve destroyed
+        # objects.
+        #
+        # In this situation we constantize the +item_type+ to get hold of
+        # the class...except when the stored object's attributes
+        # include a +type+ key.  If this is the case, the object
+        # we belong to is using single table inheritance and the
+        # +item_type+ will be the base class, not the actual subclass.
+        # If +type+ is present but empty, the class is the base class.
 
-      attrs.each do |k, v|
-        begin
-          model.send :write_attribute, k.to_sym , v
-        rescue NoMethodError
-          logger.warn "Attribute #{k} does not exist on #{item_type} (Version id: #{id})."
+        if item
+          model = item
+        else
+          inheritance_column_name = item_type.constantize.inheritance_column
+          class_name = attrs[inheritance_column_name].blank? ? item_type : attrs[inheritance_column_name]
+          klass = class_name.constantize
+          model = klass.new
+        end
+
+        attrs.each do |k, v|
+          begin
+            model.send :write_attribute, k.to_sym , v
+          rescue NoMethodError
+            logger.warn "Attribute #{k} does not exist on #{item_type} (Version id: #{id})."
+          end
+        end
+
+        model.version = self
+
+        unless options[:has_one] == false
+          reify_has_ones(model,options)
+        end
+
+        unless options[:has_many] == false
+          reify_has_manys(model,options)
         end
       end
+    end
+  end
 
-      model.version = self
-
-      unless options[:has_one] == false
-        reify_has_ones(model,options)
+  # Returns what changed in this version of the item.  Cf. `ActiveModel::Dirty#changes`.
+  # Returns nil if your `versions` table does not have an `object_changes` text column.
+  def changeset
+    if self.class.column_names.include? 'object_changes'
+      if changes = object_changes
+        YAML::load(changes)
+      else
+        {}
       end
-
-      unless options[:has_many] == false
-        reify_has_manys(model,options)
-      end
-
-      model
     end
   end
 
@@ -110,7 +123,7 @@ class Version < ActiveRecord::Base
   end
 
   def sibling_versions
-    Version.with_item_keys(item_type, item_id)
+    self.class.with_item_keys(item_type, item_id)
   end
 
   def next
@@ -126,9 +139,22 @@ class Version < ActiveRecord::Base
   end
 
   private
-  # Restore the `model`'s has_one associations as they were at version_at timestamp
-  # We lookup the first child version after version_at timestamp or in same transaction.
-  def reify_has_ones(model,options = {})
+  # In Rails 3.1+, calling reify on a previous version confuses the
+  # IdentityMap, if enabled. This prevents insertion into the map.
+  def without_identity_map(&block)
+    if defined?(ActiveRecord::IdentityMap) && ActiveRecord::IdentityMap.respond_to?(:without)
+      ActiveRecord::IdentityMap.without(&block)
+    else
+      block.call
+    end
+  end
+
+  # Restore the `model`'s has_one associations as they were when this version was
+  # superseded by the next (because that's what the user was looking at when they
+  # made the change).
+  #
+  # The `lookback` sets how many seconds before the model's change we go.
+  def reify_has_ones(model, lookback)
     model.class.reflect_on_all_associations(:has_one).each do |assoc|
       version=Version.joins(:version_associations).
         where(["item_type = ?",assoc.class_name]).

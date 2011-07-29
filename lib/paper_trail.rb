@@ -21,6 +21,17 @@ module PaperTrail
     !!PaperTrail.config.enabled
   end
 
+  # Returns `true` if PaperTrail is enabled for the request, `false` otherwise.
+  #
+  # See `PaperTrail::Controller#paper_trail_enabled_for_controller`.
+  def self.enabled_for_controller?
+    !!paper_trail_store[:request_enabled_for_controller]
+  end
+
+  # Sets whether PaperTrail is enabled or disabled for the current request.
+  def self.enabled_for_controller=(value)
+    paper_trail_store[:request_enabled_for_controller] = value
+  end
 
   # Returns who is reponsible for any changes that occur.
   def self.whodunnit
@@ -74,8 +85,11 @@ module PaperTrail
   private
 
   # Thread-safe hash to hold PaperTrail's data.
+  # Initializing with needed default values.
   def self.paper_trail_store
-    Thread.current[:paper_trail] ||= {}
+    Thread.current[:paper_trail] ||= {
+      :request_enabled_for_controller => true
+    }
   end
 
   # Returns PaperTrail's configuration object.

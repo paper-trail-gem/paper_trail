@@ -13,8 +13,12 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     context 'which updates an ignored column and a selected column' do
       setup { @article.update_attributes :title => 'My first title', :content => 'Some text here.' }
       should_change('the number of versions', :by => 1) { Version.count }
+
+      should 'have stored only non-ignored attributes' do
+        assert_equal ({'content' => [nil, 'Some text here.']}), @article.versions.last.changeset
+      end
     end
-    
+
     context 'which updates a selected column' do
       setup { @article.update_attributes :content => 'Some text here.' }
       should_change('the number of versions', :by => 1) { Version.count }
@@ -24,7 +28,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       setup { @article.update_attributes :abstract => 'Other abstract'}
       should_not_change('the number of versions') { Version.count }
     end
-    
+
   end
 
 
@@ -60,6 +64,9 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         assert @widget.live?
       end
 
+      should 'should not have changes' do
+        assert_equal Hash.new, @widget.versions.last.changeset
+      end
 
       context 'and then updated without any changes' do
         setup { @widget.save }
@@ -97,15 +104,42 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           assert @widget.versions.map(&:reify).compact.all? { |w| !w.live? }
         end
 
+        should 'have stored changes' do
+          assert_equal ({'name' => ['Henry', 'Harry']}), YAML::load(@widget.versions.last.object_changes)
+          assert_equal ({'name' => ['Henry', 'Harry']}), @widget.versions.last.changeset
+        end
+
+        if defined?(ActiveRecord::IdentityMap) && ActiveRecord::IdentityMap.respond_to?(:without)
+          should 'not clobber the IdentityMap when reifying' do
+            module ActiveRecord::IdentityMap
+              class << self
+                alias :__without :without
+                def without(&block)
+                  @unclobbered = true
+                  __without(&block)
+                end
+              end
+            end
+
+            @widget.versions.last.reify
+            assert ActiveRecord::IdentityMap.instance_variable_get("@unclobbered")
+          end
+        end
 
         context 'and has one associated object' do
           setup do
             @wotsit = @widget.create_wotsit :name => 'John'
-            @reified_widget = @widget.versions.last.reify
           end
 
-          should 'copy the has_one association when reifying' do
-            assert_nil @reified_widget.wotsit  # wotsit wasn't there at the last version
+          should 'not copy the has_one association by default when reifying' do
+            reified_widget = @widget.versions.last.reify
+            assert_equal @wotsit, reified_widget.wotsit  # association hasn't been affected by reifying
+            assert_equal @wotsit, @widget.wotsit  # confirm that the association is correct
+          end
+
+          should 'copy the has_one association when reifying with :has_one => true' do
+            reified_widget = @widget.versions.last.reify(:has_one => true)
+            assert_nil reified_widget.wotsit  # wotsit wasn't there at the last version
             assert_equal @wotsit, @widget.wotsit  # wotsit came into being on the live object
           end
         end
@@ -155,6 +189,10 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           should 'restore its associations on its previous version' do
             @reified_widget.save
             assert_equal 1, @reified_widget.fluxors.length
+          end
+
+          should 'should not have changes' do
+            assert_equal Hash.new, @widget.versions.last.changeset
           end
         end
       end
@@ -212,11 +250,11 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
 
     should 'handle datetimes' do
-      assert_equal @date_time.to_time.utc, @previous.a_datetime.to_time.utc
+      assert_equal @date_time.to_time.utc.to_i, @previous.a_datetime.to_time.utc.to_i
     end
 
     should 'handle times' do
-      assert_equal @time, @previous.a_time
+      assert_equal @time.utc.to_i, @previous.a_time.utc.to_i
     end
 
     should 'handle dates' do
@@ -241,14 +279,14 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       end
 
       should 'restore all forward-compatible attributes' do
-        assert_equal    'Warble',               @last.reify.name
-        assert_equal    'The quick brown fox',  @last.reify.a_text
-        assert_equal    42,                     @last.reify.an_integer
-        assert_in_delta 153.01,                 @last.reify.a_float,   0.001
-        assert_in_delta 2.71828,                @last.reify.a_decimal, 0.00001
-        assert_equal    @date_time.to_time.utc, @last.reify.a_datetime.to_time.utc
-        assert_equal    @time,                  @last.reify.a_time
-        assert_equal    @date,                  @last.reify.a_date
+        assert_equal    'Warble',                    @last.reify.name
+        assert_equal    'The quick brown fox',       @last.reify.a_text
+        assert_equal    42,                          @last.reify.an_integer
+        assert_in_delta 153.01,                      @last.reify.a_float,   0.001
+        assert_in_delta 2.71828,                     @last.reify.a_decimal, 0.00001
+        assert_equal    @date_time.to_time.utc.to_i, @last.reify.a_datetime.to_time.utc.to_i
+        assert_equal    @time.utc.to_i,              @last.reify.a_time.utc.to_i
+        assert_equal    @date,                       @last.reify.a_date
         assert          @last.reify.a_boolean
       end
     end
@@ -365,17 +403,20 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
 
     should 'reify with the correct type' do
-      thing = @foo.versions.last.reify
+      thing = Version.last.reify
       assert_kind_of FooWidget, thing
+      assert_equal @foo.versions.first, Version.last.previous
+      assert_nil Version.last.next
     end
-
 
     context 'when destroyed' do
       setup { @foo.destroy }
 
       should 'reify with the correct type' do
-        thing = @foo.versions.last.reify
+        thing = Version.last.reify
         assert_kind_of FooWidget, thing
+        assert_equal @foo.versions[1], Version.last.previous
+        assert_nil Version.last.next
       end
     end
   end
@@ -710,6 +751,41 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
   end
 
+  context 'A new model instance which uses a custom Version class' do
+    setup { @post = Post.new }
+
+    context 'which is then saved' do
+      setup { @post.save }
+      should_change('the number of post versions') { PostVersion.count }
+      should_not_change('the number of versions') { Version.count }
+    end
+  end
+
+  context 'An existing model instance which uses a custom Version class' do
+    setup { @post = Post.create }
+
+    context 'on the first version' do
+      setup { @version = @post.versions.first }
+
+      should 'have the correct index' do
+        assert_equal 0, @version.index
+      end
+    end
+
+    should 'should have versions of the custom class' do
+      assert_equal "PostVersion", @post.versions.first.class.name
+    end
+
+    context 'which is modified' do
+      setup { @post.update_attributes({ :content => "Some new content" }) }
+      should_change('the number of post versions') { PostVersion.count }
+      should_not_change('the number of versions') { Version.count }
+      should "not have stored changes when object_changes column doesn't exist" do
+        assert_nil @post.versions.last.changeset
+      end
+    end
+  end
+
 
   context 'An overwritten default accessor' do
     setup do
@@ -736,6 +812,26 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
   end
 
+  context 'A model with a custom association' do
+    setup do
+      @doc = Document.create
+      @doc.update_attributes :name => 'Doc 1'
+    end
+
+    should 'not respond to versions method' do
+      assert !@doc.respond_to?(:versions)
+    end
+
+    should 'create a new version record' do
+      assert_equal 2, @doc.paper_trail_versions.length
+    end
+
+    should 'respond to previous_version as normal' do
+      @doc.update_attributes :name => 'Doc 2'
+      assert_equal 3, @doc.paper_trail_versions.length
+      assert_equal 'Doc 1', @doc.previous_version.name
+    end
+  end
 
   private
 

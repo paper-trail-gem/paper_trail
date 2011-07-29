@@ -4,6 +4,12 @@ ENV["RAILS_ENV"] = "test"
 require File.expand_path("../dummy/config/environment.rb",  __FILE__)
 require "rails/test_help"
 
+begin
+  require 'turn'
+rescue LoadError
+  # noop
+end
+
 #ActionMailer::Base.delivery_method = :test
 #ActionMailer::Base.perform_deliveries = true
 #ActionMailer::Base.default_url_options[:host] = "test.com"
@@ -23,6 +29,12 @@ ActiveRecord::Migrator.migrate File.expand_path("../dummy/db/migrate/", __FILE__
 # Load support files
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
+# global setup block resetting Thread.current
+class ActiveSupport::TestCase
+  teardown do
+    Thread.current[:paper_trail] = nil
+  end
+end
 
 #
 # Helpers
