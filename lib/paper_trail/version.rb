@@ -83,6 +83,8 @@ class Version < ActiveRecord::Base
         unless options[:has_many] == false
           reify_has_manys(model,options)
         end
+
+        model
       end
     end
   end

@@ -87,7 +87,8 @@ module PaperTrail
         # Because a version stores how its object looked *before* the change,
         # we need to look for the first version created *after* the timestamp.
         reify_options.merge(:version_at => timestamp)
-        send(self.class.versions_association_name).after(timestamp).first
+        version = send(self.class.versions_association_name).after(timestamp).first
+        version ? version.reify(reify_options) : self
       end
 
       # Returns the object (not a Version) as it was most recently.
