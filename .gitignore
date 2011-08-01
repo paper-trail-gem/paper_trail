@@ -4,7 +4,11 @@ test/dummy/log/*
 test/dummy/tmp/*
 coverage
 pkg/*
+nbproject/*
 *.gem
+*.log
+*.db
+*.sqlite3
 .bundle
 Gemfile.lock
 vendor/*
