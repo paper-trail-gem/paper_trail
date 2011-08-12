@@ -25,9 +25,12 @@ module PaperTrail
         # Lazily include the instance methods so we don't clutter up
         # any more ActiveRecord models than we have to.
         send :include, InstanceMethods
-
+        
+        cattr_accessor :version_method_name
+        self.version_method_name = options[:internal_version_attr] || 'version'
+        
         # The version this instance was reified from.
-        attr_accessor :version
+        attr_accessor self.version_method_name
 
         class_attribute :version_class_name
         self.version_class_name = options[:class_name] || 'Version'
@@ -74,7 +77,7 @@ module PaperTrail
       # Returns true if this instance is the current, live one;
       # returns false if this instance came from a previous version.
       def live?
-        version.nil?
+        send(self.class.version_method_name).nil?
       end
 
       # Returns who put the object into its current state.
@@ -86,13 +89,13 @@ module PaperTrail
       def version_at(timestamp, reify_options={})
         # Because a version stores how its object looked *before* the change,
         # we need to look for the first version created *after* the timestamp.
-        version = send(self.class.versions_association_name).after(timestamp).first
-        version ? version.reify(reify_options) : self
+        send(self.class.version_method_name+"=", send(self.class.versions_association_name).after(timestamp).first)
+        send(self.class.version_method_name) ? send(self.class.version_method_name).reify(reify_options) : self
       end
 
       # Returns the object (not a Version) as it was most recently.
       def previous_version
-        preceding_version = version ? version.previous : send(self.class.versions_association_name).last
+        preceding_version = send(self.class.version_method_name) ? send(self.class.version_method_name).previous : send(self.class.versions_association_name).last
         preceding_version.try :reify
       end
 
@@ -100,7 +103,7 @@ module PaperTrail
       def next_version
         # NOTE: if self (the item) was not reified from a version, i.e. it is the
         # "live" item, we return nil.  Perhaps we should return self instead?
-        subsequent_version = version ? version.next : nil
+        subsequent_version = send(self.class.version_method_name) ? send(self.class.version_method_name).next : nil
         subsequent_version.reify if subsequent_version
       end
 
