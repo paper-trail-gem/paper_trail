@@ -581,7 +581,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
   end
 
-
+  
   context 'A non-reified item' do
     setup { @widget = Widget.new }
 
@@ -832,7 +832,43 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       assert_equal 'Doc 1', @doc.previous_version.name
     end
   end
-
+  
+  context 'A model with column version and custom version_method' do
+    setup do
+      @legacy_widget = LegacyWidget.create(:name => "foo", :version => 2)
+    end
+    
+    should 'set version on create' do
+      assert_equal 2, @legacy_widget.version
+    end
+    
+    should 'allow version updates' do
+      @legacy_widget.update_attributes :version => 3
+      assert_equal 3, @legacy_widget.version
+    end
+    
+    should 'create a new version record' do
+      assert_equal 1, @legacy_widget.versions.size 
+    end
+  end
+  
+  context 'A reified item with a column -version- and custom version_method' do
+    setup do
+      widget = LegacyWidget.create(:name => "foo", :version => 2)
+      %w( bar baz ).each { |name| widget.update_attributes :name => name }
+      @version = widget.versions.last
+      @widget = @version.reify
+    end
+    
+    should 'know which version it came from' do
+      assert_equal @version, @widget.custom_version
+    end
+    
+    should 'return its previous self' do
+      assert_equal @widget.versions[-2].reify, @widget.previous_version
+    end
+  end
+  
   private
 
   # Updates `model`'s last version so it looks like the version was

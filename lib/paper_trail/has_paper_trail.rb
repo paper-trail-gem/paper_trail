@@ -23,9 +23,9 @@ module PaperTrail
         # Lazily include the instance methods so we don't clutter up
         # any more ActiveRecord models than we have to.
         send :include, InstanceMethods
-        
+
         cattr_accessor :version_method_name
-        self.version_method_name = options[:internal_version_attr] || 'version'
+        self.version_method_name = options[:version_method_name] || 'version'
         
         # The version this instance was reified from.
         attr_accessor self.version_method_name

@@ -68,7 +68,7 @@ class Version < ActiveRecord::Base
           end
         end
 
-        model.version = self
+        model.send(model.class.version_method_name+"=",self)
 
         unless options[:has_one] == false
           reify_has_ones model, options[:has_one]
