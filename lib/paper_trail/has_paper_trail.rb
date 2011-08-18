@@ -48,7 +48,7 @@ module PaperTrail
         has_many self.versions_association_name,
                  :class_name => version_class_name,
                  :as         => :item,
-                 :order      => "created_at ASC, #{self.primary_key} ASC"
+                 :order      => "created_at ASC, #{self.version_class_name.constantize.primary_key} ASC"
 
         after_create  :record_create
         before_update :record_update
