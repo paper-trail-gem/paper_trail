@@ -637,6 +637,7 @@ Many thanks to:
 * [6twenty](https://github.com/6twenty)
 * [nir0](https://github.com/nir0)
 * [Eduard Tsech](https://github.com/edtsech)
+* [Mathieu Arnold](https://github.com/mat813)
 
 
 ## Inspirations
