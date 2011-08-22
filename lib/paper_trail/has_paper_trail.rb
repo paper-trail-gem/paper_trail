@@ -11,6 +11,8 @@ module PaperTrail
       # the model is available in the `versions` association.
       #
       # Options:
+      # :on           the events to track (optional; defaults to all of them).  Set to an array of
+      #               `:create`, `:update`, `:destroy` as desired.
       # :class_name   the name of a custom Version class.  This class should inherit from Version.
       # :ignore       an array of attributes for which a new `Version` will not be created if only they change.
       # :only         inverse of `ignore` - a new `Version` will be created only for these attributes if supplied

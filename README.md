@@ -7,7 +7,7 @@ There's an excellent [Railscast on implementing Undo with Paper Trail](http://ra
 
 ## Features
 
-* Stores every create, update and destroy.
+* Stores every create, update and destroy (or only the lifecycle events you specify).
 * Does not store updates which don't change anything.
 * Allows you to specify attributes (by inclusion or exclusion) which must change for a Version to be stored.
 * Allows you to get at every version, including the original, even once destroyed.
@@ -167,6 +167,16 @@ Here's a helpful table showing what PaperTrail stores:
 </table>
 
 PaperTrail stores the values in the Model Before column.  Most other auditing/versioning plugins store the After column.
+
+
+## Choosing Lifecycle Events To Monitor
+
+You can choose which events to track with the `on` option.  For example, to ignore `create` events:
+
+    class Article < ActiveRecord::Base
+      has_paper_trail :on => [:update, :destroy]
+    end
+
 
 
 ## Choosing Attributes To Monitor
