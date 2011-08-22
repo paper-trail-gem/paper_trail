@@ -50,9 +50,9 @@ module PaperTrail
                  :as         => :item,
                  :order      => "created_at ASC, #{self.primary_key} ASC"
 
-        after_create  :record_create if !options[:on] || (options[:on] && options[:on].include?(:create))
-        before_update :record_update if !options[:on] || (options[:on] && options[:on].include?(:update))
-        after_destroy :record_destroy if !options[:on] || (options[:on] && options[:on].include?(:destroy))
+        after_create  :record_create  if !options[:on] || options[:on].include?(:create)
+        before_update :record_update  if !options[:on] || options[:on].include?(:update)
+        after_destroy :record_destroy if !options[:on] || options[:on].include?(:destroy)
       end
 
       # Switches PaperTrail off for this class.
