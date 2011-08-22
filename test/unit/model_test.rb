@@ -812,7 +812,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
   end
 
-  context 'A model with a custom association and "on" option' do
+  context 'A model with a custom association' do
     setup do
       @doc = Document.create
       @doc.update_attributes :name => 'Doc 1'
@@ -831,10 +831,56 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       assert_equal 3, @doc.paper_trail_versions.length
       assert_equal 'Doc 1', @doc.previous_version.name
     end
+  end
 
-    should 'not create new version after destroy' do
-      @doc.destroy
-      assert_equal 2, @doc.paper_trail_versions.length
+  context 'The `on` option' do
+    context 'on create' do
+      setup do
+        Fluxor.instance_eval <<-END
+          has_paper_trail :on => [:create]
+        END
+        @fluxor = Fluxor.create
+        @fluxor.update_attributes :name => 'blah'
+        @fluxor.destroy
+      end
+      should 'only have a version for the create event' do
+        assert_equal 1, @fluxor.versions.length
+        assert_equal 'create', @fluxor.versions.last.event
+      end
+    end
+    context 'on update' do
+      setup do
+        Fluxor.reset_callbacks :create
+        Fluxor.reset_callbacks :update
+        Fluxor.reset_callbacks :destroy
+        Fluxor.instance_eval <<-END
+          has_paper_trail :on => [:update]
+        END
+        @fluxor = Fluxor.create
+        @fluxor.update_attributes :name => 'blah'
+        @fluxor.destroy
+      end
+      should 'only have a version for the update event' do
+        assert_equal 1, @fluxor.versions.length
+        assert_equal 'update', @fluxor.versions.last.event
+      end
+    end
+    context 'on destroy' do
+      setup do
+        Fluxor.reset_callbacks :create
+        Fluxor.reset_callbacks :update
+        Fluxor.reset_callbacks :destroy
+        Fluxor.instance_eval <<-END
+          has_paper_trail :on => [:destroy]
+        END
+        @fluxor = Fluxor.create
+        @fluxor.update_attributes :name => 'blah'
+        @fluxor.destroy
+      end
+      should 'only have a version for the destroy event' do
+        assert_equal 1, @fluxor.versions.length
+        assert_equal 'destroy', @fluxor.versions.last.event
+      end
     end
   end
 
