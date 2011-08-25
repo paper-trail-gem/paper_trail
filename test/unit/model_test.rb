@@ -64,7 +64,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         assert @widget.live?
       end
 
-      should 'should not have changes' do
+      should 'not have changes' do
         assert_equal Hash.new, @widget.versions.last.changeset
       end
 
@@ -191,7 +191,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
             assert_equal 1, @reified_widget.fluxors.length
           end
 
-          should 'should not have changes' do
+          should 'not have changes' do
             assert_equal Hash.new, @widget.versions.last.changeset
           end
         end
@@ -772,7 +772,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       end
     end
 
-    should 'should have versions of the custom class' do
+    should 'have versions of the custom class' do
       assert_equal "PostVersion", @post.versions.first.class.name
     end
 
