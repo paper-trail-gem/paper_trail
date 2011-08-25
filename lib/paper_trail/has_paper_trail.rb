@@ -104,6 +104,13 @@ module PaperTrail
         subsequent_version.reify if subsequent_version
       end
 
+      def without_versioning(method=nil)
+        paper_trail_was_enabled = self.paper_trail_enabled_for_model
+        self.class.paper_trail_off
+        method ? method.to_proc.call(self) : yield
+        self.class.paper_trail_on if paper_trail_was_enabled
+      end
+
       private
 
       def version_class
