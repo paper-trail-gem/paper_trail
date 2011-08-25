@@ -201,8 +201,6 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           end
         end
       end
-
-
     end
   end
 
