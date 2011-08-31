@@ -187,7 +187,7 @@ You can ignore changes to certain attributes like this:
       has_paper_trail :ignore => [:title, :rating]
     end
 
-This means that changes to just the `title` or `rating` will not store another version of the article.  It does not mean that the `title` and `rating` attributes will be ignored if some other change causes a new `Version` to be crated.  For example:
+This means that changes to just the `title` or `rating` will not store another version of the article.  It does not mean that the `title` and `rating` attributes will be ignored if some other change causes a new `Version` to be created.  For example:
 
     >> a = Article.create
     >> a.versions.length                         # 1
