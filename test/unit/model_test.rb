@@ -111,6 +111,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
         should 'return changes with indifferent access' do
           assert_equal (['Henry', 'Harry']), @widget.versions.last.changeset[:name]
+          assert_equal (['Henry', 'Harry']), @widget.versions.last.changeset['name']
         end
 
         if defined?(ActiveRecord::IdentityMap) && ActiveRecord::IdentityMap.respond_to?(:without)
