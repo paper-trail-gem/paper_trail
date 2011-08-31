@@ -563,6 +563,17 @@ And on again like this:
 
     >> Widget.paper_trail_on
 
+### Per method call
+
+You can call a method without creating a new version using `without_versioning`.  It takes either a method name as a symbol:
+
+    @widget.without_versioning :destroy
+
+Or a block:
+
+    @widget.without_versioning do
+      @widget.update_attributes :name => 'Ford'
+    end
 
 
 ## Deleting Old Versions
