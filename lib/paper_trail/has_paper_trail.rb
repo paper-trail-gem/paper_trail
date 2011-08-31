@@ -29,22 +29,22 @@ module PaperTrail
         # The version this instance was reified from.
         attr_accessor :version
 
-        cattr_accessor :version_class_name
+        class_attribute :version_class_name
         self.version_class_name = options[:class_name] || 'Version'
 
-        cattr_accessor :ignore
+        class_attribute :ignore
         self.ignore = ([options[:ignore]].flatten.compact || []).map &:to_s
 
-        cattr_accessor :only
+        class_attribute :only
         self.only = ([options[:only]].flatten.compact || []).map &:to_s
 
-        cattr_accessor :meta
+        class_attribute :meta
         self.meta = options[:meta] || {}
 
-        cattr_accessor :paper_trail_enabled_for_model
+        class_attribute :paper_trail_enabled_for_model
         self.paper_trail_enabled_for_model = true
 
-        cattr_accessor :versions_association_name
+        class_attribute :versions_association_name
         self.versions_association_name = options[:versions] || :versions
 
         has_many self.versions_association_name,
