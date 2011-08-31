@@ -96,6 +96,48 @@ class Version < ActiveRecord::Base
     previous.try :whodunnit
   end
 
+
+ #returns the differences between the current and previous revision
+ #returns nil if there is no previous revision
+def changes
+      changes = {}
+      current = self.next.try(:reify)
+      previous = self.reify rescue nil
+      record = \
+        begin
+          self.item_type.constantize.find(version.item_id)
+        rescue ActiveRecord::RecordNotFound
+          previous || current
+        end
+
+      # Bail out if no changes are available
+      return changes unless record
+
+      case self.event
+      when "create", "update"
+        current ||= record
+      when "destroy"
+        previous ||= record
+      else
+        raise ArgumentError, "Unknown event: #{version.event}"
+      end
+
+      (current or previous).attribute_names.each do |name|
+        next if name == "updated_at"
+        next if name == "created_at"
+        current_value = current.read_attribute(name) if current
+        previous_value = previous.read_attribute(name) if previous
+        unless current_value == previous_value || self.event == "create" && current_value.blank?)
+          changes[name] = {
+            :previous => previous_value,
+            :current => current_value,
+          }
+        end
+      end
+
+      return changes
+    end
+
   # Returns who changed the item from the state it had in this version.
   # This is an alias for `whodunnit`.
   def terminator
