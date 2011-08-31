@@ -109,6 +109,10 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           assert_equal ({'name' => ['Henry', 'Harry']}), @widget.versions.last.changeset
         end
 
+        should 'return changes with indifferent access' do
+          assert_equal (['Henry', 'Harry']), @widget.versions.last.changeset[:name]
+        end
+
         if defined?(ActiveRecord::IdentityMap) && ActiveRecord::IdentityMap.respond_to?(:without)
           should 'not clobber the IdentityMap when reifying' do
             module ActiveRecord::IdentityMap

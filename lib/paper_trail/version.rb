@@ -84,7 +84,7 @@ class Version < ActiveRecord::Base
   def changeset
     if self.class.column_names.include? 'object_changes'
       if changes = object_changes
-        YAML::load(changes)
+        HashWithIndifferentAccess[YAML::load(changes)]
       else
         {}
       end
