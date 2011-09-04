@@ -780,6 +780,122 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
   end
 
+  context 'A model with a has_many association' do
+    setup { @widget = Widget.create :name => 'widget_0' }
+
+    context 'before the associated was created' do
+      setup do
+        @widget.update_attributes :name => 'widget_1'
+        @glimmer = @widget.glimmers.create :name => 'glimmer_0'
+      end
+
+      context 'when reified' do
+        setup { @widget_0 = @widget.versions.last.reify(:has_many => 1) }
+
+        should 'see the associated as it was at the time' do
+          assert_equal @widget_0.glimmers, []
+        end
+      end
+    end
+
+    context 'where the associated is created between model versions' do
+      setup do
+        @glimmer = @widget.glimmers.create :name => 'glimmer_0'
+
+        @widget.update_attributes :name => 'widget_1'
+      end
+
+      context 'when reified' do
+        setup { @widget_0 = @widget.versions.last.reify(:has_many => 1) }
+
+        should 'see the associated as it was at the time' do
+          assert_equal 'glimmer_0', @widget_0.glimmers.first.name
+        end
+      end
+
+      context 'and then the associated is updated between model versions' do
+        setup do
+          @glimmer.update_attributes :name => 'glimmer_1'
+
+          @glimmer.update_attributes :name => 'glimmer_2'
+
+          @widget.update_attributes :name => 'widget_2'
+          
+          @glimmer.update_attributes :name => 'glimmer_3'
+        end
+
+        context 'when reified' do
+          setup { @widget_1 = @widget.versions.last.reify(:has_many => 1) }
+
+          should 'see the associated as it was at the time' do
+            assert_equal 'glimmer_2', @widget_1.glimmers.first.name
+          end
+        end
+
+        context 'when reified opting out of has_many reification' do
+          setup { @widget_1 = @widget.versions.last.reify(:has_many => false) }
+
+          should 'see the associated as it is live' do
+            assert_equal 'glimmer_3', @widget_1.glimmers.first.name
+          end
+        end
+      end
+      
+      context 'and then another associated is added after model version' do
+        setup do 
+          @glimmer.update_attributes :name => 'glimmer_1'
+          
+          @widget.update_attributes :name => 'widget_2'
+          
+          @glimmer_1a = @widget.glimmers.create :name => 'glimmer_1a'
+        end
+        
+        should 'have two associated objects' do 
+          assert_equal @widget.glimmers.length, 2
+        end
+        
+        context 'when reified' do
+          setup { @widget_1 = @widget.versions.last.reify(:has_many => 1) }
+          
+          should 'should remove the second associated that was added' do
+            assert_equal @widget_1.glimmers.length, 1
+          end
+          
+          should 'only have the first associated as it was at the time' do
+            assert_equal 'glimmer_1', @widget_1.glimmers.first.name
+          end
+        end
+      end
+
+      context 'and then the associated is destroyed between model versions' do
+        setup do
+          @glimmer.destroy
+
+          @widget.update_attributes :name => 'widget_3'
+        end
+
+        context 'when reified' do
+          setup { @widget_2 = @widget.versions.last.reify(:has_many => 1) }
+
+          should 'see the associated as it was at the time' do
+            assert_nil @widget_2.glimmers.first
+          end
+        end
+      end
+
+  		context 'and then another is added' do
+  			setup do
+  				@widget.glimmers.create :name => "2nd glimmer"
+  			end
+
+  			should 'have two objects in association' do
+  				assert_equal @widget.glimmers.length, 2
+  			end
+    	end
+    end
+  end
+
+
   context 'A new model instance which uses a custom Version class' do
     setup { @post = Post.new }
 

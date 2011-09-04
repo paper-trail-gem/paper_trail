@@ -68,6 +68,11 @@ class SetUpTestTables < ActiveRecord::Migration
     create_table :fluxors, :force => true do |t|
       t.integer :widget_id
       t.string  :name
+    end 
+    
+    create_table :glimmers, :force => true do |t|
+      t.integer :widget_id
+      t.string  :name
     end
 
     create_table :articles, :force => true do |t|
