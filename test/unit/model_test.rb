@@ -1,7 +1,8 @@
 require 'test_helper'
 
 class HasPaperTrailModelTest < ActiveSupport::TestCase
-
+  self.use_transactional_fixtures = false
+  
   context 'A record' do
     setup { @article = Article.create }
 

@@ -156,7 +156,7 @@ class Version < ActiveRecord::Base
   # made the change).
   #
   # The `lookback` sets how many seconds before the model's change we go.
-  def reify_has_ones(model, lookback)
+  def reify_has_ones(model, options)
     model.class.reflect_on_all_associations(:has_one).each do |assoc|
       version=Version.joins(:version_associations).
         where(["item_type = ?",assoc.class_name]).
@@ -169,7 +169,7 @@ class Version < ActiveRecord::Base
         if(version.event=='create')
           if(child=version.item)
             child.mark_for_destruction
-            model.send(assoc.name.to_s+"=",child)
+            model.send(assoc.name.to_s+"=",nil)
           end
         else
           child=version.reify(options)
@@ -197,7 +197,7 @@ class Version < ActiveRecord::Base
         if(version.event=='create')
           if(child=version.item)
             child.mark_for_destruction
-            model.send(assoc.name) << child
+            model.send(assoc.name).delete child
           end
         else
           child=version.reify(options)
