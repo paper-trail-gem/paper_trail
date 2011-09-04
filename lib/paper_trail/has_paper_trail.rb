@@ -168,7 +168,7 @@ module PaperTrail
 
       def save_associations(version)
         self.class.name.constantize.reflect_on_all_associations(:belongs_to).each do |assoc|
-          VersionAssociation.create(:version_id => version.id, :foreign_key_name => assoc.primary_key_name, :foreign_key_id => self.send(assoc.primary_key_name))
+          VersionAssociation.create(:version_id => version.id, :foreign_key_name => assoc.foreign_key, :foreign_key_id => self.send(assoc.foreign_key))
         end
       end
 
