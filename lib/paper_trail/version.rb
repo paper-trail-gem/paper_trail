@@ -160,7 +160,7 @@ class Version < ActiveRecord::Base
     model.class.reflect_on_all_associations(:has_one).each do |assoc|
       version=Version.joins(:version_associations).
         where(["item_type = ?",assoc.class_name]).
-        where(["foreign_key_name = ?",assoc.foreign_key]).
+        where(["foreign_key_name = ?",assoc.primary_key_name]).
         where(["foreign_key_id = ?", model.id]).
         where(["created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id]).
         order("#{self.class.table_name}.id ASC").
@@ -187,7 +187,7 @@ class Version < ActiveRecord::Base
       version_id_subquery=VersionAssociation.joins(:version).
         select("MIN(version_id)").
         where(["item_type = ?",assoc.class_name]).
-        where(["foreign_key_name = ?",assoc.foreign_key]).
+        where(["foreign_key_name = ?",assoc.primary_key_name]).
         where(["foreign_key_id = ?", model.id]).
         where(["created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id]).
         group("item_id").to_sql
