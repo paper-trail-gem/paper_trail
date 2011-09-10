@@ -73,6 +73,13 @@ class SetUpTestTables < ActiveRecord::Migration
     create_table :glimmers, :force => true do |t|
       t.integer :widget_id
       t.string  :name
+      t.datetime  :created_at, :updated_at, :child_updated_at
+    end
+
+    create_table :gadgets, :force => true do |t|
+      t.integer :glimmer_id
+      t.string  :name
+      t.datetime  :created_at, :updated_at, :child_updated_at
     end
 
     create_table :articles, :force => true do |t|

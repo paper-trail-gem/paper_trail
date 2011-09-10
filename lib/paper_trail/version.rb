@@ -172,6 +172,7 @@ class Version < ActiveRecord::Base
             model.send(assoc.name.to_s+"=",nil)
           end
         else
+          logger.info "Reify #{child}"
           child=version.reify(options)
           model.send(assoc.name.to_s+"=",child)
         end
@@ -200,8 +201,10 @@ class Version < ActiveRecord::Base
             model.send(assoc.name).delete child
           end
         else
+          logger.info "Reify #{child}"
           child=version.reify(options)
-          model.send(assoc.name) << child
+          child.send(assoc.foreign_key+"=", model.id)
+          # model.send(assoc.name) << child
         end
       end
     end

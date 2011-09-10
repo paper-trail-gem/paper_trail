@@ -797,7 +797,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         end
       end
     end
-
+    
     context 'where the associated is created between model versions' do
       setup do
         @glimmer = @widget.glimmers.create :name => 'glimmer_0'
@@ -810,6 +810,21 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
         should 'see the associated as it was at the time' do
           assert_equal 'glimmer_0', @widget_0.glimmers.first.name
+        end
+      end
+
+      context 'and then a nested model is added' do
+        setup do
+          @glimmer.create_gadget :name => "gadget_0"
+          @glimmer.update_attributes :updated_at => Time.now
+        end
+        
+        context 'when reified' do
+          setup { @widget_0 = @widget.versions.last.reify(:has_many => 1, :has_one => 1) }
+          
+          should 'remove the nested model' do
+            assert_nil @widget_0.glimmers.find(@glimmer.id).gadget
+          end
         end
       end
 
@@ -854,6 +869,20 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           assert_equal @widget.glimmers.length, 2
         end
         
+        context 'and the model is updated' do
+          setup do
+            @widget.update_attributes :name => 'widget_3'
+          end
+          
+          context 'when reified' do
+            setup { @widget_1 = @widget.versions.last.reify(:has_many => 1) }
+          
+            should 'have two associated objects' do
+              assert_equal @widget_1.glimmers.length, 2
+            end
+          end
+        end
+      
         context 'when reified' do
           setup { @widget_1 = @widget.versions.last.reify(:has_many => 1) }
           
