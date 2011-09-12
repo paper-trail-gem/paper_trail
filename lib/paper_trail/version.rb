@@ -54,7 +54,9 @@ class Version < ActiveRecord::Base
         if item
           model = item
         else
-          klass = retrieve_model_class_from_item_type
+          inheritance_column_name = item_type.constantize.inheritance_column
+          class_name = attrs[inheritance_column_name].blank? ? item_type : attrs[inheritance_column_name]
+          klass = class_name.constantize
           model = klass.new
         end
 
@@ -121,7 +123,9 @@ class Version < ActiveRecord::Base
   # regardless of whether this is the live model or the next version
   def reify_to_after_change(options = {})
     if self.next.nil?
-      retrieve_model_class_from_item_type.find(item_id)
+      inheritance_column_name = item_type.constantize.inheritance_column
+      class_name = attributes.include?(inheritance_column_name) ? attributes[inheritance_column_name] : item_type
+      class_name.constantize.find(item_id)
     else
       self.next.reify(options)
     end
@@ -164,11 +168,5 @@ class Version < ActiveRecord::Base
     end
   end
 
-
-  def retrieve_model_class_from_item_type
-    inheritance_column_name = item_type.constantize.inheritance_column
-    class_name = attrs[inheritance_column_name].blank? ? item_type : attrs[inheritance_column_name]
-    klass = class_name.constantize
-  end
 
 end
