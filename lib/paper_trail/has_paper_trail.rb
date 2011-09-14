@@ -21,16 +21,18 @@ module PaperTrail
       #               trail).  See `PaperTrail::Controller.info_for_paper_trail` for how to store data from
       #               the controller.
       # :versions     the name to use for the versions association.  Default is `:versions`.
+      # :version_name the name to use for the method which returns the version the instance was reified from.
+      #               Default is `:version`.
       def has_paper_trail(options = {})
         # Lazily include the instance methods so we don't clutter up
         # any more ActiveRecord models than we have to.
         send :include, InstanceMethods
 
-        class_attribute :version_method_name
-        self.version_method_name = options[:version_method_name] || 'version'
+        class_attribute :version_name
+        self.version_name = options[:version_name] || 'version'
 
         # The version this instance was reified from.
-        attr_accessor self.version_method_name
+        attr_accessor self.version_name
 
         class_attribute :version_class_name
         self.version_class_name = options[:class_name] || 'Version'
@@ -77,7 +79,7 @@ module PaperTrail
       # Returns true if this instance is the current, live one;
       # returns false if this instance came from a previous version.
       def live?
-        send(self.class.version_method_name).nil?
+        source_version.nil?
       end
 
       # Returns who put the object into its current state.
@@ -89,13 +91,13 @@ module PaperTrail
       def version_at(timestamp, reify_options={})
         # Because a version stores how its object looked *before* the change,
         # we need to look for the first version created *after* the timestamp.
-        send(self.class.version_method_name+"=", send(self.class.versions_association_name).after(timestamp).first)
-        send(self.class.version_method_name) ? send(self.class.version_method_name).reify(reify_options) : self
+        v = send(self.class.versions_association_name).after(timestamp).first
+        v ? v.reify(reify_options) : self
       end
 
       # Returns the object (not a Version) as it was most recently.
       def previous_version
-        preceding_version = send(self.class.version_method_name) ? send(self.class.version_method_name).previous : send(self.class.versions_association_name).last
+        preceding_version = source_version ? source_version.previous : send(self.class.versions_association_name).last
         preceding_version.try :reify
       end
 
@@ -103,7 +105,7 @@ module PaperTrail
       def next_version
         # NOTE: if self (the item) was not reified from a version, i.e. it is the
         # "live" item, we return nil.  Perhaps we should return self instead?
-        subsequent_version = send(self.class.version_method_name) ? send(self.class.version_method_name).next : nil
+        subsequent_version = source_version ? source_version.next : nil
         subsequent_version.reify if subsequent_version
       end
 
@@ -120,6 +122,10 @@ module PaperTrail
 
       def version_class
         version_class_name.constantize
+      end
+
+      def source_version
+        send self.class.version_name
       end
 
       def record_create
