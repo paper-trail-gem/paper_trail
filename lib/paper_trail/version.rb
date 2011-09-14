@@ -118,6 +118,19 @@ class Version < ActiveRecord::Base
     sibling_versions.select(:id).order("id ASC").map(&:id).index(self.id)
   end
 
+  # Allows you to change (or create) a model, record the version id,
+  # and then later retrieve the model as it was after your change 
+  # regardless of whether this is the live model or the next version
+  def reify_to_after_change(options = {})
+    if self.next.nil?
+      inheritance_column_name = item_type.constantize.inheritance_column
+      class_name = attributes.include?(inheritance_column_name) ? attributes[inheritance_column_name] : item_type
+      class_name.constantize.find(item_id)
+    else
+      self.next.reify(options)
+    end
+  end
+
   private
 
   # In Rails 3.1+, calling reify on a previous version confuses the
@@ -154,5 +167,6 @@ class Version < ActiveRecord::Base
       end
     end
   end
+
 
 end
