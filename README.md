@@ -42,10 +42,11 @@ When you declare `has_paper_trail` in your model, you get these methods:
       has_paper_trail   # you can pass various options here
     end
 
-    # Returns this widget's versions.
+    # Returns this widget's versions.  You can customise the name of the association.
     widget.versions
 
     # Return the version this widget was reified from, or nil if it is live.
+    # You can customise the name of the method.
     widget.version
 
     # Returns true if this widget is the current, live one; or false if it is from a previous version.
