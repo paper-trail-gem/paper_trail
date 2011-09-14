@@ -650,6 +650,7 @@ Many thanks to:
 * [nir0](https://github.com/nir0)
 * [Eduard Tsech](https://github.com/edtsech)
 * [Mathieu Arnold](https://github.com/mat813)
+* [Nicholas Thrower](https://github.com/throwern)
 
 
 ## Inspirations
