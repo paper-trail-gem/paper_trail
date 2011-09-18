@@ -203,8 +203,7 @@ class Version < ActiveRecord::Base
         else
           logger.info "Reify #{child}"
           child=version.reify(options)
-          child.send(assoc.foreign_key+"=", model.id)
-          # model.send(assoc.name) << child
+          model.send(assoc.name).build child.attributes
         end
       end
     end
