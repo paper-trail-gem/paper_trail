@@ -837,6 +837,9 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           @widget.update_attributes :name => 'widget_2'
           
           @glimmer.update_attributes :name => 'glimmer_3'
+          
+          @glimmer_version_count = @glimmer.versions.count
+          @glimmer_version_count.freeze
         end
 
         context 'when reified' do
@@ -845,6 +848,15 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           should 'see the associated as it was at the time' do
             assert_equal 'glimmer_2', @widget_1.glimmers.first.name
           end
+          
+          should 'not see new versions created' do
+            assert_equal @glimmer_version_count, @glimmer.versions.count
+          end
+          
+          should 'see no changes to the original' do
+            assert_equal 'glimmer_3', @widget.glimmers.first.name
+          end
+            
         end
 
         context 'when reified opting out of has_many reification' do
