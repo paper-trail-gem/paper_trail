@@ -201,9 +201,10 @@ class Version < ActiveRecord::Base
             model.send(assoc.name).delete child
           end
         else
-          logger.info "Reify #{child}"
-          child=version.reify(options)
-          model.send(assoc.name).build child.attributes
+          child = version.reify(options)
+          model.appear_as_new_record do
+            model.send(assoc.name) << child
+          end
         end
       end
     end

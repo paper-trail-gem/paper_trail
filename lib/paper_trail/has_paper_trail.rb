@@ -117,6 +117,14 @@ module PaperTrail
         self.class.paper_trail_on if paper_trail_was_enabled
       end
 
+      # Utility method for reifying. Anything executed inside the block will appear like a new record
+      def appear_as_new_record
+        instance_eval { alias :old_new_record? :new_record? }
+        instance_eval { alias :new_record? :present? }
+        yield
+        instance_eval { alias :new_record? :old_new_record? }
+      end
+      
       private
 
       def version_class

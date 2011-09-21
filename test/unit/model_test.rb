@@ -868,6 +868,20 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         end
       end
       
+      context 'and the associated object is removed' do
+        setup do
+          @widget.glimmers.delete @glimmer
+        end
+        
+        context 'and the parent is reified' do
+          setup { @widget_1 = @widget.versions.last.reify(:has_many => true) }
+          
+          should 'add back the removed child' do
+            assert (@widget_1.glimmers.size > 0)
+          end
+        end
+      end
+      
       context 'and then another associated is added after model version' do
         setup do 
           @glimmer.update_attributes :name => 'glimmer_1'
