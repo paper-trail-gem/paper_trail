@@ -174,7 +174,9 @@ class Version < ActiveRecord::Base
         else
           logger.info "Reify #{child}"
           child=version.reify(options)
-          model.send(assoc.name.to_s+"=",child)
+          model.appear_as_new_record do
+            model.send(assoc.name.to_s+"=",child)
+          end
         end
       end
     end
