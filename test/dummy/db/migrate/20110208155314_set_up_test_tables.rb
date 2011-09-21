@@ -118,6 +118,12 @@ class SetUpTestTables < ActiveRecord::Migration
     create_table :documents, :force => true do |t|
       t.string :name
     end
+    
+    create_table :legacy_widgets, :force => true do |t|
+      t.string    :name
+      t.integer   :version
+    end
+  
   end
 
   def self.down
@@ -136,5 +142,6 @@ class SetUpTestTables < ActiveRecord::Migration
     drop_table :versions
     drop_table :widgets
     drop_table :documents
+    drop_table :legacy_widgets
   end
 end
