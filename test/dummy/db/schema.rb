@@ -57,6 +57,11 @@ ActiveRecord::Schema.define(:version => 20110208155314) do
     t.datetime "child_updated_at"
   end
 
+  create_table "legacy_widgets", :force => true do |t|
+    t.string  "name"
+    t.integer "version"
+  end
+
   create_table "people", :force => true do |t|
     t.string "name"
   end

@@ -196,19 +196,26 @@ class Version < ActiveRecord::Base
         group("item_id").to_sql
       versions=Version.where("id IN (#{version_id_subquery})")
       
+      # Pass true to force the model to load
+      collection = Array.new model.send(assoc.name, true)
+      
       versions.each do |version|
         if(version.event=='create')
           if(child=version.item)
-            child.mark_for_destruction
-            model.send(assoc.name).delete child
+            collection.delete child
           end
         else
           child = version.reify(options)
-          model.appear_as_new_record do
-            model.send(assoc.name) << child
+   
+          collection.map! do |c|
+            c.id == child.id ? child : c
           end
+
         end
       end
+      
+      model.send(assoc.name).target = collection
+      
     end
   end
 end

@@ -1,4 +1,5 @@
 require 'test_helper'
+ActiveSupport::Deprecation.silenced = true
 
 class HasPaperTrailModelTest < ActiveSupport::TestCase
   self.use_transactional_fixtures = false
@@ -798,6 +799,28 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       end
     end
     
+    context 'and two associated objects' do
+      setup do
+        @glimmer_a = @widget.glimmers.create :name => "glimmer_0a"
+        @glimmer_b = @widget.glimmers.create :name => "glimmer_0b"
+      end
+      
+      context 'when the parent is updated and then one child is updated' do
+        setup do
+          @widget.update_attributes :name => "widget_1"
+          @glimmer_a.update_attributes :name => "glimmer_1a"
+        end
+
+        context 'and parent is reified' do
+          setup { @widget_0 = @widget.versions.last.reify(:has_many => 1) }
+
+          should 'still have two associated objects' do
+            assert_equal 2, @widget_0.glimmers.length
+          end
+        end
+      end
+    end
+    
     context 'where the associated is created between model versions' do
       setup do
         @glimmer = @widget.glimmers.create :name => 'glimmer_0'
@@ -846,6 +869,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           setup { @widget_1 = @widget.versions.last.reify(:has_many => 1) }
 
           should 'see the associated as it was at the time' do
+            debugger
             assert_equal 'glimmer_2', @widget_1.glimmers.first.name
           end
           
