@@ -456,7 +456,17 @@ You can store arbitrary model-level metadata alongside each version like this:
       end
     end
 
-PaperTrail will call your proc with the current article and store the result in the `author_id` column of the `versions` table.  (Remember to add your metadata columns to the table.)
+PaperTrail will call your proc with the current article and store the result in the `author_id` column of the `versions` table.
+
+N.B.  You must also:
+
+* Add your metadata columns to the `versions` table.
+* Declare your metadata columns using `attr_accessible` like this:
+
+    # config/initializers/paper_trail.rb
+    class Version < ActiveRecord::Base
+      attr_accessible :author_id, :word_count, :answer
+    end
 
 Why would you do this?  In this example, `author_id` is an attribute of `Article` and PaperTrail will store it anyway in serialized (YAML) form in the `object` column of the `version` record.  But let's say you wanted to pull out all versions for a particular author; without the metadata you would have to deserialize (reify) each `version` object to see if belonged to the author in question.  Clearly this is inefficient.  Using the metadata you can find just those versions you want:
 
@@ -472,7 +482,7 @@ You can also store any information you like from your controller.  Just override
       end
     end
 
-Remember to add those extra columns to your `versions` table ;)
+Remember to add those extra columns to your `versions` table and use `attr_accessible` ;)
 
 
 ## Diffing Versions
