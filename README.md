@@ -458,10 +458,7 @@ You can store arbitrary model-level metadata alongside each version like this:
 
 PaperTrail will call your proc with the current article and store the result in the `author_id` column of the `versions` table.
 
-N.B.  You must also:
-
-* Add your metadata columns to the `versions` table.
-* Declare your metadata columns using `attr_accessible` like this:
+N.B.  You must also: add your metadata columns to the `versions` table and declare your metadata columns using `attr_accessible` like this:
 
     # config/initializers/paper_trail.rb
     class Version < ActiveRecord::Base
