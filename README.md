@@ -461,9 +461,8 @@ PaperTrail will call your proc with the current article and store the result in 
 N.B.  You must also:
 
 * Add your metadata columns to the `versions` table.
-* Declare your metadata columns using `attr_accessible` like this:
+* Declare your metadata columns using `attr_accessible` like this (in config/initializers/paper_trail.rb):
 
-    # config/initializers/paper_trail.rb
     class Version < ActiveRecord::Base
       attr_accessible :author_id, :word_count, :answer
     end
