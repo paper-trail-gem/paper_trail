@@ -28,7 +28,36 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       setup { @article.update_attributes :abstract => 'Other abstract'}
       should_not_change('the number of versions') { Version.count }
     end
+    
+    context 'which updates a skipped column' do
+      setup { @article.update_attributes :file_upload => 'Your data goes here' }
+      should_not_change('the number of versions') { Version.count }
+    end
+    
+    context 'which updates a skipped column and a selected column' do
+      setup { @article.update_attributes :file_upload => 'Your data goes here', :content => 'Some text here.' }
+      should_change('the number of versions', :by => 1) { Version.count }
 
+      should 'have stored only non-skipped attributes' do
+        assert_equal ({'content' => [nil, 'Some text here.']}), @article.versions.last.changeset
+      end
+      
+      context 'and when updated again' do
+        setup do
+          @article.update_attributes :file_upload => 'More data goes here', :content => 'More text here.'
+          @old_article = @article.versions.last
+        end
+        
+        should 'have removed the skipped attributes when saving the previous version' do
+          assert_equal nil, YAML::load(@old_article.object)['file_upload']
+        end
+        
+        should 'have kept the non-skipped attributes in the previous version' do
+          assert_equal 'Some text here.', YAML::load(@old_article.object)['content']
+        end
+      end
+    end
+    
   end
 
 

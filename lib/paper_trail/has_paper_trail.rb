@@ -40,6 +40,9 @@ module PaperTrail
         class_attribute :ignore
         self.ignore = ([options[:ignore]].flatten.compact || []).map &:to_s
 
+        class_attribute :skip
+        self.skip = ([options[:skip]].flatten.compact || []).map &:to_s
+
         class_attribute :only
         self.only = ([options[:only]].flatten.compact || []).map &:to_s
 
@@ -191,7 +194,7 @@ module PaperTrail
       end
 
       def object_to_string(object)
-        object.attributes.to_yaml
+        object.attributes.except(*self.class.skip).to_yaml
       end
 
       def changed_notably?
@@ -203,7 +206,7 @@ module PaperTrail
       end
 
       def changed_and_not_ignored
-        changed - self.class.ignore
+        changed - self.class.ignore - self.class.skip
       end
 
       def switched_on?
