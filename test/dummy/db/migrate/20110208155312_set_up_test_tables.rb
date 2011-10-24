@@ -65,6 +65,7 @@ class SetUpTestTables < ActiveRecord::Migration
       t.string :title
       t.string :content
       t.string :abstract
+      t.string :file_upload
     end
 
     create_table :books, :force => true do |t|

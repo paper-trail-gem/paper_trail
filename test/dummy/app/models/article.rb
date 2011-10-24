@@ -1,6 +1,7 @@
 class Article < ActiveRecord::Base
   has_paper_trail :ignore => :title,
                   :only => [:content],
+                  :skip => [:file_upload],
                   :meta   => {:answer => 42,
                               :action => :action_data_provider_method,
                               :question => Proc.new { "31 + 11 = #{31 + 11}" },
