@@ -672,6 +672,7 @@ Many thanks to:
 * [Mathieu Arnold](https://github.com/mat813)
 * [Nicholas Thrower](https://github.com/throwern)
 * [Benjamin Curtis](https://github.com/stympy)
+* [Peter Harkins](https://github.com/pushcx)
 
 
 ## Inspirations
