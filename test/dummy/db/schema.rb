@@ -10,7 +10,12 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110208155312) do
+ActiveRecord::Schema.define(:version => 20110208155314) do
+
+  create_table "animals", :force => true do |t|
+    t.string "name"
+    t.string "species"
+  end
 
   create_table "articles", :force => true do |t|
     t.string "title"
@@ -27,9 +32,34 @@ ActiveRecord::Schema.define(:version => 20110208155312) do
     t.string "title"
   end
 
+  create_table "documents", :force => true do |t|
+    t.string "name"
+  end
+
   create_table "fluxors", :force => true do |t|
     t.integer "widget_id"
     t.string  "name"
+  end
+
+  create_table "gadgets", :force => true do |t|
+    t.integer  "glimmer_id"
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.datetime "child_updated_at"
+  end
+
+  create_table "glimmers", :force => true do |t|
+    t.integer  "widget_id"
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.datetime "child_updated_at"
+  end
+
+  create_table "legacy_widgets", :force => true do |t|
+    t.string  "name"
+    t.integer "version"
   end
 
   create_table "people", :force => true do |t|
@@ -58,12 +88,23 @@ ActiveRecord::Schema.define(:version => 20110208155312) do
     t.integer "length"
   end
 
+  create_table "version_associations", :force => true do |t|
+    t.integer "version_id"
+    t.string  "foreign_key_name", :null => false
+    t.integer "foreign_key_id"
+  end
+
+  add_index "version_associations", ["foreign_key_name", "foreign_key_id"], :name => "index_on_foreign_key_name_and foreign_key_id"
+  add_index "version_associations", ["version_id"], :name => "index_version_associations_on_version_id"
+
   create_table "versions", :force => true do |t|
-    t.string   "item_type",  :null => false
-    t.integer  "item_id",    :null => false
-    t.string   "event",      :null => false
+    t.string   "item_type",      :null => false
+    t.integer  "item_id",        :null => false
+    t.string   "event",          :null => false
     t.string   "whodunnit"
     t.text     "object"
+    t.integer  "transaction_id"
+    t.text     "object_changes"
     t.datetime "created_at"
     t.integer  "answer"
     t.string   "action"

@@ -21,6 +21,7 @@ class SetUpTestTables < ActiveRecord::Migration
       t.string   :event,     :null => false
       t.string   :whodunnit
       t.text     :object
+      t.integer  :transaction_id
       t.text     :object_changes
       t.datetime :created_at
 
@@ -35,6 +36,14 @@ class SetUpTestTables < ActiveRecord::Migration
       t.string :user_agent
     end
     add_index :versions, [:item_type, :item_id]
+	
+    create_table :version_associations do |t|
+      t.integer  :version_id
+      t.string   :foreign_key_name, :null => false
+      t.integer   :foreign_key_id
+    end
+    add_index :version_associations, [:version_id]
+    add_index :version_associations, [:foreign_key_name,:foreign_key_id], :name => 'index_on_foreign_key_name_and foreign_key_id'	
 
     create_table :post_versions, :force => true do |t|
       t.string   :item_type, :null => false
@@ -59,6 +68,18 @@ class SetUpTestTables < ActiveRecord::Migration
     create_table :fluxors, :force => true do |t|
       t.integer :widget_id
       t.string  :name
+    end 
+    
+    create_table :glimmers, :force => true do |t|
+      t.integer :widget_id
+      t.string  :name
+      t.datetime  :created_at, :updated_at, :child_updated_at
+    end
+
+    create_table :gadgets, :force => true do |t|
+      t.integer :glimmer_id
+      t.string  :name
+      t.datetime  :created_at, :updated_at, :child_updated_at
     end
 
     create_table :articles, :force => true do |t|

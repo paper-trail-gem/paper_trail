@@ -14,6 +14,7 @@ module PaperTrail
 
     def create_migration_file
       migration_template 'create_versions.rb', 'db/migrate/create_versions.rb'
+      migration_template 'create_version_associations.rb', 'db/migrate/create_version_associations.rb'
       migration_template 'add_object_changes_column_to_versions.rb', 'db/migrate/add_object_changes_column_to_versions.rb' if options.with_changes?
     end
   end

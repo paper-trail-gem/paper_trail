@@ -60,6 +60,9 @@ module PaperTrail
         after_create  :record_create  if !options[:on] || options[:on].include?(:create)
         before_update :record_update  if !options[:on] || options[:on].include?(:update)
         after_destroy :record_destroy if !options[:on] || options[:on].include?(:destroy)
+
+        after_commit :reset_transaction_id
+        after_rollback :reset_transaction_id
       end
 
       # Switches PaperTrail off for this class.
@@ -118,6 +121,14 @@ module PaperTrail
         self.class.paper_trail_on if paper_trail_was_enabled
       end
 
+      # Utility method for reifying. Anything executed inside the block will appear like a new record
+      def appear_as_new_record
+        instance_eval { alias :old_new_record? :new_record? }
+        instance_eval { alias :new_record? :present? }
+        yield
+        instance_eval { alias :new_record? :old_new_record? }
+      end
+      
       private
 
       def version_class
@@ -130,7 +141,9 @@ module PaperTrail
 
       def record_create
         if switched_on?
-          send(self.class.versions_association_name).create merge_metadata(:event => 'create', :whodunnit => PaperTrail.whodunnit)
+          version=send(self.class.versions_association_name).create merge_metadata(:event => 'create', :whodunnit => PaperTrail.whodunnit, :transaction_id => PaperTrail.transaction_id)
+          set_transaction_id(version)
+          save_associations(version)
         end
       end
 
@@ -139,7 +152,8 @@ module PaperTrail
           data = {
             :event     => 'update',
             :object    => object_to_string(item_before_change),
-            :whodunnit => PaperTrail.whodunnit
+            :whodunnit => PaperTrail.whodunnit,
+            :transaction_id => PaperTrail.transaction_id
           }
           if version_class.column_names.include? 'object_changes'
             # The double negative (reject, !include?) preserves the hash structure of self.changes.
@@ -147,21 +161,45 @@ module PaperTrail
               !notably_changed.include?(key)
             end.to_yaml
           end
-          send(self.class.versions_association_name).build merge_metadata(data)
+          version=send(self.class.versions_association_name).build merge_metadata(data)
+          set_transaction_id(version)
+          save_associations(version)
         end
       end
 
       def record_destroy
         if switched_on? and not new_record?
-          version_class.create merge_metadata(:item_id   => self.id,
+          version=version_class.create merge_metadata(:item_id   => self.id,
                                               :item_type => self.class.base_class.name,
                                               :event     => 'destroy',
                                               :object    => object_to_string(item_before_change),
-                                              :whodunnit => PaperTrail.whodunnit)
+                                              :whodunnit => PaperTrail.whodunnit,
+                                              :transaction_id => PaperTrail.transaction_id)
+
+          set_transaction_id(version)
+          save_associations(version)
         end
         send(self.class.versions_association_name).send :load_target
       end
 
+      def save_associations(version)
+        self.class.name.constantize.reflect_on_all_associations(:belongs_to).each do |assoc|
+          VersionAssociation.create(:version_id => version.id, :foreign_key_name => assoc.primary_key_name, :foreign_key_id => self.send(assoc.primary_key_name))
+        end
+      end
+
+      def set_transaction_id(version)
+        if(PaperTrail.transaction?&&PaperTrail.transaction_id.nil?)
+           PaperTrail.transaction_id=version.id
+           version.transaction_id=version.id
+           version.save
+        end
+      end
+
+      def reset_transaction_id
+        PaperTrail.transaction_id=nil
+      end
+      
       def merge_metadata(data)
         # First we merge the model-level metadata in `meta`.
         meta.each do |k,v|
