@@ -633,6 +633,17 @@ Please see the `rails2` branch.
 
 PaperTrail uses Bundler to manage its dependencies (in development and testing).  You can run the tests with `bundle exec rake test`.  (You may need to `bundle install` first.)
 
+It's a good idea to reset PaperTrail before each test so data from one test doesn't spill over another.  For example:
+
+    RSpec.configure do |config|
+      config.before :each do
+        PaperTrail.controller_info = {}
+        PaperTrail.whodunnit = nil
+      end
+    end
+
+You may want to turn PaperTrail off to speed up your tests.  See the "Turning PaperTrail Off/On" section above.
+
 
 ## Articles
 
