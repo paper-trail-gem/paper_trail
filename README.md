@@ -215,6 +215,14 @@ This means that only changes to the `title` will save a version of the article:
 
 Passing both `:ignore` and `:only` options will result in the article being saved if a changed attribute is included in `:only` but not in `:ignore`.
 
+You can skip fields altogether with the `:skip` option.  As with `:ignore`, updates to these fields will not create a new `Version`.  In addition, these fields will not be included in the serialised version of the object whenever a new `Version` is created.
+
+For example:
+
+    class Article < ActiveRecord::Base
+      has_paper_trail :skip => [:file_upload]
+    end
+
 
 ## Reverting And Undeleting A Model
 

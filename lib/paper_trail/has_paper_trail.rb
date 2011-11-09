@@ -16,6 +16,9 @@ module PaperTrail
       # :class_name   the name of a custom Version class.  This class should inherit from Version.
       # :ignore       an array of attributes for which a new `Version` will not be created if only they change.
       # :only         inverse of `ignore` - a new `Version` will be created only for these attributes if supplied
+      # :skip         fields to ignore completely.  As with `ignore`, updates to these fields will not create
+      #               a new `Version`.  In addition, these fields will not be included in the serialized versions
+      #               of the object whenever a new `Version` is created.
       # :meta         a hash of extra data to store.  You must add a column to the `versions` table for each key.
       #               Values are objects or procs (which are called with `self`, i.e. the model with the paper
       #               trail).  See `PaperTrail::Controller.info_for_paper_trail` for how to store data from
