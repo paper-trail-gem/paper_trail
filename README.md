@@ -671,6 +671,7 @@ Many thanks to:
 * [Eduard Tsech](https://github.com/edtsech)
 * [Mathieu Arnold](https://github.com/mat813)
 * [Nicholas Thrower](https://github.com/throwern)
+* [Benjamin Curtis](https://github.com/stympy)
 
 
 ## Inspirations
