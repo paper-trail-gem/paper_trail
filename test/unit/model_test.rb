@@ -2,7 +2,7 @@ require 'test_helper'
 
 class HasPaperTrailModelTest < ActiveSupport::TestCase
 
-  context 'A record' do
+  context 'A record with defined "only" and "ignore" attributes' do
     setup { @article = Article.create }
 
     context 'which updates an ignored column' do
@@ -57,7 +57,15 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         end
       end
     end
+  end
 
+  context 'A record with defined "ignore" attribute' do
+    setup { @legacy_widget = LegacyWidget.create }
+
+    context 'which updates an ignored column' do
+      setup { @legacy_widget.update_attributes :version => 1 }
+      should_not_change('the number of versions') { Version.count }
+    end
   end
 
 
