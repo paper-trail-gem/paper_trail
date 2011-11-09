@@ -335,13 +335,13 @@ To find out who made a `version`'s object look that way, use `version.originator
 
 You can specify custom version subclasses with the `:class_name` option:
 
-    class Post < ActiveRecord::Base
-      has_paper_trail :class_name => 'PostVersion'
-    end
-
     class PostVersion < Version
       # custom behaviour, e.g:
       set_table_name :post_versions
+    end
+
+    class Post < ActiveRecord::Base
+      has_paper_trail :class_name => 'PostVersion'
     end
 
 This allows you to store each model's versions in a separate table, which is useful if you have a lot of versions being created.
