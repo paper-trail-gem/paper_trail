@@ -69,7 +69,7 @@ class Version < ActiveRecord::Base
           end
         end
 
-        model.send "#{model.class.version_name}=", self
+        model.send "#{model.class.version_association_name}=", self
 
         unless options[:has_one] == false
           reify_has_ones model, options[:has_one]

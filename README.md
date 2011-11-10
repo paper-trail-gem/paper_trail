@@ -348,13 +348,14 @@ This allows you to store each model's versions in a separate table, which is use
 
 Alternatively you could store certain metadata for one type of version, and other metadata for other versions.
 
-You can also specify a custom name for the versions association.  This is useful if you already have a `versions` method on your model.  For example:
+You can also specify a custom names for versions and version associations.  This is useful if you already have `versions` or/and `version` methods on your model.  For example:
 
     class Post < ActiveRecord::Base
-      has_paper_trail :versions => :paper_trail_versions
+      has_paper_trail :versions => :paper_trail_versions,
+                      :version  => :paper_trail_version
 
-      # Existing versions method.  We don't want to clash.
-      def versions
+      # Existing version(s) method.  We don't want to clash.
+      def version(s)
         ...
       end
     end

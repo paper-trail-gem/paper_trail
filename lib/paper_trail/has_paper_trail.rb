@@ -24,18 +24,18 @@ module PaperTrail
       #               trail).  See `PaperTrail::Controller.info_for_paper_trail` for how to store data from
       #               the controller.
       # :versions     the name to use for the versions association.  Default is `:versions`.
-      # :version_name the name to use for the method which returns the version the instance was reified from.
+      # :version      the name to use for the method which returns the version the instance was reified from.
       #               Default is `:version`.
       def has_paper_trail(options = {})
         # Lazily include the instance methods so we don't clutter up
         # any more ActiveRecord models than we have to.
         send :include, InstanceMethods
 
-        class_attribute :version_name
-        self.version_name = options[:version_name] || 'version'
+        class_attribute :version_association_name
+        self.version_association_name = options[:version] || :version
 
         # The version this instance was reified from.
-        attr_accessor self.version_name
+        attr_accessor self.version_association_name
 
         class_attribute :version_class_name
         self.version_class_name = options[:class_name] || 'Version'
@@ -131,7 +131,7 @@ module PaperTrail
       end
 
       def source_version
-        send self.class.version_name
+        send self.class.version_association_name
       end
 
       def record_create
