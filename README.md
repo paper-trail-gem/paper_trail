@@ -437,20 +437,24 @@ But none of these will:
     >> @book.author_ids = [@solzhenistyn.id, @dostoyevsky.id]
     >> @book.authors = []
 
-Having said that, you can apparently get all these working (I haven't tested it myself) with this [monkey patch](http://stackoverflow.com/questions/2381033/how-to-create-a-full-audit-log-in-rails-for-every-table/2381411#2381411):
+Having said that, you can apparently get all these working (I haven't tested it myself) with this patch:
 
-    # In config/initializers/core_extensions.rb or lib/core_extensions.rb
-    ActiveRecord::Associations::HasManyThroughAssociation.class_eval do
-      def delete_records(records)
-        klass = @reflection.through_reflection.klass
-        records.each do |associate|
-          klass.destroy_all(construct_join_attributes(associate))
+    # In config/initializers/active_record_patch.rb
+    module ActiveRecord
+      # = Active Record Has Many Through Association
+      module Associations
+        class HasManyThroughAssociation < HasManyAssociation #:nodoc:
+          alias_method :original_delete_records, :delete_records
+
+          def delete_records(records, method)
+            method ||= :destroy
+            original_delete_records(records, method)
+          end
         end
       end
     end
 
-The difference is the call to `destroy_all` instead of `delete_all` in [the original](http://github.com/rails/rails/blob/master/activerecord/lib/active_record/associations/has_many_through_association.rb#L76-81).
-
+See [issue 113](https://github.com/airblade/paper_trail/issues/113) for a discussion about this.
 
 There may be a way to store authorship versions, probably using association callbacks, no matter how the collection is manipulated but I haven't found it yet.  Let me know if you do.
 
@@ -689,6 +693,7 @@ Many thanks to:
 * [Nicholas Thrower](https://github.com/throwern)
 * [Benjamin Curtis](https://github.com/stympy)
 * [Peter Harkins](https://github.com/pushcx)
+* [Mohd Amree](https://github.com/amree)
 
 
 ## Inspirations
