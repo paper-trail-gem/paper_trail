@@ -150,8 +150,8 @@ PaperTrail stores the pre-change version of the model, unlike some other auditin
 
 >> widget.versions                             # []
 >> widget.update_attributes :name => 'Wotsit'
->> widget.versions.first.reify.name            # 'Doobly'
->> widget.versions.first.event                 # 'update'
+>> widget.previous_version.name            # 'Doobly'
+>> widget.versions.last.event                 # 'update'
 ```
 
 This also means that PaperTrail does not waste space storing a version of the object as it currently stands.  The `versions` method gives you previous versions; to get the current one just call a finder on your `Widget` model as usual.
@@ -212,7 +212,7 @@ This means that changes to just the `title` or `rating` will not store another v
 >> a.versions.length                         # 1
 >> a.update_attributes :content => 'Hello'
 >> a.versions.length                         # 2
->> a.versions.last.reify.title               # 'My Title'
+>> a.previous_version.title               # 'My Title'
 ```
 
 Or, you can specify a list of all attributes you care about:
@@ -254,7 +254,7 @@ PaperTrail makes reverting to a previous version easy:
 >> widget = Widget.find 42
 >> widget.update_attributes :name => 'Blah blah'
 # Time passes....
->> widget = widget.versions.last.reify  # the widget as it was before the update
+>> widget = widget.previous_version  # the widget as it was before the update
 >> widget.save                          # reverted
 ```
 
@@ -323,7 +323,7 @@ You can find out whether a model instance is the current, live one -- or whether
 ```ruby
 >> widget = Widget.find 42
 >> widget.live?                        # true
->> widget = widget.versions.last.reify
+>> widget = widget.previous_version
 >> widget.live?                        # false
 ```
 
