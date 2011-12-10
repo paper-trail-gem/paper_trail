@@ -293,7 +293,7 @@ You can call `previous_version` and `next_version` on an item to get it as it wa
 >> widget.next_version                 # nil
 ```
 
-As an aside, I'm undecided about whether `widget.versions.last.next_version` should return `nil` or `self` (i.e. `widget`).  Let me know if you have a view.
+As an aside, I'm undecided about whether `widget.previous_version.next_version` should return `nil` or `self` (i.e. `widget`).  Let me know if you have a view.
 
 If instead you have a particular `version` of an item you can navigate to the previous and next versions.
 
