@@ -68,6 +68,32 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
   end
 
+  context 'A record with defined "ignore_if" attribute' do
+    setup { @translation = Translation.new :headline => 'Headline' }
+
+    context 'for non-US translations' do
+      setup { @translation.save }
+      should_not_change('the number of versions') { Version.count }
+
+      context 'after update' do
+        setup { @translation.update_attributes :content => 'Content' }
+        should_not_change('the number of versions') { Version.count }
+      end
+    end
+
+    context 'for US translations' do
+      setup do
+        @translation.language_code = "US"
+        @translation.save
+      end
+      should_change('the number of versions', :by => 1) { Version.count }
+
+      context 'after update' do
+        setup { @translation.update_attributes :content => 'Content' }
+        should_change('the number of versions', :by => 1) { Version.count }
+      end
+    end
+  end
 
   context 'A new record' do
     setup { @widget = Widget.new }

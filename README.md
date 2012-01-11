@@ -179,6 +179,15 @@ You can choose which events to track with the `on` option.  For example, to igno
     end
 
 
+## Choosing When Not To Save New Versions
+
+You can choose the condition when not to add new versions with the `ignore_if` option. For example, to ignore non-US translations:
+
+    class Translation < ActiveRecord::Base
+      has_paper_trail :ignore_if => Proc.new { |t| t.language_code != 'US' }
+    end
+
+
 
 ## Choosing Attributes To Monitor
 

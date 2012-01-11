@@ -43,6 +43,9 @@ module PaperTrail
         class_attribute :ignore
         self.ignore = ([options[:ignore]].flatten.compact || []).map &:to_s
 
+        class_attribute :ignore_condition
+        self.ignore_condition = options[:ignore_if]
+
         class_attribute :skip
         self.skip = ([options[:skip]].flatten.compact || []).map &:to_s
 
@@ -124,6 +127,10 @@ module PaperTrail
         self.class.paper_trail_on if paper_trail_was_enabled
       end
 
+      def prevent_versioning?
+        ignore_condition && ignore_condition.call(self)
+      end
+
       private
 
       def version_class
@@ -135,13 +142,13 @@ module PaperTrail
       end
 
       def record_create
-        if switched_on?
+        if switched_on? && !prevent_versioning?
           send(self.class.versions_association_name).create merge_metadata(:event => 'create', :whodunnit => PaperTrail.whodunnit)
         end
       end
 
       def record_update
-        if switched_on? && changed_notably?
+        if switched_on? && changed_notably? && !prevent_versioning?
           data = {
             :event     => 'update',
             :object    => object_to_string(item_before_change),
