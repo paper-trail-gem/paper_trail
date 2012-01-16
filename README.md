@@ -38,108 +38,121 @@ Works on Rails 3 and Rails 2.3.  The Rails 3 code is on the `master` branch and 
 
 When you declare `has_paper_trail` in your model, you get these methods:
 
-    class Widget < ActiveRecord::Base
-      has_paper_trail   # you can pass various options here
-    end
+```ruby
+class Widget < ActiveRecord::Base
+  has_paper_trail   # you can pass various options here
+end
 
-    # Returns this widget's versions.  You can customise the name of the association.
-    widget.versions
+# Returns this widget's versions.  You can customise the name of the association.
+widget.versions
 
-    # Return the version this widget was reified from, or nil if it is live.
-    # You can customise the name of the method.
-    widget.version
+# Return the version this widget was reified from, or nil if it is live.
+# You can customise the name of the method.
+widget.version
 
-    # Returns true if this widget is the current, live one; or false if it is from a previous version.
-    widget.live?
+# Returns true if this widget is the current, live one; or false if it is from a previous version.
+widget.live?
 
-    # Returns who put the widget into its current state.
-    widget.originator
+# Returns who put the widget into its current state.
+widget.originator
 
-    # Returns the widget (not a version) as it looked at the given timestamp.
-    widget.version_at(timestamp)
+# Returns the widget (not a version) as it looked at the given timestamp.
+widget.version_at(timestamp)
 
-    # Returns the widget (not a version) as it was most recently.
-    widget.previous_version
+# Returns the widget (not a version) as it was most recently.
+widget.previous_version
 
-    # Returns the widget (not a version) as it became next.
-    widget.next_version
+# Returns the widget (not a version) as it became next.
+widget.next_version
 
-    # Turn PaperTrail off for all widgets.
-    Widget.paper_trail_off
+# Turn PaperTrail off for all widgets.
+Widget.paper_trail_off
 
-    # Turn PaperTrail on for all widgets.
-    Widget.paper_trail_on
+# Turn PaperTrail on for all widgets.
+Widget.paper_trail_on
+```
 
 And a `Version` instance has these methods:
 
-    # Returns the item restored from this version.
-    version.reify(options = {})
+```ruby
+# Returns the item restored from this version.
+version.reify(options = {})
 
-    # Returns who put the item into the state stored in this version.
-    version.originator
+# Returns who put the item into the state stored in this version.
+version.originator
 
-    # Returns who changed the item from the state it had in this version.
-    version.terminator
-    version.whodunnit
+# Returns who changed the item from the state it had in this version.
+version.terminator
+version.whodunnit
 
-    # Returns the next version.
-    version.next
+# Returns the next version.
+version.next
 
-    # Returns the previous version.
-    version.previous
+# Returns the previous version.
+version.previous
 
-    # Returns the index of this version in all the versions.
-    version.index
+# Returns the index of this version in all the versions.
+version.index
 
-    # Returns the event that caused this version (create|update|destroy).
-    version.event
+# Returns the event that caused this version (create|update|destroy).
+version.event
+```
 
 In your controllers you can override these methods:
 
-    # Returns the user who is responsible for any changes that occur.
-    # Defaults to current_user.
-    user_for_paper_trail
+```ruby
+# Returns the user who is responsible for any changes that occur.
+# Defaults to current_user.
+user_for_paper_trail
 
-    # Returns any information about the controller or request that you want
-    # PaperTrail to store alongside any changes that occur.
-    info_for_paper_trail
-
+# Returns any information about the controller or request that you want
+# PaperTrail to store alongside any changes that occur.
+info_for_paper_trail
+```
 
 ## Basic Usage
 
 PaperTrail is simple to use.  Just add 15 characters to a model to get a paper trail of every `create`, `update`, and `destroy`.
 
-    class Widget < ActiveRecord::Base
-      has_paper_trail
-    end
+```ruby
+class Widget < ActiveRecord::Base
+  has_paper_trail
+end
+```
 
 This gives you a `versions` method which returns the paper trail of changes to your model.
 
-    >> widget = Widget.find 42
-    >> widget.versions             # [<Version>, <Version>, ...]
+```ruby
+>> widget = Widget.find 42
+>> widget.versions             # [<Version>, <Version>, ...]
+```
 
 Once you have a version, you can find out what happened:
 
-    >> v = widget.versions.last
-    >> v.event                     # 'update' (or 'create' or 'destroy')
-    >> v.whodunnit                 # '153'  (if the update was via a controller and
-                                   #         the controller has a current_user method,
-                                   #         here returning the id of the current user)
-    >> v.created_at                # when the update occurred
-    >> widget = v.reify            # the widget as it was before the update;
-                                   # would be nil for a create event
+```ruby
+>> v = widget.versions.last
+>> v.event                     # 'update' (or 'create' or 'destroy')
+>> v.whodunnit                 # '153'  (if the update was via a controller and
+                               #         the controller has a current_user method,
+                               #         here returning the id of the current user)
+>> v.created_at                # when the update occurred
+>> widget = v.reify            # the widget as it was before the update;
+                               # would be nil for a create event
+```
 
 PaperTrail stores the pre-change version of the model, unlike some other auditing/versioning plugins, so you can retrieve the original version.  This is useful when you start keeping a paper trail for models that already have records in the database.
 
-    >> widget = Widget.find 153
-    >> widget.name                                 # 'Doobly'
+```ruby
+>> widget = Widget.find 153
+>> widget.name                                 # 'Doobly'
 
-    # Add has_paper_trail to Widget model.
+# Add has_paper_trail to Widget model.
 
-    >> widget.versions                             # []
-    >> widget.update_attributes :name => 'Wotsit'
-    >> widget.versions.first.reify.name            # 'Doobly'
-    >> widget.versions.first.event                 # 'update'
+>> widget.versions                             # []
+>> widget.update_attributes :name => 'Wotsit'
+>> widget.previous_version.name            # 'Doobly'
+>> widget.versions.last.event                 # 'update'
+```
 
 This also means that PaperTrail does not waste space storing a version of the object as it currently stands.  The `versions` method gives you previous versions; to get the current one just call a finder on your `Widget` model as usual.
 
@@ -174,44 +187,52 @@ PaperTrail stores the values in the Model Before column.  Most other auditing/ve
 
 You can choose which events to track with the `on` option.  For example, to ignore `create` events:
 
-    class Article < ActiveRecord::Base
-      has_paper_trail :on => [:update, :destroy]
-    end
-
-
+```ruby
+class Article < ActiveRecord::Base
+  has_paper_trail :on => [:update, :destroy]
+end
+```
 
 ## Choosing Attributes To Monitor
 
 You can ignore changes to certain attributes like this:
 
-    class Article < ActiveRecord::Base
-      has_paper_trail :ignore => [:title, :rating]
-    end
+```ruby
+class Article < ActiveRecord::Base
+  has_paper_trail :ignore => [:title, :rating]
+end
+```
 
 This means that changes to just the `title` or `rating` will not store another version of the article.  It does not mean that the `title` and `rating` attributes will be ignored if some other change causes a new `Version` to be created.  For example:
 
-    >> a = Article.create
-    >> a.versions.length                         # 1
-    >> a.update_attributes :title => 'My Title', :rating => 3
-    >> a.versions.length                         # 1
-    >> a.update_attributes :content => 'Hello'
-    >> a.versions.length                         # 2
-    >> a.versions.last.reify.title               # 'My Title'
+```ruby
+>> a = Article.create
+>> a.versions.length                         # 1
+>> a.update_attributes :title => 'My Title', :rating => 3
+>> a.versions.length                         # 1
+>> a.update_attributes :content => 'Hello'
+>> a.versions.length                         # 2
+>> a.previous_version.title               # 'My Title'
+```
 
 Or, you can specify a list of all attributes you care about:
 
-    class Article < ActiveRecord::Base
-      has_paper_trail :only => [:title]
-    end
+```ruby
+class Article < ActiveRecord::Base
+  has_paper_trail :only => [:title]
+end
+```
 
 This means that only changes to the `title` will save a version of the article:
 
-    >> a = Article.create
-    >> a.versions.length                         # 1
-    >> a.update_attributes :title => 'My Title'
-    >> a.versions.length                         # 2
-    >> a.update_attributes :content => 'Hello'
-    >> a.versions.length                         # 2
+```ruby
+>> a = Article.create
+>> a.versions.length                         # 1
+>> a.update_attributes :title => 'My Title'
+>> a.versions.length                         # 2
+>> a.update_attributes :content => 'Hello'
+>> a.versions.length                         # 2
+```
 
 Passing both `:ignore` and `:only` options will result in the article being saved if a changed attribute is included in `:only` but not in `:ignore`.
 
@@ -219,35 +240,42 @@ You can skip fields altogether with the `:skip` option.  As with `:ignore`, upda
 
 For example:
 
-    class Article < ActiveRecord::Base
-      has_paper_trail :skip => [:file_upload]
-    end
-
+```ruby
+class Article < ActiveRecord::Base
+  has_paper_trail :skip => [:file_upload]
+end
+```
 
 ## Reverting And Undeleting A Model
 
 PaperTrail makes reverting to a previous version easy:
 
-    >> widget = Widget.find 42
-    >> widget.update_attributes :name => 'Blah blah'
-    # Time passes....
-    >> widget = widget.versions.last.reify  # the widget as it was before the update
-    >> widget.save                          # reverted
+```ruby
+>> widget = Widget.find 42
+>> widget.update_attributes :name => 'Blah blah'
+# Time passes....
+>> widget = widget.previous_version  # the widget as it was before the update
+>> widget.save                          # reverted
+```
 
 Alternatively you can find the version at a given time:
 
-    >> widget = widget.version_at(1.day.ago)  # the widget as it was one day ago
-    >> widget.save                            # reverted
+```ruby
+>> widget = widget.version_at(1.day.ago)  # the widget as it was one day ago
+>> widget.save                            # reverted
+```
 
 Note `version_at` gives you the object, not a version, so you don't need to call `reify`.
 
 Undeleting is just as simple:
 
-    >> widget = Widget.find 42
-    >> widget.destroy
-    # Time passes....
-    >> widget = Version.find(153).reify    # the widget as it was before it was destroyed
-    >> widget.save                         # the widget lives!
+```ruby
+>> widget = Widget.find 42
+>> widget.destroy
+# Time passes....
+>> widget = Version.find(153).reify    # the widget as it was before it was destroyed
+>> widget.save                         # the widget lives!
+```
 
 In fact you could use PaperTrail to implement an undo system, though I haven't had the opportunity yet to do it myself.  However [Ryan Bates has](http://railscasts.com/episodes/255-undo-with-paper-trail)!
 
@@ -256,93 +284,111 @@ In fact you could use PaperTrail to implement an undo system, though I haven't h
 
 You can call `previous_version` and `next_version` on an item to get it as it was/became.  Note that these methods reify the item for you.
 
-    >> widget = Widget.find 42
-    >> widget.versions.length              # 4 for example
-    >> widget = widget.previous_version    # => widget == widget.versions.last.reify
-    >> widget = widget.previous_version    # => widget == widget.versions[-2].reify
-    >> widget.next_version                 # => widget == widget.versions.last.reify
-    >> widget.next_version                 # nil
+```ruby
+>> widget = Widget.find 42
+>> widget.versions.length              # 4 for example
+>> widget = widget.previous_version    # => widget == widget.versions.last.reify
+>> widget = widget.previous_version    # => widget == widget.versions[-2].reify
+>> widget.next_version                 # => widget == widget.versions.last.reify
+>> widget.next_version                 # nil
+```
 
-As an aside, I'm undecided about whether `widget.versions.last.next_version` should return `nil` or `self` (i.e. `widget`).  Let me know if you have a view.
+As an aside, I'm undecided about whether `widget.previous_version.next_version` should return `nil` or `self` (i.e. `widget`).  Let me know if you have a view.
 
 If instead you have a particular `version` of an item you can navigate to the previous and next versions.
 
-    >> widget = Widget.find 42
-    >> version = widget.versions[-2]    # assuming widget has several versions
-    >> previous = version.previous
-    >> next = version.next
+```ruby
+>> widget = Widget.find 42
+>> version = widget.versions[-2]    # assuming widget has several versions
+>> previous = version.previous
+>> next = version.next
+```
 
 You can find out which of an item's versions yours is:
 
-    >> current_version_number = version.index    # 0-based
+```ruby
+>> current_version_number = version.index    # 0-based
+```
 
 Finally, if you got an item by reifying one of its versions, you can navigate back to the version it came from:
 
-    >> latest_version = Widget.find(42).versions.last
-    >> widget = latest_version.reify
-    >> widget.version == latest_version    # true
+```ruby
+>> latest_version = Widget.find(42).versions.last
+>> widget = latest_version.reify
+>> widget.version == latest_version    # true
+```
 
 You can find out whether a model instance is the current, live one -- or whether it came instead from a previous version -- with `live?`:
 
-    >> widget = Widget.find 42
-    >> widget.live?                        # true
-    >> widget = widget.versions.last.reify
-    >> widget.live?                        # false
-
+```ruby
+>> widget = Widget.find 42
+>> widget.live?                        # true
+>> widget = widget.previous_version
+>> widget.live?                        # false
+```
 
 ## Finding Out Who Was Responsible For A Change
 
 If your `ApplicationController` has a `current_user` method, PaperTrail will store the value it returns in the `version`'s `whodunnit` column.  Note that this column is a string so you will have to convert it to an integer if it's an id and you want to look up the user later on:
 
-    >> last_change = Widget.versions.last
-    >> user_who_made_the_change = User.find last_change.whodunnit.to_i
+```ruby
+>> last_change = Widget.versions.last
+>> user_who_made_the_change = User.find last_change.whodunnit.to_i
+```
 
 You may want PaperTrail to call a different method to find out who is responsible.  To do so, override the `user_for_paper_trail` method in your controller like this:
 
-    class ApplicationController
-      def user_for_paper_trail
-        logged_in? ? current_member : 'Public user'  # or whatever
-      end
-    end
+```ruby
+class ApplicationController
+  def user_for_paper_trail
+    logged_in? ? current_member : 'Public user'  # or whatever
+  end
+end
+```
 
 In a migration or in `script/console` you can set who is responsible like this:
 
-    >> PaperTrail.whodunnit = 'Andy Stewart'
-    >> widget.update_attributes :name => 'Wibble'
-    >> widget.versions.last.whodunnit              # Andy Stewart
+```ruby
+>> PaperTrail.whodunnit = 'Andy Stewart'
+>> widget.update_attributes :name => 'Wibble'
+>> widget.versions.last.whodunnit              # Andy Stewart
+```
 
 N.B. A `version`'s `whodunnit` records who changed the object causing the `version` to be stored.  Because a `version` stores the object as it looked before the change (see the table above), `whodunnit` returns who stopped the object looking like this -- not who made it look like this.  Hence `whodunnit` is aliased as `terminator`.
 
 To find out who made a `version`'s object look that way, use `version.originator`.  And to find out who made a "live" object look like it does, use `originator` on the object.
 
-    >> widget = Widget.find 153                    # assume widget has 0 versions
-    >> PaperTrail.whodunnit = 'Alice'
-    >> widget.update_attributes :name => 'Yankee'
-    >> widget.originator                           # 'Alice'
-    >> PaperTrail.whodunnit = 'Bob'
-    >> widget.update_attributes :name => 'Zulu'
-    >> widget.originator                           # 'Bob'
-    >> first_version, last_version = widget.versions.first, widget.versions.last
-    >> first_version.whodunnit                     # 'Alice'
-    >> first_version.originator                    # nil
-    >> first_version.terminator                    # 'Alice'
-    >> last_version.whodunnit                      # 'Bob'
-    >> last_version.originator                     # 'Alice'
-    >> last_version.terminator                     # 'Bob'
-
+```ruby
+>> widget = Widget.find 153                    # assume widget has 0 versions
+>> PaperTrail.whodunnit = 'Alice'
+>> widget.update_attributes :name => 'Yankee'
+>> widget.originator                           # 'Alice'
+>> PaperTrail.whodunnit = 'Bob'
+>> widget.update_attributes :name => 'Zulu'
+>> widget.originator                           # 'Bob'
+>> first_version, last_version = widget.versions.first, widget.versions.last
+>> first_version.whodunnit                     # 'Alice'
+>> first_version.originator                    # nil
+>> first_version.terminator                    # 'Alice'
+>> last_version.whodunnit                      # 'Bob'
+>> last_version.originator                     # 'Alice'
+>> last_version.terminator                     # 'Bob'
+```
 
 ## Custom Version Classes
 
 You can specify custom version subclasses with the `:class_name` option:
 
-    class PostVersion < Version
-      # custom behaviour, e.g:
-      set_table_name :post_versions
-    end
+```ruby
+class PostVersion < Version
+  # custom behaviour, e.g:
+  set_table_name :post_versions
+end
 
-    class Post < ActiveRecord::Base
-      has_paper_trail :class_name => 'PostVersion'
-    end
+class Post < ActiveRecord::Base
+  has_paper_trail :class_name => 'PostVersion'
+end
+```
 
 This allows you to store each model's versions in a separate table, which is useful if you have a lot of versions being created.
 
@@ -350,20 +396,21 @@ Alternatively you could store certain metadata for one type of version, and othe
 
 You can also specify custom names for the versions and version associations.  This is useful if you already have `versions` or/and `version` methods on your model.  For example:
 
-    class Post < ActiveRecord::Base
-      has_paper_trail :versions => :paper_trail_versions,
-                      :version  => :paper_trail_version
+```ruby
+class Post < ActiveRecord::Base
+  has_paper_trail :versions => :paper_trail_versions,
+                  :version  => :paper_trail_version
 
-      # Existing versions method.  We don't want to clash.
-      def versions
-        ...
-      end
-      # Existing version method.  We don't want to clash.
-      def version
-        ...
-      end
-    end
-
+  # Existing versions method.  We don't want to clash.
+  def versions
+    ...
+  end
+  # Existing version method.  We don't want to clash.
+  def version
+    ...
+  end
+end
+```
 
 ## Associations
 
@@ -376,25 +423,29 @@ If you can think of a good way to achieve this, please let me know.
 
 PaperTrail can restore `:has_one` associations as they were at (actually, 3 seconds before) the time.
 
-    class Treasure < ActiveRecord::Base
-      has_one :location
-    end
+```ruby
+class Treasure < ActiveRecord::Base
+  has_one :location
+end
 
-    >> treasure.amount                  # 100
-    >> treasure.location.latitude       # 12.345
+>> treasure.amount                  # 100
+>> treasure.location.latitude       # 12.345
 
-    >> treasure.update_attributes :amount => 153
-    >> treasure.location.update_attributes :latitude => 54.321
+>> treasure.update_attributes :amount => 153
+>> treasure.location.update_attributes :latitude => 54.321
 
-    >> t = treasure.versions.last.reify(:has_one => true)
-    >> t.amount                         # 100
-    >> t.location.latitude              # 12.345
+>> t = treasure.versions.last.reify(:has_one => true)
+>> t.amount                         # 100
+>> t.location.latitude              # 12.345
+```
 
 The implementation is complicated by the edge case where the parent and child are updated in one go, e.g. in one web request or database transaction.  PaperTrail doesn't know about different models being updated "together", so you can't ask it definitively to get the child as it was before the joint parent-and-child update.
 
 The correct solution is to make PaperTrail aware of requests or transactions (c.f. [Efficiency's transaction ID middleware](http://github.com/efficiency20/ops_middleware/blob/master/lib/e20/ops/middleware/transaction_id_middleware.rb)).  In the meantime we work around the problem by finding the child as it was a few seconds before the parent was updated.  By default we go 3 seconds before but you can change this by passing the desired number of seconds to the `:has_one` option:
 
-    >> t = treasure.versions.last.reify(:has_one => 1)       # look back 1 second instead of 3
+```ruby
+>> t = treasure.versions.last.reify(:has_one => 1)       # look back 1 second instead of 3
+```
 
 If you are shuddering, take solace from knowing PaperTrail opts out of these shenanigans by default. This means your `:has_one` associated objects will be the live ones, not the ones the user saw at the time.  Since PaperTrail doesn't auto-restore `:has_many` associations (I can't get it to work) or `:belongs_to` (I ran out of time looking at `:has_many`), this at least makes your associations wrong consistently ;)
 
@@ -406,53 +457,61 @@ PaperTrail can track most changes to the join table.  Specifically it can track 
 
 Given these models:
 
-    class Book < ActiveRecord::Base
-      has_many :authorships, :dependent => :destroy
-      has_many :authors, :through => :authorships, :source => :person
-      has_paper_trail
-    end
+```ruby
+class Book < ActiveRecord::Base
+  has_many :authorships, :dependent => :destroy
+  has_many :authors, :through => :authorships, :source => :person
+  has_paper_trail
+end
 
-    class Authorship < ActiveRecord::Base
-      belongs_to :book
-      belongs_to :person
-      has_paper_trail      # NOTE
-    end
+class Authorship < ActiveRecord::Base
+  belongs_to :book
+  belongs_to :person
+  has_paper_trail      # NOTE
+end
 
-    class Person < ActiveRecord::Base
-      has_many :authorships, :dependent => :destroy
-      has_many :books, :through => :authorships
-      has_paper_trail
-    end
+class Person < ActiveRecord::Base
+  has_many :authorships, :dependent => :destroy
+  has_many :books, :through => :authorships
+  has_paper_trail
+end
+```
 
 Then each of the following will store authorship versions:
 
-    >> @book.authors << @dostoyevsky
-    >> @book.authors.create :name => 'Tolstoy'
-    >> @book.authorships.last.destroy
-    >> @book.authorships.clear
+```ruby
+>> @book.authors << @dostoyevsky
+>> @book.authors.create :name => 'Tolstoy'
+>> @book.authorships.last.destroy
+>> @book.authorships.clear
+```
 
 But none of these will:
 
-    >> @book.authors.delete @tolstoy
-    >> @book.author_ids = [@solzhenistyn.id, @dostoyevsky.id]
-    >> @book.authors = []
+```ruby
+>> @book.authors.delete @tolstoy
+>> @book.author_ids = [@solzhenistyn.id, @dostoyevsky.id]
+>> @book.authors = []
+```
 
 Having said that, you can apparently get all these working (I haven't tested it myself) with this patch:
 
-    # In config/initializers/active_record_patch.rb
-    module ActiveRecord
-      # = Active Record Has Many Through Association
-      module Associations
-        class HasManyThroughAssociation < HasManyAssociation #:nodoc:
-          alias_method :original_delete_records, :delete_records
+```ruby
+# In config/initializers/active_record_patch.rb
+module ActiveRecord
+  # = Active Record Has Many Through Association
+  module Associations
+    class HasManyThroughAssociation < HasManyAssociation #:nodoc:
+      alias_method :original_delete_records, :delete_records
 
-          def delete_records(records, method)
-            method ||= :destroy
-            original_delete_records(records, method)
-          end
-        end
+      def delete_records(records, method)
+        method ||= :destroy
+        original_delete_records(records, method)
       end
     end
+  end
+end
+```
 
 See [issue 113](https://github.com/airblade/paper_trail/issues/113) for a discussion about this.
 
@@ -463,15 +522,17 @@ There may be a way to store authorship versions, probably using association call
 
 You can store arbitrary model-level metadata alongside each version like this:
 
-    class Article < ActiveRecord::Base
-      belongs_to :author
-      has_paper_trail :meta => { :author_id  => Proc.new { |article| article.author_id },
-                                 :word_count => :count_words,
-                                 :answer     => 42 }
-      def count_words
-        153
-      end
-    end
+```ruby
+class Article < ActiveRecord::Base
+  belongs_to :author
+  has_paper_trail :meta => { :author_id  => Proc.new { |article| article.author_id },
+                             :word_count => :count_words,
+                             :answer     => 42 }
+  def count_words
+    153
+  end
+end
+```
 
 PaperTrail will call your proc with the current article and store the result in the `author_id` column of the `versions` table.
 
@@ -482,24 +543,30 @@ N.B.  You must also:
 
 For example:
 
-    # config/initializers/paper_trail.rb
-    class Version < ActiveRecord::Base
-      attr_accessible :author_id, :word_count, :answer
-    end
+```ruby
+# config/initializers/paper_trail.rb
+class Version < ActiveRecord::Base
+  attr_accessible :author_id, :word_count, :answer
+end
+```
 
 Why would you do this?  In this example, `author_id` is an attribute of `Article` and PaperTrail will store it anyway in serialized (YAML) form in the `object` column of the `version` record.  But let's say you wanted to pull out all versions for a particular author; without the metadata you would have to deserialize (reify) each `version` object to see if belonged to the author in question.  Clearly this is inefficient.  Using the metadata you can find just those versions you want:
 
-    Version.all(:conditions => ['author_id = ?', author_id])
+```ruby
+Version.all(:conditions => ['author_id = ?', author_id])
+```
 
 Note you can pass a symbol as a value in the `meta` hash to signal a method to call.
 
 You can also store any information you like from your controller.  Just override the `info_for_paper_trail` method in your controller to return a hash whose keys correspond to columns in your `versions` table.  E.g.:
 
-    class ApplicationController
-      def info_for_paper_trail
-        { :ip => request.remote_ip, :user_agent => request.user_agent }
-      end
-    end
+```ruby
+class ApplicationController
+  def info_for_paper_trail
+    { :ip => request.remote_ip, :user_agent => request.user_agent }
+  end
+end
+```
 
 Remember to add those extra columns to your `versions` table and use `attr_accessible` ;)
 
@@ -510,10 +577,12 @@ There are two scenarios: diffing adjacent versions and diffing non-adjacent vers
 
 The best way to diff adjacent versions is to get PaperTrail to do it for you.  If you add an `object_changes` text column to your `versions` table, either at installation time with the `--with-changes` option or manually, PaperTrail will store the `changes` diff (excluding any attributes PaperTrail is ignoring) in each `update` version.  You can use the `version.changeset` method to retrieve it.  For example:
 
-    >> widget = Widget.create :name => 'Bob'
-    >> widget.versions.last.changeset                # {}
-    >> widget.update_attributes :name => 'Robert'
-    >> widget.versions.last.changeset                # {'name' => ['Bob', 'Robert']}
+```ruby
+>> widget = Widget.create :name => 'Bob'
+>> widget.versions.last.changeset                # {}
+>> widget.update_attributes :name => 'Robert'
+>> widget.versions.last.changeset                # {'name' => ['Bob', 'Robert']}
+```
 
 Note PaperTrail only stores the changes for updates; there's no point storing them for created or destroyed objects.
 
@@ -543,77 +612,97 @@ You can turn PaperTrail on or off in three ways: globally, per request, or per c
 
 On a global level you can turn PaperTrail off like this:
 
-    >> PaperTrail.enabled = false
+```ruby
+>> PaperTrail.enabled = false
+```
 
 For example, you might want to disable PaperTrail in your Rails application's test environment to speed up your tests.  This will do it:
 
-    # in config/environments/test.rb
-    config.after_initialize do
-      PaperTrail.enabled = false
-    end
+```ruby
+# in config/environments/test.rb
+config.after_initialize do
+  PaperTrail.enabled = false
+end
+```
 
 If you disable PaperTrail in your test environment but want to enable it for specific tests, you can add a helper like this to your test helper:
 
-    # in test/test_helper.rb
-    def with_versioning
-      was_enabled = PaperTrail.enabled?
-      PaperTrail.enabled = true
-      begin
-        yield
-      ensure
-        PaperTrail.enabled = was_enabled
-      end
-    end
+```ruby
+# in test/test_helper.rb
+def with_versioning
+  was_enabled = PaperTrail.enabled?
+  PaperTrail.enabled = true
+  begin
+    yield
+  ensure
+    PaperTrail.enabled = was_enabled
+  end
+end
+```
 
 And then use it in your tests like this:
 
-    test "something that needs versioning" do
-      with_versioning do
-        # your test
-      end
-    end
+```ruby
+test "something that needs versioning" do
+  with_versioning do
+    # your test
+  end
+end
+```
 
 ### Per request
 
 You can turn PaperTrail on or off per request by adding a `paper_trail_enabled_for_controller` method to your controller which returns true or false:
 
-    class ApplicationController < ActionController::Base
-      def paper_trail_enabled_for_controller
-        request.user_agent != 'Disable User-Agent'
-      end
-    end
+```ruby
+class ApplicationController < ActionController::Base
+  def paper_trail_enabled_for_controller
+    request.user_agent != 'Disable User-Agent'
+  end
+end
+```
 
 ### Per class
 
 If you are about change some widgets and you don't want a paper trail of your changes, you can turn PaperTrail off like this:
 
-    >> Widget.paper_trail_off
+```ruby
+>> Widget.paper_trail_off
+```
 
 And on again like this:
 
-    >> Widget.paper_trail_on
+```ruby
+>> Widget.paper_trail_on
+```
 
 ### Per method call
 
 You can call a method without creating a new version using `without_versioning`.  It takes either a method name as a symbol:
 
-    @widget.without_versioning :destroy
+```ruby
+@widget.without_versioning :destroy
+```
 
 Or a block:
 
-    @widget.without_versioning do
-      @widget.update_attributes :name => 'Ford'
-    end
-
+```ruby
+@widget.without_versioning do
+  @widget.update_attributes :name => 'Ford'
+end
+```
 
 ## Deleting Old Versions
 
 Over time your `versions` table will grow to an unwieldy size.  Because each version is self-contained (see the Diffing section above for more) you can simply delete any records you don't want any more.  For example:
 
-    sql> delete from versions where created_at < 2010-06-01;
+```sql
+sql> delete from versions where created_at < 2010-06-01;
+```
 
-    >> Version.delete_all ["created_at < ?", 1.week.ago]
-
+```ruby
+>> Version.delete_all ["created_at < ?", 1.week.ago]
+```
 
 ## Installation
 
@@ -644,13 +733,14 @@ PaperTrail uses Bundler to manage its dependencies (in development and testing).
 
 It's a good idea to reset PaperTrail before each test so data from one test doesn't spill over another.  For example:
 
-    RSpec.configure do |config|
-      config.before :each do
-        PaperTrail.controller_info = {}
-        PaperTrail.whodunnit = nil
-      end
-    end
-
+```ruby
+RSpec.configure do |config|
+  config.before :each do
+    PaperTrail.controller_info = {}
+    PaperTrail.whodunnit = nil
+  end
+end
+```
 You may want to turn PaperTrail off to speed up your tests.  See the "Turning PaperTrail Off/On" section above.
 
 
