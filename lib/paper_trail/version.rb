@@ -15,7 +15,7 @@ class Version < ActiveRecord::Base
     where(["#{self.primary_key} < ?", version.is_a?(self) ? version.id : version]).order("#{self.primary_key} DESC")
   }
 
-  scope :after, lambda { |timestamp|
+  scope :following, lambda { |timestamp|
     # TODO: is this :order necessary, considering its presence on the has_many :versions association?
     where(['created_at > ?', timestamp]).order("created_at ASC, #{self.primary_key} ASC")
   }
