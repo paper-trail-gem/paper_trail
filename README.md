@@ -179,12 +179,13 @@ You can choose which events to track with the `on` option.  For example, to igno
     end
 
 
-## Choosing When Not To Save New Versions
+## Choosing When To Save New Versions
 
-You can choose the condition when not to add new versions with the `ignore_if` option. For example, to ignore non-US translations:
+You can choose the conditions when to add new versions with the `if` and `unless` options. For example, to save versions only for US non-draft translations:
 
     class Translation < ActiveRecord::Base
-      has_paper_trail :ignore_if => Proc.new { |t| t.language_code != 'US' }
+      has_paper_trail :if     => Proc.new { |t| t.language_code == 'US' },
+                      :unless => Proc.new { |t| t.type == 'DRAFT'       }
     end
 
 

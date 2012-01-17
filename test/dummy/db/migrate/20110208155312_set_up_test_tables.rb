@@ -108,6 +108,7 @@ class SetUpTestTables < ActiveRecord::Migration
       t.string    :headline
       t.string    :content
       t.string    :language_code
+      t.string    :type
     end
   end
 
