@@ -15,6 +15,7 @@ module PaperTrail
       #               `:create`, `:update`, `:destroy` as desired.
       # :class_name   the name of a custom Version class.  This class should inherit from Version.
       # :ignore       an array of attributes for which a new `Version` will not be created if only they change.
+      # :if, :unless  Procs that allow to specify conditions when to save versions for an object
       # :only         inverse of `ignore` - a new `Version` will be created only for these attributes if supplied
       # :skip         fields to ignore completely.  As with `ignore`, updates to these fields will not create
       #               a new `Version`.  In addition, these fields will not be included in the serialized versions
@@ -43,6 +44,12 @@ module PaperTrail
         class_attribute :ignore
         self.ignore = ([options[:ignore]].flatten.compact || []).map &:to_s
 
+        class_attribute :if_condition
+        self.if_condition = options[:if]
+
+        class_attribute :unless_condition
+        self.unless_condition = options[:unless]
+
         class_attribute :skip
         self.skip = ([options[:skip]].flatten.compact || []).map &:to_s
 
@@ -63,8 +70,8 @@ module PaperTrail
                  :as         => :item,
                  :order      => "created_at ASC, #{self.version_class_name.constantize.primary_key} ASC"
 
-        after_create  :record_create  if !options[:on] || options[:on].include?(:create)
-        before_update :record_update  if !options[:on] || options[:on].include?(:update)
+        after_create  :record_create, :if => :save_version? if !options[:on] || options[:on].include?(:create)
+        before_update :record_update, :if => :save_version? if !options[:on] || options[:on].include?(:update)
         after_destroy :record_destroy if !options[:on] || options[:on].include?(:destroy)
       end
 
@@ -215,7 +222,10 @@ module PaperTrail
       def switched_on?
         PaperTrail.enabled? && PaperTrail.enabled_for_controller? && self.class.paper_trail_enabled_for_model
       end
-    end
 
+      def save_version?
+        (if_condition.blank? || if_condition.call(self)) && !unless_condition.try(:call, self)
+      end
+    end
   end
 end
