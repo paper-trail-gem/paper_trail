@@ -1,5 +1,6 @@
 test/debug.log
 test/paper_trail_plugin.sqlite3.db
+test/dummy/db/*.sqlite3
 test/dummy/log/*
 test/dummy/tmp/*
 coverage
