@@ -103,7 +103,13 @@ class SetUpTestTables < ActiveRecord::Migration
       t.string    :name
       t.integer   :version
     end
-  
+
+    create_table :translations, :force => true do |t|
+      t.string    :headline
+      t.string    :content
+      t.string    :language_code
+      t.string    :type
+    end
   end
 
   def self.down
@@ -123,5 +129,6 @@ class SetUpTestTables < ActiveRecord::Migration
     drop_table :widgets
     drop_table :documents
     drop_table :legacy_widgets
+    drop_table :translations
   end
 end

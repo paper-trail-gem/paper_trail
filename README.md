@@ -179,6 +179,16 @@ You can choose which events to track with the `on` option.  For example, to igno
     end
 
 
+## Choosing When To Save New Versions
+
+You can choose the conditions when to add new versions with the `if` and `unless` options. For example, to save versions only for US non-draft translations:
+
+    class Translation < ActiveRecord::Base
+      has_paper_trail :if     => Proc.new { |t| t.language_code == 'US' },
+                      :unless => Proc.new { |t| t.type == 'DRAFT'       }
+    end
+
+
 
 ## Choosing Attributes To Monitor
 

@@ -68,6 +68,48 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
   end
 
+  context 'A record with defined "if" and "unless" attributes' do
+    setup { @translation = Translation.new :headline => 'Headline' }
+
+    context 'for non-US translations' do
+      setup { @translation.save }
+      should_not_change('the number of versions') { Version.count }
+
+      context 'after update' do
+        setup { @translation.update_attributes :content => 'Content' }
+        should_not_change('the number of versions') { Version.count }
+      end
+    end
+
+    context 'for US translations' do
+      setup { @translation.language_code = "US" }
+
+      context 'that are drafts' do
+        setup do
+          @translation.type = 'DRAFT'
+          @translation.save
+        end
+
+        should_not_change('the number of versions') { Version.count }
+
+        context 'after update' do
+          setup { @translation.update_attributes :content => 'Content' }
+          should_not_change('the number of versions') { Version.count }
+        end
+      end
+
+      context 'that are not drafts' do
+        setup { @translation.save }
+
+        should_change('the number of versions', :by => 1) { Version.count }
+
+        context 'after update' do
+          setup { @translation.update_attributes :content => 'Content' }
+          should_change('the number of versions', :by => 1) { Version.count }
+        end
+      end
+    end
+  end
 
   context 'A new record' do
     setup { @widget = Widget.new }
