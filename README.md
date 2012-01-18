@@ -704,6 +704,7 @@ Many thanks to:
 * [Benjamin Curtis](https://github.com/stympy)
 * [Peter Harkins](https://github.com/pushcx)
 * [Mohd Amree](https://github.com/amree)
+* [Nikita Cernovs](https://github.com/nikitachernov)
 
 
 ## Inspirations
