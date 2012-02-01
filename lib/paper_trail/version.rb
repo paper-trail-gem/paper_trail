@@ -116,7 +116,8 @@ class Version < ActiveRecord::Base
   end
 
   def index
-    sibling_versions.select(:id).order("id ASC").map(&:id).index(self.id)
+    id_column = self.class.primary_key
+    sibling_versions.select(id_column.to_sym).order("#{id_column} ASC").map(&id_column.to_sym).index(self.send(id_column))
   end
 
   private
