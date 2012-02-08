@@ -358,6 +358,17 @@ This allows you to store each model's versions in a separate table, which is use
 
 Alternatively you could store certain metadata for one type of version, and other metadata for other versions.
 
+If you only use custom version classes and don't use PaperTrail's built-in one, on Rails 3.2 you must:
+
+- either declare PaperTrail's version class abstract like this:
+
+    # config/initializers/paper_trail_patch.rb
+    Version.module_eval do
+      self.abstract_class = true
+    end
+
+- or define a `versions` table in the database so Rails can instantiate the version superclass.
+
 You can also specify custom names for the versions and version associations.  This is useful if you already have `versions` or/and `version` methods on your model.  For example:
 
     class Post < ActiveRecord::Base
