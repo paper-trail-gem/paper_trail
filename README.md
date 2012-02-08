@@ -360,12 +360,11 @@ Alternatively you could store certain metadata for one type of version, and othe
 
 If you only use custom version classes and don't use PaperTrail's built-in one, on Rails 3.2 you must:
 
-- either declare PaperTrail's version class abstract like this:
+- either declare PaperTrail's version class abstract like this (in `config/initializers/paper_trail_patch.rb`):
 
-    # config/initializers/paper_trail_patch.rb
-    Version.module_eval do
-      self.abstract_class = true
-    end
+        Version.module_eval do
+          self.abstract_class = true
+        end
 
 - or define a `versions` table in the database so Rails can instantiate the version superclass.
 
