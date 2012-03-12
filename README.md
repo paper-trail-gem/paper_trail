@@ -715,6 +715,7 @@ Many thanks to:
 * [Peter Harkins](https://github.com/pushcx)
 * [Mohd Amree](https://github.com/amree)
 * [Nikita Cernovs](https://github.com/nikitachernov)
+* [Jason Noble](https://github.com/jasonnoble)
 
 
 ## Inspirations
