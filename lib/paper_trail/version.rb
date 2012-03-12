@@ -20,6 +20,10 @@ class Version < ActiveRecord::Base
     where(["#{PaperTrail.timestamp_field} > ?", timestamp]).order("#{PaperTrail.timestamp_field} ASC, #{self.primary_key} ASC")
   }
 
+  scope :between, lambda { |start_time, end_time|
+    where(['created_at > ? AND created_at < ?', start_time, end_time ]).order("created_at ASC, #{self.primary_key} ASC")
+  }
+
   # Restore the item from this version.
   #
   # This will automatically restore all :has_one associations as they were "at the time",

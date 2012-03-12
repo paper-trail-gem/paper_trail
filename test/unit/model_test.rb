@@ -576,6 +576,24 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       end
     end
 
+    context '.versions_between' do
+      setup do
+        @created       = 30.days.ago
+        @first_update  = 15.days.ago
+        @second_update = 1.day.ago
+        @widget.versions[0].update_attributes :created_at => @created
+        @widget.versions[1].update_attributes :created_at => @first_update
+        @widget.versions[2].update_attributes :created_at => @second_update
+        @widget.update_attribute :updated_at, @second_update
+      end
+
+      should 'return versions in the time period' do
+        assert_equal ['Fidget'], @widget.versions_between(20.days.ago, 10.days.ago).map(&:name)
+        assert_equal ['Widget', 'Fidget'], @widget.versions_between(45.days.ago, 10.days.ago).map(&:name)
+        assert_equal ['Fidget', 'Digit'], @widget.versions_between(16.days.ago, 1.minute.ago).map(&:name)
+        assert_equal [], @widget.versions_between(60.days.ago, 45.days.ago).map(&:name)
+      end
+    end
 
     context 'on the first version' do
       setup { @version = @widget.versions.first }
