@@ -717,6 +717,8 @@ Many thanks to:
 * [Nikita Cernovs](https://github.com/nikitachernov)
 * [Jason Noble](https://github.com/jasonnoble)
 * [Jared Mehle](https://github.com/jrmehle)
+* [Eric Schwartz](https://github.com/emschwar)
+
 
 
 ## Inspirations
