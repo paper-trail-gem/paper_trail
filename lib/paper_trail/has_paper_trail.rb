@@ -108,6 +108,11 @@ module PaperTrail
         v ? v.reify(reify_options) : self
       end
 
+      def versions_between(start_time, end_time, reify_options={})
+        versions = send(self.class.versions_association_name).between(start_time, end_time)
+        versions.collect{ |version| version_at(version.created_at) }
+      end
+
       # Returns the object (not a Version) as it was most recently.
       def previous_version
         preceding_version = source_version ? source_version.previous : send(self.class.versions_association_name).last
