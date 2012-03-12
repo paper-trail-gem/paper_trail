@@ -32,6 +32,14 @@ module PaperTrail
     paper_trail_store[:request_enabled_for_controller] = value
   end
 
+  def self.timestamp_field=(field_name)
+    PaperTrail.config.timestamp_field = field_name
+  end
+
+  def self.timestamp_field
+    PaperTrail.config.timestamp_field
+  end
+
   # Returns who is reponsible for any changes that occur.
   def self.whodunnit
     paper_trail_store[:whodunnit]
