@@ -16,6 +16,10 @@ class TimestampTest < ActiveSupport::TestCase
     @fluxor.update_attributes :name => 'Even more text.'
   end
 
+  teardown do
+    PaperTrail.config.timestamp_field = :created_at
+  end
+
   test 'versions works with custom timestamp field' do
     # Normal behaviour
     assert_equal 3, @fluxor.versions.length
