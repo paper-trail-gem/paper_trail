@@ -108,6 +108,7 @@ module PaperTrail
         v ? v.reify(reify_options) : self
       end
 
+      # Returns the objects (not Versions) as they were between the given times.
       def versions_between(start_time, end_time, reify_options={})
         versions = send(self.class.versions_association_name).between(start_time, end_time)
         versions.collect{ |version| version_at(version.created_at) }
