@@ -21,7 +21,8 @@ class Version < ActiveRecord::Base
   }
 
   scope :between, lambda { |start_time, end_time|
-    where(['created_at > ? AND created_at < ?', start_time, end_time ]).order("created_at ASC, #{self.primary_key} ASC")
+    where(["#{PaperTrail.timestamp_field} > ? AND #{PaperTrail.timestamp_field} < ?", start_time, end_time ]).
+      order("#{PaperTrail.timestamp_field} ASC, #{self.primary_key} ASC")
   }
 
   # Restore the item from this version.
