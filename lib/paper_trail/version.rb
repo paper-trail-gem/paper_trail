@@ -8,16 +8,16 @@ class Version < ActiveRecord::Base
   end
 
   scope :subsequent, lambda { |version|
-    where(["#{self.primary_key} > ?", version.is_a?(self) ? version.id : version]).order("#{self.primary_key} ASC")
+    where(["#{self.primary_key} > ?", version.is_a?(self) ? version.send(self.primary_key) : version]).order("#{self.primary_key} ASC")
   }
 
   scope :preceding, lambda { |version|
-    where(["#{self.primary_key} < ?", version.is_a?(self) ? version.id : version]).order("#{self.primary_key} DESC")
+    where(["#{self.primary_key} < ?", version.is_a?(self) ? version.send(self.primary_key) : version]).order("#{self.primary_key} DESC")
   }
 
   scope :following, lambda { |timestamp|
     # TODO: is this :order necessary, considering its presence on the has_many :versions association?
-    where(['created_at > ?', timestamp]).order("created_at ASC, #{self.primary_key} ASC")
+    where(["#{PaperTrail.timestamp_field} > ?", timestamp]).order("#{PaperTrail.timestamp_field} ASC, #{self.primary_key} ASC")
   }
 
   # Restore the item from this version.
@@ -116,7 +116,8 @@ class Version < ActiveRecord::Base
   end
 
   def index
-    sibling_versions.select(:id).order("id ASC").map(&:id).index(self.id)
+    id_column = self.class.primary_key.to_sym
+    sibling_versions.select(id_column).order("#{id_column} ASC").map(&id_column).index(self.send(id_column))
   end
 
   private
@@ -145,7 +146,7 @@ class Version < ActiveRecord::Base
         # but until PaperTrail knows which updates are "together" (e.g. parent and child being
         # updated on the same form), it's impossible to tell when the overall update started;
         # and therefore impossible to know when "just before" was.
-        if (child_as_it_was = child.version_at(created_at - lookback.seconds))
+        if (child_as_it_was = child.version_at(send(PaperTrail.timestamp_field) - lookback.seconds))
           child_as_it_was.attributes.each do |k,v|
             model.send(assoc.name).send :write_attribute, k.to_sym, v rescue nil
           end
