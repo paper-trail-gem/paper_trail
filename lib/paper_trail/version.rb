@@ -17,7 +17,8 @@ class Version < ActiveRecord::Base
 
   scope :following, lambda { |timestamp|
     # TODO: is this :order necessary, considering its presence on the has_many :versions association?
-    where(["#{PaperTrail.timestamp_field} > ?", timestamp]).order("#{PaperTrail.timestamp_field} ASC, #{self.primary_key} ASC")
+    where(["#{PaperTrail.timestamp_field} > ?", timestamp]).
+      order("#{PaperTrail.timestamp_field} ASC, #{self.primary_key} ASC")
   }
 
   scope :between, lambda { |start_time, end_time|
