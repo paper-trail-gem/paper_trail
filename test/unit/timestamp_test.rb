@@ -3,7 +3,7 @@ require 'test_helper'
 class TimestampTest < ActiveSupport::TestCase
 
   setup do
-    PaperTrail.config.timestamp_field = :custom_created_at
+    PaperTrail.timestamp_field = :custom_created_at
     change_schema
     Version.reset_column_information
 
@@ -17,7 +17,7 @@ class TimestampTest < ActiveSupport::TestCase
   end
 
   teardown do
-    PaperTrail.config.timestamp_field = :created_at
+    PaperTrail.timestamp_field = :created_at
   end
 
   test 'versions works with custom timestamp field' do
