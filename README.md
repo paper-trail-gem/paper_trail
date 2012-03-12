@@ -716,6 +716,7 @@ Many thanks to:
 * [Mohd Amree](https://github.com/amree)
 * [Nikita Cernovs](https://github.com/nikitachernov)
 * [Jason Noble](https://github.com/jasonnoble)
+* [Jared Mehle](https://github.com/jrmehle)
 
 
 ## Inspirations
