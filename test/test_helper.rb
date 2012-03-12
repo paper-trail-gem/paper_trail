@@ -38,6 +38,7 @@ def change_schema
   ActiveRecord::Migration.verbose = false
   ActiveRecord::Schema.define do
     remove_column :widgets, :sacrificial_column
+    add_column :versions, :custom_created_at, :datetime
   end
   ActiveRecord::Migration.verbose = true
 end
