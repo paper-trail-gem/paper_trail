@@ -32,10 +32,12 @@ module PaperTrail
     paper_trail_store[:request_enabled_for_controller] = value
   end
 
+  # Set the field which records when a version was created.
   def self.timestamp_field=(field_name)
     PaperTrail.config.timestamp_field = field_name
   end
 
+  # Returns the field which records when a version was created.
   def self.timestamp_field
     PaperTrail.config.timestamp_field
   end
