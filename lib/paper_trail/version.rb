@@ -8,11 +8,11 @@ class Version < ActiveRecord::Base
   end
 
   scope :subsequent, lambda { |version|
-    where(["#{self.primary_key} > ?", version.is_a?(self) ? version.send(self.primary_key) : version]).order("#{self.primary_key} ASC")
+    where(["#{self.primary_key} > ?", version]).order("#{self.primary_key} ASC")
   }
 
   scope :preceding, lambda { |version|
-    where(["#{self.primary_key} < ?", version.is_a?(self) ? version.send(self.primary_key) : version]).order("#{self.primary_key} DESC")
+    where(["#{self.primary_key} < ?", version]).order("#{self.primary_key} DESC")
   }
 
   scope :following, lambda { |timestamp|
