@@ -68,9 +68,9 @@ class Version < ActiveRecord::Base
         end
 
         attrs.each do |k, v|
-          begin
-            model.send :write_attribute, k.to_sym , v
-          rescue NoMethodError
+          if model.respond_to?("#{k}=")
+            model.send :write_attribute, k.to_sym, v
+          else
             logger.warn "Attribute #{k} does not exist on #{item_type} (Version id: #{id})."
           end
         end
