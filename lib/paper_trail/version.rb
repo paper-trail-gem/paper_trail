@@ -7,12 +7,16 @@ class Version < ActiveRecord::Base
     scoped(:conditions => { :item_type => item_type, :item_id => item_id })
   end
 
+  scope :creates, where(:event => 'create')
+  scope :updates, where(:event => 'update')
+  scope :destroys, where(:event => 'destroy')
+
   scope :subsequent, lambda { |version|
-    where(["#{self.primary_key} > ?", version.is_a?(self) ? version.send(self.primary_key) : version]).order("#{self.primary_key} ASC")
+    where(["#{self.primary_key} > ?", version]).order("#{self.primary_key} ASC")
   }
 
   scope :preceding, lambda { |version|
-    where(["#{self.primary_key} < ?", version.is_a?(self) ? version.send(self.primary_key) : version]).order("#{self.primary_key} DESC")
+    where(["#{self.primary_key} < ?", version]).order("#{self.primary_key} DESC")
   }
 
   scope :following, lambda { |timestamp|

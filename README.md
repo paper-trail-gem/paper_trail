@@ -347,7 +347,7 @@ You can specify custom version subclasses with the `:class_name` option:
 
     class PostVersion < Version
       # custom behaviour, e.g:
-      set_table_name :post_versions
+      self.table_name = :post_versions
     end
 
     class Post < ActiveRecord::Base
