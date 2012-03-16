@@ -19,6 +19,6 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'rake'
   s.add_development_dependency 'shoulda',      '2.10.3'
-  s.add_development_dependency 'sqlite3-ruby', '~> 1.2'
+  s.add_development_dependency 'sqlite3',      '~> 1.2'
   s.add_development_dependency 'capybara',     '~> 1.0.0'
 end
