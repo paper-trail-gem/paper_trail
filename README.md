@@ -718,7 +718,7 @@ Many thanks to:
 * [Jason Noble](https://github.com/jasonnoble)
 * [Jared Mehle](https://github.com/jrmehle)
 * [Eric Schwartz](https://github.com/emschwar)
-
+* [Ben Woosley](https://github.com/Empact)
 
 
 ## Inspirations
