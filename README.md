@@ -719,6 +719,7 @@ Many thanks to:
 * [Jared Mehle](https://github.com/jrmehle)
 * [Eric Schwartz](https://github.com/emschwar)
 * [Ben Woosley](https://github.com/Empact)
+* [Philip Arndt](https://github.com/parndt)
 
 
 ## Inspirations
