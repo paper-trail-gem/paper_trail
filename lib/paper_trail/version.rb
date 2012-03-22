@@ -7,9 +7,17 @@ class Version < ActiveRecord::Base
     scoped(:conditions => { :item_type => item_type, :item_id => item_id })
   end
 
-  scope :creates, where(:event => 'create')
-  scope :updates, where(:event => 'update')
-  scope :destroys, where(:event => 'destroy')
+  def self.creates
+    where :event => 'create'
+  end
+
+  def self.updates
+    where :event => 'update'
+  end
+
+  def self.destroys
+    where :event => 'destroy'
+  end
 
   scope :subsequent, lambda { |version|
     where(["#{self.primary_key} > ?", version]).order("#{self.primary_key} ASC")
