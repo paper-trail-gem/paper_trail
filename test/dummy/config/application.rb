@@ -4,7 +4,6 @@ require "active_model/railtie"
 require "active_record/railtie"
 require "action_controller/railtie"
 require "action_view/railtie"
-require "action_mailer/railtie"
 
 Bundler.require
 require 'paper_trail'
