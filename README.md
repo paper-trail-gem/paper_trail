@@ -727,6 +727,7 @@ Many thanks to:
 * [Eric Schwartz](https://github.com/emschwar)
 * [Ben Woosley](https://github.com/Empact)
 * [Philip Arndt](https://github.com/parndt)
+* [Daniel Vydra](https://github.com/dvydra)
 
 
 ## Inspirations
