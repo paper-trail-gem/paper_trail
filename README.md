@@ -356,6 +356,13 @@ You can specify custom version subclasses with the `:class_name` option:
 
 This allows you to store each model's versions in a separate table, which is useful if you have a lot of versions being created.
 
+If you are using Postgres, you should also define the sequence that your custom version class will use:
+
+    class PostVersion < Version
+      self.table_name = :post_versions
+      self.sequence_name = :post_version_id_seq
+    end
+
 Alternatively you could store certain metadata for one type of version, and other metadata for other versions.
 
 If you only use custom version classes and don't use PaperTrail's built-in one, on Rails 3.2 you must:
