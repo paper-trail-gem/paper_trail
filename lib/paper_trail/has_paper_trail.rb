@@ -44,20 +44,15 @@ module PaperTrail
         class_attribute :ignore
         self.ignore = ([options[:ignore]].flatten.compact || []).map &:to_s
 
-        class_attribute :if_condition
-        self.if_condition = options[:if]
+        class_attribute :paper_trail_options
+        self.paper_trail_options = options.dup
 
-        class_attribute :unless_condition
-        self.unless_condition = options[:unless]
+        %w(ignore skip only).map(&:to_sym).each do |k|
+          paper_trail_options[k] =
+            ([paper_trail_options[k]].flatten.compact || []).map &:to_s
+        end
 
-        class_attribute :skip
-        self.skip = ([options[:skip]].flatten.compact || []).map &:to_s
-
-        class_attribute :only
-        self.only = ([options[:only]].flatten.compact || []).map &:to_s
-
-        class_attribute :meta
-        self.meta = options[:meta] || {}
+        paper_trail_options[:meta] ||= {}
 
         class_attribute :paper_trail_enabled_for_model
         self.paper_trail_enabled_for_model = true
@@ -183,7 +178,7 @@ module PaperTrail
 
       def merge_metadata(data)
         # First we merge the model-level metadata in `meta`.
-        meta.each do |k,v|
+        paper_trail_options[:meta].each do |k,v|
           data[k] =
             if v.respond_to?(:call)
               v.call(self)
@@ -210,7 +205,7 @@ module PaperTrail
       end
 
       def object_to_string(object)
-        object.attributes.except(*self.class.skip).to_yaml
+        object.attributes.except(*self.class.paper_trail_options[:skip]).to_yaml
       end
 
       def changed_notably?
@@ -218,11 +213,14 @@ module PaperTrail
       end
 
       def notably_changed
-        self.class.only.empty? ? changed_and_not_ignored : (changed_and_not_ignored & self.class.only)
+        only = self.class.paper_trail_options[:only]
+        only.empty? ? changed_and_not_ignored : (changed_and_not_ignored & only)
       end
 
       def changed_and_not_ignored
-        changed - self.class.ignore - self.class.skip
+        ignore = self.class.paper_trail_options[:ignore]
+        skip   = self.class.paper_trail_options[:skip]
+        changed - ignore - skip
       end
 
       def switched_on?
@@ -230,6 +228,8 @@ module PaperTrail
       end
 
       def save_version?
+        if_condition     = self.class.paper_trail_options[:if]
+        unless_condition = self.class.paper_trail_options[:unless]
         (if_condition.blank? || if_condition.call(self)) && !unless_condition.try(:call, self)
       end
     end
