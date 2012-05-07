@@ -41,9 +41,6 @@ module PaperTrail
         class_attribute :version_class_name
         self.version_class_name = options[:class_name] || 'Version'
 
-        class_attribute :ignore
-        self.ignore = ([options[:ignore]].flatten.compact || []).map &:to_s
-
         class_attribute :paper_trail_options
         self.paper_trail_options = options.dup
 
