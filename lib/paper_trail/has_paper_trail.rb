@@ -44,7 +44,7 @@ module PaperTrail
         class_attribute :paper_trail_options
         self.paper_trail_options = options.dup
 
-        %w(ignore skip only).map(&:to_sym).each do |k|
+        [:ignore, :skip, :only].each do |k|
           paper_trail_options[k] =
             ([paper_trail_options[k]].flatten.compact || []).map &:to_s
         end
