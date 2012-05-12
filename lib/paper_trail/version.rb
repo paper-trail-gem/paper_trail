@@ -4,7 +4,8 @@ class Version < ActiveRecord::Base
   attr_accessible :item_type, :item_id, :event, :whodunnit, :object, :object_changes
 
   def self.with_item_keys(item_type, item_id)
-    scoped(:conditions => { :item_type => item_type, :item_id => item_id })
+    scoped(:conditions => { :item_type => item_type, :item_id => item_id }).
+    order("#{PaperTrail.timestamp_field} ASC, #{self.primary_key} ASC")
   end
 
   def self.creates
@@ -127,6 +128,12 @@ class Version < ActiveRecord::Base
 
   def next
     sibling_versions.subsequent(self).first
+  end
+  
+  # if an item is destroyed then 'version.item' will return nil causing an error. 
+  # this method will ensure to return a latest instance of an item. 
+  def latest_item
+   item || sibling_versions.last.reify
   end
 
   def previous

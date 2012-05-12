@@ -74,7 +74,10 @@ And a `Version` instance has these methods:
 
     # Returns the item restored from this version.
     version.reify(options = {})
-
+     
+    #Returns the  item's latest stored instance.(if item is destroyed, it returns the state at which it was deleted.)
+    version.latest_item
+    
     # Returns who put the item into the state stored in this version.
     version.originator
 
