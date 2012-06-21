@@ -320,6 +320,16 @@ In a migration or in `script/console` you can set who is responsible like this:
     >> PaperTrail.whodunnit = 'Andy Stewart'
     >> widget.update_attributes :name => 'Wibble'
     >> widget.versions.last.whodunnit              # Andy Stewart
+    
+You can avoid having to do this manually (and be able to blame anyone who forgets :-P) by setting your initializer like this:
+
+    class Version < ActiveRecord::Base
+      if defined?(Rails::Console)
+        PaperTrail.whodunnit = "#{`whoami`.strip}: console"
+      elsif File.basename($0) == "rake"
+        PaperTrail.whodunnit = "#{`whoami`.strip}: rake #{ARGV.join ' '}"
+      end
+    end
 
 N.B. A `version`'s `whodunnit` records who changed the object causing the `version` to be stored.  Because a `version` stores the object as it looked before the change (see the table above), `whodunnit` returns who stopped the object looking like this -- not who made it look like this.  Hence `whodunnit` is aliased as `terminator`.
 
