@@ -49,11 +49,11 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         end
 
         should 'have removed the skipped attributes when saving the previous version' do
-          assert_equal nil, YAML::load(@old_article.object)['file_upload']
+          assert_equal nil, PaperTrail.serializer.load(@old_article.object)['file_upload']
         end
 
         should 'have kept the non-skipped attributes in the previous version' do
-          assert_equal 'Some text here.', YAML::load(@old_article.object)['content']
+          assert_equal 'Some text here.', PaperTrail.serializer.load(@old_article.object)['content']
         end
       end
     end
@@ -184,7 +184,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         end
 
         should 'have stored changes' do
-          assert_equal ({'name' => ['Henry', 'Harry']}), YAML::load(@widget.versions.last.object_changes)
+          assert_equal ({'name' => ['Henry', 'Harry']}), PaperTrail.serializer.load(@widget.versions.last.object_changes)
           assert_equal ({'name' => ['Henry', 'Harry']}), @widget.versions.last.changeset
         end
 
