@@ -1,4 +1,4 @@
-class Version < ActiveRecord::Base
+class PaperTrail::Version < ActiveRecord::Base
   belongs_to :item, :polymorphic => true
   validates_presence_of :event
   attr_accessible :item_type, :item_id, :event, :whodunnit, :object, :object_changes
