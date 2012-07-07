@@ -5,7 +5,7 @@ class TimestampTest < ActiveSupport::TestCase
   setup do
     PaperTrail.timestamp_field = :custom_created_at
     change_schema
-    Version.reset_column_information
+    PaperTrail::Version.reset_column_information
 
     Fluxor.instance_eval <<-END
       has_paper_trail

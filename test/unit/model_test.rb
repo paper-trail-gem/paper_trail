@@ -7,12 +7,12 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
     context 'which updates an ignored column' do
       setup { @article.update_attributes :title => 'My first title' }
-      should_not_change('the number of versions') { Version.count }
+      should_not_change('the number of versions') { PaperTrail::Version.count }
     end
 
     context 'which updates an ignored column and a selected column' do
       setup { @article.update_attributes :title => 'My first title', :content => 'Some text here.' }
-      should_change('the number of versions', :by => 1) { Version.count }
+      should_change('the number of versions', :by => 1) { PaperTrail::Version.count }
 
       should 'have stored only non-ignored attributes' do
         assert_equal ({'content' => [nil, 'Some text here.']}), @article.versions.last.changeset
@@ -21,22 +21,22 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
     context 'which updates a selected column' do
       setup { @article.update_attributes :content => 'Some text here.' }
-      should_change('the number of versions', :by => 1) { Version.count }
+      should_change('the number of versions', :by => 1) { PaperTrail::Version.count }
     end
 
     context 'which updates a non-ignored and non-selected column' do
       setup { @article.update_attributes :abstract => 'Other abstract'}
-      should_not_change('the number of versions') { Version.count }
+      should_not_change('the number of versions') { PaperTrail::Version.count }
     end
 
     context 'which updates a skipped column' do
       setup { @article.update_attributes :file_upload => 'Your data goes here' }
-      should_not_change('the number of versions') { Version.count }
+      should_not_change('the number of versions') { PaperTrail::Version.count }
     end
 
     context 'which updates a skipped column and a selected column' do
       setup { @article.update_attributes :file_upload => 'Your data goes here', :content => 'Some text here.' }
-      should_change('the number of versions', :by => 1) { Version.count }
+      should_change('the number of versions', :by => 1) { PaperTrail::Version.count }
 
       should 'have stored only non-skipped attributes' do
         assert_equal ({'content' => [nil, 'Some text here.']}), @article.versions.last.changeset
@@ -64,7 +64,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
     context 'which updates an ignored column' do
       setup { @legacy_widget.update_attributes :version => 1 }
-      should_not_change('the number of versions') { Version.count }
+      should_not_change('the number of versions') { PaperTrail::Version.count }
     end
   end
 
@@ -73,11 +73,11 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
     context 'for non-US translations' do
       setup { @translation.save }
-      should_not_change('the number of versions') { Version.count }
+      should_not_change('the number of versions') { PaperTrail::Version.count }
 
       context 'after update' do
         setup { @translation.update_attributes :content => 'Content' }
-        should_not_change('the number of versions') { Version.count }
+        should_not_change('the number of versions') { PaperTrail::Version.count }
       end
     end
 
@@ -90,22 +90,22 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           @translation.save
         end
 
-        should_not_change('the number of versions') { Version.count }
+        should_not_change('the number of versions') { PaperTrail::Version.count }
 
         context 'after update' do
           setup { @translation.update_attributes :content => 'Content' }
-          should_not_change('the number of versions') { Version.count }
+          should_not_change('the number of versions') { PaperTrail::Version.count }
         end
       end
 
       context 'that are not drafts' do
         setup { @translation.save }
 
-        should_change('the number of versions', :by => 1) { Version.count }
+        should_change('the number of versions', :by => 1) { PaperTrail::Version.count }
 
         context 'after update' do
           setup { @translation.update_attributes :content => 'Content' }
-          should_change('the number of versions', :by => 1) { Version.count }
+          should_change('the number of versions', :by => 1) { PaperTrail::Version.count }
         end
       end
     end
@@ -250,15 +250,15 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           setup do
             @fluxor = @widget.fluxors.create :name => 'flux'
             @widget.destroy
-            @reified_widget = Version.last.reify
+            @reified_widget = PaperTrail::Version.last.reify
           end
 
           should 'record the correct event' do
-            assert_match /destroy/i, Version.last.event
+            assert_match /destroy/i, PaperTrail::Version.last.event
           end
 
           should 'have three previous versions' do
-            assert_equal 3, Version.with_item_keys('Widget', @widget.id).length
+            assert_equal 3, PaperTrail::Version.with_item_keys('Widget', @widget.id).length
           end
 
           should 'be available in its previous version' do
@@ -488,7 +488,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           setup do
             PaperTrail.whodunnit = 'Charlie'
             @widget.destroy
-            @version = Version.last
+            @version = PaperTrail::Version.last
           end
 
           should 'track who made the change' do
@@ -510,20 +510,20 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
 
     should 'reify with the correct type' do
-      thing = Version.last.reify
+      thing = PaperTrail::Version.last.reify
       assert_kind_of FooWidget, thing
-      assert_equal @foo.versions.first, Version.last.previous
-      assert_nil Version.last.next
+      assert_equal @foo.versions.first, PaperTrail::Version.last.previous
+      assert_nil PaperTrail::Version.last.next
     end
 
     context 'when destroyed' do
       setup { @foo.destroy }
 
       should 'reify with the correct type' do
-        thing = Version.last.reify
+        thing = PaperTrail::Version.last.reify
         assert_kind_of FooWidget, thing
-        assert_equal @foo.versions[1], Version.last.previous
-        assert_nil Version.last.next
+        assert_equal @foo.versions[1], PaperTrail::Version.last.previous
+        assert_nil PaperTrail::Version.last.next
       end
     end
   end
@@ -762,35 +762,35 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
 
     should 'store version on source <<' do
-      count = Version.count
+      count = PaperTrail::Version.count
       @book.authors << @dostoyevsky
-      assert_equal 1, Version.count - count
-      assert_equal Version.last, @book.authorships.first.versions.first
+      assert_equal 1, PaperTrail::Version.count - count
+      assert_equal PaperTrail::Version.last, @book.authorships.first.versions.first
     end
 
     should 'store version on source create' do
-      count = Version.count
+      count = PaperTrail::Version.count
       @book.authors.create :name => 'Tolstoy'
-      assert_equal 2, Version.count - count
-      assert_same_elements [Person.last, Authorship.last], [Version.all[-2].item, Version.last.item]
+      assert_equal 2, PaperTrail::Version.count - count
+      assert_same_elements [Person.last, Authorship.last], [PaperTrail::Version.all[-2].item, PaperTrail::Version.last.item]
     end
 
     should 'store version on join destroy' do
       @book.authors << @dostoyevsky
-      count = Version.count
+      count = PaperTrail::Version.count
       @book.authorships(true).last.destroy
-      assert_equal 1, Version.count - count
-      assert_equal @book, Version.last.reify.book
-      assert_equal @dostoyevsky, Version.last.reify.person
+      assert_equal 1, PaperTrail::Version.count - count
+      assert_equal @book, PaperTrail::Version.last.reify.book
+      assert_equal @dostoyevsky, PaperTrail::Version.last.reify.person
     end
 
     should 'store version on join clear' do
       @book.authors << @dostoyevsky
-      count = Version.count
+      count = PaperTrail::Version.count
       @book.authorships(true).clear
-      assert_equal 1, Version.count - count
-      assert_equal @book, Version.last.reify.book
-      assert_equal @dostoyevsky, Version.last.reify.person
+      assert_equal 1, PaperTrail::Version.count - count
+      assert_equal @book, PaperTrail::Version.last.reify.book
+      assert_equal @dostoyevsky, PaperTrail::Version.last.reify.person
     end
   end
 
@@ -876,17 +876,17 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
   end
 
-  context 'A new model instance which uses a custom Version class' do
+  context 'A new model instance which uses a custom PaperTrail::Version class' do
     setup { @post = Post.new }
 
     context 'which is then saved' do
       setup { @post.save }
       should_change('the number of post versions') { PostVersion.count }
-      should_not_change('the number of versions') { Version.count }
+      should_not_change('the number of versions') { PaperTrail::Version.count }
     end
   end
 
-  context 'An existing model instance which uses a custom Version class' do
+  context 'An existing model instance which uses a custom PaperTrail::Version class' do
     setup { @post = Post.create }
 
     context 'on the first version' do
@@ -904,7 +904,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     context 'which is modified' do
       setup { @post.update_attributes({ :content => "Some new content" }) }
       should_change('the number of post versions') { PostVersion.count }
-      should_not_change('the number of versions') { Version.count }
+      should_not_change('the number of versions') { PaperTrail::Version.count }
       should "not have stored changes when object_changes column doesn't exist" do
         assert_nil @post.versions.last.changeset
       end
@@ -1050,9 +1050,9 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
   # Updates `model`'s last version so it looks like the version was
   # created 2 seconds ago.
   def make_last_version_earlier(model)
-    Version.record_timestamps = false
+    PaperTrail::Version.record_timestamps = false
     model.versions.last.update_attributes :created_at => 2.seconds.ago
-    Version.record_timestamps = true
+    PaperTrail::Version.record_timestamps = true
   end
 
 end
