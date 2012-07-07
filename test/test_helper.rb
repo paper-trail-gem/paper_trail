@@ -43,7 +43,7 @@ def change_schema
   ActiveRecord::Migration.verbose = true
 end
 
-class Version < ActiveRecord::Base
+class PaperTrail::Version < ActiveRecord::Base
   attr_accessible :created_at, :updated_at,
     :answer, :action, :question, :article_id, :ip, :user_agent
 end
