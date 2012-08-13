@@ -79,6 +79,15 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         setup { @translation.update_attributes :content => 'Content' }
         should_not_change('the number of versions') { Version.count }
       end
+
+      context 'after destroy' do
+        setup do
+          @translation.save!
+          @translation.destroy
+        end
+
+        should_not_change('the number of versions') { Version.count }
+      end
     end
 
     context 'for US translations' do
@@ -105,6 +114,15 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
         context 'after update' do
           setup { @translation.update_attributes :content => 'Content' }
+          should_change('the number of versions', :by => 1) { Version.count }
+        end
+
+        context 'after destroy' do
+          setup do
+            @translation.save!
+            @translation.destroy
+          end
+
           should_change('the number of versions', :by => 1) { Version.count }
         end
       end
