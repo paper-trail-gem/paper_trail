@@ -149,7 +149,17 @@ module PaperTrail
 
       def record_create
         if switched_on?
-          send(self.class.versions_association_name).create merge_metadata(:event => 'create', :whodunnit => PaperTrail.whodunnit)
+          data = {
+            :event     => 'create',
+            :whodunnit => PaperTrail.whodunnit
+          }
+
+          if changed_notably? and version_class.column_names.include?('object_changes')
+            # The double negative (reject, !include?) preserves the hash structure of self.changes.
+            data[:object_changes] = self.changes.reject { |k, _| !notably_changed.include?(k) }.to_yaml
+          end
+
+          send(self.class.versions_association_name).create merge_metadata(data)
         end
       end
 
