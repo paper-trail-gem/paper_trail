@@ -1045,6 +1045,78 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
   end
 
+  context 'custom events' do
+    context 'on create' do
+      setup do
+        Fluxor.reset_callbacks :create
+        Fluxor.reset_callbacks :update
+        Fluxor.reset_callbacks :destroy
+        Fluxor.instance_eval <<-END
+          before_create :set_custom_event
+          has_paper_trail :on => [:create]
+        END
+        Fluxor.class_eval <<-END
+          def set_custom_event
+            self.custom_event = 'created'
+          end
+        END
+        @fluxor = Fluxor.create
+        @fluxor.update_attributes :name => 'blah'
+        @fluxor.destroy
+      end
+      should 'only have a version for the created event' do
+        assert_equal 1, @fluxor.versions.length
+        assert_equal 'created', @fluxor.versions.last.event
+      end
+    end
+    context 'on update' do
+      setup do
+        Fluxor.reset_callbacks :create
+        Fluxor.reset_callbacks :update
+        Fluxor.reset_callbacks :destroy
+        Fluxor.instance_eval <<-END
+          before_update :set_custom_event
+          has_paper_trail :on => [:update]
+        END
+        Fluxor.class_eval <<-END
+          def set_custom_event
+            self.custom_event = 'name_updated'
+          end
+        END
+        @fluxor = Fluxor.create
+        @fluxor.update_attributes :name => 'blah'
+        @fluxor.destroy
+      end
+      should 'only have a version for the name_updated event' do
+        assert_equal 1, @fluxor.versions.length
+        assert_equal 'name_updated', @fluxor.versions.last.event
+      end
+    end
+    context 'on destroy' do
+      setup do
+        Fluxor.reset_callbacks :create
+        Fluxor.reset_callbacks :update
+        Fluxor.reset_callbacks :destroy
+        Fluxor.instance_eval <<-END
+          before_destroy :set_custom_event
+          has_paper_trail :on => [:destroy]
+        END
+        Fluxor.class_eval <<-END
+          def set_custom_event
+            self.custom_event = 'destroyed'
+          end
+        END
+        @fluxor = Fluxor.create
+        @fluxor.update_attributes :name => 'blah'
+        @fluxor.destroy
+      end
+      should 'only have a version for the destroy event' do
+        assert_equal 1, @fluxor.versions.length
+        assert_equal 'destroyed', @fluxor.versions.last.event
+      end
+    end
+  end
+
   private
 
   # Updates `model`'s last version so it looks like the version was
