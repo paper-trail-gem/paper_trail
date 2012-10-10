@@ -27,6 +27,7 @@ module PaperTrail
       # :versions     the name to use for the versions association.  Default is `:versions`.
       # :version      the name to use for the method which returns the version the instance was reified from.
       #               Default is `:version`.
+      # :order        an SQL fragment used to order the versions association. Default is `"created_at ASC, id ASC"`
       def has_paper_trail(options = {})
         # Lazily include the instance methods so we don't clutter up
         # any more ActiveRecord models than we have to.
@@ -65,10 +66,13 @@ module PaperTrail
         class_attribute :versions_association_name
         self.versions_association_name = options[:versions] || :versions
 
+        class_attribute :versions_association_order
+        self.versions_association_order = options[:order] || "#{PaperTrail.timestamp_field} ASC, #{self.version_class_name.constantize.primary_key} ASC"
+
         has_many self.versions_association_name,
                  :class_name => version_class_name,
                  :as         => :item,
-                 :order      => "#{PaperTrail.timestamp_field} ASC, #{self.version_class_name.constantize.primary_key} ASC"
+                 :order      => self.versions_association_order
 
         after_create  :record_create, :if => :save_version? if !options[:on] || options[:on].include?(:create)
         before_update :record_update, :if => :save_version? if !options[:on] || options[:on].include?(:update)
