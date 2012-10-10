@@ -29,6 +29,7 @@ class SetUpTestTables < ActiveRecord::Migration
       t.string :action
       t.string  :question
       t.integer :article_id
+      t.string :title
 
       # Controller info columns.
       t.string :ip

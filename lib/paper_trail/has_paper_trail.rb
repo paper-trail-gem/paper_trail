@@ -188,7 +188,12 @@ module PaperTrail
             if v.respond_to?(:call)
               v.call(self)
             elsif v.is_a?(Symbol) && respond_to?(v)
-              send(v)
+              # if it is an attribute that is changing, be sure to grab the current version
+              if has_attribute?(v) && send("#{v}_changed?".to_sym)
+                send("#{v}_was")
+              else
+                send(v)
+              end
             else
               v
             end
