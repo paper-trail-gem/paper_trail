@@ -223,7 +223,7 @@ This means that changes to just the `title` or `rating` will not store another v
 >> a.versions.length                         # 1
 >> a.update_attributes :title => 'My Title', :rating => 3
 >> a.versions.length                         # 1
->> a.update_attributes :content => 'Hello'
+>> a.update_attributes :title => 'Greeting', :content => 'Hello'
 >> a.versions.length                         # 2
 >> a.previous_version.title                  # 'My Title'
 ```
@@ -245,6 +245,7 @@ This means that only changes to the `title` will save a version of the article:
 >> a.versions.length                         # 2
 >> a.update_attributes :content => 'Hello'
 >> a.versions.length                         # 2
+>> a.previous_version.content                # nil
 ```
 
 Passing both `:ignore` and `:only` options will result in the article being saved if a changed attribute is included in `:only` but not in `:ignore`.
