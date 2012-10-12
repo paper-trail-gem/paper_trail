@@ -7,12 +7,12 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
     context 'which updates an ignored column' do
       setup { @article.update_attributes :title => 'My first title' }
-      should_not_change('the number of versions') { Version.count }
+      should 'not change the number of versions' do assert_equal(1, Version.count) end
     end
 
     context 'which updates an ignored column and a selected column' do
       setup { @article.update_attributes :title => 'My first title', :content => 'Some text here.' }
-      should_change('the number of versions', :by => 1) { Version.count }
+      should 'change the number of versions' do assert_equal(2, Version.count) end
 
       should 'have stored only non-ignored attributes' do
         assert_equal ({'content' => [nil, 'Some text here.']}), @article.versions.last.changeset
@@ -21,22 +21,22 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
     context 'which updates a selected column' do
       setup { @article.update_attributes :content => 'Some text here.' }
-      should_change('the number of versions', :by => 1) { Version.count }
+      should 'change the number of versions' do assert_equal(2, Version.count) end
     end
 
     context 'which updates a non-ignored and non-selected column' do
       setup { @article.update_attributes :abstract => 'Other abstract'}
-      should_not_change('the number of versions') { Version.count }
+      should 'not change the number of versions' do assert_equal(1, Version.count) end
     end
 
     context 'which updates a skipped column' do
       setup { @article.update_attributes :file_upload => 'Your data goes here' }
-      should_not_change('the number of versions') { Version.count }
+      should 'not change the number of versions' do assert_equal(1, Version.count) end
     end
 
     context 'which updates a skipped column and a selected column' do
       setup { @article.update_attributes :file_upload => 'Your data goes here', :content => 'Some text here.' }
-      should_change('the number of versions', :by => 1) { Version.count }
+      should 'change the number of versions' do assert_equal(2, Version.count) end
 
       should 'have stored only non-skipped attributes' do
         assert_equal ({'content' => [nil, 'Some text here.']}), @article.versions.last.changeset
@@ -64,7 +64,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
     context 'which updates an ignored column' do
       setup { @legacy_widget.update_attributes :version => 1 }
-      should_not_change('the number of versions') { Version.count }
+      should 'not change the number of versions' do assert_equal(1, Version.count) end
     end
   end
 
@@ -73,11 +73,11 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
     context 'for non-US translations' do
       setup { @translation.save }
-      should_not_change('the number of versions') { Version.count }
+      should 'not change the number of versions' do assert_equal(0, Version.count) end
 
       context 'after update' do
         setup { @translation.update_attributes :content => 'Content' }
-        should_not_change('the number of versions') { Version.count }
+        should 'not change the number of versions' do assert_equal(0, Version.count) end
       end
     end
 
@@ -90,22 +90,22 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           @translation.save
         end
 
-        should_not_change('the number of versions') { Version.count }
+        should 'not change the number of versions' do assert_equal(0, Version.count) end
 
         context 'after update' do
           setup { @translation.update_attributes :content => 'Content' }
-          should_not_change('the number of versions') { Version.count }
+          should 'not change the number of versions' do assert_equal(0, Version.count) end
         end
       end
 
       context 'that are not drafts' do
         setup { @translation.save }
 
-        should_change('the number of versions', :by => 1) { Version.count }
+        should 'change the number of versions' do assert_equal(1, Version.count) end
 
         context 'after update' do
           setup { @translation.update_attributes :content => 'Content' }
-          should_change('the number of versions', :by => 1) { Version.count }
+          should 'change the number of versions' do assert_equal(2, Version.count) end
         end
       end
     end
@@ -353,6 +353,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     context "after a column is removed from the record's schema" do
       setup do
         change_schema
+        Widget.connection.schema_cache.clear!
         Widget.reset_column_information
         assert_raise(NoMethodError) { Widget.new.sacrificial_column }
         @last = @widget.versions.last
@@ -897,13 +898,14 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
     context 'which is then saved' do
       setup { @post.save }
-      should_change('the number of post versions') { PostVersion.count }
-      should_not_change('the number of versions') { Version.count }
+      should 'change the number of post versions' do assert_equal 1, PostVersion.count end
+      should 'not change the number of versions' do assert_equal(0, Version.count) end
     end
   end
 
   context 'An existing model instance which uses a custom Version class' do
     setup { @post = Post.create }
+    should 'have one post version' do assert_equal(1, PostVersion.count) end
 
     context 'on the first version' do
       setup { @version = @post.versions.first }
@@ -919,8 +921,8 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
     context 'which is modified' do
       setup { @post.update_attributes({ :content => "Some new content" }) }
-      should_change('the number of post versions') { PostVersion.count }
-      should_not_change('the number of versions') { Version.count }
+      should 'change the number of post versions' do assert_equal(2, PostVersion.count) end
+      should 'not change the number of versions' do assert_equal(0, Version.count) end
       should "not have stored changes when object_changes column doesn't exist" do
         assert_nil @post.versions.last.changeset
       end
