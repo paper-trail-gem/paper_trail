@@ -631,7 +631,10 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
 
   context 'An item' do
-    setup { @article = Article.new }
+    setup do
+      @initial_title = 'Foobar'
+      @article = Article.new :title => @initial_title
+    end
 
     context 'which is created' do
       setup { @article.save }
@@ -651,10 +654,16 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       should 'store dynamic meta data based on a method of the item' do
         assert_equal @article.action_data_provider_method, @article.versions.last.action
       end
+      
+      should 'store dynamic meta data based on an attribute of the item prior to creation' do
+        assert_equal nil, @article.versions.last.title
+      end
 
 
       context 'and updated' do
-        setup { @article.update_attributes! :content => 'Better text.' }
+        setup do
+          @article.update_attributes! :content => 'Better text.', :title => 'Rhubarb'
+        end
 
         should 'store fixed meta data' do
           assert_equal 42, @article.versions.last.answer
@@ -666,6 +675,10 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
         should 'store dynamic meta data which depends on the item' do
           assert_equal @article.id, @article.versions.last.article_id
+        end
+        
+        should 'store dynamic meta data based on an attribute of the item prior to the update' do
+          assert_equal @initial_title, @article.versions.last.title
         end
       end
 
@@ -684,7 +697,10 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         should 'store dynamic meta data which depends on the item' do
           assert_equal @article.id, @article.versions.last.article_id
         end
-
+        
+        should 'store dynamic meta data based on an attribute of the item prior to the destruction' do
+          assert_equal @initial_title, @article.versions.last.title
+        end
       end
     end
   end
