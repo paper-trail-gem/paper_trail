@@ -629,7 +629,7 @@ For diffing two strings:
 
 * [htmldiff](http://github.com/myobie/htmldiff): expects but doesn't require HTML input and produces HTML output.  Works very well but slows down significantly on large (e.g. 5,000 word) inputs.
 * [differ](http://github.com/pvande/differ): expects plain text input and produces plain text/coloured/HTML/any output.  Can do character-wise, word-wise, line-wise, or arbitrary-boundary-string-wise diffs.  Works very well on non-HTML input.
-* [diff-lcs](http://github.com/halostatue/ruwiki/tree/master/diff-lcs/trunk): old-school, line-wise diffs.
+* [diff-lcs](https://github.com/halostatue/diff-lcs): old-school, line-wise diffs.
 
 For diffing two ActiveRecord objects:
 
