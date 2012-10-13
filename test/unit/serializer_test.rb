@@ -31,8 +31,9 @@ class SerializerTest < ActiveSupport::TestCase
 
 
       # Check values are stored as YAML.
-      assert_equal "---\nwidget_id: \nname: Some text.\nid: 1\n", @fluxor.versions[1].object
-      assert_equal ({"widget_id" => nil,"name" =>"Some text.","id" =>1}), YAML.load(@fluxor.versions[1].object)
+      hash = {"widget_id" => nil,"name" =>"Some text.","id" =>1}
+      assert_equal YAML.dump(hash), @fluxor.versions[1].object
+      assert_equal hash, YAML.load(@fluxor.versions[1].object)
 
     end
   end
@@ -60,8 +61,9 @@ class SerializerTest < ActiveSupport::TestCase
       assert_equal 'Some text.', @fluxor.versions[1].reify.name
 
       # Check values are stored as JSON.
-      assert_equal "{\"widget_id\":null,\"name\":\"Some text.\",\"id\":1}", @fluxor.versions[1].object
-      assert_equal ({"widget_id" => nil,"name" =>"Some text.","id" =>1}), JSON.parse(@fluxor.versions[1].object)
+      hash = {"widget_id" => nil,"name" =>"Some text.","id" =>1}
+      assert_equal JSON.dump(hash), @fluxor.versions[1].object
+      assert_equal hash, JSON.parse(@fluxor.versions[1].object)
 
     end
   end
