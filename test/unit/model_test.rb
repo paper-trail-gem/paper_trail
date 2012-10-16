@@ -143,8 +143,15 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         assert @widget.live?
       end
 
-      should 'not have changes' do
-        assert_equal Hash.new, @widget.versions.last.changeset
+      should 'have changes' do
+        changes = {
+          'name'       => [nil, 'Henry'],
+          'created_at' => [nil, @widget.created_at],
+          'updated_at' => [nil, @widget.updated_at],
+          'id'         => [nil, 1]
+        }
+
+        assert_equal changes, @widget.versions.last.changeset
       end
 
       context 'and then updated without any changes' do
