@@ -614,12 +614,14 @@ The best way to diff adjacent versions is to get PaperTrail to do it for you.  I
 
 ```ruby
 >> widget = Widget.create :name => 'Bob'
->> widget.versions.last.changeset                # {}
+>> widget.versions.last.changeset                # {'name' => [nil, 'Bob']}
 >> widget.update_attributes :name => 'Robert'
 >> widget.versions.last.changeset                # {'name' => ['Bob', 'Robert']}
+>> widget.destroy
+>> widget.versions.last.changeset                # {}
 ```
 
-Note PaperTrail only stores the changes for updates; there's no point storing them for created or destroyed objects.
+Note PaperTrail only stores the changes for creation and updates; it doesn't store anything when an object is destroyed.
 
 Please be aware that PaperTrail doesn't use diffs internally.  When I designed PaperTrail I wanted simplicity and robustness so I decided to make each version of an object self-contained.  A version stores all of its object's data, not a diff from the previous version.  This means you can delete any version without affecting any other.
 
