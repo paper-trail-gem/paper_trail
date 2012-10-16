@@ -517,6 +517,12 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       assert_nil Version.last.next
     end
 
+    should 'should return the correct originator' do
+      PaperTrail.whodunnit = 'Ben'
+      @foo.update_attribute(:name, 'Geoffrey')
+      assert_equal PaperTrail.whodunnit, @foo.originator
+    end
+
     context 'when destroyed' do
       setup { @foo.destroy }
 
