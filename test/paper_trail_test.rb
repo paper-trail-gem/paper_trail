@@ -24,4 +24,10 @@ class PaperTrailTest < ActiveSupport::TestCase
     versions_for_widget = Version.with_item_keys('Widget', widget.id)
     assert_equal 2, versions_for_widget.length
   end
+
+  test 'originator works ok with inheritance' do
+    PaperTrail.whodunnit = "2"
+    animal = Cat.create
+    assert_equal PaperTrail.whodunnit, animal.originator
+  end
 end
