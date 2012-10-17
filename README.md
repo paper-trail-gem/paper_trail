@@ -299,12 +299,12 @@ In fact you could use PaperTrail to implement an undo system, though I haven't h
 You can call `previous_version` and `next_version` on an item to get it as it was/became.  Note that these methods reify the item for you.
 
 ```ruby
->> widget = Widget.find 42
->> widget.versions.length              # 4 for example
->> widget = widget.previous_version    # => widget == widget.versions.last.reify
->> widget = widget.previous_version    # => widget == widget.versions[-2].reify
->> widget.next_version                 # => widget == widget.versions.last.reify
->> widget.next_version                 # nil
+>> live_widget = Widget.find 42
+>> live_widget.versions.length            # 4 for example
+>> widget = live_widget.previous_version  # => widget == live_widget.versions.last.reify
+>> widget = widget.previous_version       # => widget == live_widget.versions[-2].reify
+>> widget = widget.next_version           # => widget == live_widget.versions.last.reify
+>> widget.next_version                    # nil
 ```
 
 As an aside, I'm undecided about whether `widget.previous_version.next_version` should return `nil` or `self` (i.e. `widget`).  Let me know if you have a view.
