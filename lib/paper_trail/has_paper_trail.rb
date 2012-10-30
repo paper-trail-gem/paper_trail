@@ -76,7 +76,7 @@ module PaperTrail
       end
 
       def version_key
-        return self.version_class_name.constantize.primary_key
+        self.version_class_name.constantize.primary_key
       end
 
       # Switches PaperTrail off for this class.
