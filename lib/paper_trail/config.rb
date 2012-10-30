@@ -1,3 +1,5 @@
+require 'singleton'
+
 module PaperTrail
   class Config
     include Singleton
