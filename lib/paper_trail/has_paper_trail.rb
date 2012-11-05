@@ -176,9 +176,10 @@ module PaperTrail
           }
           if version_class.column_names.include? 'object_changes'
             # The double negative (reject, !include?) preserves the hash structure of self.changes.
-            data[:object_changes] = self.changes.reject do |key, value|
+            changes = self.changes.reject do |key, value|
               !notably_changed.include?(key)
-            end.to_yaml
+            end
+            data[:object_changes] = PaperTrail.serializer.dump(changes)
           end
           send(self.class.versions_association_name).build merge_metadata(data)
         end
@@ -229,7 +230,7 @@ module PaperTrail
       end
 
       def object_to_string(object)
-        object.attributes.except(*self.class.skip).to_yaml
+        PaperTrail.serializer.dump object.attributes.except(*self.class.skip)
       end
 
       def changed_notably?
