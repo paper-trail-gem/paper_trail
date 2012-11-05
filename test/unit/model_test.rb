@@ -906,6 +906,29 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
   end
 
+  context 'When an attribute has a custom serializer' do
+    setup { @person = Person.create(:time_zone => "UTC") }
+
+    should "be an instance of ActiveSupport::TimeZone" do
+      assert_equal ActiveSupport::TimeZone, @person.time_zone.class
+    end
+
+    context 'when that attribute is updated' do
+      setup { @person.update_attributes({ :time_zone => 'Pacific Time (US & Canada)' }) }
+
+      should 'have used the value returned by the serializer' do
+        assert_equal ['UTC', 'Pacific Time (US & Canada)'], @person.versions.last.changeset[:time_zone]
+        assert_equal @person.instance_variable_get(:@attributes)['time_zone'].serialized_value, @person.versions.last.changeset[:time_zone].last
+      end
+
+      should 'not have stored the default, ridiculously long (to_yaml) serialization of the time_zone object' do
+        # Before the serialized attributes fix, the object_changes that was stored was ridiculously long (58723)
+        assert @person.versions.last.object_changes.length < 105, "object_changes length was #{@person.versions.last.object_changes.length}"
+      end
+    end
+  end
+
+
   context 'A new model instance which uses a custom Version class' do
     setup { @post = Post.new }
 
