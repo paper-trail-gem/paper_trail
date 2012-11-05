@@ -189,10 +189,10 @@ module PaperTrail
           # Use serialized value for attributes that are serialized
           changes_hash.each do |key, (old_value, new_value)|
             if serialized_attributes.include?(key)
-              # serializer.dump(new_value) is the same as @attributes[key].serialized_value
-              serializer = @attributes[key].coder
-              changes_hash[key] = [serializer.dump(old_value),
-                                   serializer.dump(new_value)]
+              # coder.dump(new_value) is the same as @attributes[key].serialized_value
+              coder = @attributes[key].coder
+              changes_hash[key] = [coder.dump(old_value),
+                                   coder.dump(new_value)]
             end
           end
         end
