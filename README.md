@@ -368,6 +368,18 @@ In a migration or in `rails console` you can set who is responsible like this:
 >> widget.versions.last.whodunnit              # Andy Stewart
 ```
 
+You can avoid having to do this manually by setting your initializer to pick up the username of the current user from the OS, like this:
+
+```ruby
+class Version < ActiveRecord::Base
+  if defined?(Rails::Console)
+    PaperTrail.whodunnit = "#{`whoami`.strip}: console"
+  elsif File.basename($0) == "rake"
+    PaperTrail.whodunnit = "#{`whoami`.strip}: rake #{ARGV.join ' '}"
+  end
+end
+```
+
 N.B. A `version`'s `whodunnit` records who changed the object causing the `version` to be stored.  Because a `version` stores the object as it looked before the change (see the table above), `whodunnit` returns who stopped the object looking like this -- not who made it look like this.  Hence `whodunnit` is aliased as `terminator`.
 
 To find out who made a `version`'s object look that way, use `version.originator`.  And to find out who made a "live" object look like it does, use `originator` on the object.
