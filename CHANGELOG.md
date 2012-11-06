@@ -11,3 +11,5 @@
     `has_paper_trail` method for `destroy` events.
   - [#167](https://github.com/airblade/paper_trail/pull/167) - Fix `originator` method so that it works with subclasses and STI.
   - [#160](https://github.com/airblade/paper_trail/pull/160) - Fixed failing tests and resolved out of date dependency issues.
+  - [#157](https://github.com/airblade/paper_trail/pull/157) - Refactored `class_attribute` names on the `ClassMethods` module
+    for names that are not obviously pertaining to PaperTrail to prevent method name collision.
