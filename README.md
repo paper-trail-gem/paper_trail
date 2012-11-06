@@ -360,7 +360,7 @@ class ApplicationController
 end
 ```
 
-In a migration or in `script/console` you can set who is responsible like this:
+In a migration or in `rails console` you can set who is responsible like this:
 
 ```ruby
 >> PaperTrail.whodunnit = 'Andy Stewart'
