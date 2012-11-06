@@ -81,12 +81,8 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       end
 
       context 'after destroy' do
-        setup do
-          @translation.save!
-          @translation.destroy
-        end
-
-        should_not_change('the number of versions') { Version.count }
+        setup { @translation.destroy }
+        should 'not change the number of versions' do assert_equal(0, Version.count) end
       end
     end
 
@@ -118,12 +114,8 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         end
 
         context 'after destroy' do
-          setup do
-            @translation.save!
-            @translation.destroy
-          end
-
-          should_change('the number of versions', :by => 1) { Version.count }
+          setup { @translation.destroy }
+          should 'change the number of versions' do assert_equal(2, Version.count) end
         end
       end
     end
