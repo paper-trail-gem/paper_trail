@@ -167,12 +167,26 @@ module PaperTrail
             :whodunnit => PaperTrail.whodunnit
           }
           if version_class.column_names.include? 'object_changes'
-            # The double negative (reject, !include?) preserves the hash structure of self.changes.
-            data[:object_changes] = self.changes.reject do |key, value|
-              !notably_changed.include?(key)
-            end.to_yaml
+            data[:object_changes] = changes_for_paper_trail.to_yaml
           end
           send(self.class.versions_association_name).build merge_metadata(data)
+        end
+      end
+
+      def changes_for_paper_trail
+        # The double negative (reject, !include?) preserves the hash structure of self.changes.
+        self.changes.reject do |key, value|
+          !notably_changed.include?(key)
+        end.tap do |changes_hash|
+          # Use serialized value for attributes that are serialized
+          changes_hash.each do |key, (old_value, new_value)|
+            if serialized_attributes.include?(key)
+              # coder.dump(new_value) is the same as @attributes[key].serialized_value
+              coder = @attributes[key].coder
+              changes_hash[key] = [coder.dump(old_value),
+                                   coder.dump(new_value)]
+            end
+          end
         end
       end
 
