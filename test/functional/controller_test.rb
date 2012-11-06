@@ -68,4 +68,23 @@ class ControllerTest < ActionController::TestCase
     assert_equal '127.0.0.1',     versions_for_widget.last.ip
     assert_equal 'Rails Testing', versions_for_widget.last.user_agent
   end
+
+  test "controller metadata methods should get evaluated if paper trail is enabled for controller" do
+    @request.env['HTTP_USER_AGENT'] = 'User-Agent'
+    post :create, :widget => { :name => 'Flugel' }
+    assert PaperTrail.enabled_for_controller?
+    assert_equal 153, PaperTrail.whodunnit
+    assert PaperTrail.controller_info.present?
+    assert PaperTrail.controller_info.keys.include?(:ip)
+    assert PaperTrail.controller_info.keys.include?(:user_agent)
+  end
+
+  test "controller metadata methods should not get evaluated if paper trail is disabled for controller" do
+    @request.env['HTTP_USER_AGENT'] = 'Disable User-Agent'
+    post :create, :widget => { :name => 'Flugel' }
+    assert_equal 0, assigns(:widget).versions.length
+    assert !PaperTrail.enabled_for_controller?    
+    assert PaperTrail.whodunnit.nil?
+    assert PaperTrail.controller_info.nil?
+  end
 end
