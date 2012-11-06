@@ -185,14 +185,13 @@ module PaperTrail
         # The double negative (reject, !include?) preserves the hash structure of self.changes.
         self.changes.reject do |key, value|
           !notably_changed.include?(key)
-        end.tap do |changes_hash|
+        end.tap do |changes|
           # Use serialized value for attributes that are serialized
-          changes_hash.each do |key, (old_value, new_value)|
-            if serialized_attributes.include?(key)
-              # coder.dump(new_value) is the same as @attributes[key].serialized_value
-              coder = @attributes[key].coder
-              changes_hash[key] = [coder.dump(old_value),
-                                   coder.dump(new_value)]
+          serialized_attributes.each do |key, coder|
+            if changes.key?(key)
+              old_value, new_value = changes[key]
+              changes[key] = [coder.dump(old_value),
+                              coder.dump(new_value)]
             end
           end
         end
