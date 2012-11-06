@@ -79,6 +79,7 @@ class Version < ActiveRecord::Base
           model = klass.new
         end
 
+        model.class.unserialize_attributes attrs
         attrs.each do |k, v|
           if model.respond_to?("#{k}=")
             model.send :write_attribute, k.to_sym, v

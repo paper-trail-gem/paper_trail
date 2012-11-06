@@ -89,6 +89,23 @@ module PaperTrail
         self.paper_trail_enabled_for_model = true
       end
 
+      # Used for Version#object attribute
+      def serialize_attributes(attributes)
+        serialized_attributes.each do |key, coder|
+          if attributes.key?(key)
+            attributes[key] = coder.dump(attributes[key])
+          end
+        end
+      end
+      def unserialize_attributes(attributes)
+        serialized_attributes.each do |key, coder|
+          if attributes.key?(key)
+            attributes[key] = coder.load(attributes[key])
+          end
+        end
+      end
+
+      # Used for Version#object_changes attribute
       def serialize_attribute_changes(changes)
         serialized_attributes.each do |key, coder|
           if changes.key?(key)
@@ -255,7 +272,9 @@ module PaperTrail
       end
 
       def object_to_string(object)
-        object.attributes.except(*self.class.skip).to_yaml
+        object.attributes.except(*self.class.skip).tap do |attributes|
+          self.class.serialize_attributes attributes
+        end.to_yaml
       end
 
       def changed_notably?
