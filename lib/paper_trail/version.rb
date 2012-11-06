@@ -104,13 +104,7 @@ class Version < ActiveRecord::Base
     if self.class.column_names.include? 'object_changes'
       if changes = object_changes
         HashWithIndifferentAccess[YAML::load(changes)].tap do |changes|
-          item_type.constantize.serialized_attributes.each do |key, coder|
-            if changes.key?(key)
-              old_value, new_value = changes[key]
-              changes[key] = [coder.load(old_value),
-                              coder.load(new_value)]
-            end
-          end
+          item_type.constantize.unserialize_attribute_changes(changes)
         end
       else
         {}

@@ -88,6 +88,25 @@ module PaperTrail
       def paper_trail_on
         self.paper_trail_enabled_for_model = true
       end
+
+      def serialize_attribute_changes(changes)
+        serialized_attributes.each do |key, coder|
+          if changes.key?(key)
+            old_value, new_value = changes[key]
+            changes[key] = [coder.dump(old_value),
+                            coder.dump(new_value)]
+          end
+        end
+      end
+      def unserialize_attribute_changes(changes)
+        serialized_attributes.each do |key, coder|
+          if changes.key?(key)
+            old_value, new_value = changes[key]
+            changes[key] = [coder.load(old_value),
+                            coder.load(new_value)]
+          end
+        end
+      end
     end
 
     # Wrap the following methods in a module so we can include them only in the
@@ -187,13 +206,7 @@ module PaperTrail
           !notably_changed.include?(key)
         end.tap do |changes|
           # Use serialized value for attributes that are serialized
-          serialized_attributes.each do |key, coder|
-            if changes.key?(key)
-              old_value, new_value = changes[key]
-              changes[key] = [coder.dump(old_value),
-                              coder.dump(new_value)]
-            end
-          end
+          self.class.serialize_attribute_changes(changes)
         end
       end
 
