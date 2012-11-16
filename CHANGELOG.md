@@ -1,5 +1,7 @@
 ## 2.6.4 (unreleased)
 
+  - [#181](https://github.com/airblade/paper_trail/issues/181)/[#182](https://github.com/airblade/paper_trail/pull/182) -
+    Controller metadata methods should only be evaluated when `paper_trail_enabled_for_controller == true`.
   - [#177](https://github.com/airblade/paper_trail/issues/177)/[#178](https://github.com/airblade/paper_trail/pull/178) -
     Factored out `version_key` into it's own method to prevent `ConnectionNotEstablished` error from getting thrown in
     instances where `has_paper_trail` is declared on class prior to ActiveRecord establishing a connection.
