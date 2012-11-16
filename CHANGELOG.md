@@ -1,4 +1,4 @@
-## 2.6.4 (unreleased)
+## 2.6.4
 
   - [#181](https://github.com/airblade/paper_trail/issues/181)/[#182](https://github.com/airblade/paper_trail/pull/182) -
     Controller metadata methods should only be evaluated when `paper_trail_enabled_for_controller == true`.
