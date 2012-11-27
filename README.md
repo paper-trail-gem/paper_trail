@@ -572,7 +572,7 @@ You can store arbitrary model-level metadata alongside each version like this:
 ```ruby
 class Article < ActiveRecord::Base
   belongs_to :author
-  has_paper_trail :meta => { :author_id  => Proc.new { |article| article.author_id },
+  has_paper_trail :meta => { :author_id  => :author_id,
                              :word_count => :count_words,
                              :answer     => 42 }
   def count_words
