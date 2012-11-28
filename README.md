@@ -840,6 +840,13 @@ Many thanks to:
 * [Ben Woosley](https://github.com/Empact)
 * [Philip Arndt](https://github.com/parndt)
 * [Daniel Vydra](https://github.com/dvydra)
+* [Byron Bowerman](https://github.com/BM5k)
+* [Nicolas Buduroi](https://github.com/budu)
+* [Pikender Sharma](https://github.com/pikender)
+* [Paul Brannan](https://github.com/cout)
+* [Ben Morrall](https://github.com/bmorrall)
+* [Yves Senn](https://github.com/senny)
+* [Ben Atkins](https://github.com/fullbridge-batkins)
 
 
 ## Inspirations
