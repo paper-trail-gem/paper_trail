@@ -917,55 +917,85 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
   end
 
   context 'When an attribute has a custom serializer' do
-    setup { @person = Person.create(:time_zone => "Samoa") }
+    setup { @person = Person.new(:time_zone => "Samoa") }
 
     should "be an instance of ActiveSupport::TimeZone" do
       assert_equal ActiveSupport::TimeZone, @person.time_zone.class
     end
 
-    context 'when that attribute is updated' do
+    context 'when the model is saved' do
       setup do
-        @attribute_value_before_change = @person.instance_variable_get(:@attributes)['time_zone']
-        @person.assign_attributes({ :time_zone => 'Pacific Time (US & Canada)' })
         @changes_before_save = @person.changes.dup
         @person.save!
       end
 
-      # Tests for serialization:
-      # Before the serialized attributes fix, the object/object_changes value that was stored was ridiculously long (58723).
-      should 'version.object should not have stored the default, ridiculously long (to_yaml) serialization of the TimeZone object' do
-        assert @person.versions.last.object.        length < 105, "object         length was #{@person.versions.last.object        .length}"
-      end
+      # Test for serialization:
       should 'version.object_changes should not have stored the default, ridiculously long (to_yaml) serialization of the TimeZone object' do
         assert @person.versions.last.object_changes.length < 105, "object_changes length was #{@person.versions.last.object_changes.length}"
       end
-      # But now it stores the short, serialized value.
-      should 'version.object attribute should have stored the value returned by the attribute serializer' do
-        as_stored_in_version = HashWithIndifferentAccess[YAML::load(@person.versions.last.object)]
-        assert_equal 'Samoa', as_stored_in_version[:time_zone]
-        assert_equal @attribute_value_before_change.serialized_value, as_stored_in_version[:time_zone]
-      end
+      # It should store the serialized value.
       should 'version.object_changes attribute should have stored the value returned by the attribute serializer' do
         as_stored_in_version = HashWithIndifferentAccess[YAML::load(@person.versions.last.object_changes)]
-        assert_equal ['Samoa', 'Pacific Time (US & Canada)'], as_stored_in_version[:time_zone]
+        assert_equal [nil, 'Samoa'], as_stored_in_version[:time_zone]
         assert_equal @person.instance_variable_get(:@attributes)['time_zone'].serialized_value, as_stored_in_version[:time_zone].last
       end
 
       # Tests for unserialization:
-      should 'version.reify should convert the attribute value back to its original, unserialized value' do
-        assert_equal @attribute_value_before_change.unserialized_value, @person.versions.last.reify.time_zone
-      end
       should 'version.changeset should convert the attribute value back to its original, unserialized value' do
         assert_equal @person.instance_variable_get(:@attributes)['time_zone'].unserialized_value, @person.versions.last.changeset[:time_zone].last
       end
       should "record.changes (before save) returns the original, unserialized values" do
-        assert_equal [ActiveSupport::TimeZone, ActiveSupport::TimeZone], @changes_before_save[:time_zone].map(&:class)
+        assert_equal [NilClass, ActiveSupport::TimeZone], @changes_before_save[:time_zone].map(&:class)
       end
       should 'version.changeset should be the same as record.changes was before the save' do
-        assert_equal @changes_before_save, @person.versions.last.changeset
-        assert_equal [ActiveSupport::TimeZone, ActiveSupport::TimeZone], @person.versions.last.changeset[:time_zone].map(&:class)
+        assert_equal @changes_before_save, @person.versions.last.changeset.delete_if { |key, val| key.to_sym == :id }
+        assert_equal [NilClass, ActiveSupport::TimeZone], @person.versions.last.changeset[:time_zone].map(&:class)
       end
 
+      context 'when that attribute is updated' do
+        setup do
+          @attribute_value_before_change = @person.instance_variable_get(:@attributes)['time_zone']
+          @person.assign_attributes({ :time_zone => 'Pacific Time (US & Canada)' })
+          @changes_before_save = @person.changes.dup
+          @person.save!
+        end
+
+        # Tests for serialization:
+        # Before the serialized attributes fix, the object/object_changes value that was stored was ridiculously long (58723).
+        should 'version.object should not have stored the default, ridiculously long (to_yaml) serialization of the TimeZone object' do
+          assert @person.versions.last.object.        length < 105, "object         length was #{@person.versions.last.object        .length}"
+        end
+        should 'version.object_changes should not have stored the default, ridiculously long (to_yaml) serialization of the TimeZone object' do
+          assert @person.versions.last.object_changes.length < 105, "object_changes length was #{@person.versions.last.object_changes.length}"
+        end
+        # But now it stores the short, serialized value.
+        should 'version.object attribute should have stored the value returned by the attribute serializer' do
+          as_stored_in_version = HashWithIndifferentAccess[YAML::load(@person.versions.last.object)]
+          assert_equal 'Samoa', as_stored_in_version[:time_zone]
+          assert_equal @attribute_value_before_change.serialized_value, as_stored_in_version[:time_zone]
+        end
+        should 'version.object_changes attribute should have stored the value returned by the attribute serializer' do
+          as_stored_in_version = HashWithIndifferentAccess[YAML::load(@person.versions.last.object_changes)]
+          assert_equal ['Samoa', 'Pacific Time (US & Canada)'], as_stored_in_version[:time_zone]
+          assert_equal @person.instance_variable_get(:@attributes)['time_zone'].serialized_value, as_stored_in_version[:time_zone].last
+        end
+
+        # Tests for unserialization:
+        should 'version.reify should convert the attribute value back to its original, unserialized value' do
+          assert_equal @attribute_value_before_change.unserialized_value, @person.versions.last.reify.time_zone
+        end
+        should 'version.changeset should convert the attribute value back to its original, unserialized value' do
+          assert_equal @person.instance_variable_get(:@attributes)['time_zone'].unserialized_value, @person.versions.last.changeset[:time_zone].last
+        end
+        should "record.changes (before save) returns the original, unserialized values" do
+          assert_equal [ActiveSupport::TimeZone, ActiveSupport::TimeZone], @changes_before_save[:time_zone].map(&:class)
+        end
+        should 'version.changeset should be the same as record.changes was before the save' do
+          assert_equal @changes_before_save, @person.versions.last.changeset
+          assert_equal [ActiveSupport::TimeZone, ActiveSupport::TimeZone], @person.versions.last.changeset[:time_zone].map(&:class)
+        end
+
+      end
     end
   end
 
