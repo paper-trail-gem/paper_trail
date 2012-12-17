@@ -1,5 +1,7 @@
 ## 2.7.0 (Unreleased)
 
+  - [#180](https://github.com/airblade/paper_trail/pull/180) - Store serialized representation of serialized attributes
+    on the `object_changes` column in the `Version` table.
   - [#183](https://github.com/airblade/paper_trail/pull/183) - Fully qualify the `Version` class to help prevent
     namespace resolution errors within other gems / plugins.
 
