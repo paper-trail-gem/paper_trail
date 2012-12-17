@@ -79,6 +79,7 @@ class Version < ActiveRecord::Base
           model = klass.new
         end
 
+        model.class.unserialize_attributes attrs
         attrs.each do |k, v|
           if model.respond_to?("#{k}=")
             model.send :write_attribute, k.to_sym, v
@@ -103,7 +104,9 @@ class Version < ActiveRecord::Base
   def changeset
     if self.class.column_names.include? 'object_changes'
       if changes = object_changes
-        HashWithIndifferentAccess[YAML::load(changes)]
+        HashWithIndifferentAccess[YAML::load(changes)].tap do |changes|
+          item_type.constantize.unserialize_attribute_changes(changes)
+        end
       else
         {}
       end

@@ -80,6 +80,44 @@ module PaperTrail
       def paper_trail_on
         self.paper_trail_enabled_for_model = true
       end
+
+      # Used for Version#object attribute
+      def serialize_attributes(attributes)
+        serialized_attributes.each do |key, coder|
+          if attributes.key?(key)
+            attributes[key] = coder.dump(attributes[key])
+          end
+        end
+      end
+
+      def unserialize_attributes(attributes)
+        serialized_attributes.each do |key, coder|
+          if attributes.key?(key)
+            attributes[key] = coder.load(attributes[key])
+          end
+        end
+      end
+
+      # Used for Version#object_changes attribute
+      def serialize_attribute_changes(changes)
+        serialized_attributes.each do |key, coder|
+          if changes.key?(key)
+            old_value, new_value = changes[key]
+            changes[key] = [coder.dump(old_value),
+                            coder.dump(new_value)]
+          end
+        end
+      end
+
+      def unserialize_attribute_changes(changes)
+        serialized_attributes.each do |key, coder|
+          if changes.key?(key)
+            old_value, new_value = changes[key]
+            changes[key] = [coder.load(old_value),
+                            coder.load(new_value)]
+          end
+        end
+      end
     end
 
     # Wrap the following methods in a module so we can include them only in the
@@ -167,12 +205,18 @@ module PaperTrail
             :whodunnit => PaperTrail.whodunnit
           }
           if version_class.column_names.include? 'object_changes'
-            # The double negative (reject, !include?) preserves the hash structure of self.changes.
-            data[:object_changes] = self.changes.reject do |key, value|
-              !notably_changed.include?(key)
-            end.to_yaml
+            data[:object_changes] = changes_for_paper_trail.to_yaml
           end
           send(self.class.versions_association_name).build merge_metadata(data)
+        end
+      end
+
+      def changes_for_paper_trail
+        # The double negative (reject, !include?) preserves the hash structure of self.changes.
+        self.changes.reject do |key, value|
+          !notably_changed.include?(key)
+        end.tap do |changes|
+          self.class.serialize_attribute_changes(changes) # Use serialized value for attributes when necessary
         end
       end
 
@@ -221,7 +265,9 @@ module PaperTrail
       end
 
       def object_to_string(object)
-        object.attributes.except(*self.class.paper_trail_options[:skip]).to_yaml
+        object.attributes.except(*self.class.paper_trail_options[:skip]).tap do |attributes|
+          self.class.serialize_attributes attributes
+        end.to_yaml
       end
 
       def changed_notably?

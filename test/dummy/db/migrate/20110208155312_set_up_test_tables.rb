@@ -80,6 +80,7 @@ class SetUpTestTables < ActiveRecord::Migration
 
     create_table :people, :force => true do |t|
       t.string :name
+      t.string :time_zone
     end
 
     create_table :songs, :force => true do |t|
