@@ -204,7 +204,7 @@ module PaperTrail
             :whodunnit => PaperTrail.whodunnit
           }
           if version_class.column_names.include? 'object_changes'
-            data[:object_changes] = changes_for_paper_trail.to_yaml
+            data[:object_changes] = PaperTrail.serializer.dump(changes_for_paper_trail)
           end
           send(self.class.versions_association_name).build merge_metadata(data)
         end
@@ -263,9 +263,10 @@ module PaperTrail
       end
 
       def object_to_string(object)
-        object.attributes.except(*self.class.paper_trail_options[:skip]).tap do |attributes|
+        _attrs = object.attributes.except(*self.class.paper_trail_options[:skip]).tap do |attributes|
           self.class.serialize_attributes attributes
-        end.to_yaml
+        end
+        PaperTrail.serializer.dump(_attrs)
       end
 
       def changed_notably?

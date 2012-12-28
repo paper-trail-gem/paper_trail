@@ -55,7 +55,7 @@ class Version < ActiveRecord::Base
       options.reverse_merge! :has_one => false
 
       unless object.nil?
-        attrs = YAML::load object
+        attrs = PaperTrail.serializer.load object
 
         # Normally a polymorphic belongs_to relationship allows us
         # to get the object we belong to by calling, in this case,
@@ -104,7 +104,7 @@ class Version < ActiveRecord::Base
   def changeset
     if self.class.column_names.include? 'object_changes'
       if changes = object_changes
-        HashWithIndifferentAccess[YAML::load(changes)].tap do |changes|
+        HashWithIndifferentAccess[PaperTrail.serializer.load(changes)].tap do |changes|
           item_type.constantize.unserialize_attribute_changes(changes)
         end
       else
