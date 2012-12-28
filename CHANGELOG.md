@@ -1,4 +1,4 @@
-## 2.7.0 (Unreleased)
+## 2.7.0
 
   - [#164](https://github.com/airblade/paper_trail/pull/164) - Allow for custom serializer for storage of object attributes.
   - [#180](https://github.com/airblade/paper_trail/pull/180) - Store serialized representation of serialized attributes
