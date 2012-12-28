@@ -857,6 +857,9 @@ Many thanks to:
 * [Ben Morrall](https://github.com/bmorrall)
 * [Yves Senn](https://github.com/senny)
 * [Ben Atkins](https://github.com/fullbridge-batkins)
+* [Yves Senn](https://github.com/senny)
+* [Tyler Rick](https://github.com/TylerRick)
+* [Bradley Priest](https://github.com/bradleypriest)
 
 
 ## Inspirations
