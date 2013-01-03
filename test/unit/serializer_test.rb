@@ -62,7 +62,7 @@ class SerializerTest < ActiveSupport::TestCase
 
       # Check values are stored as JSON.
       hash = {"widget_id" => nil,"name" =>"Some text.","id" =>1}
-      assert_equal JSON.dump(hash), @fluxor.versions[1].object
+      assert_equal hash.to_json, @fluxor.versions[1].object
       assert_equal hash, JSON.parse(@fluxor.versions[1].object)
 
     end
