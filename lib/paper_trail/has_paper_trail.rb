@@ -225,8 +225,8 @@ module PaperTrail
                                               :event     => 'destroy',
                                               :object    => object_to_string(item_before_change),
                                               :whodunnit => PaperTrail.whodunnit)
+          send(self.class.versions_association_name).send :load_target
         end
-        send(self.class.versions_association_name).send :load_target
       end
 
       def merge_metadata(data)
