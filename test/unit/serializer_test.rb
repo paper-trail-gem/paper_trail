@@ -3,7 +3,7 @@ require 'test_helper'
 class CustomSerializer
   require 'json'
   def self.dump(object_hash)
-    JSON.dump object_hash
+    object_hash.to_json
   end
 
   def self.load(string)
