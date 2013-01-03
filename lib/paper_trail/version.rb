@@ -102,15 +102,13 @@ class Version < ActiveRecord::Base
   # Returns what changed in this version of the item.  Cf. `ActiveModel::Dirty#changes`.
   # Returns nil if your `versions` table does not have an `object_changes` text column.
   def changeset
-    if self.class.column_names.include? 'object_changes'
-      if changes = object_changes
-        HashWithIndifferentAccess[PaperTrail.serializer.load(changes)].tap do |changes|
-          item_type.constantize.unserialize_attribute_changes(changes)
-        end
-      else
-        {}
-      end
+    return nil unless self.class.column_names.include? 'object_changes'
+
+    HashWithIndifferentAccess.new(PaperTrail.serializer.load(object_changes)).tap do |changes|
+      item_type.constantize.unserialize_attribute_changes(changes)
     end
+  rescue
+    {}
   end
 
   # Returns who put the item into the state stored in this version.
