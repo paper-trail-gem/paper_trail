@@ -1,5 +1,7 @@
 ## 2.7.1 (Unreleased)
 
+  - Added `setter` method for the `serializer` config option.
+
 ## 2.7.0
 
   - [#183](https://github.com/airblade/paper_trail/pull/183) - Fully qualify the `Version` class to help prevent

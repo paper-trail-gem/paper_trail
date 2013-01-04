@@ -69,6 +69,11 @@ module PaperTrail
     paper_trail_store[:controller_info] = value
   end
 
+  # Getter and Setter for PaperTrail Serializer
+  def self.serializer=(value)
+    PaperTrail.config.serializer = value
+  end
+
   def self.serializer
     PaperTrail.config.serializer
   end
