@@ -4,6 +4,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
   context 'A record with defined "only" and "ignore" attributes' do
     setup { @article = Article.create }
+    should 'creation should change the number of versions' do assert_equal(1, Version.count) end
 
     context 'which updates an ignored column' do
       setup { @article.update_attributes :title => 'My first title' }
@@ -14,6 +15,10 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       setup { @article.update_attributes :title => 'My first title', :content => 'Some text here.' }
       should 'change the number of versions' do assert_equal(2, Version.count) end
 
+      should "show the new version in the model's `versions` association" do
+        assert_equal(2, @article.versions.size)
+      end
+
       should 'have stored only non-ignored attributes' do
         assert_equal ({'content' => [nil, 'Some text here.']}), @article.versions.last.changeset
       end
@@ -22,6 +27,10 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     context 'which updates a selected column' do
       setup { @article.update_attributes :content => 'Some text here.' }
       should 'change the number of versions' do assert_equal(2, Version.count) end
+
+      should "show the new version in the model's `versions` association" do
+        assert_equal(2, @article.versions.size)
+      end
     end
 
     context 'which updates a non-ignored and non-selected column' do
@@ -37,6 +46,10 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     context 'which updates a skipped column and a selected column' do
       setup { @article.update_attributes :file_upload => 'Your data goes here', :content => 'Some text here.' }
       should 'change the number of versions' do assert_equal(2, Version.count) end
+
+      should "show the new version in the model's `versions` association" do
+        assert_equal(2, @article.versions.size)
+      end
 
       should 'have stored only non-skipped attributes' do
         assert_equal ({'content' => [nil, 'Some text here.']}), @article.versions.last.changeset
@@ -55,6 +68,15 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         should 'have kept the non-skipped attributes in the previous version' do
           assert_equal 'Some text here.', PaperTrail.serializer.load(@old_article.object)['content']
         end
+      end
+    end
+
+    context 'which gets destroyed' do
+      setup { @article.destroy }
+      should 'change the number of versions' do assert_equal(2, Version.count) end
+
+      should "show the new version in the model's `versions` association" do
+        assert_equal(2, @article.versions.size)
       end
     end
   end
@@ -111,11 +133,19 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         context 'after update' do
           setup { @translation.update_attributes :content => 'Content' }
           should 'change the number of versions' do assert_equal(2, Version.count) end
+
+          should "show the new version in the model's `versions` association" do
+            assert_equal(2, @translation.versions.size)
+          end
         end
 
         context 'after destroy' do
           setup { @translation.destroy }
           should 'change the number of versions' do assert_equal(2, Version.count) end
+
+          should "show the new version in the model's `versions` association" do
+            assert_equal(2, @translation.versions.size)
+          end
         end
       end
     end
