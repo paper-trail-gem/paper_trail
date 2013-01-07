@@ -82,7 +82,7 @@ module PaperTrail
       end
 
       # Used for Version#object attribute
-      def serialize_attributes(attributes)
+      def serialize_attributes_for_paper_trail(attributes)
         serialized_attributes.each do |key, coder|
           if attributes.key?(key)
             attributes[key] = coder.dump(attributes[key])
@@ -90,7 +90,7 @@ module PaperTrail
         end
       end
 
-      def unserialize_attributes(attributes)
+      def unserialize_attributes_for_paper_trail(attributes)
         serialized_attributes.each do |key, coder|
           if attributes.key?(key)
             attributes[key] = coder.load(attributes[key])
@@ -264,7 +264,7 @@ module PaperTrail
 
       def object_to_string(object)
         _attrs = object.attributes.except(*self.class.paper_trail_options[:skip]).tap do |attributes|
-          self.class.serialize_attributes attributes
+          self.class.serialize_attributes_for_paper_trail attributes
         end
         PaperTrail.serializer.dump(_attrs)
       end
