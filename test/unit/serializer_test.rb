@@ -40,7 +40,9 @@ class SerializerTest < ActiveSupport::TestCase
 
   context 'Custom Serializer' do
     setup do
-      PaperTrail.config.serializer = CustomSerializer
+      PaperTrail.configure do |config|
+        config.serializer = CustomSerializer
+      end
 
       Fluxor.instance_eval <<-END
         has_paper_trail
