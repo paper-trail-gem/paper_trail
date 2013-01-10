@@ -56,7 +56,7 @@ class SerializerTest < ActiveSupport::TestCase
       PaperTrail.config.serializer = PaperTrail::Serializers::Yaml
     end
 
-    should 'work with custom serializer' do
+    should 'reify with custom serializer' do
       # Normal behaviour
       assert_equal 2, @fluxor.versions.length
       assert_nil @fluxor.versions[0].reify
@@ -66,7 +66,13 @@ class SerializerTest < ActiveSupport::TestCase
       hash = {"widget_id" => nil,"name" =>"Some text.","id" =>1}
       assert_equal hash.to_json, @fluxor.versions[1].object
       assert_equal hash, JSON.parse(@fluxor.versions[1].object)
+    end
 
+    should 'store object_changes' do
+      initial_changeset = {"name" => [nil, "Some text."], "id" => [nil, 1]}
+      second_changeset =  {"name"=>["Some text.", "Some more text."]}
+      assert_equal initial_changeset, @fluxor.versions[0].changeset
+      assert_equal second_changeset,  @fluxor.versions[1].changeset
     end
   end
 
