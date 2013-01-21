@@ -31,10 +31,9 @@ class SerializerTest < ActiveSupport::TestCase
 
 
       # Check values are stored as YAML.
-      hash = {"widget_id" => nil,"name" =>"Some text.","id" =>1}
+      hash = {"widget_id" => nil, "name" => "Some text.", "id" => 1}
       assert_equal YAML.dump(hash), @fluxor.versions[1].object
       assert_equal hash, YAML.load(@fluxor.versions[1].object)
-
     end
   end
 

@@ -90,7 +90,7 @@ module PaperTrail
   def self.config
     @@config ||= PaperTrail::Config.instance
   end
-  
+
   def self.configure
     yield config
   end

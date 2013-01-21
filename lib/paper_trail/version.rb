@@ -82,7 +82,7 @@ class Version < ActiveRecord::Base
         model.class.unserialize_attributes attrs
         attrs.each do |k, v|
           if model.respond_to?("#{k}=")
-            model[k] = v
+            model[k.to_sym] = v
           else
             logger.warn "Attribute #{k} does not exist on #{item_type} (Version id: #{id})."
           end

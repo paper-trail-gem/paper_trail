@@ -1,5 +1,6 @@
 ## 2.7.1 (Unreleased)
 
+  - [#189](https://github.com/airblade/paper_trail/pull/189) - Provided support for a `configure` block initializer.
   - Added `setter` method for the `serializer` config option.
 
 ## 2.7.0
