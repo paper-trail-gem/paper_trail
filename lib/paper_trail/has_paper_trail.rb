@@ -84,17 +84,13 @@ module PaperTrail
       # Used for Version#object attribute
       def serialize_attributes_for_paper_trail(attributes)
         serialized_attributes.each do |key, coder|
-          if attributes.key?(key)
-            attributes[key] = coder.dump(attributes[key])
-          end
+          attributes[key] = coder.dump(attributes[key]) if attributes.key?(key)
         end
       end
 
       def unserialize_attributes_for_paper_trail(attributes)
         serialized_attributes.each do |key, coder|
-          if attributes.key?(key)
-            attributes[key] = coder.load(attributes[key])
-          end
+          attributes[key] = coder.load(attributes[key]) if attributes.key?(key)
         end
       end
 
