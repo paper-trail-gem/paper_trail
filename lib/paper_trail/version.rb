@@ -79,7 +79,7 @@ class Version < ActiveRecord::Base
           model = klass.new
         end
 
-        model.class.unserialize_attributes attrs
+        model.class.unserialize_attributes_for_paper_trail attrs
         attrs.each do |k, v|
           if model.respond_to?("#{k}=")
             model[k.to_sym] = v
