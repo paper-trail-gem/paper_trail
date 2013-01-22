@@ -11,6 +11,7 @@ require "rails/test_help"
 Rails.backtrace_cleaner.remove_silencers!
 
 require 'shoulda'
+require 'ffaker'
 
 # Configure capybara for integration testing
 require "capybara/rails"

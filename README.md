@@ -749,7 +749,10 @@ By default, PaperTrail stores your changes as a YAML dump. You can override this
 >> PaperTrail.config.serializer = MyCustomSerializer
 ```
 
-The serializer needs to be a class that responds to a `load` and `dump` method.  [See the default PaperTrail serializer](https://github.com/airblade/paper_trail/blob/master/lib/paper_trail/serializers/yaml.rb) for an example.
+The serializer needs to be a class that has a `load` and `dump` class method.  These serializers are included in the gem for your convenience:
+
+* [Yaml](https://github.com/airblade/paper_trail/blob/master/lib/paper_trail/serializers/yaml.rb) - Default
+* [Json](https://github.com/airblade/paper_trail/blob/master/lib/paper_trail/serializers/json.rb)
 
 ## Deleting Old Versions
 

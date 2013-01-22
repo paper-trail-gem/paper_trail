@@ -1,16 +1,5 @@
 require 'test_helper'
 
-class CustomSerializer
-  require 'json'
-  def self.dump(object_hash)
-    JSON.dump object_hash
-  end
-
-  def self.load(string)
-    JSON.parse string
-  end
-end
-
 class SerializerTest < ActiveSupport::TestCase
 
   context 'YAML Serializer' do
@@ -40,7 +29,7 @@ class SerializerTest < ActiveSupport::TestCase
   context 'Custom Serializer' do
     setup do
       PaperTrail.configure do |config|
-        config.serializer = CustomSerializer
+        config.serializer = PaperTrail::Serializers::Json
       end
 
       Fluxor.instance_eval <<-END
