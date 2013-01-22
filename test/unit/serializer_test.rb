@@ -3,11 +3,11 @@ require 'test_helper'
 class CustomSerializer
   require 'json'
   def self.dump(object_hash)
-    object_hash.to_json
+    ActiveSupport::JSON.encode object_hash
   end
 
   def self.load(string)
-    JSON.parse string
+    ActiveSupport::JSON.decode string
   end
 end
 
@@ -63,8 +63,8 @@ class SerializerTest < ActiveSupport::TestCase
 
       # Check values are stored as JSON.
       hash = {"widget_id" => nil,"name" =>"Some text.","id" =>1}
-      assert_equal hash.to_json, @fluxor.versions[1].object
-      assert_equal hash, JSON.parse(@fluxor.versions[1].object)
+      assert_equal ActiveSupport::JSON.encode(hash), @fluxor.versions[1].object
+      assert_equal hash, ActiveSupport::JSON.decode(@fluxor.versions[1].object)
     end
 
     should 'store object_changes' do
