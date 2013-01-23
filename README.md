@@ -863,6 +863,7 @@ Many thanks to:
 * [Yves Senn](https://github.com/senny)
 * [Tyler Rick](https://github.com/TylerRick)
 * [Bradley Priest](https://github.com/bradleypriest)
+* [David Butler](https://github.com/dwbutler)
 
 
 ## Inspirations
