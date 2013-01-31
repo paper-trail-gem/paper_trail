@@ -11,9 +11,7 @@ class YamlTest < ActiveSupport::TestCase
     @hash_as_yaml = @hash.to_yaml
     # Setup an array of random words
     @array = []
-    (4..8).to_a.sample.times do
-      @array << Faker::Lorem.word
-    end
+    (rand(5) + 4).times { @array << Faker::Lorem.word }
     @array_as_yaml = @array.to_yaml
   end
 
@@ -33,7 +31,7 @@ class YamlTest < ActiveSupport::TestCase
       assert PaperTrail::Serializers::Yaml.respond_to?(:dump)
     end
 
-    should '`deserialize` YAML to Ruby' do
+    should '`serialize` Ruby to YAML' do
       assert_equal @hash_as_yaml, PaperTrail::Serializers::Yaml.dump(@hash)
       assert_equal @array_as_yaml, PaperTrail::Serializers::Yaml.dump(@array)
     end

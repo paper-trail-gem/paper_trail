@@ -7,8 +7,8 @@ module PaperTrail
         ActiveSupport::JSON.decode string
       end
 
-      def self.dump(hash)
-        ActiveSupport::JSON.encode hash
+      def self.dump(object)
+        ActiveSupport::JSON.encode object
       end
     end
   end

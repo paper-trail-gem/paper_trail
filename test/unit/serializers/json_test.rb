@@ -11,9 +11,7 @@ class JsonTest < ActiveSupport::TestCase
     @hash_as_json = @hash.to_json
     # Setup an array of random words
     @array = []
-    (4..8).to_a.sample.times do
-      @array << Faker::Lorem.word
-    end
+    (rand(5) + 4).times { @array << Faker::Lorem.word }
     @array_as_json = @array.to_json
   end
 
@@ -33,7 +31,7 @@ class JsonTest < ActiveSupport::TestCase
       assert PaperTrail::Serializers::Json.respond_to?(:dump)
     end
 
-    should '`deserialize` JSON to Ruby' do
+    should '`serialize` Ruby to JSON' do
       assert_equal @hash_as_json, PaperTrail::Serializers::Json.dump(@hash)
       assert_equal @array_as_json, PaperTrail::Serializers::Json.dump(@array)
     end

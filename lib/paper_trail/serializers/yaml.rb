@@ -7,8 +7,8 @@ module PaperTrail
         YAML.load string
       end
 
-      def self.dump(hash)
-        YAML.dump hash
+      def self.dump(object)
+        YAML.dump object
       end
     end
   end
