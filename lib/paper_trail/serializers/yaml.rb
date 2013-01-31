@@ -2,7 +2,7 @@ require 'yaml'
 
 module PaperTrail
   module Serializers
-    module Yaml
+    class Yaml
       def self.load(string)
         YAML.load string
       end
