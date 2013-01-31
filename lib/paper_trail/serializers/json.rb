@@ -3,11 +3,13 @@ require 'active_support/json'
 module PaperTrail
   module Serializers
     module Json
-      def self.load(string)
+      extend self # makes all instance methods become module methods as well
+
+      def load(string)
         ActiveSupport::JSON.decode string
       end
 
-      def self.dump(object)
+      def dump(object)
         ActiveSupport::JSON.encode object
       end
     end
