@@ -2,7 +2,7 @@ require 'active_support/json'
 
 module PaperTrail
   module Serializers
-    module Json
+    class Json
       def self.load(string)
         ActiveSupport::JSON.decode string
       end
