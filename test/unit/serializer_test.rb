@@ -9,6 +9,7 @@ class SerializerTest < ActiveSupport::TestCase
       END
 
       @fluxor = Fluxor.create :name => 'Some text.'
+      @original_fluxor_attributes = @fluxor.attributes
       @fluxor.update_attributes :name => 'Some more text.'
     end
 
@@ -20,9 +21,8 @@ class SerializerTest < ActiveSupport::TestCase
 
 
       # Check values are stored as YAML.
-      hash = {"widget_id" => nil, "name" => "Some text.", "id" => 1}
-      assert_equal YAML.dump(hash), @fluxor.versions[1].object
-      assert_equal hash, YAML.load(@fluxor.versions[1].object)
+      assert_equal YAML.dump(@original_fluxor_attributes), @fluxor.versions[1].object
+      assert_equal @original_fluxor_attributes, YAML.load(@fluxor.versions[1].object)
     end
   end
 
@@ -37,6 +37,7 @@ class SerializerTest < ActiveSupport::TestCase
       END
 
       @fluxor = Fluxor.create :name => 'Some text.'
+      @original_fluxor_attributes = @fluxor.attributes
       @fluxor.update_attributes :name => 'Some more text.'
     end
 
@@ -51,9 +52,8 @@ class SerializerTest < ActiveSupport::TestCase
       assert_equal 'Some text.', @fluxor.versions[1].reify.name
 
       # Check values are stored as JSON.
-      hash = {"widget_id" => nil,"name" =>"Some text.","id" =>1}
-      assert_equal JSON.dump(hash), @fluxor.versions[1].object
-      assert_equal hash, JSON.parse(@fluxor.versions[1].object)
+      assert_equal ActiveSupport::JSON.encode(@original_fluxor_attributes), @fluxor.versions[1].object
+      assert_equal @original_fluxor_attributes, ActiveSupport::JSON.decode(@fluxor.versions[1].object)
     end
 
     should 'store object_changes' do
