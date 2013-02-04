@@ -1,5 +1,8 @@
 ## 2.7.1 (Unreleased)
 
+  - [#197](https://github.com/airblade/paper_trail/issues/197) - PaperTrail now falls back on using YAML for serialization of
+    serialized model attributes for storage in the `object` and `object_changes` columns in the `Version` table. This fixes
+    compatibility for `Rails 3.0.x` for projects that employ the `serialize` declaration on a model.
   - [#194](https://github.com/airblade/paper_trail/issues/194) - A JSON serializer is now included in the gem.
   - [#192](https://github.com/airblade/paper_trail/pull/192) - `object_changes` should store serialized representation of serialized
     attributes for `create` actions (in addition to `update` actions, which had already been patched by
@@ -14,7 +17,7 @@
   - [#183](https://github.com/airblade/paper_trail/pull/183) - Fully qualify the `Version` class to help prevent
     namespace resolution errors within other gems / plugins.
   - [#180](https://github.com/airblade/paper_trail/pull/180) - Store serialized representation of serialized attributes
-    on the `object` and `object_changes` column in the `Version` table.
+    on the `object` and `object_changes` columns in the `Version` table.
   - [#164](https://github.com/airblade/paper_trail/pull/164) - Allow usage of custom serializer for storage of object attributes.
 
 ## 2.6.4

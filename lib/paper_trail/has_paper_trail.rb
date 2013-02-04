@@ -84,13 +84,19 @@ module PaperTrail
       # Used for Version#object attribute
       def serialize_attributes_for_paper_trail(attributes)
         serialized_attributes.each do |key, coder|
-          attributes[key] = coder.dump(attributes[key]) if attributes.key?(key)
+          if attributes.key?(key)
+            coder = PaperTrail::Serializers::Yaml unless coder.respond_to?(:dump) # Rails 3.0.x's default serializers don't have a `dump` method
+            attributes[key] = coder.dump(attributes[key])
+          end
         end
       end
 
       def unserialize_attributes_for_paper_trail(attributes)
         serialized_attributes.each do |key, coder|
-          attributes[key] = coder.load(attributes[key]) if attributes.key?(key)
+          if attributes.key?(key)
+            coder = PaperTrail::Serializers::Yaml unless coder.respond_to?(:dump)
+            attributes[key] = coder.load(attributes[key])
+          end
         end
       end
 
@@ -98,6 +104,7 @@ module PaperTrail
       def serialize_attribute_changes(changes)
         serialized_attributes.each do |key, coder|
           if changes.key?(key)
+            coder = PaperTrail::Serializers::Yaml unless coder.respond_to?(:dump) # Rails 3.0.x's default serializers don't have a `dump` method
             old_value, new_value = changes[key]
             changes[key] = [coder.dump(old_value),
                             coder.dump(new_value)]
@@ -108,6 +115,7 @@ module PaperTrail
       def unserialize_attribute_changes(changes)
         serialized_attributes.each do |key, coder|
           if changes.key?(key)
+            coder = PaperTrail::Serializers::Yaml unless coder.respond_to?(:dump)
             old_value, new_value = changes[key]
             changes[key] = [coder.load(old_value),
                             coder.load(new_value)]
