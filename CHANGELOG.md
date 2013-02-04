@@ -14,7 +14,7 @@
   - [#183](https://github.com/airblade/paper_trail/pull/183) - Fully qualify the `Version` class to help prevent
     namespace resolution errors within other gems / plugins.
   - [#180](https://github.com/airblade/paper_trail/pull/180) - Store serialized representation of serialized attributes
-    on the `object_changes` column in the `Version` table.
+    on the `object` and `object_changes` column in the `Version` table.
   - [#164](https://github.com/airblade/paper_trail/pull/164) - Allow usage of custom serializer for storage of object attributes.
 
 ## 2.6.4
