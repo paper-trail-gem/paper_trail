@@ -19,7 +19,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'activerecord', '~> 4.0.0.beta'
 
   s.add_development_dependency 'rake'
-  s.add_development_dependency 'shoulda', '~> 3.3'
-  s.add_development_dependency 'sqlite3', '~> 1.2'
+  s.add_development_dependency 'sqlite3'
   s.add_development_dependency 'ffaker', '>= 1.15'
 end

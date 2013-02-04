@@ -26,7 +26,7 @@ class MixinYamlTest < ActiveSupport::TestCase
     @hash_as_yaml = @hash.to_yaml
   end
 
-  context '`load` class method' do
+  describe '`load` class method' do
     should 'exist' do
       assert CustomYamlSerializer.respond_to?(:load)
     end
@@ -36,7 +36,7 @@ class MixinYamlTest < ActiveSupport::TestCase
     end
   end
 
-  context '`dump` class method' do
+  describe '`dump` class method' do
     should 'exist' do
       assert CustomYamlSerializer.respond_to?(:dump)
     end

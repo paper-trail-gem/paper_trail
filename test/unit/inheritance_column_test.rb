@@ -2,7 +2,7 @@ require 'test_helper'
 
 class InheritanceColumnTest < ActiveSupport::TestCase
 
-  context 'STI models' do
+  describe 'STI models' do
     setup do
       @animal = Animal.create :name => 'Animal'
       @animal.update_attributes :name => 'Animal from the Muppets'

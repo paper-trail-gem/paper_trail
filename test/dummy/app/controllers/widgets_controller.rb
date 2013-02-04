@@ -5,13 +5,13 @@ class WidgetsController < ApplicationController
   end
 
   def create
-    @widget = Widget.create params[:widget]
+    @widget = Widget.create params[:widget].permit!
     head :ok
   end
 
   def update
     @widget = Widget.find params[:id]
-    @widget.update_attributes params[:widget]
+    @widget.update_attributes params[:widget].permit!
     head :ok
   end
 

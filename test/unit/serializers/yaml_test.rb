@@ -15,7 +15,7 @@ class YamlTest < ActiveSupport::TestCase
     @array_as_yaml = @array.to_yaml
   end
 
-  context '`load` class method' do
+  describe '`load` class method' do
     should 'exist' do
       assert PaperTrail::Serializers::Yaml.respond_to?(:load)
     end
@@ -26,7 +26,7 @@ class YamlTest < ActiveSupport::TestCase
     end
   end
 
-  context '`dump` class method' do
+  describe '`dump` class method' do
     should 'exist' do
       assert PaperTrail::Serializers::Yaml.respond_to?(:dump)
     end

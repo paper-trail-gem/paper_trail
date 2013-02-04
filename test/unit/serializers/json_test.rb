@@ -15,7 +15,7 @@ class JsonTest < ActiveSupport::TestCase
     @array_as_json = @array.to_json
   end
 
-  context '`load` class method' do
+  describe '`load` class method' do
     should 'exist' do
       assert PaperTrail::Serializers::Json.respond_to?(:load)
     end
@@ -26,7 +26,7 @@ class JsonTest < ActiveSupport::TestCase
     end
   end
 
-  context '`dump` class method' do
+  describe '`dump` class method' do
     should 'exist' do
       assert PaperTrail::Serializers::Json.respond_to?(:dump)
     end
