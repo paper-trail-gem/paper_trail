@@ -85,7 +85,7 @@ module PaperTrail
       def serialize_attributes_for_paper_trail(attributes)
         serialized_attributes.each do |key, coder|
           if attributes.key?(key)
-            coder = PaperTrail::Serializers::Yaml unless coder.respond_to?(:dump) # Rails 3.0.x's default serializers don't have a `dump` method
+            coder = PaperTrail::Serializers::Yaml unless coder.respond_to?(:dump) # Fall back to YAML if `coder` has no `dump` method
             attributes[key] = coder.dump(attributes[key])
           end
         end
@@ -104,7 +104,7 @@ module PaperTrail
       def serialize_attribute_changes(changes)
         serialized_attributes.each do |key, coder|
           if changes.key?(key)
-            coder = PaperTrail::Serializers::Yaml unless coder.respond_to?(:dump) # Rails 3.0.x's default serializers don't have a `dump` method
+            coder = PaperTrail::Serializers::Yaml unless coder.respond_to?(:dump) # Fall back to YAML if `coder` has no `dump` method
             old_value, new_value = changes[key]
             changes[key] = [coder.dump(old_value),
                             coder.dump(new_value)]
