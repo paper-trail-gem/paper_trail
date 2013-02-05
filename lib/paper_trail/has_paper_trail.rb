@@ -155,15 +155,17 @@ module PaperTrail
       # Returns the object (not a Version) as it was most recently.
       def previous_version
         preceding_version = source_version ? source_version.previous : send(self.class.versions_association_name).last
-        preceding_version.try :reify
+        preceding_version.reify if preceding_version
       end
 
       # Returns the object (not a Version) as it became next.
+      # NOTE: if self (the item) was not reified from a version, i.e. it is the
+      #  "live" item, we return nil.  Perhaps we should return self instead?
       def next_version
-        # NOTE: if self (the item) was not reified from a version, i.e. it is the
-        # "live" item, we return nil.  Perhaps we should return self instead?
-        subsequent_version = source_version ? source_version.next : nil
-        subsequent_version.reify if subsequent_version
+        subsequent_version = source_version.next
+        subsequent_version ? subsequent_version.reify : self.class.find(self.id)
+      rescue
+        nil
       end
 
       # Executes the given method or block without creating a new version.

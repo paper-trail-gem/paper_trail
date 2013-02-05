@@ -795,10 +795,10 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       end
 
       should 'have a previous version' do
-        assert_equal @widget.versions.last.reify, @widget.previous_version
+        assert_equal @widget.versions.last.reify.name, @widget.previous_version.name
       end
 
-      should 'have a next version' do
+      should 'not have a next version' do
         assert_nil @widget.next_version
       end
     end
@@ -806,21 +806,20 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
   context 'A reified item' do
     setup do
-      widget = Widget.create :name => 'Bob'
-      %w( Tom Dick Jane ).each { |name| widget.update_attributes :name => name }
-      @versions      = widget.versions
-      @second_widget = @versions[1].reify  # first widget is null
-      @last_widget   = @versions.last.reify
+      @widget = Widget.create :name => 'Bob'
+      %w(Tom Dick Jane).each { |name| @widget.update_attributes :name => name }
+      @second_widget = @widget.versions[1].reify  # first widget is `nil`
+      @last_widget   = @widget.versions.last.reify
     end
 
     should 'have a previous version' do
-      assert_nil @second_widget.previous_version
-      assert_equal @versions[-2].reify, @last_widget.previous_version
+      assert_nil @second_widget.previous_version # `create` events return `nil` for `reify`
+      assert_equal @widget.versions[-2].reify.name, @last_widget.previous_version.name
     end
 
     should 'have a next version' do
-      assert_equal @versions[2].reify, @second_widget.next_version
-      assert_nil @last_widget.next_version
+      assert_equal @widget.versions[2].reify.name, @second_widget.next_version.name
+      assert_equal @last_widget.next_version.name, @widget.name
     end
   end
 
@@ -1106,7 +1105,11 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       assert_equal 2, @doc.paper_trail_versions.length
     end
 
-    should 'respond to previous_version as normal' do
+    should 'respond to `next_version` as normal' do
+      assert_equal @doc.paper_trail_versions.last.reify.next_version.name, @doc.name
+    end
+
+    should 'respond to `previous_version` as normal' do
       @doc.update_attributes :name => 'Doc 2'
       assert_equal 3, @doc.paper_trail_versions.length
       assert_equal 'Doc 1', @doc.previous_version.name
