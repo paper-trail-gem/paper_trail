@@ -217,7 +217,7 @@ module PaperTrail
       end
 
       def changes_for_paper_trail
-        self.changes.keep_if do |key, value|
+        self.changes.select do |key, value|
           notably_changed.include?(key)
         end.tap do |changes|
           self.class.serialize_attribute_changes(changes) # Use serialized value for attributes when necessary
