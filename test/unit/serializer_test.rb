@@ -19,10 +19,13 @@ class SerializerTest < ActiveSupport::TestCase
       assert_nil @fluxor.versions[0].reify
       assert_equal 'Some text.', @fluxor.versions[1].reify.name
 
-
       # Check values are stored as YAML.
-      assert_equal YAML.dump(@original_fluxor_attributes), @fluxor.versions[1].object
       assert_equal @original_fluxor_attributes, YAML.load(@fluxor.versions[1].object)
+      # This test can't consistently pass in Ruby1.8 because hashes do no preserve order, which means the order of the
+      # attributes in the YAML can't be ensured.
+      if RUBY_VERSION.to_f >= 1.9
+        assert_equal YAML.dump(@original_fluxor_attributes), @fluxor.versions[1].object
+      end
     end
   end
 
@@ -52,8 +55,12 @@ class SerializerTest < ActiveSupport::TestCase
       assert_equal 'Some text.', @fluxor.versions[1].reify.name
 
       # Check values are stored as JSON.
-      assert_equal ActiveSupport::JSON.encode(@original_fluxor_attributes), @fluxor.versions[1].object
       assert_equal @original_fluxor_attributes, ActiveSupport::JSON.decode(@fluxor.versions[1].object)
+      # This test can't consistently pass in Ruby1.8 because hashes do no preserve order, which means the order of the
+      # attributes in the JSON can't be ensured.
+      if RUBY_VERSION.to_f >= 1.9
+        assert_equal ActiveSupport::JSON.encode(@original_fluxor_attributes), @fluxor.versions[1].object
+      end
     end
 
     should 'store object_changes' do
