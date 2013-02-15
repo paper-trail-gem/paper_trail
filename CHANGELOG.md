@@ -1,4 +1,4 @@
-## 2.7.1 (Unreleased)
+## 2.7.1
 
   - [#206](https://github.com/airblade/paper_trail/issues/206) - Fixed Ruby 1.8.7 compatibility for tracking `object_changes`.
   - [#200](https://github.com/airblade/paper_trail/issues/200) - Fixed `next_version` method so that it returns the live model
