@@ -628,6 +628,15 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       should 'return the current object for version_at after latest update' do
         assert_equal 'Digit', @widget.version_at(1.day.from_now).name
       end
+
+      context 'passing in a string representation of a timestamp' do
+        should 'still return a widget when appropriate' do
+          # need to add 1 second onto the timestamps before casting to a string, since casting a Time to a string drops the microseconds
+          assert_equal 'Widget', @widget.version_at((@created + 1.second).to_s).name
+          assert_equal 'Fidget', @widget.version_at((@first_update + 1.second).to_s).name
+          assert_equal 'Digit', @widget.version_at((@second_update + 1.second).to_s).name
+        end
+      end
     end
 
     context '.versions_between' do
