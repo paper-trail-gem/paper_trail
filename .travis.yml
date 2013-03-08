@@ -1,6 +1,10 @@
 language: ruby
 rvm:
+  - 2.0.0
   - 1.9.3
   - 1.9.2
   - 1.8.7
   - ree
+matrix:
+  allow_failures:
+    - rvm: 2.0.0
