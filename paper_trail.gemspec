@@ -15,10 +15,11 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ['lib']
 
-  s.add_dependency 'railties', '~> 4.0.0.beta'
-  s.add_dependency 'activerecord', '~> 4.0.0.beta'
+  s.add_dependency 'railties', '>= 4.0.0.beta', '< 5.0'
+  s.add_dependency 'activerecord', '>= 4.0.0.beta', '< 5.0'
 
   s.add_development_dependency 'rake'
   s.add_development_dependency 'sqlite3'
   s.add_development_dependency 'ffaker', '>= 1.15'
+  s.add_development_dependency 'protected_attributes', '~> 1.0'
 end

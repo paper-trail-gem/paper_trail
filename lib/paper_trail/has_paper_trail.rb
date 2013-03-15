@@ -85,7 +85,7 @@ module PaperTrail
       def serialize_attributes_for_paper_trail(attributes)
         serialized_attributes.each do |key, coder|
           if attributes.key?(key)
-            coder = PaperTrail::Serializers::Yaml unless coder.respond_to?(:dump) # Rails 3.0.x's default serializers don't have a `dump` method
+            coder = PaperTrail::Serializers::Yaml unless coder.respond_to?(:dump) # Fall back to YAML if `coder` has no `dump` method
             attributes[key] = coder.dump(attributes[key])
           end
         end
@@ -104,7 +104,7 @@ module PaperTrail
       def serialize_attribute_changes(changes)
         serialized_attributes.each do |key, coder|
           if changes.key?(key)
-            coder = PaperTrail::Serializers::Yaml unless coder.respond_to?(:dump) # Rails 3.0.x's default serializers don't have a `dump` method
+            coder = PaperTrail::Serializers::Yaml unless coder.respond_to?(:dump) # Fall back to YAML if `coder` has no `dump` method
             old_value, new_value = changes[key]
             changes[key] = [coder.dump(old_value),
                             coder.dump(new_value)]
@@ -155,15 +155,17 @@ module PaperTrail
       # Returns the object (not a Version) as it was most recently.
       def previous_version
         preceding_version = source_version ? source_version.previous : send(self.class.versions_association_name).last
-        preceding_version.try :reify
+        preceding_version.reify if preceding_version
       end
 
       # Returns the object (not a Version) as it became next.
+      # NOTE: if self (the item) was not reified from a version, i.e. it is the
+      #  "live" item, we return nil.  Perhaps we should return self instead?
       def next_version
-        # NOTE: if self (the item) was not reified from a version, i.e. it is the
-        # "live" item, we return nil.  Perhaps we should return self instead?
-        subsequent_version = source_version ? source_version.next : nil
-        subsequent_version.reify if subsequent_version
+        subsequent_version = source_version.next
+        subsequent_version ? subsequent_version.reify : self.class.find(self.id)
+      rescue
+        nil
       end
 
       # Executes the given method or block without creating a new version.
@@ -215,8 +217,8 @@ module PaperTrail
       end
 
       def changes_for_paper_trail
-        self.changes.keep_if do |key, value|
-          notably_changed.include?(key)
+        self.changes.delete_if do |key, value|
+          !notably_changed.include?(key)
         end.tap do |changes|
           self.class.serialize_attribute_changes(changes) # Use serialized value for attributes when necessary
         end

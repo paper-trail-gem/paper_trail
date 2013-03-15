@@ -1,5 +1,2 @@
-source :rubygems
-
-gem 'rails',     github: 'rails/rails'
-
+source 'https://rubygems.org'
 gemspec
