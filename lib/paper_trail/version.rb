@@ -4,7 +4,7 @@ class Version < ActiveRecord::Base
   attr_accessible :item_type, :item_id, :event, :whodunnit, :object, :object_changes
 
   def self.with_item_keys(item_type, item_id)
-    scoped(:conditions => { :item_type => item_type, :item_id => item_id })
+    where :item_type => item_type, :item_id => item_id
   end
 
   def self.creates
@@ -20,21 +20,21 @@ class Version < ActiveRecord::Base
   end
 
   scope :subsequent, lambda { |version|
-    where(["#{self.primary_key} > ?", version]).order("#{self.primary_key} ASC")
+    where("#{self.primary_key} > ?", version).order("#{self.primary_key} ASC")
   }
 
   scope :preceding, lambda { |version|
-    where(["#{self.primary_key} < ?", version]).order("#{self.primary_key} DESC")
+    where("#{self.primary_key} < ?", version).order("#{self.primary_key} DESC")
   }
 
   scope :following, lambda { |timestamp|
     # TODO: is this :order necessary, considering its presence on the has_many :versions association?
-    where(["#{PaperTrail.timestamp_field} > ?", timestamp]).
+    where("#{PaperTrail.timestamp_field} > ?", timestamp).
       order("#{PaperTrail.timestamp_field} ASC, #{self.primary_key} ASC")
   }
 
   scope :between, lambda { |start_time, end_time|
-    where(["#{PaperTrail.timestamp_field} > ? AND #{PaperTrail.timestamp_field} < ?", start_time, end_time ]).
+    where("#{PaperTrail.timestamp_field} > ? AND #{PaperTrail.timestamp_field} < ?", start_time, end_time).
       order("#{PaperTrail.timestamp_field} ASC, #{self.primary_key} ASC")
   }
 
