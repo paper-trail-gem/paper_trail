@@ -1,3 +1,7 @@
+## 2.7.2 (Unreleased)
+
+  - [#187](https://github.com/airblade/paper_trail/pull/187) - Confirmed JRuby support.
+
 ## 2.7.1
 
   - [#206](https://github.com/airblade/paper_trail/issues/206) - Fixed Ruby 1.8.7 compatibility for tracking `object_changes`.
