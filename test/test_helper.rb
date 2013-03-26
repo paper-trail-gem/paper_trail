@@ -1,14 +1,5 @@
 # Configure Rails Envinronment
 ENV["RAILS_ENV"] = "test"
-require 'bundler/setup'
-
-if defined?(JRUBY_VERSION)
-  require 'jdbc/sqlite3'
-  require 'active_record'
-  require 'active_record/connection_adapters/jdbcsqlite3_adapter'
-else
-  require 'sqlite3'
-end
 
 require File.expand_path("../dummy/config/environment.rb",  __FILE__)
 require "rails/test_help"

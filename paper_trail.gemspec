@@ -20,6 +20,11 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'rake'
   s.add_development_dependency 'shoulda', '~> 3.3'
-  s.add_development_dependency 'sqlite3', '~> 1.2' unless defined?(JRUBY_VERSION)
-  s.add_development_dependency 'ffaker',  '~> 2.0'
+  s.add_development_dependency 'ffaker',  '>= 1.15'
+  # JRuby support for the test ENV
+  unless defined?(JRUBY_VERSION)
+    s.add_development_dependency 'sqlite3', '~> 1.2'
+  else
+    s.add_development_dependency 'activerecord-jdbcsqlite3-adapter', '~> 1.2.9'
+  end
 end
