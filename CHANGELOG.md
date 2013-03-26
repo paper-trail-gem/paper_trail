@@ -15,6 +15,14 @@
   - [#189](https://github.com/airblade/paper_trail/pull/189) - Provided support for a `configure` block initializer.
   - Added `setter` method for the `serializer` config option.
 
+  - [#192](https://github.com/airblade/paper_trail/pull/192) - `object_changes` should store serialized representation of serialized
+    attributes for `create` actions (in addition to `update` actions, which had already been patched by
+    [#180](https://github.com/airblade/paper_trail/pull/180)).
+  - [#190](https://github.com/airblade/paper_trail/pull/190) - Fix compatibility with
+    [SerializedAttributes](https://github.com/technoweenie/serialized_attributes) gem.
+  - [#189](https://github.com/airblade/paper_trail/pull/189) - Provided support for a `configure` block initializer.
+  - Added `setter` method for the `serializer` config option.
+
 ## 2.7.0
 
   - [#183](https://github.com/airblade/paper_trail/pull/183) - Fully qualify the `Version` class to help prevent

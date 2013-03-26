@@ -746,7 +746,7 @@ end
 By default, PaperTrail stores your changes as a YAML dump. You can override this with the serializer config option:
 
 ```ruby
->> PaperTrail.serializer = MyCustomSerializer
+>> PaperTrail.config.serializer = MyCustomSerializer
 ```
 
 A valid serializer is a `module` (or `class`) that defines a `load` and `dump` method.  These serializers are included in the gem for your convenience:
