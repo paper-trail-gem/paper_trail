@@ -772,13 +772,17 @@ sql> delete from versions where created_at < 2010-06-01;
 
 1. Install PaperTrail as a gem via your `Gemfile`:
 
-    `gem 'paper_trail', '~> 2'`
+    `gem 'paper_trail', '~> 2.7.2'`
 
 2. Generate a migration which will add a `versions` table to your database.
 
-    `bundle exec rails generate paper_trail:install`
+    * `bundle exec rake railties:install:migrations SCOPE=paper_trail`
 
-3. Run the migration.
+3. Generate a migration which will add a `change tracking` to your database.
+
+    * `bundle exec rails generate paper_trail:install`
+
+4. Run the migration.
 
     `bundle exec rake db:migrate`
 

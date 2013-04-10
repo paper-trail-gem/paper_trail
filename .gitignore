@@ -13,3 +13,4 @@ Gemfile.lock
 vendor/*
 .idea
 .rvmrc
+spec/dummy/log/*
