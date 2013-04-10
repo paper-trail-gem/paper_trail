@@ -2,6 +2,7 @@ require 'paper_trail/config'
 require 'paper_trail/controller'
 require 'paper_trail/has_paper_trail'
 require 'paper_trail/version'
+require 'paper_trail/engine'
 
 require 'paper_trail/serializers/yaml'
 require 'paper_trail/serializers/json'
