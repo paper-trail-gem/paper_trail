@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'railties', ['>= 3.0', '< 5.0']
   s.add_development_dependency 'sinatra', '~> 1.0'
   s.add_development_dependency 'rack-test', '>= 0.6'
+  s.add_development_dependency 'rspec-rails', '~> 2.14'
 
   # JRuby support for the test ENV
   unless defined?(JRUBY_VERSION)

@@ -6,6 +6,8 @@ require 'paper_trail/cleaner'
 Dir[File.join(File.dirname(__FILE__), 'paper_trail', 'frameworks', '*.rb')].each { |file| require file }
 Dir[File.join(File.dirname(__FILE__), 'paper_trail', 'serializers', '*.rb')].each { |file| require file }
 
+require 'paper_trail/rspec' if defined?(RSpec)
+
 # PaperTrail's module methods can be called in both models and controllers.
 module PaperTrail
   extend PaperTrail::Cleaner
