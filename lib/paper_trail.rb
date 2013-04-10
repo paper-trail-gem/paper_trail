@@ -6,6 +6,8 @@ require 'paper_trail/engine'
 require 'paper_trail/serializers/yaml'
 require 'paper_trail/serializers/json'
 
+require 'paper_trail/rspec' if defined?(RSpec)
+
 # PaperTrail's module methods can be called in both models and controllers.
 module PaperTrail
 
