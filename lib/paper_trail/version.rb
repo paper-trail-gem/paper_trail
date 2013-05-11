@@ -80,6 +80,14 @@ class Version < ActiveRecord::Base
         end
 
         model.class.unserialize_attributes_for_paper_trail attrs
+
+        # Look for attributes that exist in the model and not in this version.
+        # These attributes should be set to nil.
+        (model.attribute_names - attrs.keys).each do |k|
+          attrs[k] = nil
+        end
+
+        # Set all the attributes in this version on the model
         attrs.each do |k, v|
           if model.respond_to?("#{k}=")
             model[k.to_sym] = v
