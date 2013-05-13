@@ -57,6 +57,8 @@ module PaperTrail
         class_attribute :versions_association_name
         self.versions_association_name = options[:versions] || :versions
 
+        attr_accessor :paper_trail_event
+
         has_many self.versions_association_name,
                  :class_name => version_class_name,
                  :as         => :item,
@@ -190,7 +192,7 @@ module PaperTrail
       def record_create
         if switched_on?
           data = {
-            :event     => 'create',
+            :event     => paper_trail_event || 'create',
             :whodunnit => PaperTrail.whodunnit
           }
 
@@ -205,7 +207,7 @@ module PaperTrail
       def record_update
         if switched_on? && changed_notably?
           data = {
-            :event     => 'update',
+            :event     => paper_trail_event || 'update',
             :object    => object_to_string(item_before_change),
             :whodunnit => PaperTrail.whodunnit
           }
@@ -228,7 +230,7 @@ module PaperTrail
         if switched_on? and not new_record?
           version_class.create merge_metadata(:item_id   => self.id,
                                               :item_type => self.class.base_class.name,
-                                              :event     => 'destroy',
+                                              :event     => paper_trail_event || 'destroy',
                                               :object    => object_to_string(item_before_change),
                                               :whodunnit => PaperTrail.whodunnit)
         end

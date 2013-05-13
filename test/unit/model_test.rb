@@ -1212,6 +1212,60 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
   end
 
+  context 'custom events' do
+    context 'on create' do
+      setup do
+        Fluxor.reset_callbacks :create
+        Fluxor.reset_callbacks :update
+        Fluxor.reset_callbacks :destroy
+        Fluxor.instance_eval <<-END
+          has_paper_trail :on => [:create]
+        END
+        @fluxor = Fluxor.new.tap { |model| model.paper_trail_event = 'created' }
+        @fluxor.update_attributes :name => 'blah'
+        @fluxor.destroy
+      end
+      should 'only have a version for the created event' do
+        assert_equal 1, @fluxor.versions.length
+        assert_equal 'created', @fluxor.versions.last.event
+      end
+    end
+    context 'on update' do
+      setup do
+        Fluxor.reset_callbacks :create
+        Fluxor.reset_callbacks :update
+        Fluxor.reset_callbacks :destroy
+        Fluxor.instance_eval <<-END
+          has_paper_trail :on => [:update]
+        END
+        @fluxor = Fluxor.create.tap { |model| model.paper_trail_event = 'name_updated' }
+        @fluxor.update_attributes :name => 'blah'
+        @fluxor.destroy
+      end
+      should 'only have a version for the name_updated event' do
+        assert_equal 1, @fluxor.versions.length
+        assert_equal 'name_updated', @fluxor.versions.last.event
+      end
+    end
+    context 'on destroy' do
+      setup do
+        Fluxor.reset_callbacks :create
+        Fluxor.reset_callbacks :update
+        Fluxor.reset_callbacks :destroy
+        Fluxor.instance_eval <<-END
+          has_paper_trail :on => [:destroy]
+        END
+        @fluxor = Fluxor.create.tap { |model| model.paper_trail_event = 'destroyed' }
+        @fluxor.update_attributes :name => 'blah'
+        @fluxor.destroy
+      end
+      should 'only have a version for the destroy event' do
+        assert_equal 1, @fluxor.versions.length
+        assert_equal 'destroyed', @fluxor.versions.last.event
+      end
+    end
+  end
+
   private
 
   # Updates `model`'s last version so it looks like the version was
