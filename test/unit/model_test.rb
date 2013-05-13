@@ -891,7 +891,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       end
     end
 
-    context 'where the associated is created between model versions' do
+    context 'where the association is created between model versions' do
       setup do
         @wotsit = @widget.create_wotsit :name => 'wotsit_0'
         make_last_version_earlier @wotsit
