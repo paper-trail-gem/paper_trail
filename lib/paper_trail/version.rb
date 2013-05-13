@@ -72,6 +72,8 @@ class Version < ActiveRecord::Base
 
         if item
           model = item
+          # Look for attributes that exist in the model and not in this version. These attributes should be set to nil.
+          (model.attribute_names - attrs.keys).each { |k| attrs[k] = nil }
         else
           inheritance_column_name = item_type.constantize.inheritance_column
           class_name = attrs[inheritance_column_name].blank? ? item_type : attrs[inheritance_column_name]
@@ -80,12 +82,6 @@ class Version < ActiveRecord::Base
         end
 
         model.class.unserialize_attributes_for_paper_trail attrs
-
-        # Look for attributes that exist in the model and not in this version.
-        # These attributes should be set to nil.
-        (model.attribute_names - attrs.keys).each do |k|
-          attrs[k] = nil
-        end
 
         # Set all the attributes in this version on the model
         attrs.each do |k, v|
