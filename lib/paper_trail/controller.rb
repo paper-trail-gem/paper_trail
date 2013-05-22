@@ -14,7 +14,7 @@ module PaperTrail
     # Override this method in your controller to call a different
     # method, e.g. `current_person`, or anything you like.
     def user_for_paper_trail
-      current_user rescue nil
+      current_user if defined?(current_user)
     end
 
     # Returns any information about the controller or request that you

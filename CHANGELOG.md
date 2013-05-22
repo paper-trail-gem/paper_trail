@@ -1,5 +1,7 @@
 ## 2.7.2 (Unreleased)
 
+  - [#228](https://github.com/airblade/paper_trail/issues/228) - Refactored default `user_for_paper_trail` method implementation
+  so that `current_user` only gets invoked if it is defined.
   - [#219](https://github.com/airblade/paper_trail/pull/219) - Fixed issue where attributes stored with `nil` value might not get
   reified properly depending on the way the serializer worked.
   - [#187](https://github.com/airblade/paper_trail/pull/187) - Confirmed JRuby support.
