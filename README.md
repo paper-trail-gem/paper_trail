@@ -773,13 +773,15 @@ A valid serializer is a `module` (or `class`) that defines a `load` and `dump` m
 
 ## Limiting the number of versions created per object instance
 
-If you are weary of your `versions` table growing to an unwieldy size, or just don't care to track more than a certain number of versions about an object,
-there is a configuration option that can be set to cap the number of versions saved per object.  Note that if this value is set to a numeric value, the number
-version marking the `create` event will always be preserved, so it actually has a version limit of 1 higher than what this value is set to.
+If you are weary of your `versions` table growing to an unwieldy size, or just don't care to track more than a certain number of versions per object,
+there is a configuration option that can be set to cap the number of versions saved per object. Note that this value must be numeric, and it only applies to
+versions other than `create` events (which will always be preserved if they are stored).
 
 ```ruby
->> PaperTrail.config.version_limit = 3 # will make it so that a maximum of 4 versions will be stored for each object (3 most recent ones plus a `create` event)
->> PaperTrail.config.version_limit = nil # disables/removes the version limit
+# will make it so that a maximum of 4 versions will be stored for each object (the 3 most recent ones plus a `create` event)
+>> PaperTrail.config.version_limit = 3
+# disables/removes the version limit
+>> PaperTrail.config.version_limit = nil
 ```
 
 ## Deleting Old Versions
