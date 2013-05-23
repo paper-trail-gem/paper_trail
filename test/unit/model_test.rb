@@ -1266,6 +1266,22 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
   end
 
+  context '`PaperTrail::Config.version_limit` set' do
+    setup do
+      PaperTrail.config.version_limit = 2
+      @widget = Widget.create! :name => 'Henry'
+      6.times { @widget.update_attribute(:name, Faker::Lorem.word) }
+    end
+
+    teardown { PaperTrail.config.version_limit = nil }
+
+    should "limit the number of versions to 3 (2 plus the created at event)" do
+      assert_equal 'create', @widget.versions.first.event
+      assert_equal 3, @widget.versions.size
+    end
+  end
+
+
   private
 
   # Updates `model`'s last version so it looks like the version was

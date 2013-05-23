@@ -771,6 +771,17 @@ A valid serializer is a `module` (or `class`) that defines a `load` and `dump` m
 * [Yaml](https://github.com/airblade/paper_trail/blob/master/lib/paper_trail/serializers/yaml.rb) - Default
 * [Json](https://github.com/airblade/paper_trail/blob/master/lib/paper_trail/serializers/json.rb)
 
+## Limiting the number of versions created per object instance
+
+If you are weary of your `versions` table growing to an unwieldy size, or just don't care to track more than a certain number of versions about an object,
+there is a configuration option that can be set to cap the number of versions saved per object.  Note that if this value is set to a numeric value, the number
+version marking the `create` event will always be preserved, so it actually has a version limit of 1 higher than what this value is set to.
+
+```ruby
+>> PaperTrail.config.version_limit = 3 # will make it so that a maximum of 4 versions will be stored for each object (3 most recent ones plus a `create` event)
+>> PaperTrail.config.version_limit = nil # disables/removes the version limit
+```
+
 ## Deleting Old Versions
 
 Over time your `versions` table will grow to an unwieldy size.  Because each version is self-contained (see the Diffing section above for more) you can simply delete any records you don't want any more.  For example:

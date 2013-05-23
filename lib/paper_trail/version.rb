@@ -3,6 +3,8 @@ class Version < ActiveRecord::Base
   validates_presence_of :event
   attr_accessible :item_type, :item_id, :event, :whodunnit, :object, :object_changes
 
+  after_create :enforce_version_limit!
+
   def self.with_item_keys(item_type, item_id)
     where :item_type => item_type, :item_id => item_id
   end
@@ -17,6 +19,10 @@ class Version < ActiveRecord::Base
 
   def self.destroys
     where :event => 'destroy'
+  end
+
+  def self.not_creates
+    where 'event <> ?', 'create'
   end
 
   scope :subsequent, lambda { |version|
@@ -178,6 +184,15 @@ class Version < ActiveRecord::Base
         end
       end
     end
+  end
+
+  # checks to see if a value has been set for the `version_limit` config option, and if so enforces it
+  def enforce_version_limit!
+    return unless PaperTrail.config.version_limit.is_a? Numeric
+    previous_versions = sibling_versions.not_creates
+    return unless previous_versions.size > PaperTrail.config.version_limit
+    excess_previous_versions = previous_versions - previous_versions.last(PaperTrail.config.version_limit)
+    excess_previous_versions.map(&:destroy)
   end
 
 end
