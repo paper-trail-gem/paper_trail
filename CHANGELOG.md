@@ -1,4 +1,4 @@
-## 2.7.2 (Unreleased)
+## 2.7.2
 
   - [#228](https://github.com/airblade/paper_trail/issues/228) - Refactored default `user_for_paper_trail` method implementation
   so that `current_user` only gets invoked if it is defined.
