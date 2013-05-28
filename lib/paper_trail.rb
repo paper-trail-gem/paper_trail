@@ -1,3 +1,4 @@
+require 'paper_trail/cleaner'
 require 'paper_trail/config'
 require 'paper_trail/controller'
 require 'paper_trail/has_paper_trail'
@@ -9,6 +10,7 @@ require 'paper_trail/serializers/json'
 # PaperTrail's module methods can be called in both models and controllers.
 module PaperTrail
 
+  extend PaperTrail::Cleaner
   # Switches PaperTrail on or off.
   def self.enabled=(value)
     PaperTrail.config.enabled = value
