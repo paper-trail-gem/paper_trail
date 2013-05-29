@@ -34,7 +34,7 @@ class ControllerTest < ActionController::TestCase
     assert_equal 0, w.versions.length
     delete :destroy, :id => w.id
     widget = assigns(:widget)
-    assert_equal 0, Version.with_item_keys('Widget', w.id).size
+    assert_equal 0, PaperTrail::Version.with_item_keys('Widget', w.id).size
   end
 
   test 'create' do
@@ -62,7 +62,7 @@ class ControllerTest < ActionController::TestCase
     assert_equal 1, w.versions.length
     delete :destroy, :id => w.id
     widget = assigns(:widget)
-    versions_for_widget = Version.with_item_keys('Widget', w.id)
+    versions_for_widget = PaperTrail::Version.with_item_keys('Widget', w.id)
     assert_equal 2,               versions_for_widget.length
     assert_equal 153,             versions_for_widget.last.whodunnit.to_i
     assert_equal '127.0.0.1',     versions_for_widget.last.ip
