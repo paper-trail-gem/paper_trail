@@ -629,7 +629,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         assert_equal 'Digit', @widget.version_at(1.day.from_now).name
       end
 
-      context 'passing in a string representation of a timestamp' do
+      describe 'passing in a string representation of a timestamp' do
         should 'still return a widget when appropriate' do
           # need to add 1 second onto the timestamps before casting to a string, since casting a Time to a string drops the microseconds
           assert_equal 'Widget', @widget.version_at((@created + 1.second).to_s).name
@@ -891,7 +891,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       end
     end
 
-    describe 'where the associated is created between model versions' do
+    describe 'where the association is created between model versions' do
       setup do
         @wotsit = @widget.create_wotsit :name => 'wotsit_0'
         make_last_version_earlier @wotsit
@@ -1211,6 +1211,76 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       assert_equal @widget.versions[-2].reify, @widget.previous_version
     end
   end
+
+  describe 'custom events' do
+    describe 'on create' do
+      setup do
+        Fluxor.reset_callbacks :create
+        Fluxor.reset_callbacks :update
+        Fluxor.reset_callbacks :destroy
+        Fluxor.instance_eval <<-END
+          has_paper_trail :on => [:create]
+        END
+        @fluxor = Fluxor.new.tap { |model| model.paper_trail_event = 'created' }
+        @fluxor.update_attributes :name => 'blah'
+        @fluxor.destroy
+      end
+      should 'only have a version for the created event' do
+        assert_equal 1, @fluxor.versions.length
+        assert_equal 'created', @fluxor.versions.last.event
+      end
+    end
+    describe 'on update' do
+      setup do
+        Fluxor.reset_callbacks :create
+        Fluxor.reset_callbacks :update
+        Fluxor.reset_callbacks :destroy
+        Fluxor.instance_eval <<-END
+          has_paper_trail :on => [:update]
+        END
+        @fluxor = Fluxor.create.tap { |model| model.paper_trail_event = 'name_updated' }
+        @fluxor.update_attributes :name => 'blah'
+        @fluxor.destroy
+      end
+      should 'only have a version for the name_updated event' do
+        assert_equal 1, @fluxor.versions.length
+        assert_equal 'name_updated', @fluxor.versions.last.event
+      end
+    end
+    describe 'on destroy' do
+      setup do
+        Fluxor.reset_callbacks :create
+        Fluxor.reset_callbacks :update
+        Fluxor.reset_callbacks :destroy
+        Fluxor.instance_eval <<-END
+          has_paper_trail :on => [:destroy]
+        END
+        @fluxor = Fluxor.create.tap { |model| model.paper_trail_event = 'destroyed' }
+        @fluxor.update_attributes :name => 'blah'
+        @fluxor.destroy
+      end
+      should 'only have a version for the destroy event' do
+        assert_equal 1, @fluxor.versions.length
+        assert_equal 'destroyed', @fluxor.versions.last.event
+      end
+    end
+  end
+
+  describe '`PaperTrail::Config.version_limit` set' do
+    setup do
+      PaperTrail.config.version_limit = 2
+      @widget = Widget.create! :name => 'Henry'
+      6.times { @widget.update_attribute(:name, Faker::Lorem.word) }
+    end
+
+    teardown { PaperTrail.config.version_limit = nil }
+
+    should "limit the number of versions to 3 (2 plus the created at event)" do
+      assert_equal 'create', @widget.versions.first.event
+      assert_equal 3, @widget.versions.size
+    end
+  end
+
 
   private
 

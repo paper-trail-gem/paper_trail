@@ -193,6 +193,23 @@ class Article < ActiveRecord::Base
 end
 ```
 
+You may also have the `Version` model save a custom string in it's `event` field instead of the typical `create`, `update`, `destroy`.
+PaperTrail supplies a custom accessor method called `paper_trail_event`, which it will attempt to use to fill the `event` field before
+falling back on one of the default events.
+
+```ruby
+>> a = Article.create
+>> a.versions.size                           # 1
+>> a.versions.last.event                     # 'create'
+>> a.paper_trail_event = 'update title'
+>> a.update_attributes :title => 'My Title'
+>> a.versions.size                           # 2
+>> a.versions.last.event                     # 'update title'
+>> a.paper_trail_event = nil
+>> a.update_attributes :title => "Alternate"
+>> a.versions.size                           # 3
+>> a.versions.last.event                     # 'update'
+```
 
 ## Choosing When To Save New Versions
 
@@ -753,6 +770,19 @@ A valid serializer is a `module` (or `class`) that defines a `load` and `dump` m
 
 * [Yaml](https://github.com/airblade/paper_trail/blob/master/lib/paper_trail/serializers/yaml.rb) - Default
 * [Json](https://github.com/airblade/paper_trail/blob/master/lib/paper_trail/serializers/json.rb)
+
+## Limiting the number of versions created per object instance
+
+If you are weary of your `versions` table growing to an unwieldy size, or just don't care to track more than a certain number of versions per object,
+there is a configuration option that can be set to cap the number of versions saved per object. Note that this value must be numeric, and it only applies to
+versions other than `create` events (which will always be preserved if they are stored).
+
+```ruby
+# will make it so that a maximum of 4 versions will be stored for each object (the 3 most recent ones plus a `create` event)
+>> PaperTrail.config.version_limit = 3
+# disables/removes the version limit
+>> PaperTrail.config.version_limit = nil
+```
 
 ## Deleting Old Versions
 

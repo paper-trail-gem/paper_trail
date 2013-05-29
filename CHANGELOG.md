@@ -1,3 +1,14 @@
+## 2.7.2
+
+  - [#228](https://github.com/airblade/paper_trail/issues/228) - Refactored default `user_for_paper_trail` method implementation
+  so that `current_user` only gets invoked if it is defined.
+  - [#219](https://github.com/airblade/paper_trail/pull/219) - Fixed issue where attributes stored with `nil` value might not get
+  reified properly depending on the way the serializer worked.
+  - [#213](https://github.com/airblade/paper_trail/issues/213) - Added a `version_limit` option to the `PaperTrail::Config` options
+  that can be used to restrict the number of versions PaperTrail will store per object instance.
+  - [#187](https://github.com/airblade/paper_trail/pull/187) - Confirmed JRuby support.
+  - [#174](https://github.com/airblade/paper_trail/pull/174) - The `event` field on the versions table can now be customized.
+
 ## 2.7.1
 
   - [#206](https://github.com/airblade/paper_trail/issues/206) - Fixed Ruby 1.8.7 compatibility for tracking `object_changes`.

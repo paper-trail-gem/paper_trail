@@ -40,4 +40,18 @@ class VersionTest < ActiveSupport::TestCase
       end
     end
   end
+
+  describe "Version.not_creates" do
+    setup {
+      @article.update_attributes(:name => 'Animal')
+      @article.destroy
+      assert Version.not_creates.present?
+    }
+
+    should "return all items except create events" do
+      Version.not_creates.each do |version|
+        assert_not_equal "create", version.event
+      end
+    end
+  end
 end

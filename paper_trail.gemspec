@@ -19,7 +19,14 @@ Gem::Specification.new do |s|
   s.add_dependency 'activerecord', '>= 4.0.0.beta', '< 5.0'
 
   s.add_development_dependency 'rake'
-  s.add_development_dependency 'sqlite3'
-  s.add_development_dependency 'ffaker', '>= 1.15'
+  s.add_development_dependency 'shoulda', '~> 3.3'
+  s.add_development_dependency 'shoulda-matchers', '~> 1.5'
+  s.add_development_dependency 'ffaker',  '>= 1.15'
   s.add_development_dependency 'protected_attributes', '~> 1.0'
+  # JRuby support for the test ENV
+  unless defined?(JRUBY_VERSION)
+    s.add_development_dependency 'sqlite3', '~> 1.2'
+  else
+    s.add_development_dependency 'activerecord-jdbcsqlite3-adapter', '~> 1.2.9'
+  end
 end

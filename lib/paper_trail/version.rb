@@ -2,6 +2,8 @@ class Version < ActiveRecord::Base
   belongs_to :item, :polymorphic => true
   validates_presence_of :event
 
+  after_create :enforce_version_limit!
+
   def self.with_item_keys(item_type, item_id)
     where :item_type => item_type, :item_id => item_id
   end
@@ -16,6 +18,10 @@ class Version < ActiveRecord::Base
 
   def self.destroys
     where :event => 'destroy'
+  end
+
+  def self.not_creates
+    where 'event <> ?', 'create'
   end
 
   scope :subsequent, lambda { |version|
@@ -71,6 +77,8 @@ class Version < ActiveRecord::Base
 
         if item
           model = item
+          # Look for attributes that exist in the model and not in this version. These attributes should be set to nil.
+          (model.attribute_names - attrs.keys).each { |k| attrs[k] = nil }
         else
           inheritance_column_name = item_type.constantize.inheritance_column
           class_name = attrs[inheritance_column_name].blank? ? item_type : attrs[inheritance_column_name]
@@ -79,6 +87,8 @@ class Version < ActiveRecord::Base
         end
 
         model.class.unserialize_attributes_for_paper_trail attrs
+
+        # Set all the attributes in this version on the model
         attrs.each do |k, v|
           if model.respond_to?("#{k}=")
             model[k.to_sym] = v
@@ -173,6 +183,15 @@ class Version < ActiveRecord::Base
         end
       end
     end
+  end
+
+  # checks to see if a value has been set for the `version_limit` config option, and if so enforces it
+  def enforce_version_limit!
+    return unless PaperTrail.config.version_limit.is_a? Numeric
+    previous_versions = sibling_versions.not_creates
+    return unless previous_versions.size > PaperTrail.config.version_limit
+    excess_previous_versions = previous_versions - previous_versions.last(PaperTrail.config.version_limit)
+    excess_previous_versions.map(&:destroy)
   end
 
 end
