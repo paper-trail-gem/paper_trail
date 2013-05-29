@@ -58,5 +58,8 @@ module Dummy
 
     # Version of your assets, change this if you want to expire all your assets
     # config.assets.version = '1.0'
+
+    # Rails 4 key for generating secret key
+    config.secret_key_base = 'A fox regularly kicked the screaming pile of biscuits.'
   end
 end
