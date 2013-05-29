@@ -60,9 +60,9 @@ module PaperTrail
         attr_accessor :paper_trail_event
 
         has_many self.versions_association_name,
-          lambda { |_model| order(PaperTrail.timestamp_field.to_sym => :asc, _model.class.version_key.to_sym => :asc) },
-          :class_name => self.version_class_name, :as => :item
-
+                 lambda { |_model| order("#{PaperTrail.timestamp_field} ASC", "#{_model.class.version_key} ASC") },
+                 :class_name => self.version_class_name, :as => :item
+                 
         after_create  :record_create, :if => :save_version? if !options[:on] || options[:on].include?(:create)
         before_update :record_update, :if => :save_version? if !options[:on] || options[:on].include?(:update)
         after_destroy :record_destroy, :if => :save_version? if !options[:on] || options[:on].include?(:destroy)
