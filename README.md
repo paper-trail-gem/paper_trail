@@ -253,7 +253,7 @@ You can find out whether a model instance is the current, live one -- or whether
 
 If your `ApplicationController` has a `current_user` method, PaperTrail will store the value it returns in the `version`'s `whodunnit` column.  Note that this column is a string so you will have to convert it to an integer if it's an id and you want to look up the user later on:
 
-    >> last_change = Widget.versions.last
+    >> last_change = widget.versions.last
     >> user_who_made_the_change = User.find last_change.whodunnit.to_i
 
 You may want PaperTrail to call a different method to find out who is responsible.  To do so, override the `user_for_paper_trail` method in your controller like this:
