@@ -49,4 +49,13 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
     assert_equal 1, Version.all.count
     assert_equal "Animal Muppet", @animal.name
   end
+
+  test 'cleaner accepts variable arguments' do
+    @animal = Animal.create :name => 'Animal'
+    @animal.update_attributes :name => 'Animal from the Muppets'
+    @animal.update_attributes :name => 'Animal Muppet'
+    PaperTrail.clean_paper_trail_versions(2)
+    assert_equal 2, Version.all.count
+    assert_equal "Animal Muppet", @animal.name
+  end
 end
