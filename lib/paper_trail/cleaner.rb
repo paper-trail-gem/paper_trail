@@ -13,12 +13,19 @@ module PaperTrail
     end
 
     def sanitize(group)
-      group.pop
+      group = keep_versions(group)
       if group.size > 0
         group.each do |member| 
           member.destroy
         end
       end
+    end
+
+    def keep_versions(group)
+      @keeping_versions.times do
+        group.pop
+      end
+      group
     end
 
     def analyze_grouping(grouping)
@@ -39,7 +46,8 @@ module PaperTrail
       end
     end 
 
-    def clean_paper_trail_versions
+    def clean_paper_trail_versions(keeping = 1)
+      @keeping_versions = keeping
       acquire_version_info
       examine_and_clean_versions
     end
