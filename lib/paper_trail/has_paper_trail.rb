@@ -265,7 +265,7 @@ module PaperTrail
         end
         previous.tap do |prev|
           prev.id = id
-          changed_attributes.each { |attr, before| prev[attr] = before }
+          changed_attributes.select { |k,v| self.class.column_names.include?(k) }.each { |attr, before| prev[attr] = before }
         end
       end
 
