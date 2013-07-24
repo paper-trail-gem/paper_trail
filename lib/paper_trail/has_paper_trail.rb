@@ -188,6 +188,7 @@ module PaperTrail
       def record_create
         if switched_on?
           data = {
+            :item_id   => self[:id],
             :event     => paper_trail_event || 'create',
             :whodunnit => PaperTrail.whodunnit
           }
