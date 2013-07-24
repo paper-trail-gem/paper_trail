@@ -188,6 +188,7 @@ module PaperTrail
       def record_create
         if switched_on?
           data = {
+            :item_id   => self[:id],
             :event     => paper_trail_event || 'create',
             :whodunnit => PaperTrail.whodunnit
           }
@@ -224,7 +225,7 @@ module PaperTrail
 
       def record_destroy
         if switched_on? and not new_record?
-          version_class.create merge_metadata(:item_id   => self[:id],
+          version_class.create merge_metadata(:item_id   => self.id,
                                               :item_type => self.class.base_class.name,
                                               :event     => paper_trail_event || 'destroy',
                                               :object    => object_to_string(item_before_change),
