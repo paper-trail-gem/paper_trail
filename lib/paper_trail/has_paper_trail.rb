@@ -39,7 +39,7 @@ module PaperTrail
         attr_accessor self.version_association_name
 
         class_attribute :version_class_name
-        self.version_class_name = options[:class_name] || '::Version'
+        self.version_class_name = options[:class_name] || 'PaperTrail::Version'
 
         class_attribute :paper_trail_options
         self.paper_trail_options = options.dup
