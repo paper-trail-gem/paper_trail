@@ -150,6 +150,10 @@ module PaperTrail
       sibling_versions.select(id_column).order("#{id_column} ASC").map(&id_column).index(self.send(id_column))
     end
 
+    def grouping_by_date
+      created_at.to_date.to_s(:db)
+    end
+
     private
 
     # In Rails 3.1+, calling reify on a previous version confuses the
