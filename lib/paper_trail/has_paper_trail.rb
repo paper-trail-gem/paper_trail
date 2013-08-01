@@ -61,7 +61,7 @@ module PaperTrail
 
         if ActiveRecord::VERSION::STRING.to_f >= 4.0 # `has_many` syntax for specifying order uses a lambda in Rails 4
           has_many self.versions_association_name,
-            lambda { |_model| order("#{PaperTrail.timestamp_field} ASC") },
+            lambda { order("#{PaperTrail.timestamp_field} ASC") },
             :class_name => self.version_class_name, :as => :item
         else
           has_many self.versions_association_name,

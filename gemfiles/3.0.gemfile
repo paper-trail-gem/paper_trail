@@ -1,0 +1,22 @@
+source 'https://rubygems.org'
+
+gem 'railties', '~> 3.0'
+gem 'activerecord', '~> 3.0'
+
+group :development, :test do
+  gem 'rake'
+  gem 'shoulda', '~> 3.5'
+  gem 'ffaker',  '>= 1.15'
+
+  # Use sqlite3 gem for regular Ruby
+  gem 'sqlite3', '~> 1.2', :platform => :ruby
+
+  platforms :jruby, :ruby_18 do
+    # shoulda-matchers > 2.0 is not compatible with Ruby18.
+    # Since we can't specify difference between JRuby 18/19, we need to use shoulda-matchers 1.5 for all JRuby testing.
+    gem 'shoulda-matchers', '~> 1.5'
+  end
+
+  # Use jRuby's sqlite3 adapter for jRuby
+  gem 'activerecord-jdbcsqlite3-adapter', '~> 1.2.9', :platform => :jruby
+end
