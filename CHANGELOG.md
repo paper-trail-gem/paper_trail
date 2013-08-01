@@ -3,6 +3,7 @@
   - [#224](https://github.com/airblade/paper_trail/issues/224)/[#236](https://github.com/airblade/paper_trail/pull/236) -
     Fixed compatibility with [ActsAsTaggableOn](https://github.com/mbleigh/acts-as-taggable-on).
   - [#235](https://github.com/airblade/paper_trail/pull/235) - Dropped unnecessary secondary sort on `versions` association.
+  - [#212](https://github.com/airblade/paper_trail/pull/212) - Added `PaperTrail::Cleaner` module, useful for discarding draft versions.
   - [#199](https://github.com/airblade/paper_trail/pull/199) - Rails 4 compatibility.
   - [#165](https://github.com/airblade/paper_trail/pull/165) - Namespaced the version class under the `PaperTrail` module.
   

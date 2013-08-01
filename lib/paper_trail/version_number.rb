@@ -1,3 +1,3 @@
 module PaperTrail
-  VERSION = '2.7.2'
+  VERSION = '3.0.0.beta'
 end
