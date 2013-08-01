@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class ThreadSafetyTest < ActionController::TestCase
-  should "be thread safe" do
+  test "be thread safe" do
     blocked = true
 
     slow_thread = Thread.new do

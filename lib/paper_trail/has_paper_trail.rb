@@ -59,11 +59,17 @@ module PaperTrail
 
         attr_accessor :paper_trail_event
 
-        has_many self.versions_association_name,
-                 :class_name => version_class_name,
-                 :as         => :item,
-                 :order      => "#{PaperTrail.timestamp_field} ASC"
-
+        if ActiveRecord::VERSION::STRING.to_f >= 4.0 # `has_many` syntax for specifying order uses a lambda in Rails 4
+          has_many self.versions_association_name,
+            lambda { |_model| order("#{PaperTrail.timestamp_field} ASC") },
+            :class_name => self.version_class_name, :as => :item
+        else
+          has_many self.versions_association_name,
+            :class_name => version_class_name,
+            :as         => :item,
+            :order      => "#{PaperTrail.timestamp_field} ASC"
+        end
+                 
         after_create  :record_create, :if => :save_version? if !options[:on] || options[:on].include?(:create)
         before_update :record_update, :if => :save_version? if !options[:on] || options[:on].include?(:update)
         after_destroy :record_destroy, :if => :save_version? if !options[:on] || options[:on].include?(:destroy)

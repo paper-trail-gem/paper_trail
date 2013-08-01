@@ -4,6 +4,12 @@ require "active_model/railtie"
 require "active_record/railtie"
 require "action_controller/railtie"
 require "action_view/railtie"
+begin
+  require "protected_attributes" # Rails 4 requirement for using `attr_protected` and `attr_accessible`
+rescue LoadError
+  warn "Please ensure that the 'protected_attributes' gem is available as a development dependency in `paper_trail.gemspec`, " +
+    "otherwise the test suite may fail!" if ActiveRecord::VERSION::STRING.to_f >= 4.0
+end
 
 Bundler.require(:default, Rails.env) if defined?(Bundler)
 require 'paper_trail'
@@ -50,15 +56,15 @@ module Dummy
     # This will create an empty whitelist of attributes available for mass-assignment for all models
     # in your app. As such, your models will need to explicitly whitelist or blacklist accessible
     # parameters by using an attr_accessible or attr_protected declaration.
-    #
-    # This is uncommented in new rails apps by default but for our testing purposes its more convenient
-    # to leave it commented out.
-    # config.active_record.whitelist_attributes = true
+    config.active_record.whitelist_attributes = false
 
     # Enable the asset pipeline
     config.assets.enabled = false
 
     # Version of your assets, change this if you want to expire all your assets
     # config.assets.version = '1.0'
+
+    # Rails 4 key for generating secret key
+    config.secret_key_base = 'A fox regularly kicked the screaming pile of biscuits.'
   end
 end
