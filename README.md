@@ -29,9 +29,30 @@ There's an excellent [Railscast on implementing Undo with Paper Trail](http://ra
 * Threadsafe.
 
 
-## Rails Version
+## Compatibility
 
-Works on Rails 3 and Rails 2.3.  The Rails 3 code is on the `master` branch and tagged `v2.x`.  The Rails 2.3 code is on the `rails2` branch and tagged `v1.x`.  Please note I'm not adding new features to the Rails 2.3 codebase.
+Works with ActiveRecord 4 and ActiveRecord 3. Note: this code is on the `master` branch and tagged `v3.x`.
+
+Version 2 is on the branch named [`2.7-stable`](https://github.com/airblade/paper_trail/tree/2.7-stable) and is tagged `v2.x`, and works with Rails 3.
+The Rails 2.3 code is on the [`rails2`](https://github.com/airblade/paper_trail/tree/2.7-stable) branch and tagged `v1.x`. These branches are both stable with their respective versions of Rails but will not have new features added/backported to them.
+
+## Installation
+
+### Rails 3 & 4
+
+1. Install PaperTrail as a gem via your `Gemfile`:
+
+    `gem 'paper_trail', '~> 3.0'`
+
+2. Generate a migration which will add a `versions` table to your database.
+
+    `bundle exec rails generate paper_trail:install`
+
+3. Run the migration.
+
+    `bundle exec rake db:migrate`
+
+4. Add `has_paper_trail` to the models you want to track.
 
 
 ## API Summary
@@ -797,29 +818,6 @@ sql> delete from versions where created_at < 2010-06-01;
 ```ruby
 >> PaperTrail::Version.delete_all ["created_at < ?", 1.week.ago]
 ```
-
-## Installation
-
-### Rails 3
-
-1. Install PaperTrail as a gem via your `Gemfile`:
-
-    `gem 'paper_trail', '~> 2'`
-
-2. Generate a migration which will add a `versions` table to your database.
-
-    `bundle exec rails generate paper_trail:install`
-
-3. Run the migration.
-
-    `bundle exec rake db:migrate`
-
-4. Add `has_paper_trail` to the models you want to track.
-
-### Rails 2
-
-Please see the `rails2` branch.
-
 
 ## Testing
 
