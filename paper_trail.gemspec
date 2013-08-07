@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.summary       = "Track changes to your models' data.  Good for auditing or versioning."
   s.description   = s.summary
   s.homepage      = 'http://github.com/airblade/paper_trail'
-  s.authors       = ['Andy Stewart']
+  s.authors       = ['Andy Stewart', 'Ben Atkins']
   s.email         = 'boss@airbladesoftware.com'
 
   s.files         = `git ls-files`.split("\n")
@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rake'
   s.add_development_dependency 'shoulda', '~> 3.5'
   s.add_development_dependency 'ffaker',  '>= 1.15'
-  s.add_development_dependency 'protected_attributes', '~> 1.0' # this may not actually be necessary, if we do a begin/rescue statement
+
   # JRuby support for the test ENV
   unless defined?(JRUBY_VERSION)
     s.add_development_dependency 'sqlite3', '~> 1.2'
