@@ -2,7 +2,6 @@ require 'paper_trail/cleaner'
 require 'paper_trail/config'
 require 'paper_trail/controller'
 require 'paper_trail/has_paper_trail'
-require 'paper_trail/version'
 
 require 'paper_trail/serializers/yaml'
 require 'paper_trail/serializers/json'
@@ -20,6 +19,10 @@ module PaperTrail
   # PaperTrail is enabled by default.
   def self.enabled?
     !!PaperTrail.config.enabled
+  end
+
+  def self.protected_attributes?
+    Rails.version < '4' || defined?(ProtectedAttributes)
   end
 
   # Returns `true` if PaperTrail is enabled for the request, `false` otherwise.
@@ -100,6 +103,9 @@ module PaperTrail
   end
 
 end
+
+require 'paper_trail/version'
+
 
 
 ActiveSupport.on_load(:active_record) do
