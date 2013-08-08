@@ -201,8 +201,7 @@ module PaperTrail
           if changed_notably? and version_class.column_names.include?('object_changes')
             data[:object_changes] = PaperTrail.serializer.dump(changes_for_paper_trail)
           end
-
-          send(self.class.versions_association_name).create merge_metadata(data)
+          send(self.class.versions_association_name).create! merge_metadata(data)
         end
       end
 
