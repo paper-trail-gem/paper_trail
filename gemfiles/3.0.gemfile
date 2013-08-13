@@ -1,12 +1,18 @@
 source 'https://rubygems.org'
 
-gem 'railties', '~> 3.0'
 gem 'activerecord', '~> 3.0'
 
 group :development, :test do
   gem 'rake'
   gem 'shoulda', '~> 3.5'
   gem 'ffaker',  '>= 1.15'
+
+  # Testing of Rails
+  gem 'railties', '~> 3.0'
+
+  # Testing of Sinatra
+  gem 'sinatra', '~> 1.0'
+  gem 'rack-test', '>= 0.6'
 
   # Use sqlite3 gem for regular Ruby
   gem 'sqlite3', '~> 1.2', :platform => :ruby

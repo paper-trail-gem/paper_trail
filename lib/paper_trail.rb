@@ -1,10 +1,10 @@
 require 'paper_trail/config'
-require 'paper_trail/controller'
 require 'paper_trail/has_paper_trail'
 require 'paper_trail/cleaner'
 
-require 'paper_trail/serializers/yaml'
-require 'paper_trail/serializers/json'
+# Require all frameworks and serializers
+Dir[File.join(File.dirname(__FILE__), 'paper_trail', 'frameworks', '*.rb')].each { |file| require file }
+Dir[File.join(File.dirname(__FILE__), 'paper_trail', 'serializers', '*.rb')].each { |file| require file }
 
 # PaperTrail's module methods can be called in both models and controllers.
 module PaperTrail
@@ -88,9 +88,7 @@ module PaperTrail
   # Thread-safe hash to hold PaperTrail's data.
   # Initializing with needed default values.
   def self.paper_trail_store
-    Thread.current[:paper_trail] ||= {
-      :request_enabled_for_controller => true
-    }
+    Thread.current[:paper_trail] ||= { :request_enabled_for_controller => true }
   end
 
   # Returns PaperTrail's configuration object.
@@ -110,6 +108,8 @@ ActiveSupport.on_load(:active_record) do
   include PaperTrail::Model
 end
 
-ActiveSupport.on_load(:action_controller) do
-  include PaperTrail::Controller
+if defined?(ActionController)
+  ActiveSupport.on_load(:action_controller) do
+    include PaperTrail::Rails::Controller
+  end
 end

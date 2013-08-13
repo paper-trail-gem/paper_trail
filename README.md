@@ -54,6 +54,22 @@ The Rails 2.3 code is on the [`rails2`](https://github.com/airblade/paper_trail/
 
 4. Add `has_paper_trail` to the models you want to track.
 
+### Sinatra
+
+PaperTrail provides a helper extension that acts similar to the controller mixin it provides for `Rails` applications.
+
+It will set `PaperTrail.whodunnit` to whatever is returned by a method named `user_for_paper_trail` which you can define inside your Sinatra Application. (by default it attempts to invoke a method named `current_user`)
+
+If you're using the modular [Sinatra::Base](http://www.sinatrarb.com/intro.html#Modular%20vs.%20Classic%20Style) style of application, you will need to register the extension:
+
+```ruby
+# bleh_app.rb
+require 'sinatra/base'
+
+class BlehApp < Sinatra::Base
+  register PaperTrail::Sinatra
+end
+```
 
 ## API Summary
 
