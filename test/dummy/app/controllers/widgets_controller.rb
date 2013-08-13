@@ -5,13 +5,21 @@ class WidgetsController < ApplicationController
   end
 
   def create
-    @widget = Widget.create params[:widget].permit!
+    if PaperTrail.active_record_protected_attributes?
+      @widget = Widget.create params[:widget]
+    else
+      @widget = Widget.create params[:widget].permit!
+    end
     head :ok
   end
 
   def update
     @widget = Widget.find params[:id]
-    @widget.update_attributes params[:widget].permit!
+    if PaperTrail.active_record_protected_attributes?
+      @widget.update_attributes params[:widget]
+    else
+      @widget.update_attributes params[:widget].permit!
+    end
     head :ok
   end
 
