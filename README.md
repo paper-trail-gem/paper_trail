@@ -1,4 +1,4 @@
-# PaperTrail
+# PaperTrail [![Build Status](https://secure.travis-ci.org/airblade/paper_trail.png?branch=rails2)](http://travis-ci.org/airblade/paper_trail)
 
 PaperTrail lets you track changes to your models' data.  It's good for auditing or versioning.  You can see how a model looked at any stage in its lifecycle, revert it to any version, and even undelete it after it's been destroyed.
 
