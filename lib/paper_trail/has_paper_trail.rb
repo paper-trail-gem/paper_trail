@@ -99,9 +99,24 @@ module PaperTrail
 
       def record_update
         if switched_on? && changed_notably?
-          versions.build merge_metadata(:event     => 'update',
-                                        :object    => object_to_string(item_before_change),
-                                        :whodunnit => PaperTrail.whodunnit)
+          data = {
+            :event => 'update',
+            :object    => object_to_string(item_before_change),
+            :whodunnit => PaperTrail.whodunnit
+          }
+          if Version.column_names.include? 'object_changes'
+            data[:object_changes] = changes_for_paper_trail.to_yaml
+          end
+
+          versions.build merge_metadata(data)
+        end
+      end
+
+      def changes_for_paper_trail
+        self.changes.delete_if do |key, value|
+          !notably_changed.include?(key)
+        end.tap do |changes|
+          changes
         end
       end
 

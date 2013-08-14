@@ -150,6 +150,18 @@ class HasPaperTrailModelTest < Test::Unit::TestCase
         end
 
 
+        context 'object_changes' do
+          should "store changes in an object to object_changes" do
+            assert YAML.load(@widget.versions.last.object_changes), {"name"=>["Henry", "Harry"]}
+          end
+        end
+
+        context 'changeset' do
+          should "have a changeset object" do
+            assert @widget.versions.last.changeset, {"name"=>["Henry", "Harry"]}
+          end
+        end
+
         context 'and has one associated object' do
           setup do
             @wotsit = @widget.create_wotsit :name => 'John'
