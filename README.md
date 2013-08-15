@@ -69,7 +69,7 @@ If you're using the modular [Sinatra::Base](http://www.sinatrarb.com/intro.html#
 require 'sinatra/base'
 
 class BlehApp < Sinatra::Base
-  register PaperTrail::Sinatra
+  register Sinatra::PaperTrail
 end
 ```
 

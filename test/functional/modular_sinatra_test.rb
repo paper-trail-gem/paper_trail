@@ -1,27 +1,26 @@
 require 'test_helper'
-require 'sinatra'
+require 'sinatra/base'
 
-# --- Tests for non-modular `Sinatra::Application` style ----
-class Sinatra::Application
+# --- Tests for modular `Sinatra::Base` style ----
+class BaseApp < Sinatra::Base
   ActiveRecord::Base.establish_connection(:adapter => 'sqlite3', :database => File.expand_path('../../dummy/db/test.sqlite3', __FILE__))
-  register Sinatra::PaperTrail # we shouldn't actually need this line if I'm not mistaken but the tests seem to fail without it ATM
+  register Sinatra::PaperTrail
 
   get '/test' do
     Widget.create!(:name => 'foo')
-    'Hai'
+    'Hello'
   end
 
   def current_user
-    'raboof'
+    'foobar'
   end
-
 end
 
-class SinatraTest < ActiveSupport::TestCase
+class ModularSinatraTest < ActiveSupport::TestCase
   include Rack::Test::Methods
 
   def app
-    @app ||= Sinatra::Application
+    @app ||= BaseApp
   end
 
   test 'baseline' do
@@ -29,15 +28,15 @@ class SinatraTest < ActiveSupport::TestCase
     assert_nil Widget.create.versions.first.whodunnit
   end
 
-  context "`PaperTrail::Sinatra` in a `Sinatra::Application` application" do
-
+  context "`PaperTrail::Sinatra` in a `Sinatra::Base` application" do
+  
     should "sets the `user_for_paper_trail` from the `current_user` method" do
       get '/test'
-      assert_equal 'Hai', last_response.body
+      assert_equal 'Hello', last_response.body
       widget = Widget.first
       assert_not_nil widget
       assert_equal 1, widget.versions.size
-      assert_equal 'raboof', widget.versions.first.whodunnit
+      assert_equal 'foobar', widget.versions.first.whodunnit
     end
 
   end
