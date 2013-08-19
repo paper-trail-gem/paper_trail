@@ -2,8 +2,8 @@ require 'rails/generators'
 require 'rails/generators/migration'
 
 module PaperTrail
-  class InstallGenerator < Rails::Generators::Base
-    include Rails::Generators::Migration
+  class InstallGenerator < ::Rails::Generators::Base
+    include ::Rails::Generators::Migration
 
     source_root File.expand_path('../templates', __FILE__)
     class_option :with_changes, :type => :boolean, :default => false, :desc => "Store changeset (diff) with each version"
