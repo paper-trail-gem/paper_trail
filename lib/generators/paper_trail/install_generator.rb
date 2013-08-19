@@ -1,5 +1,6 @@
 require 'rails/generators'
 require 'rails/generators/migration'
+require 'rails/generators/active_record'
 
 module PaperTrail
   class InstallGenerator < ::Rails::Generators::Base
@@ -16,8 +17,7 @@ module PaperTrail
     end
 
     def self.next_migration_number(dirname)
-      next_migration_number = current_migration_number(dirname) + 1
-      ActiveRecord::Migration.next_migration_number(next_migration_number)
+      ActiveRecord::Generators::Base.next_migration_number(dirname)
     end
   end
 end
