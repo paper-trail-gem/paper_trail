@@ -16,7 +16,7 @@ class BaseApp < Sinatra::Base
   end
 end
 
-class ModularSinatraTest < ActiveSupport::TestCase
+class ModularSinatraTest < ActionDispatch::IntegrationTest
   include Rack::Test::Methods
 
   def app
@@ -35,6 +35,7 @@ class ModularSinatraTest < ActiveSupport::TestCase
       assert_equal 'Hello', last_response.body
       widget = Widget.first
       assert_not_nil widget
+      assert_equal 'foo', widget.name
       assert_equal 1, widget.versions.size
       assert_equal 'foobar', widget.versions.first.whodunnit
     end

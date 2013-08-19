@@ -1,5 +1,5 @@
 require 'test_helper'
-require 'sinatra'
+# require 'sinatra/main'
 
 # --- Tests for non-modular `Sinatra::Application` style ----
 class Sinatra::Application
@@ -7,7 +7,7 @@ class Sinatra::Application
   register Sinatra::PaperTrail # we shouldn't actually need this line if I'm not mistaken but the tests seem to fail without it ATM
 
   get '/test' do
-    Widget.create!(:name => 'foo')
+    Widget.create!(:name => 'bar')
     'Hai'
   end
 
@@ -17,7 +17,7 @@ class Sinatra::Application
 
 end
 
-class SinatraTest < ActiveSupport::TestCase
+class SinatraTest < ActionDispatch::IntegrationTest
   include Rack::Test::Methods
 
   def app
@@ -36,6 +36,7 @@ class SinatraTest < ActiveSupport::TestCase
       assert_equal 'Hai', last_response.body
       widget = Widget.first
       assert_not_nil widget
+      assert_equal 'bar', widget.name
       assert_equal 1, widget.versions.size
       assert_equal 'raboof', widget.versions.first.whodunnit
     end
