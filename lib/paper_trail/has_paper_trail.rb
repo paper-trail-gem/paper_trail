@@ -192,7 +192,7 @@ module PaperTrail
       end
 
       def record_create
-        if switched_on?
+        if paper_trail_switched_on?
           data = {
             :event     => paper_trail_event || 'create',
             :whodunnit => PaperTrail.whodunnit
@@ -206,7 +206,7 @@ module PaperTrail
       end
 
       def record_update
-        if switched_on? && changed_notably?
+        if paper_trail_switched_on? && changed_notably?
           data = {
             :event     => paper_trail_event || 'update',
             :object    => object_to_string(item_before_change),
@@ -228,7 +228,7 @@ module PaperTrail
       end
 
       def record_destroy
-        if switched_on? and not new_record?
+        if paper_trail_switched_on? and not new_record?
           version_class.create merge_metadata(:item_id   => self.id,
                                               :item_type => self.class.base_class.name,
                                               :event     => paper_trail_event || 'destroy',
@@ -293,7 +293,7 @@ module PaperTrail
         changed - ignore - skip
       end
 
-      def switched_on?
+      def paper_trail_switched_on?
         PaperTrail.enabled? && PaperTrail.enabled_for_controller? && self.class.paper_trail_enabled_for_model
       end
 
