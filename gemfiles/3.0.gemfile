@@ -17,6 +17,9 @@ group :development, :test do
   # Use sqlite3 gem for regular Ruby
   gem 'sqlite3', '~> 1.2', :platform => :ruby
 
+  # RSpec testing
+  gem 'rspec-rails', '~> 2.14'
+
   platforms :jruby, :ruby_18 do
     # shoulda-matchers > 2.0 is not compatible with Ruby18.
     # Since we can't specify difference between JRuby 18/19, we need to use shoulda-matchers 1.5 for all JRuby testing.

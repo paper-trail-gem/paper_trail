@@ -4,9 +4,7 @@ test/paper_trail_plugin.sqlite3.db
 test/dummy/db/*.sqlite3
 test/dummy/log/*
 test/dummy/tmp/*
-spec/dummy/db/*.sqlite3
-spec/dummy/log/*.log
-spec/dummy/tmp
+spec/dummy/
 coverage
 pkg/*
 *.gem

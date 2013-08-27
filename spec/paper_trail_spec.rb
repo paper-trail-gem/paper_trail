@@ -15,7 +15,7 @@ describe "PaperTrail RSpec Helper" do
       end
     end
 
-    context 'versioning: true', versioning: true do
+    context 'versioning: true', :versioning => true do
       it 'should have versioning on by default' do
         ::PaperTrail.should be_enabled
       end
