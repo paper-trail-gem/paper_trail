@@ -843,7 +843,7 @@ You may want to turn PaperTrail off to speed up your tests.  See the [Turning Pa
 
 ### RSpec
 
-PaperTrail provides a helper that works with RSpec to make it easier to control when `PaperTrail` is turned on. By default, it will be
+PaperTrail provides a helper that works with RSpec to make it easier to control when `PaperTrail` during testing. By default, PaperTrail will be
 turned off for all tests. When you wish to enable PaperTrail for a test you can either wrap the test in a `with_versioning` block, or pass
 in `:versioning => true` option to a test block, like so:
 
@@ -888,6 +888,23 @@ describe Widget do
   end
 end
 ```
+
+### Cucumber
+
+PaperTrail provides a helper that works similar to the RSpec helper.
+By default, PaperTrail will be turned off for all scenarios by a `before` hook added by the helper.
+When you wish to enable PaperTrail for a scenario, you can wrap code in a `with_versioning` block in a step, like so:
+
+```ruby
+Given /I want versioning on my model/ do
+  with_versioning do
+    # PaperTrail will be turned on for all code inside of this block
+  end
+end
+```
+
+The helper will also reset the `PaperTrail.whodunnit` value to `nil` before each test to help prevent data spillover between tests.
+If you are using PaperTrail with Rails, the helper will automatically set the `PaperTrail.controller_info` value to `{}` as well, again, to help prevent data spillover between tests.
 
 ## Articles
 
