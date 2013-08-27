@@ -839,20 +839,55 @@ sql> delete from versions where created_at < 2010-06-01;
 
 ## Testing
 
-PaperTrail uses Bundler to manage its dependencies (in development and testing).  You can run the tests with `bundle exec rake test`.  (You may need to `bundle install` first.)
+You may want to turn PaperTrail off to speed up your tests.  See the [Turning PaperTrail Off/On](#turning-papertrail-offon) section above.
 
-It's a good idea to reset PaperTrail before each test so data from one test doesn't spill over another.  For example:
+### RSpec
+
+PaperTrail provides a helper that works with RSpec to make it easier to control when `PaperTrail` is turned on. By default, it will be
+turned off for all tests. When you wish to enable PaperTrail for a test you can either wrap the test in a `with_versioning` block, or pass
+in `:versioning => true` option to a test block, like so:
 
 ```ruby
-RSpec.configure do |config|
-  config.before :each do
-    PaperTrail.controller_info = {}
-    PaperTrail.whodunnit = nil
+describe "RSpec test group" do
+  it 'by default, PaperTrail will be turned off' do
+    PaperTrail.should_not be_enabled
+  end
+
+  with_versioning do
+    it 'within a `with_versioning` block it will be turned on' do
+      PaperTrail.should be_enabled
+    end
+  end
+
+  it 'can be turned on at the `it` or `describe` level like this', :versioning => true do
+    PaperTrail.should be_enabled
   end
 end
 ```
-You may want to turn PaperTrail off to speed up your tests.  See the [Turning PaperTrail Off/On](#turning-papertrail-offon) section above.
 
+The helper will also reset the `PaperTrail.whodunnit` value to `nil` before each test to help prevent data spillover between tests.
+If you are using PaperTrail with Rails, the helper will automatically set the `PaperTrail.controller_info` value to `{}` as well, again, to help prevent data spillover between tests.
+
+There is also a `be_versioned` matcher provided by PaperTrail's RSpec helper which can be leveraged like so:
+
+```ruby
+class Widget < ActiveRecord::Base
+end
+
+describe Widget do
+  it { should_not be_versioned }
+
+  describe "add versioning to the `Widget` class" do
+    before(:all) do
+      class Widget < ActiveRecord::Base
+        has_paper_trail
+      end
+    end
+
+    it { should be_versioned }
+  end
+end
+```
 
 ## Articles
 
@@ -912,6 +947,7 @@ Many thanks to:
 * [Tyler Rick](https://github.com/TylerRick)
 * [Bradley Priest](https://github.com/bradleypriest)
 * [David Butler](https://github.com/dwbutler)
+* [Paul Belt](https://github.com/belt)
 
 
 ## Inspirations
