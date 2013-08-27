@@ -851,7 +851,7 @@ RSpec.configure do |config|
   end
 end
 ```
-You may want to turn PaperTrail off to speed up your tests.  See the "Turning PaperTrail Off/On" section above.
+You may want to turn PaperTrail off to speed up your tests.  See the [Turning PaperTrail Off/On](#turning-papertrail-offon) section above.
 
 
 ## Articles
