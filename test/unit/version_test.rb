@@ -1,11 +1,11 @@
 require 'test_helper'
 
 class PaperTrail::VersionTest < ActiveSupport::TestCase
-  setup {
+  setup do
     change_schema
     @animal = Animal.create
     assert PaperTrail::Version.creates.present?
-  }
+  end
 
   context "PaperTrail::Version.creates" do
     should "return only create events" do
@@ -57,15 +57,18 @@ class PaperTrail::VersionTest < ActiveSupport::TestCase
 end
 
 class VersionTest < ActiveSupport::TestCase
+  # without this, it sometimes picks up the changed schema from the previous test and gets confused
+  setup { PaperTrail::Version.reset_column_information }
+
   context "Version class" do
     should "be a subclass of the `PaperTrail::Version` class" do
       assert Version < PaperTrail::Version
     end
 
     should "act like a `PaperTrail::Version` while warning the user" do
-      @animal = Animal.create! :name => Faker::Name.name
-      @animal.update_attributes! :name => Faker::Name.name
-      assert_equal Version.last.reify.name, @animal.versions.last.reify.name
+      widget = Widget.create! :name => Faker::Name.name
+      widget.update_attributes! :name => Faker::Name.name
+      assert_equal Version.last.reify.name, widget.versions.last.reify.name
     end
   end
 end
