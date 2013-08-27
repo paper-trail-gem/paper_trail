@@ -6,6 +6,9 @@ Dummy::Application.configure do
   # since you don't have to restart the web server when you make code changes.
   config.cache_classes = false
 
+  # Do not eager load code on boot.
+  config.eager_load = false
+
   # Show full error reports and disable caching
   config.consider_all_requests_local       = true
   config.action_controller.perform_caching = false
@@ -29,10 +32,9 @@ Dummy::Application.configure do
   # Do not compress assets
   config.assets.compress = false
 
-  # Expands the lines which load the assets
+  # Debug mode disables concatenation and preprocessing of assets.
+  # This option may cause significant delays in view rendering with a large
+  # number of complex assets.
   config.assets.debug = true
-
-  # Eager loads all registered namespaces
-  config.eager_load = false
 end
 
