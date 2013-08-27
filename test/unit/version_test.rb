@@ -3,7 +3,7 @@ require 'test_helper'
 class PaperTrail::VersionTest < ActiveSupport::TestCase
   setup {
     change_schema
-    @article = Animal.create
+    @animal = Animal.create
     assert PaperTrail::Version.creates.present?
   }
 
@@ -17,7 +17,7 @@ class PaperTrail::VersionTest < ActiveSupport::TestCase
 
   context "PaperTrail::Version.updates" do
     setup {
-      @article.update_attributes(:name => 'Animal')
+      @animal.update_attributes(:name => 'Animal')
       assert PaperTrail::Version.updates.present?
     }
 
@@ -30,7 +30,7 @@ class PaperTrail::VersionTest < ActiveSupport::TestCase
 
   context "PaperTrail::Version.destroys" do
     setup {
-      @article.destroy
+      @animal.destroy
       assert PaperTrail::Version.destroys.present?
     }
 
@@ -43,8 +43,8 @@ class PaperTrail::VersionTest < ActiveSupport::TestCase
 
   context "PaperTrail::Version.not_creates" do
     setup {
-      @article.update_attributes(:name => 'Animal')
-      @article.destroy
+      @animal.update_attributes(:name => 'Animal')
+      @animal.destroy
       assert PaperTrail::Version.not_creates.present?
     }
 
@@ -52,6 +52,20 @@ class PaperTrail::VersionTest < ActiveSupport::TestCase
       PaperTrail::Version.not_creates.each do |version|
         assert_not_equal "create", version.event
       end
+    end
+  end
+end
+
+class VersionTest < ActiveSupport::TestCase
+  context "Version class" do
+    should "be a subclass of the `PaperTrail::Version` class" do
+      assert Version < PaperTrail::Version
+    end
+
+    should "act like a `PaperTrail::Version` while warning the user" do
+      @animal = Animal.create! :name => Faker::Name.name
+      @animal.update_attributes! :name => Faker::Name.name
+      assert_equal Version.last.reify.name, @animal.versions.last.reify.name
     end
   end
 end
