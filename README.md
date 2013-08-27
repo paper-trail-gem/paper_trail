@@ -648,10 +648,8 @@ For example:
 
 ```ruby
 # config/initializers/paper_trail.rb
-module PaperTrail
-  class Version < ActiveRecord::Base
-    attr_accessible :author_id, :word_count, :answer
-  end
+class Version < ActiveRecord::Base
+  attr_accessible :author_id, :word_count, :answer
 end
 ```
 
