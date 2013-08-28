@@ -1,4 +1,6 @@
 if defined? RSpec
+  require 'rspec/core'
+  require 'rspec/matchers'
   require File.expand_path('../rspec/extensions', __FILE__)
 
   RSpec.configure do |config|

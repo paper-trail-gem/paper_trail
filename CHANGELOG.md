@@ -3,13 +3,14 @@
   - [#224](https://github.com/airblade/paper_trail/issues/224)/[#236](https://github.com/airblade/paper_trail/pull/236) -
     Fixed compatibility with [ActsAsTaggableOn](https://github.com/mbleigh/acts-as-taggable-on).
   - [#235](https://github.com/airblade/paper_trail/pull/235) - Dropped unnecessary secondary sort on `versions` association.
+  - [#216](https://github.com/airblade/paper_trail/pull/216) - Added helper & extension for [RSpec](https://github.com/rspec/rspec),
+    and helper for [Cucumber](http://cukes.info).
   - [#212](https://github.com/airblade/paper_trail/pull/212) - Added `PaperTrail::Cleaner` module, useful for discarding draft versions.
   - [#207](https://github.com/airblade/paper_trail/issues/207) - Versions for `'create'` events are now created with `create!` instead of 
     `create` so that an exception gets raised if it is appropriate to do so.
   - [#199](https://github.com/airblade/paper_trail/pull/199) - Rails 4 compatibility.
   - [#165](https://github.com/airblade/paper_trail/pull/165) - Namespaced the version class under the `PaperTrail` module.
   - [#119](https://github.com/airblade/paper_trail/issues/119) - Support for [Sinatra](http://www.sinatrarb.com/); decoupled gem from `Rails`.
-  
 
 ## 2.7.2
 

@@ -845,7 +845,7 @@ You may want to turn PaperTrail off to speed up your tests.  See the [Turning Pa
 
 PaperTrail provides a helper that works with RSpec to make it easier to control when `PaperTrail` during testing. By default, PaperTrail will be
 turned off for all tests. When you wish to enable PaperTrail for a test you can either wrap the test in a `with_versioning` block, or pass
-in `:versioning => true` option to a test block, like so:
+in `:versioning => true` option to a spec block, like so:
 
 ```ruby
 describe "RSpec test group" do
