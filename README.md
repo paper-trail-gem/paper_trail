@@ -189,7 +189,7 @@ PaperTrail stores the pre-change version of the model, unlike some other auditin
 
 >> widget.versions                             # []
 >> widget.update_attributes :name => 'Wotsit'
->> widget.last.reify.name                      # 'Doobly'
+>> widget.versions.last.reify.name             # 'Doobly'
 >> widget.versions.last.event                  # 'update'
 ```
 
