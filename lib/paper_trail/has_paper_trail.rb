@@ -69,10 +69,11 @@ module PaperTrail
             :as         => :item,
             :order      => "#{PaperTrail.timestamp_field} ASC"
         end
-                 
-        after_create  :record_create, :if => :save_version? if !options[:on] || options[:on].include?(:create)
-        before_update :record_update, :if => :save_version? if !options[:on] || options[:on].include?(:update)
-        after_destroy :record_destroy, :if => :save_version? if !options[:on] || options[:on].include?(:destroy)
+
+        options_on = Array(options[:on])
+        after_create  :record_create, :if => :save_version? if options_on.empty? || options_on.include?(:create)
+        before_update :record_update, :if => :save_version? if options_on.empty? || options_on.include?(:update)
+        after_destroy :record_destroy, :if => :save_version? if options_on.empty? || options_on.include?(:destroy)
       end
 
       # Switches PaperTrail off for this class.
