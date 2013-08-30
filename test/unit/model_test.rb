@@ -1177,12 +1177,17 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       end
     end
     context 'allows a symbol to be passed' do
-      Fluxor.reset_callbacks :create
-      Fluxor.reset_callbacks :update
-      Fluxor.reset_callbacks :destroy
-      Fluxor.instance_evail <<-END
-        has_paper_trail :on => :create
-      END
+      setup do
+        Fluxor.reset_callbacks :create
+        Fluxor.reset_callbacks :update
+        Fluxor.reset_callbacks :destroy
+        Fluxor.instance_eval <<-END
+          has_paper_trail :on => :create
+        END
+        @fluxor = Fluxor.create
+        @fluxor.update_attributes :name => 'blah'
+        @fluxor.destroy
+      end
       should 'only have a version for hte create event' do
         assert_equal 1, @fluxor.versions.length
         assert_equal 'create', @fluxor.versions.last.event

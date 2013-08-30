@@ -70,7 +70,7 @@ module PaperTrail
             :order      => "#{PaperTrail.timestamp_field} ASC"
         end
 
-        options_on = Array(options[:on])
+        options_on = Array(options[:on]) # so that a single symbol can be passed in without wrapping it in an `Array`
         after_create  :record_create, :if => :save_version? if options_on.empty? || options_on.include?(:create)
         before_update :record_update, :if => :save_version? if options_on.empty? || options_on.include?(:update)
         after_destroy :record_destroy, :if => :save_version? if options_on.empty? || options_on.include?(:destroy)

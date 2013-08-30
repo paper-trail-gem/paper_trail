@@ -15,10 +15,7 @@ desc 'Run PaperTrail specs for the RSpec helper.'
 RSpec::Core::RakeTask.new(:spec)
 
 desc 'Run all available test suites'
-task :run_all_tests do
-  system('rake test')
-  system('rake spec')
-end
+task :run_all_tests => [:test, :spec]
 
 desc 'Default: run unit tests.'
 task :default => :run_all_tests
