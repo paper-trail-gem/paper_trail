@@ -4,11 +4,13 @@ require 'paper_trail/version_number'
 Gem::Specification.new do |s|
   s.name          = 'paper_trail'
   s.version       = PaperTrail::VERSION
+  s.platform      = Gem::Platform::RUBY
   s.summary       = "Track changes to your models' data.  Good for auditing or versioning."
   s.description   = s.summary
   s.homepage      = 'http://github.com/airblade/paper_trail'
   s.authors       = ['Andy Stewart', 'Ben Atkins']
   s.email         = 'boss@airbladesoftware.com'
+  s.license       = 'MIT'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
