@@ -48,7 +48,7 @@ The Rails 2.3 code is on the [`rails2`](https://github.com/airblade/paper_trail/
 
 2. Generate a migration which will add a `versions` table to your database.
 
-    `bundle exec rails generate paper_trail:install`
+    `bundle exec rails generate paper_trail`
 
 3. Run the migration.
 
