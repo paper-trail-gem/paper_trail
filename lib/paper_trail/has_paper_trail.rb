@@ -50,7 +50,7 @@ module PaperTrail
 
         [:ignore, :skip, :only].each do |k|
           paper_trail_options[k] =
-            ([paper_trail_options[k]].flatten.compact || []).map { |attr| attr.is_a?(Hash) ? attr.stringify_keys : attr.to_s }
+            [paper_trail_options[k]].flatten.compact.map { |attr| attr.is_a?(Hash) ? attr.stringify_keys : attr.to_s }
         end
 
         paper_trail_options[:meta] ||= {}
