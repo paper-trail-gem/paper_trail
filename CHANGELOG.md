@@ -1,5 +1,7 @@
 ## 3.0.0 (Unreleased)
 
+  - [#273](https://github.com/airblade/paper_trail/pull/273) - Make the `only` and `ignore` options accept `Hash` arguments;
+    allows for conditional tracking.
   - [#264](https://github.com/airblade/paper_trail/pull/264) - Allow unwrapped symbol to be passed in to the `on` option.
   - [#224](https://github.com/airblade/paper_trail/issues/224)/[#236](https://github.com/airblade/paper_trail/pull/236) -
     Fixed compatibility with [ActsAsTaggableOn](https://github.com/mbleigh/acts-as-taggable-on).

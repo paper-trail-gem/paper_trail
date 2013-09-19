@@ -15,12 +15,12 @@ module PaperTrail
       #               `:create`, `:update`, `:destroy` as desired.
       # :class_name   the name of a custom Version class.  This class should inherit from Version.
       # :ignore       an array of attributes for which a new `Version` will not be created if only they change.
-      #               it can also has a Hash as an item: the key is the attribute to ignore, the value - a Proc
-      #               given a current state of object before save, only if it results in true - attribute will be ignored
+      #               it can also aceept a Hash as an argument where the key is the attribute to ignore (a `String` or `Symbol`), 
+      #               which will only be ignored if the value is a `Proc` which returns truthily.
       # :if, :unless  Procs that allow to specify conditions when to save versions for an object
       # :only         inverse of `ignore` - a new `Version` will be created only for these attributes if supplied
-      #               it can also has a Hash as an item: the key is the attribute to track, the value - a Proc
-      #               given a current state of object before save, only if it results in true - attribute will create a version
+      #               it can also aceept a Hash as an argument where the key is the attribute to track (a `String` or `Symbol`), 
+      #               which will only be counted if the value is a `Proc` which returns truthily.
       # :skip         fields to ignore completely.  As with `ignore`, updates to these fields will not create
       #               a new `Version`.  In addition, these fields will not be included in the serialized versions
       #               of the object whenever a new `Version` is created.
@@ -50,15 +50,7 @@ module PaperTrail
 
         [:ignore, :skip, :only].each do |k|
           paper_trail_options[k] =
-            ([paper_trail_options[k]].flatten.compact || []).map do |attr|
-              if attr.is_a? Hash
-                Hash[attr.map do |attr_name, condition|
-                  [attr_name.to_s, condition]
-                end]
-              else
-                attr.to_s
-              end
-            end
+            ([paper_trail_options[k]].flatten.compact || []).map { |attr| attr.is_a?(Hash) ? attr.stringify_keys : attr.to_s }
         end
 
         paper_trail_options[:meta] ||= {}
@@ -285,7 +277,7 @@ module PaperTrail
       end
 
       def object_to_string(object)
-        _attrs = object.attributes.except(*self.class.paper_trail_options[:skip]).tap do |attributes|
+        _attrs = object.attributes.except(*self.paper_trail_options[:skip]).tap do |attributes|
           self.class.serialize_attributes_for_paper_trail attributes
         end
         PaperTrail.serializer.dump(_attrs)
@@ -296,31 +288,21 @@ module PaperTrail
       end
 
       def notably_changed
-        only = []
-        self.class.paper_trail_options[:only].each do |attr|
-          if attr.is_a? Hash
-            attr.each do |attr_name, condition|
-              only << attr_name if condition.respond_to?(:call) && condition.call(self)
-            end
-          else
-            only << attr
-          end
+        only = self.paper_trail_options[:only].dup
+        # remove Hash arguments and then evaluate whether the attributes (the keys of the hash) should also get pushed into the collection
+        only.delete_if do |obj|
+          obj.is_a?(Hash) && obj.each { |attr, condition| only << attr if condition.respond_to?(:call) && condition.call(self) }
         end
         only.empty? ? changed_and_not_ignored : (changed_and_not_ignored & only)
       end
 
       def changed_and_not_ignored
-        ignore = []
-        self.class.paper_trail_options[:ignore].each do |attr|
-          if attr.is_a? Hash
-            attr.each do |attr_name, condition|
-              ignore << attr_name if condition.respond_to?(:call) && condition.call(self)
-            end
-          else
-            ignore << attr
-          end
+        ignore = self.paper_trail_options[:ignore].dup
+         # remove Hash arguments and then evaluate whether the attributes (the keys of the hash) should also get pushed into the collection
+        ignore.delete_if do |obj|
+          obj.is_a?(Hash) && obj.each { |attr, condition| ignore << attr if condition.respond_to?(:call) && condition.call(self) }
         end
-        skip   = self.class.paper_trail_options[:skip]
+        skip = self.paper_trail_options[:skip]
         changed - ignore - skip
       end
 
@@ -329,8 +311,8 @@ module PaperTrail
       end
 
       def save_version?
-        if_condition     = self.class.paper_trail_options[:if]
-        unless_condition = self.class.paper_trail_options[:unless]
+        if_condition     = self.paper_trail_options[:if]
+        unless_condition = self.paper_trail_options[:unless]
         (if_condition.blank? || if_condition.call(self)) && !unless_condition.try(:call, self)
       end
     end

@@ -268,7 +268,7 @@ You can ignore changes to certain attributes like this:
 
 ```ruby
 class Article < ActiveRecord::Base
-  has_paper_trail :ignore => [:title, :rating => Proc.new { |obj| obj.raiting == 0 } ]
+  has_paper_trail :ignore => [:title, :rating]
 end
 ```
 
@@ -277,13 +277,10 @@ This means that changes to just the `title` or `rating` will not store another v
 ```ruby
 >> a = Article.create
 >> a.versions.length                         # 1
->> a.update_attributes :title => 'My Title', :rating => 0
->> a.versions.length                         # 1
 >> a.update_attributes :title => 'My Title', :rating => 3
->> a.versions.length                         # 2
->> a.previous_version.raiting                # nil
+>> a.versions.length                         # 1
 >> a.update_attributes :title => 'Greeting', :content => 'Hello'
->> a.versions.length                         # 3
+>> a.versions.length                         # 2
 >> a.previous_version.title                  # 'My Title'
 ```
 
@@ -291,11 +288,11 @@ Or, you can specify a list of all attributes you care about:
 
 ```ruby
 class Article < ActiveRecord::Base
-  has_paper_trail :only => [:title, :author => Proc.new { |obj| obj.author.present? }]
+  has_paper_trail :only => [:title]
 end
 ```
 
-This means that only changes to the `title` and non-empty `author` will save a version of the article:
+This means that only changes to the `title` will save a version of the article:
 
 ```ruby
 >> a = Article.create
@@ -305,11 +302,31 @@ This means that only changes to the `title` and non-empty `author` will save a v
 >> a.update_attributes :content => 'Hello'
 >> a.versions.length                         # 2
 >> a.previous_version.content                # nil
->> a.update_attributes :author => 'Me'
+```
+
+The `:ignore` and `:only` options can also accept `Hash` arguments, where the :
+
+```ruby
+class Article < ActiveRecord::Base
+  has_paper_trail :only => [:title => Proc.new { |obj| !obj.title.blank? } ]
+end
+```
+
+This means that if the `title` is not blank, then only changes to the `title` will save a version of the article:
+
+```ruby
+>> a = Article.create
+>> a.versions.length                         # 1
+>> a.update_attributes :content => 'Hello'
+>> a.versions.length                         # 2
+>> a.update_attributes :title => 'My Title'
 >> a.versions.length                         # 3
->> a.update_attributes :author => ''
+>> a.update_attributes :content => 'Hai'
 >> a.versions.length                         # 3
->> a.previous_version.author                 # 'Me'
+>> a.previous_version.content                # "Hello"
+>> a.update_attributes :title => 'Dif Title'
+>> a.versions.length                         # 4
+>> a.previous_version.content                # "Hai"
 ```
 
 Passing both `:ignore` and `:only` options will result in the article being saved if a changed attribute is included in `:only` but not in `:ignore`.
@@ -973,6 +990,7 @@ Many thanks to:
 * [Bradley Priest](https://github.com/bradleypriest)
 * [David Butler](https://github.com/dwbutler)
 * [Paul Belt](https://github.com/belt)
+* [Vlad Bokov](https://github.com/razum2um)
 
 
 ## Inspirations
