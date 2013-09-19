@@ -11,8 +11,21 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       should 'not change the number of versions' do assert_equal(1, PaperTrail::Version.count) end
     end
 
-    context 'which updates an ignored column and a selected column' do
-      setup { @article.update_attributes :title => 'My first title', :content => 'Some text here.' }
+    context 'which updates an ignored column with truly Proc' do
+      setup { @article.update_attributes :abstract => 'ignore abstract' }
+      should 'not change the number of versions' do assert_equal(1, PaperTrail::Version.count) end
+    end
+
+    context 'which updates an ignored column with falsy Proc' do
+      setup { @article.update_attributes :abstract => 'do not ignore abstract!' }
+      should 'change the number of versions' do assert_equal(2, PaperTrail::Version.count) end
+    end
+
+    context 'which updates an ignored column, ignored with truly Proc and a selected column' do
+      setup { @article.update_attributes :title => 'My first title',
+                                         :content => 'Some text here.',
+                                         :abstract => 'ignore abstract'
+      }
       should 'change the number of versions' do assert_equal(2, PaperTrail::Version.count) end
 
       should "show the new version in the model's `versions` association" do
@@ -21,6 +34,22 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
       should 'have stored only non-ignored attributes' do
         assert_equal ({'content' => [nil, 'Some text here.']}), @article.versions.last.changeset
+      end
+    end
+
+    context 'which updates an ignored column, ignored with falsy Proc and a selected column' do
+      setup { @article.update_attributes :title => 'My first title',
+                                         :content => 'Some text here.',
+                                         :abstract => 'do not ignore abstract'
+      }
+      should 'change the number of versions' do assert_equal(2, PaperTrail::Version.count) end
+
+      should "show the new version in the model's `versions` association" do
+        assert_equal(2, @article.versions.size)
+      end
+
+      should 'have stored only non-ignored attributes' do
+        assert_equal ({'content' => [nil, 'Some text here.'], 'abstract' => [nil, 'do not ignore abstract']}), @article.versions.last.changeset
       end
     end
 
