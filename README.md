@@ -268,7 +268,7 @@ You can ignore changes to certain attributes like this:
 
 ```ruby
 class Article < ActiveRecord::Base
-  has_paper_trail :ignore => [:title, :rating]
+  has_paper_trail :ignore => [:title, :rating => Proc.new { |obj| obj.raiting == 0 } ]
 end
 ```
 
@@ -277,10 +277,13 @@ This means that changes to just the `title` or `rating` will not store another v
 ```ruby
 >> a = Article.create
 >> a.versions.length                         # 1
->> a.update_attributes :title => 'My Title', :rating => 3
+>> a.update_attributes :title => 'My Title', :rating => 0
 >> a.versions.length                         # 1
->> a.update_attributes :title => 'Greeting', :content => 'Hello'
+>> a.update_attributes :title => 'My Title', :rating => 3
 >> a.versions.length                         # 2
+>> a.previous_version.raiting                # nil
+>> a.update_attributes :title => 'Greeting', :content => 'Hello'
+>> a.versions.length                         # 3
 >> a.previous_version.title                  # 'My Title'
 ```
 
@@ -288,11 +291,11 @@ Or, you can specify a list of all attributes you care about:
 
 ```ruby
 class Article < ActiveRecord::Base
-  has_paper_trail :only => [:title]
+  has_paper_trail :only => [:title, :author => Proc.new { |obj| obj.author.present? }]
 end
 ```
 
-This means that only changes to the `title` will save a version of the article:
+This means that only changes to the `title` and non-empty `author` will save a version of the article:
 
 ```ruby
 >> a = Article.create
@@ -302,6 +305,11 @@ This means that only changes to the `title` will save a version of the article:
 >> a.update_attributes :content => 'Hello'
 >> a.versions.length                         # 2
 >> a.previous_version.content                # nil
+>> a.update_attributes :author => 'Me'
+>> a.versions.length                         # 3
+>> a.update_attributes :author => ''
+>> a.versions.length                         # 3
+>> a.previous_version.author                 # 'Me'
 ```
 
 Passing both `:ignore` and `:only` options will result in the article being saved if a changed attribute is included in `:only` but not in `:ignore`.
