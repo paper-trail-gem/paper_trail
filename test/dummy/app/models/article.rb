@@ -1,6 +1,6 @@
 class Article < ActiveRecord::Base
-  has_paper_trail :ignore => [:title, :abstract => Proc.new { |obj| ['ignore abstract', 'Other abstract'].include? obj.abstract } ],
-                  :only => [:content, :abstract => Proc.new { |obj| obj.abstract.present? } ],
+  has_paper_trail :ignore => [:title, { :abstract => Proc.new { |obj| ['ignore abstract', 'Other abstract'].include? obj.abstract } } ],
+                  :only => [:content, { :abstract => Proc.new { |obj| obj.abstract.present? } } ],
                   :skip => [:file_upload],
                   :meta => {
                               :answer => 42,
