@@ -1,9 +1,9 @@
-module Sinatra
-  module PaperTrail
+module PaperTrail
+  module Sinatra
 
     # Register this module inside your Sinatra application to gain access to controller-level methods used by PaperTrail
     def self.registered(app)
-      app.helpers Sinatra::PaperTrail
+      app.helpers self
       app.before { set_paper_trail_whodunnit }
     end
 
@@ -27,5 +27,5 @@ module Sinatra
 
   end
 
-  register Sinatra::PaperTrail if defined?(register)
+  ::Sinatra.register PaperTrail::Sinatra if defined?(::Sinatra)
 end

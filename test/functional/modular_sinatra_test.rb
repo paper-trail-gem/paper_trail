@@ -4,7 +4,7 @@ require 'sinatra/base'
 # --- Tests for modular `Sinatra::Base` style ----
 class BaseApp < Sinatra::Base
   ActiveRecord::Base.establish_connection(:adapter => 'sqlite3', :database => File.expand_path('../../dummy/db/test.sqlite3', __FILE__))
-  register Sinatra::PaperTrail
+  register PaperTrail::Sinatra
 
   get '/test' do
     Widget.create!(:name => 'foo')

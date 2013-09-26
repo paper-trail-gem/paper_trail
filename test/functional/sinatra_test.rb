@@ -4,7 +4,7 @@ require 'test_helper'
 # --- Tests for non-modular `Sinatra::Application` style ----
 class Sinatra::Application
   ActiveRecord::Base.establish_connection(:adapter => 'sqlite3', :database => File.expand_path('../../dummy/db/test.sqlite3', __FILE__))
-  register Sinatra::PaperTrail # we shouldn't actually need this line if I'm not mistaken but the tests seem to fail without it ATM
+  register PaperTrail::Sinatra # we shouldn't actually need this line if I'm not mistaken but the tests seem to fail without it ATM
 
   get '/test' do
     Widget.create!(:name => 'bar')
