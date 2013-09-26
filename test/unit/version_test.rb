@@ -55,20 +55,3 @@ class PaperTrail::VersionTest < ActiveSupport::TestCase
     end
   end
 end
-
-class VersionTest < ActiveSupport::TestCase
-  # without this, it sometimes picks up the changed schema from the previous test and gets confused
-  setup { PaperTrail::Version.reset_column_information }
-
-  context "Version class" do
-    should "be a subclass of the `PaperTrail::Version` class" do
-      assert Version < PaperTrail::Version
-    end
-
-    should "act like a `PaperTrail::Version` while warning the user" do
-      widget = Widget.create! :name => Faker::Name.name
-      widget.update_attributes! :name => Faker::Name.name
-      assert_equal Version.last.reify.name, widget.versions.last.reify.name
-    end
-  end
-end

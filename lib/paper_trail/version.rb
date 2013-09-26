@@ -198,28 +198,3 @@ module PaperTrail
 
   end
 end
-
-# Legacy support for old applications using the original non-namespaced `Version` class
-class Version < PaperTrail::Version
-  def initialize(*args)
-    warn "DEPRECATED: Please use the namespaced `PaperTrail::Version` class instead. Support for the non-namespaced `Version` class will be removed in PaperTrail 3.1."
-    super
-  end
-
-  class << self
-    def find(*args)
-      warn "DEPRECATED: Please use the namespaced `PaperTrail::Version` class instead. Support for the non-namespaced `Version` class will be removed in PaperTrail 3.1."
-      super
-    end
-
-    def first(*args)
-      warn "DEPRECATED: Please use the namespaced `PaperTrail::Version` class instead. Support for the non-namespaced `Version` class will be removed in PaperTrail 3.1."
-      super
-    end
-
-    def last(*args)
-      warn "DEPRECATED: Please use the namespaced `PaperTrail::Version` class instead. Support for the non-namespaced `Version` class will be removed in PaperTrail 3.1."
-      super
-    end
-  end
-end
