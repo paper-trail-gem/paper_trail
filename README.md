@@ -2,8 +2,7 @@
 
 PaperTrail lets you track changes to your models' data.  It's good for auditing or versioning.  You can see how a model looked at any stage in its lifecycle, revert it to any version, and even undelete it after it's been destroyed.
 
-There's an excellent [Railscast on implementing Undo with Paper Trail](http://railscasts.com/episodes/255-undo-with-paper-trail).
-
+There's an excellent [RailsCast on implementing Undo with Paper Trail](http://railscasts.com/episodes/255-undo-with-paper-trail).
 
 ## Features
 
@@ -987,12 +986,13 @@ manually require the helper(s) in your test helper, like so:
 ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
-require 'rspec/autorun'
 require 'paper_trail/frameworks/rspec'
 ```
 
 ## Articles
 
+[Using PaperTrail to track stack traces](http://rubyrailsexpert.com/?p=36), T James Corcoran's blog, 1st October 2013.
+[RailsCast #255 - Undo with PaperTrail](http://railscasts.com/episodes/255-undo-with-paper-trail), 28th February 2011.
 [Keep a Paper Trail with PaperTrail](http://www.linux-mag.com/id/7528), Linux Magazine, 16th September 2009.
 
 
