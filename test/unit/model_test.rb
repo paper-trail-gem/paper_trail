@@ -582,6 +582,31 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
   end
 
 
+  context 'Timestamps' do
+    setup do
+      @wotsit = Wotsit.create! :name => 'wotsit'
+    end
+
+    should 'record timestamps' do
+      @wotsit.update_attributes! :name => 'changed'
+      assert_not_nil @wotsit.versions.last.reify.created_at
+      assert_not_nil @wotsit.versions.last.reify.updated_at
+    end
+
+    should 'not generate warning' do
+      # Tests that it doesn't try to write created_on as an attribute just because a created_on
+      # method exists.
+      warnings = capture(:stderr) {  # Deprecation warning in Rails 3.2
+        assert_nothing_raised {  # ActiveModel::MissingAttributeError in Rails 4
+          @wotsit.update_attributes! :name => 'changed'
+        }
+      }
+      assert_equal '', warnings
+    end
+
+  end
+
+
   context 'A subclass' do
     setup do
       @foo = FooWidget.create
