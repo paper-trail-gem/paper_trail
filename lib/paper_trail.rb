@@ -79,7 +79,7 @@ module PaperTrail
   end
 
   def self.active_record_protected_attributes?
-    @active_record_protected_attributes ||= ActiveRecord::VERSION::STRING.to_f < 4.0 || defined?(ProtectedAttributes)
+    @active_record_protected_attributes ||= ActiveRecord::VERSION::STRING.to_f < 4.0 || !!defined?(ProtectedAttributes)
   end
 
   private
@@ -101,9 +101,17 @@ module PaperTrail
 
 end
 
+# Ensure `ProtectedAttributes` gem gets required if it is available before the `Version` class gets loaded in
+unless PaperTrail.active_record_protected_attributes?
+  PaperTrail.remove_instance_variable(:@active_record_protected_attributes)
+  begin
+    require 'protected_attributes'
+  rescue LoadError; end # will rescue if ProtectedAttributes gem is not available
+end
+
 require 'paper_trail/version'
 
-# Require all frameworks
+# Require frameworks
 require 'paper_trail/frameworks/rails'
 require 'paper_trail/frameworks/sinatra'
 require 'paper_trail/frameworks/rspec' if defined? RSpec
