@@ -2,8 +2,7 @@ require 'paper_trail/config'
 require 'paper_trail/has_paper_trail'
 require 'paper_trail/cleaner'
 
-# Require all frameworks and serializers
-Dir[File.join(File.dirname(__FILE__), 'paper_trail', 'frameworks', '*.rb')].each { |file| require file }
+# Require serializers
 Dir[File.join(File.dirname(__FILE__), 'paper_trail', 'serializers', '*.rb')].each { |file| require file }
 
 # PaperTrail's module methods can be called in both models and controllers.
@@ -103,6 +102,12 @@ module PaperTrail
 end
 
 require 'paper_trail/version'
+
+# Require all frameworks
+require 'paper_trail/frameworks/rails'
+require 'paper_trail/frameworks/sinatra'
+require 'paper_trail/frameworks/rspec' if defined? RSpec
+require 'paper_trail/frameworks/cucumber' if defined? World
 
 ActiveSupport.on_load(:active_record) do
   include PaperTrail::Model

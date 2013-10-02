@@ -1,5 +1,7 @@
 ## 3.0.0 (Unreleased)
 
+  - [#278](https://github.com/airblade/paper_trail/issues/278)/[#272](https://github.com/airblade/paper_trail/issues/272) -
+    Make RSpec and Cucumber helpers usable with [Spork](https://github.com/sporkrb/spork) and [Zeus](https://github.com/burke/zeus).
   - [#273](https://github.com/airblade/paper_trail/pull/273) - Make the `only` and `ignore` options accept `Hash` arguments;
     allows for conditional tracking.
   - [#264](https://github.com/airblade/paper_trail/pull/264) - Allow unwrapped symbol to be passed in to the `on` option.

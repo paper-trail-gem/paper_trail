@@ -891,9 +891,9 @@ You may want to turn PaperTrail off to speed up your tests.  See the [Turning Pa
 
 ### RSpec
 
-PaperTrail provides a helper that works with RSpec to make it easier to control when `PaperTrail` during testing. By default, PaperTrail will be
-turned off for all tests. When you wish to enable PaperTrail for a test you can either wrap the test in a `with_versioning` block, or pass
-in `:versioning => true` option to a spec block, like so:
+PaperTrail provides a helper that works with [RSpec](https://github.com/rspec/rspec) to make it easier to control when `PaperTrail` is enabled
+during testing. By default, PaperTrail will be turned off for all tests.
+When you wish to enable PaperTrail for a test you can either wrap the test in a `with_versioning` block, or pass in `:versioning => true` option to a spec block, like so:
 
 ```ruby
 describe "RSpec test group" do
@@ -939,7 +939,7 @@ end
 
 ### Cucumber
 
-PaperTrail provides a helper that works similar to the RSpec helper.
+PaperTrail provides a helper for [Cucumber](http://cukes.info) that works similar to the RSpec helper.
 By default, PaperTrail will be turned off for all scenarios by a `before` hook added by the helper.
 When you wish to enable PaperTrail for a scenario, you can wrap code in a `with_versioning` block in a step, like so:
 
@@ -953,6 +953,43 @@ end
 
 The helper will also reset the `PaperTrail.whodunnit` value to `nil` before each test to help prevent data spillover between tests.
 If you are using PaperTrail with Rails, the helper will automatically set the `PaperTrail.controller_info` value to `{}` as well, again, to help prevent data spillover between tests.
+
+### Spork
+
+If you wish to use the `RSpec` or `Cucumber` helpers with [Spork](https://github.com/sporkrb/spork), you will need to
+manually require the helper(s) in your `prefork` block on your test helper, like so:
+
+```ruby
+# spec/spec_helper.rb
+
+require 'spork'
+
+Spork.prefork do
+  # This file is copied to spec/ when you run 'rails generate rspec:install'
+  ENV["RAILS_ENV"] ||= 'test'
+  require File.expand_path("../../config/environment", __FILE__)
+  require 'rspec/rails'
+  require 'rspec/autorun'
+  require 'paper_trail/frameworks/rspec'
+  require 'paper_trail/frameworks/cucumber'
+  ...
+end
+```
+
+### Zeus
+
+If you wish to use the `RSpec` or `Cucumber` heleprs with [Zeus](https://github.com/burke/zeus), you will need to
+manually require the helper(s) in your test helper, like so:
+
+```ruby
+# spec/spec_helper.rb
+
+ENV["RAILS_ENV"] ||= 'test'
+require File.expand_path("../../config/environment", __FILE__)
+require 'rspec/rails'
+require 'rspec/autorun'
+require 'paper_trail/frameworks/rspec'
+```
 
 ## Articles
 
