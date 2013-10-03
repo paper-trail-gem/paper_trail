@@ -1,5 +1,6 @@
 ## 3.0.0 (Unreleased)
 
+  - [#280](https://github.com/airblade/paper_trail/pull/280) - Don't track virtual timestamp attributes.
   - [#278](https://github.com/airblade/paper_trail/issues/278)/[#272](https://github.com/airblade/paper_trail/issues/272) -
     Make RSpec and Cucumber helpers usable with [Spork](https://github.com/sporkrb/spork) and [Zeus](https://github.com/burke/zeus).
   - [#273](https://github.com/airblade/paper_trail/pull/273) - Make the `only` and `ignore` options accept `Hash` arguments;

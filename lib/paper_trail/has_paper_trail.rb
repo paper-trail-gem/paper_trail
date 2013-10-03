@@ -268,10 +268,10 @@ module PaperTrail
         previous = self.dup
         # `dup` clears timestamps so we add them back.
         all_timestamp_attributes.each do |column|
-          previous[column] = send(column) if attributes.has_key?(column.to_s) && !send(column).nil?
+          previous[column] = send(column) if self.class.column_names.include?(column.to_s) and not send(column).nil?
         end
         previous.tap do |prev|
-          prev.id = id
+          prev.id = id # `dup` clears the `id` so we add that back
           changed_attributes.select { |k,v| self.class.column_names.include?(k) }.each { |attr, before| prev[attr] = before }
         end
       end
