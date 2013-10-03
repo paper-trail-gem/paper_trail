@@ -103,10 +103,10 @@ end
 
 # Ensure `ProtectedAttributes` gem gets required if it is available before the `Version` class gets loaded in
 unless PaperTrail.active_record_protected_attributes?
-  PaperTrail.remove_instance_variable(:@active_record_protected_attributes)
+  PaperTrail.send(:remove_instance_variable, :@active_record_protected_attributes)
   begin
     require 'protected_attributes'
-  rescue LoadError; end # will rescue if ProtectedAttributes gem is not available
+  rescue LoadError; end # will rescue if `ProtectedAttributes` gem is not available
 end
 
 require 'paper_trail/version'
