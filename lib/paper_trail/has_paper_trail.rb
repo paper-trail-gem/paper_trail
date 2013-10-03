@@ -268,7 +268,7 @@ module PaperTrail
         previous = self.dup
         # `dup` clears timestamps so we add them back.
         all_timestamp_attributes.each do |column|
-          previous[column] = send(column) if respond_to?(column) && !send(column).nil?
+          previous[column] = send(column) if attributes.has_key?(column.to_s) && !send(column).nil?
         end
         previous.tap do |prev|
           prev.id = id
