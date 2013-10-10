@@ -26,23 +26,19 @@ module PaperTrail
       where 'event <> ?', 'create'
     end
 
-    scope :subsequent, lambda { |version|
-      where("#{self.primary_key} > ?", version).order("#{self.primary_key} ASC")
+    # These methods accept a timestamp or a version and returns other versions that come before or after
+    scope :subsequent, lambda { |obj|
+      obj = obj.send(PaperTrail.timestamp_field) if obj.is_a?(self)
+      where("#{PaperTrail.timestamp_field} > ?", obj).order("#{PaperTrail.timestamp_field} ASC")
     }
-
-    scope :preceding, lambda { |version|
-      where("#{self.primary_key} < ?", version).order("#{self.primary_key} DESC")
-    }
-
-    scope :following, lambda { |timestamp|
-      # TODO: is this :order necessary, considering its presence on the has_many :versions association?
-      where("#{PaperTrail.timestamp_field} > ?", timestamp).
-        order("#{PaperTrail.timestamp_field} ASC, #{self.primary_key} ASC")
+    scope :preceding, lambda { |obj|
+      obj = obj.send(PaperTrail.timestamp_field) if obj.is_a?(self)
+      where("#{PaperTrail.timestamp_field} < ?", obj).order("#{PaperTrail.timestamp_field} DESC")
     }
 
     scope :between, lambda { |start_time, end_time|
       where("#{PaperTrail.timestamp_field} > ? AND #{PaperTrail.timestamp_field} < ?", start_time, end_time).
-        order("#{PaperTrail.timestamp_field} ASC, #{self.primary_key} ASC")
+        order("#{PaperTrail.timestamp_field} ASC")
     }
 
     # Restore the item from this version.
@@ -145,8 +141,8 @@ module PaperTrail
     end
 
     def index
-      id_column = self.class.primary_key.to_sym
-      sibling_versions.select(id_column).order("#{id_column} ASC").map(&id_column).index(self.send(id_column))
+      @index ||= sibling_versions.select([PaperTrail.timestamp_field, self.class.primary_key.to_sym]).
+        order("#{PaperTrail.timestamp_field} ASC").index(self)
     end
 
     private

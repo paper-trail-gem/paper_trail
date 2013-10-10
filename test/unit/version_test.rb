@@ -48,9 +48,49 @@ class PaperTrail::VersionTest < ActiveSupport::TestCase
       assert PaperTrail::Version.not_creates.present?
     }
 
-    should "return all items except create events" do
+    should "return all versions except create events" do
       PaperTrail::Version.not_creates.each do |version|
         assert_not_equal "create", version.event
+      end
+    end
+  end
+
+  context "PaperTrail::Version.subsequent" do
+    setup { 2.times { @animal.update_attributes(:name => Faker::Lorem.word) } }
+
+    context "receiving a TimeStamp" do
+      should "return all versions that were created before the Timestamp; descendingly by order of the `PaperTrail.timestamp_field`" do
+        value = PaperTrail::Version.subsequent(1.hour.ago)
+        assert_equal value, @animal.versions.to_a
+        assert_not_nil value.to_sql.match(/ORDER BY created_at ASC\z/)
+      end
+    end
+
+    context "receiving a `PaperTrail::Version`" do
+      should "grab the Timestamp from the version and use that as the value" do
+        value = PaperTrail::Version.subsequent(@animal.versions.first)
+        assert_equal value, @animal.versions.to_a.tap { |assoc| assoc.shift }
+        assert_not_nil value.to_sql.match(/WHERE \(created_at > '#{@animal.versions.first.send(PaperTrail.timestamp_field).strftime("%F %T.%6N")}'\)/)
+      end
+    end
+  end
+
+  context "PaperTrail::Version.preceding" do
+    setup { 2.times { @animal.update_attributes(:name => Faker::Lorem.word) } }
+
+    context "receiving a TimeStamp" do
+      should "return all versions that were created before the Timestamp; descendingly by order of the `PaperTrail.timestamp_field`" do
+        value = PaperTrail::Version.preceding(Time.now)
+        assert_equal value, @animal.versions.reverse
+        assert_not_nil value.to_sql.match(/ORDER BY created_at DESC\z/)
+      end
+    end
+
+    context "receiving a `PaperTrail::Version`" do
+      should "grab the Timestamp from the version and use that as the value" do
+        value = PaperTrail::Version.preceding(@animal.versions.last)
+        assert_equal value, @animal.versions.to_a.tap { |assoc| assoc.pop }.reverse
+        assert_not_nil value.to_sql.match(/WHERE \(created_at < '#{@animal.versions.last.send(PaperTrail.timestamp_field).strftime("%F %T.%6N")}'\)/)
       end
     end
   end

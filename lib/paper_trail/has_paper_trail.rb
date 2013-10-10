@@ -151,7 +151,7 @@ module PaperTrail
       def version_at(timestamp, reify_options={})
         # Because a version stores how its object looked *before* the change,
         # we need to look for the first version created *after* the timestamp.
-        v = send(self.class.versions_association_name).following(timestamp).first
+        v = send(self.class.versions_association_name).subsequent(timestamp).first
         v ? v.reify(reify_options) : self
       end
 
