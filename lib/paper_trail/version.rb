@@ -115,34 +115,33 @@ module PaperTrail
     def changeset
       return nil unless self.class.column_names.include? 'object_changes'
 
-      HashWithIndifferentAccess.new(PaperTrail.serializer.load(object_changes)).tap do |changes|
+      @changeset ||= HashWithIndifferentAccess.new(PaperTrail.serializer.load(object_changes)).tap do |changes|
         item_type.constantize.unserialize_attribute_changes(changes)
-      end
-    rescue
-      {}
+      end rescue {}
     end
 
     # Returns who put the item into the state stored in this version.
     def originator
-      previous.try :whodunnit
+      @originator ||= previous.whodunnit rescue nil
     end
 
     # Returns who changed the item from the state it had in this version.
     # This is an alias for `whodunnit`.
     def terminator
-      whodunnit
+      @terminator ||= whodunnit
     end
 
-    def sibling_versions
-      self.class.with_item_keys(item_type, item_id)
+    def sibling_versions(reload = false)
+      @sibling_versions = nil if reload == true
+      @sibling_versions ||= self.class.with_item_keys(item_type, item_id)
     end
 
     def next
-      sibling_versions.subsequent(self).first
+      @next ||= sibling_versions.subsequent(self).first
     end
 
     def previous
-      sibling_versions.preceding(self).first
+      @previous ||= sibling_versions.preceding(self).first
     end
 
     def index
