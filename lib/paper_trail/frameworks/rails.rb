@@ -47,7 +47,7 @@ module PaperTrail
       # Override this method in your controller to specify when PaperTrail should
       # be off.
       def paper_trail_enabled_for_controller
-        true
+        PaperTrail.enabled?
       end
 
       private

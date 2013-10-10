@@ -806,7 +806,7 @@ end
 
 ### Per request
 
-You can turn PaperTrail on or off per request by adding a `paper_trail_enabled_for_controller` method to your controller which returns true or false:
+You can turn PaperTrail on or off per request by adding a `paper_trail_enabled_for_controller` method to your controller which returns `true` or `false`:
 
 ```ruby
 class ApplicationController < ActionController::Base
