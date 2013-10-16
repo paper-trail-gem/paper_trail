@@ -13,7 +13,7 @@ module PaperTrail
       # Options:
       # :on           the events to track (optional; defaults to all of them).  Set to an array of
       #               `:create`, `:update`, `:destroy` as desired.
-      # :class_name   the name of a custom Version class.  This class should inherit from Version.
+      # :class_name   the name of a custom Version class.  This class should inherit from `PaperTrail::Version`.
       # :ignore       an array of attributes for which a new `Version` will not be created if only they change.
       #               it can also aceept a Hash as an argument where the key is the attribute to ignore (a `String` or `Symbol`), 
       #               which will only be ignored if the value is a `Proc` which returns truthily.
@@ -63,7 +63,7 @@ module PaperTrail
 
         attr_accessor :paper_trail_event
 
-        if ActiveRecord::VERSION::STRING.to_f >= 4.0 # `has_many` syntax for specifying order uses a lambda in Rails 4
+        if ::ActiveRecord::VERSION::STRING.to_f >= 4.0 # `has_many` syntax for specifying order uses a lambda in Rails 4
           has_many self.versions_association_name,
             lambda { order("#{PaperTrail.timestamp_field} ASC") },
             :class_name => self.version_class_name, :as => :item

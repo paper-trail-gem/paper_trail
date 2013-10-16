@@ -1,5 +1,5 @@
 module PaperTrail
-  class Version < ActiveRecord::Base
+  class Version < ::ActiveRecord::Base
     belongs_to :item, :polymorphic => true
     validates_presence_of :event
     attr_accessible :item_type, :item_id, :event, :whodunnit, :object, :object_changes if PaperTrail.active_record_protected_attributes?
@@ -49,7 +49,7 @@ module PaperTrail
     # opt out.
     #
     # Options:
-    # +:has_one+   set to `false` to opt out of has_one reification.
+    # :has_one     set to `false` to opt out of has_one reification.
     #              set to a float to change the lookback time (check whether your db supports
     #              sub-second datetimes if you want them).
     def reify(options = {})
@@ -62,16 +62,16 @@ module PaperTrail
 
           # Normally a polymorphic belongs_to relationship allows us
           # to get the object we belong to by calling, in this case,
-          # +item+.  However this returns nil if +item+ has been
+          # `item`.  However this returns nil if `item` has been
           # destroyed, and we need to be able to retrieve destroyed
           # objects.
           #
-          # In this situation we constantize the +item_type+ to get hold of
+          # In this situation we constantize the `item_type` to get hold of
           # the class...except when the stored object's attributes
-          # include a +type+ key.  If this is the case, the object
+          # include a `type` key.  If this is the case, the object
           # we belong to is using single table inheritance and the
-          # +item_type+ will be the base class, not the actual subclass.
-          # If +type+ is present but empty, the class is the base class.
+          # `item_type` will be the base class, not the actual subclass.
+          # If `type` is present but empty, the class is the base class.
 
           if item
             model = item
@@ -151,8 +151,8 @@ module PaperTrail
     # In Rails 3.1+, calling reify on a previous version confuses the
     # IdentityMap, if enabled. This prevents insertion into the map.
     def without_identity_map(&block)
-      if defined?(ActiveRecord::IdentityMap) && ActiveRecord::IdentityMap.respond_to?(:without)
-        ActiveRecord::IdentityMap.without(&block)
+      if defined?(::ActiveRecord::IdentityMap) && ::ActiveRecord::IdentityMap.respond_to?(:without)
+        ::ActiveRecord::IdentityMap.without(&block)
       else
         block.call
       end
