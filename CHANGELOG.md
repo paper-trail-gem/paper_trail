@@ -1,5 +1,7 @@
 ## 3.0.0 (Unreleased)
 
+  - [#287](https://github.com/airblade/paper_trail/issues/287) - Support for
+    [PostgreSQL's JSON Type](http://www.postgresql.org/docs/9.2/static/datatype-json.html) for storing `object` and `object_changes`.
   - [#281](https://github.com/airblade/paper_trail/issues/281) - `Rails::Controller` helper will return `false` for the
     `paper_trail_enabled_for_controller` method if `PaperTrail.enabled? == false`.
   - [#280](https://github.com/airblade/paper_trail/pull/280) - Don't track virtual timestamp attributes.

@@ -204,7 +204,8 @@ module PaperTrail
           }
 
           if changed_notably? and version_class.column_names.include?('object_changes')
-            data[:object_changes] = PaperTrail.serializer.dump(changes_for_paper_trail)
+            data[:object_changes] = version_class.object_changes_col_is_json? ? changes_for_paper_trail :
+              PaperTrail.serializer.dump(changes_for_paper_trail)
           end
           send(self.class.versions_association_name).create! merge_metadata(data)
         end
@@ -212,13 +213,15 @@ module PaperTrail
 
       def record_update
         if paper_trail_switched_on? && changed_notably?
+          object_attrs = object_attrs_for_paper_trail(item_before_change)
           data = {
             :event     => paper_trail_event || 'update',
-            :object    => object_to_string(item_before_change),
+            :object    => version_class.object_col_is_json? ? object_attrs : PaperTrail.serializer.dump(object_attrs),
             :whodunnit => PaperTrail.whodunnit
           }
-          if version_class.column_names.include? 'object_changes'
-            data[:object_changes] = PaperTrail.serializer.dump(changes_for_paper_trail)
+          if version_class.column_names.include?('object_changes')
+            data[:object_changes] = version_class.object_changes_col_is_json? ? changes_for_paper_trail :
+              PaperTrail.serializer.dump(changes_for_paper_trail)
           end
           send(self.class.versions_association_name).build merge_metadata(data)
         end
@@ -228,17 +231,22 @@ module PaperTrail
         self.changes.delete_if do |key, value|
           !notably_changed.include?(key)
         end.tap do |changes|
-          self.class.serialize_attribute_changes(changes) # Use serialized value for attributes when necessary
+          # don't serialize before values before inserting into columns of type `JSON` on `PostgreSQL` databases
+          self.class.serialize_attribute_changes(changes) unless version_class.object_changes_col_is_json?
         end
       end
 
       def record_destroy
         if paper_trail_switched_on? and not new_record?
-          version_class.create merge_metadata(:item_id   => self.id,
-                                              :item_type => self.class.base_class.name,
-                                              :event     => paper_trail_event || 'destroy',
-                                              :object    => object_to_string(item_before_change),
-                                              :whodunnit => PaperTrail.whodunnit)
+          object_attrs = object_attrs_for_paper_trail(item_before_change)
+          data = {
+            :item_id   => self.id,
+            :item_type => self.class.base_class.name,
+            :event     => paper_trail_event || 'destroy',
+            :object    => version_class.object_col_is_json? ? object_attrs : PaperTrail.serializer.dump(object_attrs),
+            :whodunnit => PaperTrail.whodunnit
+          }
+          version_class.create merge_metadata(data)
           send(self.class.versions_association_name).send :load_target
         end
       end
@@ -276,11 +284,12 @@ module PaperTrail
         end
       end
 
-      def object_to_string(object)
+      # returns hash of object attributes (with appropriate attributes serialized), ommitting attributes to be skipped
+      def object_attrs_for_paper_trail(object)
         _attrs = object.attributes.except(*self.paper_trail_options[:skip]).tap do |attributes|
-          self.class.serialize_attributes_for_paper_trail attributes
+          # don't serialize before values before inserting into columns of type `JSON` on `PostgreSQL` databases
+          self.class.serialize_attributes_for_paper_trail attributes unless version_class.object_changes_col_is_json?
         end
-        PaperTrail.serializer.dump(_attrs)
       end
 
       def changed_notably?
