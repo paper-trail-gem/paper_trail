@@ -145,6 +145,7 @@ version.originator
 # Returns who changed the item from the state it had in this version.
 version.terminator
 version.whodunnit
+version.version_author
 
 # Returns the next version.
 version.next
