@@ -288,7 +288,7 @@ module PaperTrail
       def object_attrs_for_paper_trail(object)
         _attrs = object.attributes.except(*self.paper_trail_options[:skip]).tap do |attributes|
           # don't serialize before values before inserting into columns of type `JSON` on `PostgreSQL` databases
-          self.class.serialize_attributes_for_paper_trail attributes unless version_class.object_changes_col_is_json?
+          self.class.serialize_attributes_for_paper_trail attributes unless version_class.object_col_is_json?
         end
       end
 
