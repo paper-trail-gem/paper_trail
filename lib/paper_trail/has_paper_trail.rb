@@ -69,7 +69,7 @@ module PaperTrail
             :class_name => self.version_class_name, :as => :item
         else
           has_many self.versions_association_name,
-            :class_name => version_class_name,
+            :class_name => self.version_class_name,
             :as         => :item,
             :order      => "#{PaperTrail.timestamp_field} ASC"
         end

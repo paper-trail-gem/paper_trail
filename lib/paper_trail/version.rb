@@ -27,19 +27,20 @@ module PaperTrail
     end
 
     # These methods accept a timestamp or a version and returns other versions that come before or after
-    scope :subsequent, lambda { |obj|
+    def self.subsequent(obj)
       obj = obj.send(PaperTrail.timestamp_field) if obj.is_a?(self)
       where("#{PaperTrail.timestamp_field} > ?", obj).order("#{PaperTrail.timestamp_field} ASC")
-    }
-    scope :preceding, lambda { |obj|
+    end
+
+    def self.preceding(obj)
       obj = obj.send(PaperTrail.timestamp_field) if obj.is_a?(self)
       where("#{PaperTrail.timestamp_field} < ?", obj).order("#{PaperTrail.timestamp_field} DESC")
-    }
+    end
 
-    scope :between, lambda { |start_time, end_time|
+    def self.between(start_time, end_time)
       where("#{PaperTrail.timestamp_field} > ? AND #{PaperTrail.timestamp_field} < ?", start_time, end_time).
         order("#{PaperTrail.timestamp_field} ASC")
-    }
+    end
 
     # Restore the item from this version.
     #

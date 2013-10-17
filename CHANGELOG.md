@@ -1,5 +1,7 @@
 ## 3.0.0 (Unreleased)
 
+  - [#288](https://github.com/airblade/paper_trail/issues/288) - Change all scope declarations to class methods on the `PaperTrail::Version`
+    class. Fixes usability when `PaperTrail::Version.abstract_class? == true`.
   - [#281](https://github.com/airblade/paper_trail/issues/281) - `Rails::Controller` helper will return `false` for the
     `paper_trail_enabled_for_controller` method if `PaperTrail.enabled? == false`.
   - [#280](https://github.com/airblade/paper_trail/pull/280) - Don't track virtual timestamp attributes.
