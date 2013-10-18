@@ -90,8 +90,15 @@ module PaperTrail
         self.paper_trail_enabled_for_model = true
       end
 
+      def paper_trail_version_class
+        @paper_trail_version_class ||= version_class_name.constantize
+      end
+
       # Used for Version#object attribute
       def serialize_attributes_for_paper_trail(attributes)
+        # don't serialize before values before inserting into columns of type `JSON` on `PostgreSQL` databases
+        return attributes if self.paper_trail_version_class.object_col_is_json?
+
         serialized_attributes.each do |key, coder|
           if attributes.key?(key)
             coder = PaperTrail::Serializers::YAML unless coder.respond_to?(:dump) # Fall back to YAML if `coder` has no `dump` method
@@ -101,6 +108,9 @@ module PaperTrail
       end
 
       def unserialize_attributes_for_paper_trail(attributes)
+        # don't serialize before values before inserting into columns of type `JSON` on `PostgreSQL` databases
+        return attributes if self.paper_trail_version_class.object_col_is_json?
+
         serialized_attributes.each do |key, coder|
           if attributes.key?(key)
             coder = PaperTrail::Serializers::YAML unless coder.respond_to?(:dump)
@@ -111,6 +121,9 @@ module PaperTrail
 
       # Used for Version#object_changes attribute
       def serialize_attribute_changes(changes)
+        # don't serialize before values before inserting into columns of type `JSON` on `PostgreSQL` databases
+        return changes if self.paper_trail_version_class.object_changes_col_is_json?
+
         serialized_attributes.each do |key, coder|
           if changes.key?(key)
             coder = PaperTrail::Serializers::YAML unless coder.respond_to?(:dump) # Fall back to YAML if `coder` has no `dump` method
@@ -122,6 +135,9 @@ module PaperTrail
       end
 
       def unserialize_attribute_changes(changes)
+        # don't serialize before values before inserting into columns of type `JSON` on `PostgreSQL` databases
+        return changes if self.paper_trail_version_class.object_changes_col_is_json?
+
         serialized_attributes.each do |key, coder|
           if changes.key?(key)
             coder = PaperTrail::Serializers::YAML unless coder.respond_to?(:dump)
@@ -139,12 +155,12 @@ module PaperTrail
       # Returns true if this instance is the current, live one;
       # returns false if this instance came from a previous version.
       def live?
-        source_version.nil?
+        @is_live ||= source_version.nil?
       end
 
       # Returns who put the object into its current state.
       def originator
-        version_class.with_item_keys(self.class.base_class.name, id).last.try :whodunnit
+        @originator ||= self.class.paper_trail_version_class.with_item_keys(self.class.base_class.name, id).last.try :whodunnit
       end
 
       # Returns the object (not a Version) as it was at the given timestamp.
@@ -188,10 +204,6 @@ module PaperTrail
 
       private
 
-      def version_class
-        version_class_name.constantize
-      end
-
       def source_version
         send self.class.version_association_name
       end
@@ -203,8 +215,8 @@ module PaperTrail
             :whodunnit => PaperTrail.whodunnit
           }
 
-          if changed_notably? and version_class.column_names.include?('object_changes')
-            data[:object_changes] = version_class.object_changes_col_is_json? ? changes_for_paper_trail :
+          if changed_notably? and self.class.paper_trail_version_class.column_names.include?('object_changes')
+            data[:object_changes] = self.class.paper_trail_version_class.object_changes_col_is_json? ? changes_for_paper_trail :
               PaperTrail.serializer.dump(changes_for_paper_trail)
           end
           send(self.class.versions_association_name).create! merge_metadata(data)
@@ -216,11 +228,11 @@ module PaperTrail
           object_attrs = object_attrs_for_paper_trail(item_before_change)
           data = {
             :event     => paper_trail_event || 'update',
-            :object    => version_class.object_col_is_json? ? object_attrs : PaperTrail.serializer.dump(object_attrs),
+            :object    => self.class.paper_trail_version_class.object_col_is_json? ? object_attrs : PaperTrail.serializer.dump(object_attrs),
             :whodunnit => PaperTrail.whodunnit
           }
-          if version_class.column_names.include?('object_changes')
-            data[:object_changes] = version_class.object_changes_col_is_json? ? changes_for_paper_trail :
+          if self.class.paper_trail_version_class.column_names.include?('object_changes')
+            data[:object_changes] = self.class.paper_trail_version_class.object_changes_col_is_json? ? changes_for_paper_trail :
               PaperTrail.serializer.dump(changes_for_paper_trail)
           end
           send(self.class.versions_association_name).build merge_metadata(data)
@@ -230,10 +242,7 @@ module PaperTrail
       def changes_for_paper_trail
         self.changes.delete_if do |key, value|
           !notably_changed.include?(key)
-        end.tap do |changes|
-          # don't serialize before values before inserting into columns of type `JSON` on `PostgreSQL` databases
-          self.class.serialize_attribute_changes(changes) unless version_class.object_changes_col_is_json?
-        end
+        end.tap { |changes| self.class.serialize_attribute_changes(changes) }
       end
 
       def record_destroy
@@ -243,10 +252,10 @@ module PaperTrail
             :item_id   => self.id,
             :item_type => self.class.base_class.name,
             :event     => paper_trail_event || 'destroy',
-            :object    => version_class.object_col_is_json? ? object_attrs : PaperTrail.serializer.dump(object_attrs),
+            :object    => self.class.paper_trail_version_class.object_col_is_json? ? object_attrs : PaperTrail.serializer.dump(object_attrs),
             :whodunnit => PaperTrail.whodunnit
           }
-          version_class.create merge_metadata(data)
+          self.class.paper_trail_version_class.create merge_metadata(data)
           send(self.class.versions_association_name).send :load_target
         end
       end
@@ -287,8 +296,7 @@ module PaperTrail
       # returns hash of object attributes (with appropriate attributes serialized), ommitting attributes to be skipped
       def object_attrs_for_paper_trail(object)
         _attrs = object.attributes.except(*self.paper_trail_options[:skip]).tap do |attributes|
-          # don't serialize before values before inserting into columns of type `JSON` on `PostgreSQL` databases
-          self.class.serialize_attributes_for_paper_trail attributes unless version_class.object_col_is_json?
+          self.class.serialize_attributes_for_paper_trail(attributes)
         end
       end
 
