@@ -21,6 +21,8 @@
   - [#199](https://github.com/airblade/paper_trail/pull/199) - Rails 4 compatibility.
   - [#165](https://github.com/airblade/paper_trail/pull/165) - Namespaced the `Version` class under the `PaperTrail` module.
   - [#119](https://github.com/airblade/paper_trail/issues/119) - Support for [Sinatra](http://www.sinatrarb.com/); decoupled gem from `Rails`.
+  - Renamed the default serializers from `PaperTrail::Serializers::Yaml` and `PaperTrail::Serializers::Json` to the capitalized forms,
+    `PaperTrail::Serializers::YAML` and `PaperTrail::Serializers::JSON`.
 
 ## 2.7.2
 

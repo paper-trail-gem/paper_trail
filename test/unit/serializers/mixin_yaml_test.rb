@@ -1,7 +1,7 @@
 require 'test_helper'
 
 module CustomYamlSerializer
-  extend PaperTrail::Serializers::Yaml
+  extend PaperTrail::Serializers::YAML
 
   def self.load(string)
     parsed_value = super(string)

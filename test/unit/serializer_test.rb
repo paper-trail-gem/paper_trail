@@ -14,16 +14,16 @@ class SerializerTest < ActiveSupport::TestCase
       @fluxor.update_attributes :name => 'Some more text.'
     end
 
-    should 'work with the default yaml serializer' do
+    should 'work with the default `YAML` serializer' do
       # Normal behaviour
       assert_equal 2, @fluxor.versions.length
       assert_nil @fluxor.versions[0].reify
       assert_equal 'Some text.', @fluxor.versions[1].reify.name
 
-      # Check values are stored as YAML.
+      # Check values are stored as `YAML`.
       assert_equal @original_fluxor_attributes, YAML.load(@fluxor.versions[1].object)
       # This test can't consistently pass in Ruby1.8 because hashes do no preserve order, which means the order of the
-      # attributes in the YAML can't be ensured.
+      # attributes in the `YAML` can't be ensured.
       if RUBY_VERSION.to_f >= 1.9
         assert_equal YAML.dump(@original_fluxor_attributes), @fluxor.versions[1].object
       end
@@ -33,7 +33,7 @@ class SerializerTest < ActiveSupport::TestCase
   context 'JSON Serializer' do
     setup do
       PaperTrail.configure do |config|
-        config.serializer = PaperTrail::Serializers::Json
+        config.serializer = PaperTrail::Serializers::JSON
       end
 
       Fluxor.instance_eval <<-END
@@ -46,7 +46,7 @@ class SerializerTest < ActiveSupport::TestCase
     end
 
     teardown do
-      PaperTrail.config.serializer = PaperTrail::Serializers::Yaml
+      PaperTrail.config.serializer = PaperTrail::Serializers::YAML
     end
 
     should 'reify with JSON serializer' do
@@ -88,7 +88,7 @@ class SerializerTest < ActiveSupport::TestCase
     end
 
     teardown do
-      PaperTrail.config.serializer = PaperTrail::Serializers::Yaml
+      PaperTrail.config.serializer = PaperTrail::Serializers::YAML
     end
 
     should 'reify with custom serializer' do

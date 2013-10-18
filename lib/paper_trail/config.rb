@@ -8,7 +8,7 @@ module PaperTrail
     def initialize
       @enabled         = true # Indicates whether PaperTrail is on or off.
       @timestamp_field = :created_at
-      @serializer      = PaperTrail::Serializers::Yaml
+      @serializer      = PaperTrail::Serializers::YAML
     end
   end
 end
