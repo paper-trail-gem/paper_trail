@@ -1,45 +1,50 @@
+require 'active_support/concern'
+
 module PaperTrail
-  class Version < ::ActiveRecord::Base
-    belongs_to :item, :polymorphic => true
-    validates_presence_of :event
-    attr_accessible :item_type, :item_id, :event, :whodunnit, :object, :object_changes if PaperTrail.active_record_protected_attributes?
+  module VersionConcern
+    extend ActiveSupport::Concern
+    included do
+      belongs_to :item, :polymorphic => true
+      validates_presence_of :event
+      attr_accessible :item_type, :item_id, :event, :whodunnit, :object, :object_changes if PaperTrail.active_record_protected_attributes?
 
-    after_create :enforce_version_limit!
+      after_create :enforce_version_limit!
 
-    def self.with_item_keys(item_type, item_id)
-      where :item_type => item_type, :item_id => item_id
-    end
+      def self.with_item_keys(item_type, item_id)
+        where :item_type => item_type, :item_id => item_id
+      end
 
-    def self.creates
-      where :event => 'create'
-    end
+      def self.creates
+        where :event => 'create'
+      end
 
-    def self.updates
-      where :event => 'update'
-    end
+      def self.updates
+        where :event => 'update'
+      end
 
-    def self.destroys
-      where :event => 'destroy'
-    end
+      def self.destroys
+        where :event => 'destroy'
+      end
 
-    def self.not_creates
-      where 'event <> ?', 'create'
-    end
+      def self.not_creates
+        where 'event <> ?', 'create'
+      end
 
-    # These methods accept a timestamp or a version and returns other versions that come before or after
-    def self.subsequent(obj)
-      obj = obj.send(PaperTrail.timestamp_field) if obj.is_a?(self)
-      where("#{PaperTrail.timestamp_field} > ?", obj).order("#{PaperTrail.timestamp_field} ASC")
-    end
+      # These methods accept a timestamp or a version and returns other versions that come before or after
+      def self.subsequent(obj)
+        obj = obj.send(PaperTrail.timestamp_field) if obj.is_a?(self)
+        where("#{PaperTrail.timestamp_field} > ?", obj).order("#{PaperTrail.timestamp_field} ASC")
+      end
 
-    def self.preceding(obj)
-      obj = obj.send(PaperTrail.timestamp_field) if obj.is_a?(self)
-      where("#{PaperTrail.timestamp_field} < ?", obj).order("#{PaperTrail.timestamp_field} DESC")
-    end
+      def self.preceding(obj)
+        obj = obj.send(PaperTrail.timestamp_field) if obj.is_a?(self)
+        where("#{PaperTrail.timestamp_field} < ?", obj).order("#{PaperTrail.timestamp_field} DESC")
+      end
 
-    def self.between(start_time, end_time)
-      where("#{PaperTrail.timestamp_field} > ? AND #{PaperTrail.timestamp_field} < ?", start_time, end_time).
-        order("#{PaperTrail.timestamp_field} ASC")
+      def self.between(start_time, end_time)
+        where("#{PaperTrail.timestamp_field} > ? AND #{PaperTrail.timestamp_field} < ?", start_time, end_time).
+          order("#{PaperTrail.timestamp_field} ASC")
+      end
     end
 
     # Returns whether the `object` column is using the `json` type supported by PostgreSQL
@@ -205,6 +210,9 @@ module PaperTrail
       excess_previous_versions = previous_versions - previous_versions.last(PaperTrail.config.version_limit)
       excess_previous_versions.map(&:destroy)
     end
+  end
 
+  class Version < ::ActiveRecord::Base
+    include VersionConcern
   end
 end
