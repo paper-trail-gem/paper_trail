@@ -6,9 +6,6 @@ rvm:
   - jruby-19mode
   - jruby-18mode
 
-before_install:
-  - gem install bundler --version '~> 1.3'
-
 gemfile:
   - Gemfile
   - gemfiles/3.0.gemfile
