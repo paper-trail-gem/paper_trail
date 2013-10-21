@@ -703,7 +703,7 @@ module PaperTrail
 end
 ```
 
-Why would you do this?  In this example, `author_id` is an attribute of `Article` and PaperTrail will store it anyway in serialized (YAML) form in the `object` column of the `version` record.  But let's say you wanted to pull out all versions for a particular author; without the metadata you would have to deserialize (reify) each `version` object to see if belonged to the author in question.  Clearly this is inefficient.  Using the metadata you can find just those versions you want:
+Why would you do this?  In this example, `author_id` is an attribute of `Article` and PaperTrail will store it anyway in a serialized form in the `object` column of the `version` record.  But let's say you wanted to pull out all versions for a particular author; without the metadata you would have to deserialize (reify) each `version` object to see if belonged to the author in question.  Clearly this is inefficient.  Using the metadata you can find just those versions you want:
 
 ```ruby
 PaperTrail::Version.all(:conditions => ['author_id = ?', author_id])
@@ -849,7 +849,7 @@ end
 
 ## Using a custom serializer
 
-By default, PaperTrail stores your changes as a YAML dump. You can override this with the serializer config option:
+By default, PaperTrail stores your changes as a `YAML` dump. You can override this with the serializer config option:
 
 ```ruby
 >> PaperTrail.serializer = MyCustomSerializer
@@ -857,8 +857,8 @@ By default, PaperTrail stores your changes as a YAML dump. You can override this
 
 A valid serializer is a `module` (or `class`) that defines a `load` and `dump` method.  These serializers are included in the gem for your convenience:
 
-* [Yaml](https://github.com/airblade/paper_trail/blob/master/lib/paper_trail/serializers/yaml.rb) - Default
-* [Json](https://github.com/airblade/paper_trail/blob/master/lib/paper_trail/serializers/json.rb)
+* [YAML](https://github.com/airblade/paper_trail/blob/master/lib/paper_trail/serializers/yaml.rb) - Default
+* [JSON](https://github.com/airblade/paper_trail/blob/master/lib/paper_trail/serializers/json.rb)
 
 ## Limiting the number of versions created per object instance
 

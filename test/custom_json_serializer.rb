@@ -1,6 +1,6 @@
 # This custom serializer excludes nil values
 module CustomJsonSerializer
-  extend PaperTrail::Serializers::Json
+  extend PaperTrail::Serializers::JSON
 
   def self.load(string)
     parsed_value = super(string)

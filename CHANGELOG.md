@@ -2,6 +2,8 @@
 
   - [#288](https://github.com/airblade/paper_trail/issues/288) - Change all scope declarations to class methods on the `PaperTrail::Version`
     class. Fixes usability when `PaperTrail::Version.abstract_class? == true`.
+  - [#287](https://github.com/airblade/paper_trail/issues/287) - Support for
+    [PostgreSQL's JSON Type](http://www.postgresql.org/docs/9.2/static/datatype-json.html) for storing `object` and `object_changes`.
   - [#281](https://github.com/airblade/paper_trail/issues/281) - `Rails::Controller` helper will return `false` for the
     `paper_trail_enabled_for_controller` method if `PaperTrail.enabled? == false`.
   - [#280](https://github.com/airblade/paper_trail/pull/280) - Don't track virtual timestamp attributes.
@@ -21,6 +23,8 @@
   - [#199](https://github.com/airblade/paper_trail/pull/199) - Rails 4 compatibility.
   - [#165](https://github.com/airblade/paper_trail/pull/165) - Namespaced the `Version` class under the `PaperTrail` module.
   - [#119](https://github.com/airblade/paper_trail/issues/119) - Support for [Sinatra](http://www.sinatrarb.com/); decoupled gem from `Rails`.
+  - Renamed the default serializers from `PaperTrail::Serializers::Yaml` and `PaperTrail::Serializers::Json` to the capitalized forms,
+    `PaperTrail::Serializers::YAML` and `PaperTrail::Serializers::JSON`.
 
 ## 2.7.2
 

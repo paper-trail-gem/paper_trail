@@ -17,23 +17,23 @@ class YamlTest < ActiveSupport::TestCase
 
   context '`load` class method' do
     should 'exist' do
-      assert PaperTrail::Serializers::Yaml.respond_to?(:load)
+      assert PaperTrail::Serializers::YAML.respond_to?(:load)
     end
 
-    should '`deserialize` YAML to Ruby' do
-      assert_equal @hash, PaperTrail::Serializers::Yaml.load(@hash_as_yaml)
-      assert_equal @array, PaperTrail::Serializers::Yaml.load(@array_as_yaml)
+    should 'deserialize `YAML` to Ruby' do
+      assert_equal @hash, PaperTrail::Serializers::YAML.load(@hash_as_yaml)
+      assert_equal @array, PaperTrail::Serializers::YAML.load(@array_as_yaml)
     end
   end
 
   context '`dump` class method' do
     should 'exist' do
-      assert PaperTrail::Serializers::Yaml.respond_to?(:dump)
+      assert PaperTrail::Serializers::YAML.respond_to?(:dump)
     end
 
-    should '`serialize` Ruby to YAML' do
-      assert_equal @hash_as_yaml, PaperTrail::Serializers::Yaml.dump(@hash)
-      assert_equal @array_as_yaml, PaperTrail::Serializers::Yaml.dump(@array)
+    should 'serialize Ruby to `YAML`' do
+      assert_equal @hash_as_yaml, PaperTrail::Serializers::YAML.dump(@hash)
+      assert_equal @array_as_yaml, PaperTrail::Serializers::YAML.dump(@array)
     end
   end
 

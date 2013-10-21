@@ -2,7 +2,7 @@ require 'active_support/json'
 
 module PaperTrail
   module Serializers
-    module Json
+    module JSON
       extend self # makes all instance methods become module methods as well
 
       def load(string)

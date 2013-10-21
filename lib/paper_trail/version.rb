@@ -42,6 +42,16 @@ module PaperTrail
         order("#{PaperTrail.timestamp_field} ASC")
     end
 
+    # Returns whether the `object` column is using the `json` type supported by PostgreSQL
+    def self.object_col_is_json?
+      @object_col_is_json ||= columns_hash['object'].type == :json
+    end
+
+    # Returns whether the `object_changes` column is using the `json` type supported by PostgreSQL
+    def self.object_changes_col_is_json?
+      @object_changes_col_is_json ||= columns_hash['object_changes'].type == :json
+    end
+
     # Restore the item from this version.
     #
     # This will automatically restore all :has_one associations as they were "at the time",
@@ -59,7 +69,7 @@ module PaperTrail
         options.reverse_merge! :has_one => false
 
         unless object.nil?
-          attrs = PaperTrail.serializer.load object
+          attrs = self.class.object_col_is_json? ? object : PaperTrail.serializer.load(object)
 
           # Normally a polymorphic belongs_to relationship allows us
           # to get the object we belong to by calling, in this case,
@@ -112,9 +122,12 @@ module PaperTrail
     def changeset
       return nil unless self.class.column_names.include? 'object_changes'
 
-      @changeset ||= HashWithIndifferentAccess.new(PaperTrail.serializer.load(object_changes)).tap do |changes|
+      _changes = self.class.object_changes_col_is_json? ? object_changes : PaperTrail.serializer.load(object_changes)
+      @changeset ||= HashWithIndifferentAccess.new(_changes).tap do |changes|
         item_type.constantize.unserialize_attribute_changes(changes)
-      end rescue {}
+      end
+    rescue
+      {}
     end
 
     # Returns who put the item into the state stored in this version.

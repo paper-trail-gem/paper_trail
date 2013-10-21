@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class JsonTest < ActiveSupport::TestCase
+class JSONTest < ActiveSupport::TestCase
 
   setup do
     # Setup a hash with random values
@@ -17,23 +17,23 @@ class JsonTest < ActiveSupport::TestCase
 
   context '`load` class method' do
     should 'exist' do
-      assert PaperTrail::Serializers::Json.respond_to?(:load)
+      assert PaperTrail::Serializers::JSON.respond_to?(:load)
     end
 
     should '`deserialize` JSON to Ruby' do
-      assert_equal @hash, PaperTrail::Serializers::Json.load(@hash_as_json)
-      assert_equal @array, PaperTrail::Serializers::Json.load(@array_as_json)
+      assert_equal @hash, PaperTrail::Serializers::JSON.load(@hash_as_json)
+      assert_equal @array, PaperTrail::Serializers::JSON.load(@array_as_json)
     end
   end
 
   context '`dump` class method' do
     should 'exist' do
-      assert PaperTrail::Serializers::Json.respond_to?(:dump)
+      assert PaperTrail::Serializers::JSON.respond_to?(:dump)
     end
 
     should '`serialize` Ruby to JSON' do
-      assert_equal @hash_as_json, PaperTrail::Serializers::Json.dump(@hash)
-      assert_equal @array_as_json, PaperTrail::Serializers::Json.dump(@array)
+      assert_equal @hash_as_json, PaperTrail::Serializers::JSON.dump(@hash)
+      assert_equal @array_as_json, PaperTrail::Serializers::JSON.dump(@array)
     end
   end
 
