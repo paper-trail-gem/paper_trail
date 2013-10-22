@@ -9,52 +9,54 @@ module PaperTrail
       attr_accessible :item_type, :item_id, :event, :whodunnit, :object, :object_changes if PaperTrail.active_record_protected_attributes?
 
       after_create :enforce_version_limit!
+    end
 
-      def self.with_item_keys(item_type, item_id)
+    module ClassMethods
+      def with_item_keys(item_type, item_id)
         where :item_type => item_type, :item_id => item_id
       end
 
-      def self.creates
+      def creates
         where :event => 'create'
       end
 
-      def self.updates
+      def updates
         where :event => 'update'
       end
 
-      def self.destroys
+      def destroys
         where :event => 'destroy'
       end
 
-      def self.not_creates
+      def not_creates
         where 'event <> ?', 'create'
       end
 
       # These methods accept a timestamp or a version and returns other versions that come before or after
-      def self.subsequent(obj)
+      def subsequent(obj)
         obj = obj.send(PaperTrail.timestamp_field) if obj.is_a?(self)
         where("#{PaperTrail.timestamp_field} > ?", obj).order("#{PaperTrail.timestamp_field} ASC")
       end
 
-      def self.preceding(obj)
+      def preceding(obj)
         obj = obj.send(PaperTrail.timestamp_field) if obj.is_a?(self)
         where("#{PaperTrail.timestamp_field} < ?", obj).order("#{PaperTrail.timestamp_field} DESC")
       end
 
-      def self.between(start_time, end_time)
+      def between(start_time, end_time)
         where("#{PaperTrail.timestamp_field} > ? AND #{PaperTrail.timestamp_field} < ?", start_time, end_time).
           order("#{PaperTrail.timestamp_field} ASC")
       end
-    end
 
-    # Returns whether the `object` column is using the `json` type supported by PostgreSQL
-    def self.object_col_is_json?
-      @object_col_is_json ||= columns_hash['object'].type == :json
-    end
+      # Returns whether the `object` column is using the `json` type supported by PostgreSQL
+      def object_col_is_json?
+        @object_col_is_json ||= columns_hash['object'].type == :json
+      end
 
-    # Returns whether the `object_changes` column is using the `json` type supported by PostgreSQL
-    def self.object_changes_col_is_json?
-      @object_changes_col_is_json ||= columns_hash['object_changes'].type == :json
+      # Returns whether the `object_changes` column is using the `json` type supported by PostgreSQL
+      def object_changes_col_is_json?
+        @object_changes_col_is_json ||= columns_hash['object_changes'].type == :json
+      end
     end
 
     # Restore the item from this version.
