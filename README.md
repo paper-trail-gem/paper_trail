@@ -391,7 +391,7 @@ Undeleting is just as simple:
 >> widget = Widget.find 42
 >> widget.destroy
 # Time passes....
->> widget = PaperTrail::Version.find(153).reify    # the widget as it was before it was destroyed
+>> widget = PaperTrail::Version.find(153).reify  # the widget as it was before destruction
 >> widget.save                         # the widget lives!
 ```
 
@@ -404,11 +404,11 @@ You can call `previous_version` and `next_version` on an item to get it as it wa
 
 ```ruby
 >> live_widget = Widget.find 42
->> live_widget.versions.length            # 4 for example
->> widget = live_widget.previous_version  # => widget == live_widget.versions.last.reify
->> widget = widget.previous_version       # => widget == live_widget.versions[-2].reify
->> widget = widget.next_version           # => widget == live_widget.versions.last.reify
->> widget.next_version                    # nil
+>> live_widget.versions.length           # 4 for example
+>> widget = live_widget.previous_version # => widget == live_widget.versions.last.reify
+>> widget = widget.previous_version      # => widget == live_widget.versions[-2].reify
+>> widget = widget.next_version          # => widget == live_widget.versions.last.reify
+>> widget.next_version                   # nil
 ```
 
 As an aside, I'm undecided about whether `widget.previous_version.next_version` should return `nil` or `self` (i.e. `widget`).  Let me know if you have a view.
@@ -595,7 +595,7 @@ The implementation is complicated by the edge case where the parent and child ar
 The correct solution is to make PaperTrail aware of requests or transactions (c.f. [Efficiency's transaction ID middleware](http://github.com/efficiency20/ops_middleware/blob/master/lib/e20/ops/middleware/transaction_id_middleware.rb)).  In the meantime we work around the problem by finding the child as it was a few seconds before the parent was updated.  By default we go 3 seconds before but you can change this by passing the desired number of seconds to the `:has_one` option:
 
 ```ruby
->> t = treasure.versions.last.reify(:has_one => 1)       # look back 1 second instead of 3
+>> t = treasure.versions.last.reify(:has_one => 1)  # look back 1 second instead of 3
 ```
 
 If you are shuddering, take solace from knowing PaperTrail opts out of these shenanigans by default. This means your `:has_one` associated objects will be the live ones, not the ones the user saw at the time.  Since PaperTrail doesn't auto-restore `:has_many` associations (I can't get it to work) or `:belongs_to` (I ran out of time looking at `:has_many`), this at least makes your associations wrong consistently ;)
@@ -867,7 +867,8 @@ there is a configuration option that can be set to cap the number of versions sa
 versions other than `create` events (which will always be preserved if they are stored).
 
 ```ruby
-# will make it so that a maximum of 4 versions will be stored for each object (the 3 most recent ones plus a `create` event)
+# will make it so that a maximum of 4 versions will be stored for each object
+# (the 3 most recent ones plus a `create` event)
 >> PaperTrail.config.version_limit = 3
 # disables/removes the version limit
 >> PaperTrail.config.version_limit = nil
@@ -887,7 +888,7 @@ sql> delete from versions where created_at < 2010-06-01;
 
 ## Testing
 
-You may want to turn PaperTrail off to speed up your tests.  See the [Turning PaperTrail Off/On](#turning-papertrail-offon) section above.
+You may want to turn PaperTrail off to speed up your tests.  See the [Turning PaperTrail Off/On](#turning-papertrail-offon) section above for tips on usage with `Test::Unit`.
 
 ### RSpec
 
