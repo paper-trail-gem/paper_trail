@@ -43,7 +43,7 @@ The Rails 2.3 code is on the [`rails2`](https://github.com/airblade/paper_trail/
 
 1. Add `PaperTrail` to your `Gemfile`.
 
-    `gem 'paper_trail', '>= 3.0.0.beta1'`
+    `gem 'paper_trail', '>= 3.0.0.rc1'`
 
 2. Generate a migration which will add a `versions` table to your database.
 
@@ -1053,6 +1053,7 @@ Many thanks to:
 * [Paul Belt](https://github.com/belt)
 * [Vlad Bokov](https://github.com/razum2um)
 * [Sean Marcia](https://github.com/SeanMarcia)
+* [Chulki Lee](https://github.com/chulkilee)
 
 
 ## Inspirations
