@@ -1,52 +1,10 @@
 require 'spec_helper'
 
-module Foo
-  class Base < ActiveRecord::Base
-    self.abstract_class = true
-  end
-
-  class Document < Base
-    has_paper_trail :class_name => 'Foo::Version'
-  end
-
-  class Version < Base
-    include PaperTrail::VersionConcern
-  end
-end
-Foo::Base.establish_connection(:adapter => 'sqlite3', :database => File.expand_path('../../../test/dummy/db/test-foo.sqlite3', __FILE__))
-
-module Bar
-  class Base < ActiveRecord::Base
-    self.abstract_class = true
-  end
-
-  class Document < Base
-    has_paper_trail :class_name => 'Bar::Version'
-  end
-
-  class Version < Base
-    include PaperTrail::VersionConcern
-  end
-end
-Bar::Base.establish_connection(:adapter => 'sqlite3', :database => File.expand_path('../../../test/dummy/db/test-bar.sqlite3', __FILE__))
-
-describe PaperTrail::VersionConcern do
-  it 'allows included class to have different connections' do
-    Foo::Version.connection.should_not eq Bar::Version.connection
-  end
-
-  it 'allows custom version class to share connection with superclass' do
-    Foo::Version.connection.should eq Foo::Document.connection
-    Bar::Version.connection.should eq Bar::Document.connection
-  end
-
-  it 'can be used with class_name option' do
-    Foo::Document.version_class_name.should eq 'Foo::Version'
-    Bar::Document.version_class_name.should eq 'Bar::Version'
-  end
-end
-
 describe PaperTrail::Version do
+  it "should include the `VersionConcern` module to get base functionality" do
+    PaperTrail::Version.should include(PaperTrail::VersionConcern)
+  end
+
   describe "Attributes" do
     it { should have_db_column(:item_type).of_type(:string) }
     it { should have_db_column(:item_id).of_type(:integer) }
