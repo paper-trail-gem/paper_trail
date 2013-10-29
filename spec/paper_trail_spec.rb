@@ -1,31 +1,29 @@
 require 'spec_helper'
 
 describe "PaperTrail RSpec Helper" do
-  describe :enabled do
-    context 'default' do
-      it 'should have versioning off by default' do
-        ::PaperTrail.should_not be_enabled
-      end
-      it 'should turn versioning on in a with_versioning block' do
-        ::PaperTrail.should_not be_enabled
-        with_versioning do
-          ::PaperTrail.should be_enabled
-        end
-        ::PaperTrail.should_not be_enabled
-      end
+  context 'default' do
+    it 'should have versioning off by default' do
+      ::PaperTrail.should_not be_enabled
     end
+    it 'should turn versioning on in a with_versioning block' do
+      ::PaperTrail.should_not be_enabled
+      with_versioning do
+        ::PaperTrail.should be_enabled
+      end
+      ::PaperTrail.should_not be_enabled
+    end
+  end
 
-    context 'versioning: true', :versioning => true do
-      it 'should have versioning on by default' do
+  context '`versioning: true`', :versioning => true do
+    it 'should have versioning on by default' do
+      ::PaperTrail.should be_enabled
+    end
+    it 'should keep versioning on after a with_versioning block' do
+      ::PaperTrail.should be_enabled
+      with_versioning do
         ::PaperTrail.should be_enabled
       end
-      it 'should keep versioning on after a with_versioning block' do
-        ::PaperTrail.should be_enabled
-        with_versioning do
-          ::PaperTrail.should be_enabled
-        end
-        ::PaperTrail.should be_enabled
-      end
+      ::PaperTrail.should be_enabled
     end
   end
 
