@@ -33,7 +33,7 @@ describe PaperTrail::Version do
       end
 
       describe :version_author do
-        it { should respond_to(:terminator) }
+        it { should respond_to(:version_author) }
 
         it "should be an alias for the `terminator` method" do
           subject.method(:version_author).should == subject.method(:terminator)
