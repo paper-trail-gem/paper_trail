@@ -35,17 +35,19 @@ module PaperTrail
       # These methods accept a timestamp or a version and returns other versions that come before or after
       def subsequent(obj)
         obj = obj.send(PaperTrail.timestamp_field) if obj.is_a?(self)
-        where("#{PaperTrail.timestamp_field} > ?", obj).order("#{PaperTrail.timestamp_field} ASC")
+        where("#{table_name}.#{PaperTrail.timestamp_field} > ?", obj).
+          order("#{table_name}.#{PaperTrail.timestamp_field} ASC")
       end
 
       def preceding(obj)
         obj = obj.send(PaperTrail.timestamp_field) if obj.is_a?(self)
-        where("#{PaperTrail.timestamp_field} < ?", obj).order("#{PaperTrail.timestamp_field} DESC")
+        where("#{table_name}.#{PaperTrail.timestamp_field} < ?", obj).
+          order("#{table_name}.#{PaperTrail.timestamp_field} DESC")
       end
 
       def between(start_time, end_time)
-        where("#{PaperTrail.timestamp_field} > ? AND #{PaperTrail.timestamp_field} < ?", start_time, end_time).
-          order("#{PaperTrail.timestamp_field} ASC")
+        where("#{table_name}.#{PaperTrail.timestamp_field} > ? AND #{table_name}.#{PaperTrail.timestamp_field} < ?",
+          start_time, end_time).order("#{table_name}.#{PaperTrail.timestamp_field} ASC")
       end
 
       # Returns whether the `object` column is using the `json` type supported by PostgreSQL
@@ -163,8 +165,10 @@ module PaperTrail
     end
 
     def index
-      @index ||= sibling_versions.select([PaperTrail.timestamp_field, self.class.primary_key.to_sym]).
-        order("#{PaperTrail.timestamp_field} ASC").index(self)
+      table_name = self.class.table_name
+      @index ||= sibling_versions.
+        select(["#{table_name}.#{PaperTrail.timestamp_field}", "#{table_name}.#{self.class.primary_key}"]).
+        order("#{table_name}.#{PaperTrail.timestamp_field} ASC").index(self)
     end
 
     private

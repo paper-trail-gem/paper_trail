@@ -1,5 +1,7 @@
 ## 3.0.0 (Unreleased)
 
+  - [#295](https://github.com/airblade/paper_trail/issues/295) - Explicitly specify table name for version class when
+    querying attributes. Prevents `AmbiguousColumn` errors on certain `JOIN` statements.
   - [#289](https://github.com/airblade/paper_trail/pull/289) - Use `ActiveSupport::Concern` for implementation of base functionality on
     `PaperTrail::Version` class. Increases flexibility and makes it easier to use custom version classes with multiple `ActiveRecord` connections.
   - [#288](https://github.com/airblade/paper_trail/issues/288) - Change all scope declarations to class methods on the `PaperTrail::Version`
