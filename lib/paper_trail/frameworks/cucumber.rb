@@ -1,6 +1,7 @@
 # before hook for Cucumber
 before do
   ::PaperTrail.enabled = false
+  ::PaperTrail.enabled_for_controller = true
   ::PaperTrail.whodunnit = nil
   ::PaperTrail.controller_info = {} if defined? ::Rails
 end

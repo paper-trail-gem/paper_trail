@@ -5,7 +5,6 @@ module PaperTrail
       base.send :extend, ClassMethods
     end
 
-
     module ClassMethods
       # Declare this in your model to track every create, update, and destroy.  Each version of
       # the model is available in the `versions` association.
