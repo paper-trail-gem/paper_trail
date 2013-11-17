@@ -5,11 +5,11 @@ Gem::Specification.new do |s|
   s.name          = 'paper_trail'
   s.version       = PaperTrail::VERSION
   s.platform      = Gem::Platform::RUBY
-  s.summary       = "Track changes to your models' data.  Good for auditing or versioning."
+  s.summary       = "Track changes to your models' data. Good for auditing or versioning."
   s.description   = s.summary
   s.homepage      = 'http://github.com/airblade/paper_trail'
   s.authors       = ['Andy Stewart', 'Ben Atkins']
-  s.email         = 'boss@airbladesoftware.com'
+  s.email         = 'batkinz@gmail.com'
   s.license       = 'MIT'
 
   s.files         = `git ls-files`.split("\n")
@@ -22,6 +22,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'rake'
   s.add_development_dependency 'shoulda', '~> 3.5'
+  # s.add_development_dependency 'shoulda-matchers', '~> 1.5' # needed for ActiveRecord < 4
   s.add_development_dependency 'ffaker',  '>= 1.15'
   s.add_development_dependency 'railties', ['>= 3.0', '< 5.0']
   s.add_development_dependency 'sinatra', '~> 1.0'
