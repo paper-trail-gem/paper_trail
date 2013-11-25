@@ -706,7 +706,7 @@ end
 Why would you do this?  In this example, `author_id` is an attribute of `Article` and PaperTrail will store it anyway in a serialized form in the `object` column of the `version` record.  But let's say you wanted to pull out all versions for a particular author; without the metadata you would have to deserialize (reify) each `version` object to see if belonged to the author in question.  Clearly this is inefficient.  Using the metadata you can find just those versions you want:
 
 ```ruby
-PaperTrail::Version.all(:conditions => ['author_id = ?', author_id])
+PaperTrail::Version.where(:author_id => author_id)
 ```
 
 Note you can pass a symbol as a value in the `meta` hash to signal a method to call.
