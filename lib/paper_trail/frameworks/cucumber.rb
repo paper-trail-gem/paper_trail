@@ -1,5 +1,5 @@
 # before hook for Cucumber
-before do
+Before do
   ::PaperTrail.enabled = false
   ::PaperTrail.enabled_for_controller = true
   ::PaperTrail.whodunnit = nil
