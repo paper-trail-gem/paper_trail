@@ -5,6 +5,10 @@ class PaperTrailTest < ActiveSupport::TestCase
     assert_kind_of Module, PaperTrail::Version
   end
 
+  test 'Version Number' do
+    assert PaperTrail.const_defined?(:VERSION)
+  end
+
   test 'create with plain model class' do
     widget = Widget.create
     assert_equal 1, widget.versions.length

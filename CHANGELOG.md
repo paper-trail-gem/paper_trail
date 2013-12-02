@@ -1,5 +1,6 @@
 ## 3.0.0 (Unreleased)
 
+  - [#305](https://github.com/airblade/paper_trail/pull/305) - `PaperTrail::VERSION` should be loaded at runtime.
   - [#295](https://github.com/airblade/paper_trail/issues/295) - Explicitly specify table name for version class when
     querying attributes. Prevents `AmbiguousColumn` errors on certain `JOIN` statements.
   - [#289](https://github.com/airblade/paper_trail/pull/289) - Use `ActiveSupport::Concern` for implementation of base functionality on
