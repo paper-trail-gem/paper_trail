@@ -1,6 +1,7 @@
 require 'paper_trail/config'
 require 'paper_trail/has_paper_trail'
 require 'paper_trail/cleaner'
+require 'paper_trail/version_number'
 
 # Require serializers
 Dir[File.join(File.dirname(__FILE__), 'paper_trail', 'serializers', '*.rb')].each { |file| require file }
