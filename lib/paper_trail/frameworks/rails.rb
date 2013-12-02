@@ -59,19 +59,13 @@ module PaperTrail
 
       # Tells PaperTrail who is responsible for any changes that occur.
       def set_paper_trail_whodunnit
-        ::PaperTrail.whodunnit = user_for_paper_trail if paper_trail_enabled_for_controller
-      end
-
-      # DEPRECATED: please use `set_paper_trail_whodunnit` instead.
-      def set_whodunnit
-        logger.warn '[PaperTrail]: the `set_whodunnit` controller method has been deprecated.  Please rename to `set_paper_trail_whodunnit`.'
-        set_paper_trail_whodunnit
+        ::PaperTrail.whodunnit = user_for_paper_trail if ::PaperTrail.enabled_for_controller?
       end
 
       # Tells PaperTrail any information from the controller you want
       # to store alongside any changes that occur.
       def set_paper_trail_controller_info
-        ::PaperTrail.controller_info = info_for_paper_trail if paper_trail_enabled_for_controller
+        ::PaperTrail.controller_info = info_for_paper_trail if ::PaperTrail.enabled_for_controller?
       end
 
     end

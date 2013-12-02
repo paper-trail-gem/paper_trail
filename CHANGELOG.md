@@ -30,6 +30,7 @@
   - [#119](https://github.com/airblade/paper_trail/issues/119) - Support for [Sinatra](http://www.sinatrarb.com/); decoupled gem from `Rails`.
   - Renamed the default serializers from `PaperTrail::Serializers::Yaml` and `PaperTrail::Serializers::Json` to the capitalized forms,
     `PaperTrail::Serializers::YAML` and `PaperTrail::Serializers::JSON`.
+  - Removed deprecated `set_whodunnit` method from Rails Controller scope.
 
 ## 2.7.2
 
