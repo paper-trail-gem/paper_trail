@@ -8,6 +8,7 @@ if RUBY_VERSION.to_f >= 1.9
   FileUtils.cp "#{db_directory}/test.sqlite3", "#{db_directory}/test-foo.sqlite3"
   FileUtils.cp "#{db_directory}/test.sqlite3", "#{db_directory}/test-bar.sqlite3"
 else
+  require 'ftools'
   File.cp "#{db_directory}/test.sqlite3", "#{db_directory}/test-foo.sqlite3"
   File.cp "#{db_directory}/test.sqlite3", "#{db_directory}/test-bar.sqlite3"
 end
