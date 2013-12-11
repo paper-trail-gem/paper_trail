@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.platform      = Gem::Platform::RUBY
   s.summary       = "Track changes to your models' data. Good for auditing or versioning."
   s.description   = s.summary
-  s.homepage      = 'http://github.com/airblade/paper_trail'
+  s.homepage      = 'https://github.com/airblade/paper_trail'
   s.authors       = ['Andy Stewart', 'Ben Atkins']
   s.email         = 'batkinz@gmail.com'
   s.license       = 'MIT'
@@ -16,6 +16,8 @@ Gem::Specification.new do |s|
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ['lib']
+
+  s.required_rubygems_version = '>= 1.3.6'
 
   s.add_dependency 'activerecord', ['>= 3.0', '< 5.0']
   s.add_dependency 'activesupport', ['>= 3.0', '< 5.0']

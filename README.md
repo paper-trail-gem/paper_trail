@@ -32,9 +32,8 @@ There's an excellent [RailsCast on implementing Undo with Paper Trail](http://ra
 
 Works with ActiveRecord 4 and ActiveRecord 3. Note: this code is on the `master` branch and tagged `v3.x`.
 
-**You are reading the docs for the `master` branch. The latest release of PaperTrail is 2.7.2, the docs for which can be viewed on the [`2.7-stable`](https://github.com/airblade/paper_trail/tree/2.7-stable) branch.**
-
 Version 2 is on the branch named [`2.7-stable`](https://github.com/airblade/paper_trail/tree/2.7-stable) and is tagged `v2.x`, and works with Rails 3.
+
 The Rails 2.3 code is on the [`rails2`](https://github.com/airblade/paper_trail/tree/rails2) branch and tagged `v1.x`. These branches are both stable with their respective versions of Rails but will not have new features added/backported to them.
 
 ## Installation
@@ -43,7 +42,7 @@ The Rails 2.3 code is on the [`rails2`](https://github.com/airblade/paper_trail/
 
 1. Add `PaperTrail` to your `Gemfile`.
 
-    `gem 'paper_trail', '>= 3.0.0.rc2'`
+    `gem 'paper_trail', '~> 3.0.0'`
 
 2. Generate a migration which will add a `versions` table to your database.
 
@@ -57,14 +56,15 @@ The Rails 2.3 code is on the [`rails2`](https://github.com/airblade/paper_trail/
 
 ### Sinatra
 
-In order to configure `PaperTrail` for usage with [`Sinatra`](http://www.sinatrarb.com), your Sinatra app must be using `ActiveRecord` 3 or greater.
-It is also recommended to use the [`Sinatra ActiveRecord Extension`](https://github.com/janko-m/sinatra-activerecord) or something similar for managing
-your applications `ActiveRecord` connection in a manner similar to the way `Rails` does. If using the aforementioned `Sinatra ActiveRecord Extension`,
-steps for setting up your app with `PaperTrail` will look something like this:
+In order to configure `PaperTrail` for usage with [Sinatra](http://www.sinatrarb.com),
+your `Sinatra` app must be using `ActiveRecord` 3 or  `ActiveRecord` 4. It is also recommended to use the 
+[Sinatra ActiveRecord Extension](https://github.com/janko-m/sinatra-activerecord) or something similar for managing
+your applications `ActiveRecord` connection in a manner similar to the way `Rails` does. If using the aforementioned
+`Sinatra ActiveRecord Extension`, steps for setting up your app with `PaperTrail` will look something like this:
 
 1. Add `PaperTrail` to your `Gemfile`.
 
-    `gem 'paper_trail', '>= 3.0.0.rc2'`
+    `gem 'paper_trail', '~> 3.0.0'`
 
 2. Generate a migration to add a `versions` table to your database.
 
@@ -84,7 +84,7 @@ PaperTrail provides a helper extension that acts similar to the controller mixin
 
 It will set `PaperTrail.whodunnit` to whatever is returned by a method named `user_for_paper_trail` which you can define inside your Sinatra Application. (by default it attempts to invoke a method named `current_user`)
 
-If you're using the modular [Sinatra::Base](http://www.sinatrarb.com/intro.html#Modular%20vs.%20Classic%20Style) style of application, you will need to register the extension:
+If you're using the modular [`Sinatra::Base`](http://www.sinatrarb.com/intro.html#Modular%20vs.%20Classic%20Style) style of application, you will need to register the extension:
 
 ```ruby
 # bleh_app.rb
@@ -447,7 +447,7 @@ You can find out whether a model instance is the current, live one -- or whether
 
 ## Finding Out Who Was Responsible For A Change
 
-If your `ApplicationController` has a `current_user` method, PaperTrail will store the value it returns in the `version`'s `whodunnit` column.  Note that this column is a string so you will have to convert it to an integer if it's an id and you want to look up the user later on:
+If your `ApplicationController` has a `current_user` method, PaperTrail will store the value it returns in the version's `whodunnit` column.  Note that this column is of type `String`, so you will have to convert it to an integer if it's an id and you want to look up the user later on:
 
 ```ruby
 >> last_change = widget.versions.last
@@ -464,7 +464,7 @@ class ApplicationController
 end
 ```
 
-In a migration or in `rails console` you can set who is responsible like this:
+In a console session you can manually set who is responsible like this:
 
 ```ruby
 >> PaperTrail.whodunnit = 'Andy Stewart'
@@ -484,9 +484,9 @@ class PaperTrail::Version < ActiveRecord::Base
 end
 ```
 
-N.B. A `version`'s `whodunnit` records who changed the object causing the `version` to be stored.  Because a `version` stores the object as it looked before the change (see the table above), `whodunnit` returns who stopped the object looking like this -- not who made it look like this.  Hence `whodunnit` is aliased as `terminator`.
+A version's `whodunnit` records who changed the object causing the `version` to be stored.  Because a version stores the object as it looked before the change (see the table above), `whodunnit` returns who stopped the object looking like this -- not who made it look like this.  Hence `whodunnit` is aliased as `terminator`.
 
-To find out who made a `version`'s object look that way, use `version.originator`.  And to find out who made a "live" object look like it does, use `originator` on the object.
+To find out who made a version's object look that way, use `version.originator`.  And to find out who made a "live" object look like it does, use `originator` on the object.
 
 ```ruby
 >> widget = Widget.find 153                    # assume widget has 0 versions
@@ -533,7 +533,7 @@ end
 
 Alternatively you could store certain metadata for one type of version, and other metadata for other versions.
 
-If you only use custom version classes and don't use PaperTrail's built-in one, on Rails 3.2 you must:
+If you only use custom version classes and don't use PaperTrail's built-in one, on Rails `>= 3.2` you must:
 
 - either declare PaperTrail's version class abstract like this (in `config/initializers/paper_trail_patch.rb`):
 
@@ -543,7 +543,7 @@ PaperTrail::Version.module_eval do
 end
 ```
 
-- or define a `versions` table in the database so Rails can instantiate the version superclass.
+- or create a `versions` table in the database so Rails can instantiate the `PaperTrail::Version` superclass.
 
 You can also specify custom names for the versions and version associations.  This is useful if you already have `versions` or/and `version` methods on your model.  For example:
 
@@ -668,6 +668,7 @@ See [issue 113](https://github.com/airblade/paper_trail/issues/113) for a discus
 
 There may be a way to store authorship versions, probably using association callbacks, no matter how the collection is manipulated but I haven't found it yet.  Let me know if you do.
 
+There has been some discussion of how to implement PaperTrail to fully track HABTM associations. See [pull 90](https://github.com/airblade/paper_trail/pull/90) for an implementation that has worked for some.
 
 ## Storing metadata
 
@@ -771,7 +772,7 @@ On a global level you can turn PaperTrail off like this:
 >> PaperTrail.enabled = false
 ```
 
-For example, you might want to disable PaperTrail in your Rails application's test environment to speed up your tests.  This will do it:
+For example, you might want to disable PaperTrail in your Rails application's test environment to speed up your tests.  This will do it (note: this gets done automatically for `RSpec and `Cucumber`, please see the [Testing section](#testing)):
 
 ```ruby
 # in config/environments/test.rb

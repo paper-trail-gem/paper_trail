@@ -1,4 +1,4 @@
-## 3.0.0 (Unreleased)
+## 3.0.0
 
   - [#305](https://github.com/airblade/paper_trail/pull/305) - `PaperTrail::VERSION` should be loaded at runtime.
   - [#295](https://github.com/airblade/paper_trail/issues/295) - Explicitly specify table name for version class when
