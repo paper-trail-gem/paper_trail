@@ -239,7 +239,7 @@ Here's a helpful table showing what PaperTrail stores:
     <td>destroy</td>
     <td>widget</td>
     <td>nil</td>
-  </tr>
+  </tr>a
 </table>
 
 PaperTrail stores the values in the Model Before column.  Most other auditing/versioning plugins store the After column.
@@ -723,6 +723,8 @@ end
 ```
 
 Remember to add those extra columns to your `versions` table and use `attr_accessible` ;)
+
+**NOTE FOR RAILS 4:** If you're using strong parameters in Rails 4 and have *not* included the `protected_attributes` gem, there's no need to declare your metadata columns using `attr_accessible`.
 
 
 ## Diffing Versions
