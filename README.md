@@ -239,7 +239,7 @@ Here's a helpful table showing what PaperTrail stores:
     <td>destroy</td>
     <td>widget</td>
     <td>nil</td>
-  </tr>a
+  </tr>
 </table>
 
 PaperTrail stores the values in the Model Before column.  Most other auditing/versioning plugins store the After column.
@@ -691,7 +691,7 @@ PaperTrail will call your proc with the current article and store the result in 
 N.B.  You must also:
 
 * Add your metadata columns to the `versions` table.
-* Declare your metadata columns using `attr_accessible`.
+* Declare your metadata columns using `attr_accessible`. (If you are using `Rails 3`, or `Rails 4` with the [ProtectedAttributes](https://github.com/rails/protected_attributes) gem)
 
 For example:
 
@@ -724,7 +724,7 @@ end
 
 Remember to add those extra columns to your `versions` table and use `attr_accessible` ;)
 
-**NOTE FOR RAILS 4:** If you're using strong parameters in Rails 4 and have *not* included the `protected_attributes` gem, there's no need to declare your metadata columns using `attr_accessible`.
+**NOTE FOR RAILS 4:** If you're using [Strong Parameters](https://github.com/rails/strong_parameters) in Rails 4 and have *not* included the `protected_attributes` gem, there's no need to declare your metadata columns using `attr_accessible`.
 
 
 ## Diffing Versions
