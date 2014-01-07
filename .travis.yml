@@ -6,6 +6,8 @@ rvm:
   - jruby-19mode
   - jruby-18mode
 
+before_install: gem update --system 2.2.1
+
 gemfile:
   - Gemfile
   - gemfiles/3.0.gemfile
