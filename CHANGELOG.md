@@ -1,3 +1,8 @@
+## 3.0.1 (Unreleased)
+
+  - [#313](https://github.com/airblade/paper_trail/pull/313) - Make the rails controller helper compatible with
+    `ActionController::API` for compatibility with the [`rails-api`](https://github.com/rails-api/rails-api) gem.
+
 ## 3.0.0
 
   - [#305](https://github.com/airblade/paper_trail/pull/305) - `PaperTrail::VERSION` should be loaded at runtime.
