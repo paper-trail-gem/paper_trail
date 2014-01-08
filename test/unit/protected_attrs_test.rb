@@ -3,7 +3,7 @@ require 'test_helper'
 class ProtectedAttrsTest < ActiveSupport::TestCase
   subject { ProtectedWidget.new }
 
-  if ActiveRecord::VERSION::STRING.to_f < 4.0 # these ActiveModel matchers (provided by shoulda-matchers) only work for Rails 3
+  if ActiveRecord::VERSION::MAJOR < 4 # these ActiveModel matchers (provided by shoulda-matchers) only work for Rails 3
     accessible_attrs = ProtectedWidget.accessible_attributes.to_a
     accessible_attrs.each do |attr_name|
       should allow_mass_assignment_of(attr_name.to_sym)
@@ -36,7 +36,7 @@ class ProtectedAttrsTest < ActiveSupport::TestCase
 
       should 'the previous version should contain right attributes' do
         # For some reason this test seems to be broken in JRuby 1.9 mode in the test env even though it works in the console. WTF?
-        unless ActiveRecord::VERSION::STRING.to_f >= 4.0 && defined?(JRUBY_VERSION) && RUBY_VERSION.to_f >= 1.9
+        unless ActiveRecord::VERSION::MAJOR >= 4 && defined?(JRUBY_VERSION) && RUBY_VERSION.to_f >= 1.9
           assert_equal @widget.previous_version.attributes, @initial_attributes
         end
       end

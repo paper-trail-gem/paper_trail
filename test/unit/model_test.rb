@@ -615,7 +615,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
     should 'reify with the correct type' do
       # For some reason this test appears to be broken on AR4 in the test env. Executing it manually in the Rails console seems to work.. not sure what the issues is here.
-      assert_kind_of FooWidget, @foo.versions.last.reify if ActiveRecord::VERSION::STRING.to_f < 4.0
+      assert_kind_of FooWidget, @foo.versions.last.reify if ActiveRecord::VERSION::MAJOR < 4
       assert_equal @foo.versions.first, PaperTrail::Version.last.previous
       assert_nil PaperTrail::Version.last.next
     end
@@ -1060,7 +1060,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         end
         # Need an additional clause to detect what version of ActiveRecord is being used for this test because AR4 injects the `updated_at` column into the changeset for updates to models
         should 'version.object_changes should not have stored the default, ridiculously long (to_yaml) serialization of the TimeZone object' do
-          assert @person.versions.last.object_changes.length < (ActiveRecord::VERSION::STRING.to_f < 4.0 ? 105 : 118), "object_changes length was #{@person.versions.last.object_changes.length}"
+          assert @person.versions.last.object_changes.length < (ActiveRecord::VERSION::MAJOR < 4 ? 105 : 118), "object_changes length was #{@person.versions.last.object_changes.length}"
         end
         # But now it stores the short, serialized value.
         should 'version.object attribute should have stored the value returned by the attribute serializer' do

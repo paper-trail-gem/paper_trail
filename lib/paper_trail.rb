@@ -79,7 +79,7 @@ module PaperTrail
   end
 
   def self.active_record_protected_attributes?
-    @active_record_protected_attributes ||= ::ActiveRecord::VERSION::STRING.to_f < 4.0 || !!defined?(ProtectedAttributes)
+    @active_record_protected_attributes ||= ::ActiveRecord::VERSION::MAJOR < 4 || !!defined?(ProtectedAttributes)
   end
 
   private
