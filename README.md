@@ -408,10 +408,8 @@ You can call `previous_version` and `next_version` on an item to get it as it wa
 >> widget = live_widget.previous_version # => widget == live_widget.versions.last.reify
 >> widget = widget.previous_version      # => widget == live_widget.versions[-2].reify
 >> widget = widget.next_version          # => widget == live_widget.versions.last.reify
->> widget.next_version                   # nil
+>> widget.next_version                   # live_widget
 ```
-
-As an aside, I'm undecided about whether `widget.previous_version.next_version` should return `nil` or `self` (i.e. `widget`).  Let me know if you have a view.
 
 If instead you have a particular `version` of an item you can navigate to the previous and next versions.
 
