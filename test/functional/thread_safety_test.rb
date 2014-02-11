@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class ThreadSafetyTest < ActionController::TestCase
-  test "be thread safe" do
+  test "be thread safe when using #set_paper_trail_whodunnit" do
     blocked = true
 
     slow_thread = Thread.new do
@@ -22,5 +22,29 @@ class ThreadSafetyTest < ActionController::TestCase
     end
 
     assert_not_equal slow_thread.value, fast_thread.value
+  end
+
+  test "be thread safe when using #without_versioning" do
+    enabled = nil
+
+    slow_thread = Thread.new do
+      Widget.new.without_versioning do
+        sleep(0.01)
+        enabled = PaperTrail.enabled_for_model?(Widget)
+        sleep(0.01)
+      end
+
+      enabled
+    end
+
+    fast_thread = Thread.new do
+      sleep(0.005)
+      enabled = PaperTrail.enabled_for_model?(Widget)
+      enabled
+    end
+
+    assert_not_equal slow_thread.value, fast_thread.value
+    assert Widget.paper_trail_enabled_for_model
+    assert PaperTrail.enabled_for_model?(Widget)
   end
 end
