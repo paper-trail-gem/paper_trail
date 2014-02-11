@@ -15,7 +15,7 @@ module PaperTrail
     # Override this method in your controller to call a different
     # method, e.g. `current_person`, or anything you like.
     def user_for_paper_trail
-      current_user if defined?(current_user)
+      current_user.try(:id) if defined?(current_user)
     end
 
     private

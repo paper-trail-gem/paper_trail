@@ -12,7 +12,7 @@ class BaseApp < Sinatra::Base
   end
 
   def current_user
-    'foobar'
+    @current_user ||= OpenStruct.new(:id => 'foobar')
   end
 end
 

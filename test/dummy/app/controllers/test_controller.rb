@@ -1,5 +1,5 @@
 class TestController < ActionController::Base
-  def current_user
+  def user_for_paper_trail
     Thread.current.object_id
   end
 end

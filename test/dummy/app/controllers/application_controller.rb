@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
 
   # Returns id of hypothetical current user
   def current_user
-    153
+    @current_user ||= OpenStruct.new(:id => 153)
   end
 
   def info_for_paper_trail

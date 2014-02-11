@@ -1,6 +1,8 @@
 ## 3.0.1 (Unreleased)
 
-  - [#313](https://github.com/airblade/paper_trail/pull/313) - Make the rails controller helper compatible with
+  - [#316](https://github.com/airblade/paper_trail/issues/316) - `user_for_paper_trail` should default to `current_user.try(:id)`
+    instead of `current_user` (if `current_user` is defined).
+  - [#313](https://github.com/airblade/paper_trail/pull/313) - Make the `Rails::Controller` helper compatible with
     `ActionController::API` for compatibility with the [`rails-api`](https://github.com/rails-api/rails-api) gem.
 
 ## 3.0.0
