@@ -32,6 +32,16 @@ module PaperTrail
     !!paper_trail_store[:request_enabled_for_controller]
   end
 
+  # Sets whether PaperTrail is enabled or disabled for this model in the current request.
+  def self.enabled_for_model(model, value)
+    paper_trail_store[:"request_enabled_for_#{model}"] = value
+  end
+
+  # Returns `true` if PaperTrail is enabled for this model in the current request, `false` otherwise.
+  def self.enabled_for_model?(model)
+    !!paper_trail_store.fetch(:"request_enabled_for_#{model}", true)
+  end
+
   # Set the field which records when a version was created.
   def self.timestamp_field=(field_name)
     PaperTrail.config.timestamp_field = field_name

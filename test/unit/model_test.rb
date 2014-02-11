@@ -495,7 +495,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       context 'when destroyed "without versioning"' do
         should 'leave paper trail off after call' do
           @widget.without_versioning :destroy
-          assert !Widget.paper_trail_enabled_for_model
+          assert !Widget.paper_trail_enabled_for_model?
         end
       end
 
@@ -522,7 +522,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           end
 
           should 'enable paper trail after call' do
-            assert Widget.paper_trail_enabled_for_model
+            assert Widget.paper_trail_enabled_for_model?
           end
         end
       end
