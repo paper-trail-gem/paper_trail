@@ -12,7 +12,10 @@ class BaseApp < Sinatra::Base
   end
 
   def current_user
-    @current_user ||= OpenStruct.new(:id => 'foobar')
+    @current_user ||= OpenStruct.new(:id => 'foobar').tap do |obj|
+      # Invoking `id` returns the `object_id` value in Ruby18 unless specifically overwritten
+      def obj.id; 'foobar'; end if RUBY_VERSION.to_f < 1.9
+    end
   end
 end
 
