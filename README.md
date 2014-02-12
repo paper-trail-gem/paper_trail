@@ -457,7 +457,7 @@ You may want PaperTrail to call a different method to find out who is responsibl
 ```ruby
 class ApplicationController
   def user_for_paper_trail
-    logged_in? ? current_member : 'Public user'  # or whatever
+    logged_in? ? current_member.id : 'Public user'  # or whatever
   end
 end
 ```
