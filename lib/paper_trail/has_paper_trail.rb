@@ -81,12 +81,16 @@ module PaperTrail
 
       # Switches PaperTrail off for this class.
       def paper_trail_off
-        self.paper_trail_enabled_for_model = false
+        PaperTrail.enabled_for_model(self, false)
       end
 
       # Switches PaperTrail on for this class.
       def paper_trail_on
-        self.paper_trail_enabled_for_model = true
+        PaperTrail.enabled_for_model(self, true)
+      end
+
+      def paper_trail_enabled_for_model?
+        PaperTrail.enabled_for_model?(self)
       end
 
       def paper_trail_version_class
@@ -194,11 +198,11 @@ module PaperTrail
 
       # Executes the given method or block without creating a new version.
       def without_versioning(method = nil)
-        paper_trail_was_enabled = self.paper_trail_enabled_for_model
-        self.class.paper_trail_off
+        paper_trail_was_enabled = PaperTrail.enabled_for_model?(self.class)
+        PaperTrail.enabled_for_model(self.class, false)
         method ? method.to_proc.call(self) : yield
       ensure
-        self.class.paper_trail_on if paper_trail_was_enabled
+        PaperTrail.enabled_for_model(self.class, paper_trail_was_enabled)
       end
 
       private
@@ -323,7 +327,7 @@ module PaperTrail
       end
 
       def paper_trail_switched_on?
-        PaperTrail.enabled? && PaperTrail.enabled_for_controller? && self.paper_trail_enabled_for_model
+        PaperTrail.enabled? && PaperTrail.enabled_for_controller? && PaperTrail.enabled_for_model?(self.class)
       end
 
       def save_version?
