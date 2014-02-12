@@ -478,11 +478,11 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
     context 'with its paper trail turned off' do
       setup do
-        Widget.paper_trail_off
+        Widget.paper_trail_off!
         @count = @widget.versions.length
       end
 
-      teardown { Widget.paper_trail_on }
+      teardown { Widget.paper_trail_on! }
 
       context 'when updated' do
         setup { @widget.update_attributes :name => 'Beeblebrox' }
@@ -500,7 +500,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       end
 
       context 'and then its paper trail turned on' do
-        setup { Widget.paper_trail_on }
+        setup { Widget.paper_trail_on! }
 
         context 'when updated' do
           setup { @widget.update_attributes :name => 'Ford' }

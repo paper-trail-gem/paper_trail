@@ -80,13 +80,23 @@ module PaperTrail
       end
 
       # Switches PaperTrail off for this class.
-      def paper_trail_off
+      def paper_trail_off!
         self.paper_trail_enabled_for_model = false
       end
 
+      def paper_trail_off
+        warn "DEPRECATED: use `paper_trail_off!` instead of `paper_trail_off`. Support for `paper_trail_off` will be removed in PaperTrail 3.1"
+        self.paper_trail_off!
+      end
+
       # Switches PaperTrail on for this class.
-      def paper_trail_on
+      def paper_trail_on!
         self.paper_trail_enabled_for_model = true
+      end
+
+      def paper_trail_on
+        warn "DEPRECATED: use `paper_trail_on!` instead of `paper_trail_on`. Support for `paper_trail_on` will be removed in PaperTrail 3.1"
+        self.paper_trail_on!
       end
 
       def paper_trail_version_class
@@ -195,10 +205,10 @@ module PaperTrail
       # Executes the given method or block without creating a new version.
       def without_versioning(method = nil)
         paper_trail_was_enabled = self.paper_trail_enabled_for_model
-        self.class.paper_trail_off
+        self.class.paper_trail_off!
         method ? method.to_proc.call(self) : yield
       ensure
-        self.class.paper_trail_on if paper_trail_was_enabled
+        self.class.paper_trail_on! if paper_trail_was_enabled
       end
 
       private

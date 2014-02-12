@@ -127,10 +127,10 @@ widget.previous_version
 widget.next_version
 
 # Turn PaperTrail off for all widgets.
-Widget.paper_trail_off
+Widget.paper_trail_off!
 
 # Turn PaperTrail on for all widgets.
-Widget.paper_trail_on
+Widget.paper_trail_on!
 ```
 
 And a `PaperTrail::Version` instance has these methods:
@@ -823,13 +823,13 @@ end
 If you are about change some widgets and you don't want a paper trail of your changes, you can turn PaperTrail off like this:
 
 ```ruby
->> Widget.paper_trail_off
+>> Widget.paper_trail_off!
 ```
 
 And on again like this:
 
 ```ruby
->> Widget.paper_trail_on
+>> Widget.paper_trail_on!
 ```
 
 ### Per method call
