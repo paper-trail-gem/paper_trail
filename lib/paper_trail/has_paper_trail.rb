@@ -203,9 +203,13 @@ module PaperTrail
         nil
       end
 
+      def paper_trail_enabled_for_model?
+        self.class.paper_trail_enabled_for_model?
+      end
+
       # Executes the given method or block without creating a new version.
       def without_versioning(method = nil)
-        paper_trail_was_enabled = self.class.paper_trail_enabled_for_model?
+        paper_trail_was_enabled = self.paper_trail_enabled_for_model?
         self.class.paper_trail_off!
         method ? method.to_proc.call(self) : yield
       ensure
@@ -334,7 +338,7 @@ module PaperTrail
       end
 
       def paper_trail_switched_on?
-        PaperTrail.enabled? && PaperTrail.enabled_for_controller? && self.class.paper_trail_enabled_for_model?
+        PaperTrail.enabled? && PaperTrail.enabled_for_controller? && self.paper_trail_enabled_for_model?
       end
 
       def save_version?

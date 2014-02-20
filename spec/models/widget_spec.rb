@@ -27,10 +27,10 @@ describe Widget do
     describe :paper_trail_off! do
       it { should respond_to(:paper_trail_off!) }
 
-      it 'should set the `paper_trail_enabled_for_model` to `false`' do
-        subject.paper_trail_enabled_for_model.should be_true
+      it 'should set the `paper_trail_enabled_for_model?` to `false`' do
+        subject.paper_trail_enabled_for_model?.should be_true
         subject.paper_trail_off!
-        subject.paper_trail_enabled_for_model.should be_false
+        subject.paper_trail_enabled_for_model?.should be_false
       end
     end
 
@@ -54,10 +54,10 @@ describe Widget do
 
       it { should respond_to(:paper_trail_on!) }
 
-      it 'should set the `paper_trail_enabled_for_model` to `true`' do
-        subject.paper_trail_enabled_for_model.should be_false
+      it 'should set the `paper_trail_enabled_for_model?` to `true`' do
+        subject.paper_trail_enabled_for_model?.should be_false
         subject.paper_trail_on!
-        subject.paper_trail_enabled_for_model.should be_true
+        subject.paper_trail_enabled_for_model?.should be_true
       end
     end
 
