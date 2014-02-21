@@ -126,11 +126,18 @@ widget.previous_version
 # Returns the widget (not a version) as it became next.
 widget.next_version
 
+# Generates a version for a `touch` event (`widget.touch` does NOT generate a version)
+widget.touch_with_version
+
 # Turn PaperTrail off for all widgets.
 Widget.paper_trail_off!
 
 # Turn PaperTrail on for all widgets.
 Widget.paper_trail_on!
+
+# Check wheter PaperTrail is enabled for all widgets
+Widget.paper_trail_enabled_for_model?
+widget.paper_trail_enabled_for_model?
 ```
 
 And a `PaperTrail::Version` instance has these methods:

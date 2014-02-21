@@ -10,9 +10,9 @@ class SetUpTestTables < ActiveRecord::Migration
       t.time      :a_time
       t.date      :a_date
       t.boolean   :a_boolean
-      t.datetime  :created_at, :updated_at
       t.string    :sacrificial_column
       t.string    :type
+      t.timestamps
     end
 
     create_table :versions, :force => true do |t|
@@ -54,7 +54,7 @@ class SetUpTestTables < ActiveRecord::Migration
     create_table :wotsits, :force => true do |t|
       t.integer :widget_id
       t.string  :name
-      t.datetime :created_at, :updated_at
+      t.timestamps
     end
 
     create_table :fluxors, :force => true do |t|

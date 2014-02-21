@@ -5,9 +5,9 @@ describe Widget do
     it { should be_versioned }
   end
 
-  describe "`versioning` option" do
-    let(:widget) { Widget.create :name => 'Bob', :an_integer => 1 }
+  let(:widget) { Widget.create :name => 'Bob', :an_integer => 1 }
 
+  describe "`versioning` option" do
     context :enabled, :versioning => true do
       it 'should enable versioning for models wrapped within a block' do
         widget.versions.size.should == 1
@@ -21,60 +21,80 @@ describe Widget do
     end
   end
 
-  describe "class methods" do
-    subject { Widget }
+  describe "Methods" do
+    describe "Instance", :versioning => true do
+      describe :touch_with_version do
+        it { should respond_to(:touch_with_version) }
 
-    describe :paper_trail_off! do
-      it { should respond_to(:paper_trail_off!) }
+        it "should generate a version" do
+          count = widget.versions.size
+          widget.touch_with_version
+          widget.versions.size.should == count + 1
+        end
 
-      it 'should set the `paper_trail_enabled_for_model?` to `false`' do
-        subject.paper_trail_enabled_for_model?.should be_true
-        subject.paper_trail_off!
-        subject.paper_trail_enabled_for_model?.should be_false
+        it "should increment the `:updated_at` timestamp" do
+          time_was = widget.updated_at
+          widget.touch_with_version
+          widget.updated_at.should > time_was
+        end
       end
     end
 
-    describe :paper_trail_off do
-      it { should respond_to(:paper_trail_off) }
+    describe "Class" do
+      subject { Widget }
 
-      it 'should set the invoke `paper_trail_off!`' do
-        subject.should_receive(:warn)
-        subject.should_receive(:paper_trail_off!)
-        subject.paper_trail_off
+      describe :paper_trail_off! do
+        it { should respond_to(:paper_trail_off!) }
+
+        it 'should set the `paper_trail_enabled_for_model?` to `false`' do
+          subject.paper_trail_enabled_for_model?.should be_true
+          subject.paper_trail_off!
+          subject.paper_trail_enabled_for_model?.should be_false
+        end
       end
 
-      it 'should display a deprecation warning' do
-        subject.should_receive(:warn).with("DEPRECATED: use `paper_trail_on!` instead of `paper_trail_on`. Support for `paper_trail_on` will be removed in PaperTrail 3.1")
-        subject.paper_trail_on
-      end
-    end
+      describe :paper_trail_off do
+        it { should respond_to(:paper_trail_off) }
 
-    describe :paper_trail_on! do
-      before { subject.paper_trail_off! }
+        it 'should set the invoke `paper_trail_off!`' do
+          subject.should_receive(:warn)
+          subject.should_receive(:paper_trail_off!)
+          subject.paper_trail_off
+        end
 
-      it { should respond_to(:paper_trail_on!) }
-
-      it 'should set the `paper_trail_enabled_for_model?` to `true`' do
-        subject.paper_trail_enabled_for_model?.should be_false
-        subject.paper_trail_on!
-        subject.paper_trail_enabled_for_model?.should be_true
-      end
-    end
-
-    describe :paper_trail_on do
-      before { subject.paper_trail_off! }
-
-      it { should respond_to(:paper_trail_on) }
-
-      it 'should set the invoke `paper_trail_on!`' do
-        subject.should_receive(:warn)
-        subject.should_receive(:paper_trail_on!)
-        subject.paper_trail_on
+        it 'should display a deprecation warning' do
+          subject.should_receive(:warn).with("DEPRECATED: use `paper_trail_on!` instead of `paper_trail_on`. Support for `paper_trail_on` will be removed in PaperTrail 3.1")
+          subject.paper_trail_on
+        end
       end
 
-      it 'should display a deprecation warning' do
-        subject.should_receive(:warn).with("DEPRECATED: use `paper_trail_on!` instead of `paper_trail_on`. Support for `paper_trail_on` will be removed in PaperTrail 3.1")
-        subject.paper_trail_on
+      describe :paper_trail_on! do
+        before { subject.paper_trail_off! }
+
+        it { should respond_to(:paper_trail_on!) }
+
+        it 'should set the `paper_trail_enabled_for_model?` to `true`' do
+          subject.paper_trail_enabled_for_model?.should be_false
+          subject.paper_trail_on!
+          subject.paper_trail_enabled_for_model?.should be_true
+        end
+      end
+
+      describe :paper_trail_on do
+        before { subject.paper_trail_off! }
+
+        it { should respond_to(:paper_trail_on) }
+
+        it 'should set the invoke `paper_trail_on!`' do
+          subject.should_receive(:warn)
+          subject.should_receive(:paper_trail_on!)
+          subject.paper_trail_on
+        end
+
+        it 'should display a deprecation warning' do
+          subject.should_receive(:warn).with("DEPRECATED: use `paper_trail_on!` instead of `paper_trail_on`. Support for `paper_trail_on` will be removed in PaperTrail 3.1")
+          subject.paper_trail_on
+        end
       end
     end
   end

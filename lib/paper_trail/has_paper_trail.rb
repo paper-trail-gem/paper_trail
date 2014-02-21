@@ -216,6 +216,22 @@ module PaperTrail
         self.class.paper_trail_on! if paper_trail_was_enabled
       end
 
+      # Mimicks behavior of `touch` method from `ActiveRecord::Persistence`, but generates a version
+      #
+      # TODO: lookinto leveraging the `after_touch` callback from `ActiveRecord` to allow the
+      #  regular `touch` method go generate a version as normal. May make sense to switch the `record_update`
+      #  method to leverage an `after_update` callback anyways (likely for v3.1.0)
+      def touch_with_version(name = nil)
+        raise ActiveRecordError, "can not touch on a new record object" unless persisted?
+
+        attributes = timestamp_attributes_for_update_in_model
+        attributes << name if name
+        current_time = current_time_from_proper_timezone
+
+        attributes.each { |column| write_attribute(column, current_time) }
+        save!
+      end
+
       private
 
       def source_version
