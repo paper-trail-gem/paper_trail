@@ -57,7 +57,7 @@ The Rails 2.3 code is on the [`rails2`](https://github.com/airblade/paper_trail/
 ### Sinatra
 
 In order to configure `PaperTrail` for usage with [Sinatra](http://www.sinatrarb.com),
-your `Sinatra` app must be using `ActiveRecord` 3 or  `ActiveRecord` 4. It is also recommended to use the 
+your `Sinatra` app must be using `ActiveRecord` 3 or  `ActiveRecord` 4. It is also recommended to use the
 [Sinatra ActiveRecord Extension](https://github.com/janko-m/sinatra-activerecord) or something similar for managing
 your applications `ActiveRecord` connection in a manner similar to the way `Rails` does. If using the aforementioned
 `Sinatra ActiveRecord Extension`, steps for setting up your app with `PaperTrail` will look something like this:
@@ -487,6 +487,21 @@ class PaperTrail::Version < ActiveRecord::Base
     PaperTrail.whodunnit = "#{`whoami`.strip}: rake #{ARGV.join ' '}"
   end
 end
+```
+
+Sometimes you want to define who is responsible in a small scope and don't using `PaperTrail.whodunnit`. In these cases it is possible to define executing your operation inside a block:
+
+```ruby
+PaperTrail.whodunnit = 'Andy Stewart'
+
+widget.whodunnit 'Lucas Souza' do
+  widget.update_attributes :name => 'Wibble'
+end
+
+widget.versions.last.whodunnit              # Lucas Souza
+
+widget.update_attributes :name => 'Clair'
+widget.versions.last.whodunnit              # Andy Stewart
 ```
 
 A version's `whodunnit` records who changed the object causing the `version` to be stored.  Because a version stores the object as it looked before the change (see the table above), `whodunnit` returns who stopped the object looking like this -- not who made it look like this.  Hence `whodunnit` is aliased as `terminator`.
