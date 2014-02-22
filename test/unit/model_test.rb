@@ -535,6 +535,20 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       @widget = Widget.new :name => 'Fidget'
     end
 
+    context 'defining whodunnit using a block' do
+      setup do
+        @widget.whodunnit 'Clair' do
+          @widget.save
+        end
+
+        @version = @widget.versions.last  # only 1 version
+      end
+
+      should 'track who made the change' do
+        assert_equal 'Clair', @version.whodunnit
+      end
+    end
+
     context 'when a record is created' do
       setup do
         PaperTrail.whodunnit = 'Alice'
@@ -771,7 +785,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       should 'store dynamic meta data based on a method of the item' do
         assert_equal @article.action_data_provider_method, @article.versions.last.action
       end
-      
+
       should 'store dynamic meta data based on an attribute of the item prior to creation' do
         assert_equal nil, @article.versions.last.title
       end
@@ -793,7 +807,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         should 'store dynamic meta data which depends on the item' do
           assert_equal @article.id, @article.versions.last.article_id
         end
-        
+
         should 'store dynamic meta data based on an attribute of the item prior to the update' do
           assert_equal @initial_title, @article.versions.last.title
         end
@@ -814,7 +828,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         should 'store dynamic meta data which depends on the item' do
           assert_equal @article.id, @article.versions.last.article_id
         end
-        
+
         should 'store dynamic meta data based on an attribute of the item prior to the destruction' do
           assert_equal @initial_title, @article.versions.last.title
         end

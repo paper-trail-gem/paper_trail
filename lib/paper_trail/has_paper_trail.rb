@@ -14,11 +14,11 @@ module PaperTrail
       #               `:create`, `:update`, `:destroy` as desired.
       # :class_name   the name of a custom Version class.  This class should inherit from `PaperTrail::Version`.
       # :ignore       an array of attributes for which a new `Version` will not be created if only they change.
-      #               it can also aceept a Hash as an argument where the key is the attribute to ignore (a `String` or `Symbol`), 
+      #               it can also aceept a Hash as an argument where the key is the attribute to ignore (a `String` or `Symbol`),
       #               which will only be ignored if the value is a `Proc` which returns truthily.
       # :if, :unless  Procs that allow to specify conditions when to save versions for an object
       # :only         inverse of `ignore` - a new `Version` will be created only for these attributes if supplied
-      #               it can also aceept a Hash as an argument where the key is the attribute to track (a `String` or `Symbol`), 
+      #               it can also aceept a Hash as an argument where the key is the attribute to track (a `String` or `Symbol`),
       #               which will only be counted if the value is a `Proc` which returns truthily.
       # :skip         fields to ignore completely.  As with `ignore`, updates to these fields will not create
       #               a new `Version`.  In addition, these fields will not be included in the serialized versions
@@ -232,6 +232,11 @@ module PaperTrail
         save!
       end
 
+      def whodunnit(whodunnit)
+        @whodunnit = whodunnit
+        yield if block_given?
+      end
+
       private
 
       def source_version
@@ -242,7 +247,7 @@ module PaperTrail
         if paper_trail_switched_on?
           data = {
             :event     => paper_trail_event || 'create',
-            :whodunnit => PaperTrail.whodunnit
+            :whodunnit => _whodunnit
           }
 
           if changed_notably? and self.class.paper_trail_version_class.column_names.include?('object_changes')
@@ -361,6 +366,10 @@ module PaperTrail
         if_condition     = self.paper_trail_options[:if]
         unless_condition = self.paper_trail_options[:unless]
         (if_condition.blank? || if_condition.call(self)) && !unless_condition.try(:call, self)
+      end
+
+      def _whodunnit
+        @whodunnit || PaperTrail.whodunnit
       end
     end
   end
