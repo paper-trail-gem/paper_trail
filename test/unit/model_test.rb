@@ -538,6 +538,8 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     context 'defining whodunnit using a block' do
       context "when a record is created" do
         setup do
+          PaperTrail.whodunnit = 'Helena'
+
           @widget.whodunnit 'Clair' do
             @widget.save
           end
@@ -547,6 +549,13 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
         should 'track who made the change' do
           assert_equal 'Clair', @version.whodunnit
+        end
+
+        should 'ignore defined whodunnit using global whodunnit' do
+          @widget.update_attributes :name => 'Fernandes'
+          @version = @widget.versions.last
+
+          assert_equal 'Helena', @version.whodunnit
         end
 
         context "when a record is updated" do
