@@ -570,6 +570,13 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           should 'track who made the change' do
             assert_equal 'Rafaela', @version.whodunnit
           end
+
+          should 'ignore defined whodunnit using global whodunnit' do
+            @widget.update_attributes :name => 'Souza'
+            @version = @widget.versions.last
+
+            assert_equal 'Helena', @version.whodunnit
+          end
         end
 
         context 'when a record is destroyed' do
