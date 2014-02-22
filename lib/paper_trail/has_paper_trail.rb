@@ -264,7 +264,7 @@ module PaperTrail
           data = {
             :event     => paper_trail_event || 'update',
             :object    => self.class.paper_trail_version_class.object_col_is_json? ? object_attrs : PaperTrail.serializer.dump(object_attrs),
-            :whodunnit => PaperTrail.whodunnit
+            :whodunnit => _whodunnit
           }
           if self.class.paper_trail_version_class.column_names.include?('object_changes')
             data[:object_changes] = self.class.paper_trail_version_class.object_changes_col_is_json? ? changes_for_paper_trail :

@@ -536,16 +536,32 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
 
     context 'defining whodunnit using a block' do
-      setup do
-        @widget.whodunnit 'Clair' do
-          @widget.save
+      context "when a record is created" do
+        setup do
+          @widget.whodunnit 'Clair' do
+            @widget.save
+          end
+
+          @version = @widget.versions.last  # only 1 version
         end
 
-        @version = @widget.versions.last  # only 1 version
-      end
+        should 'track who made the change' do
+          assert_equal 'Clair', @version.whodunnit
+        end
 
-      should 'track who made the change' do
-        assert_equal 'Clair', @version.whodunnit
+        context "when a record is updated" do
+          setup do
+            @widget.whodunnit 'Rafaela' do
+              @widget.update_attributes :name => 'Fernandes'
+            end
+
+            @version = @widget.versions.last  # only 1 version
+          end
+
+          should 'track who made the change' do
+            assert_equal 'Rafaela', @version.whodunnit
+          end
+        end
       end
     end
 
