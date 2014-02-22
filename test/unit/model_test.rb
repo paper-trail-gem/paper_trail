@@ -562,6 +562,20 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
             assert_equal 'Rafaela', @version.whodunnit
           end
         end
+
+        context 'when a record is destroyed' do
+          setup do
+            @widget.whodunnit 'Lucas' do
+              @widget.destroy
+            end
+
+            @version = PaperTrail::Version.last
+          end
+
+          should 'track who made the change' do
+            assert_equal 'Lucas', @version.whodunnit
+          end
+        end
       end
     end
 

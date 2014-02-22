@@ -288,7 +288,7 @@ module PaperTrail
             :item_type => self.class.base_class.name,
             :event     => paper_trail_event || 'destroy',
             :object    => self.class.paper_trail_version_class.object_col_is_json? ? object_attrs : PaperTrail.serializer.dump(object_attrs),
-            :whodunnit => PaperTrail.whodunnit
+            :whodunnit => _whodunnit
           }
           self.class.paper_trail_version_class.create merge_metadata(data)
           send(self.class.versions_association_name).send :load_target
