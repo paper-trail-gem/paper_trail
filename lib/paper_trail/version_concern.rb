@@ -215,9 +215,9 @@ module PaperTrail
       version_table_name = model.class.paper_trail_version_class.table_name
       model.class.reflect_on_all_associations(:has_one).each do |assoc|
         version = model.class.paper_trail_version_class.joins(:version_associations).
-          where(:item_type => assoc.class_name).
-          where(:foreign_key_name => assoc.foreign_key).
-          where(:foreign_key_id => model.id).
+          where("version_associations.foreign_key_name = ?", assoc.foreign_key).
+          where("version_associations.foreign_key_id = ?", model.id).
+          where("#{version_table_name}.item_type = ?", assoc.class_name).
           where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
           order("#{version_table_name}.id ASC").first
         if version
@@ -230,7 +230,7 @@ module PaperTrail
             child = version.reify options
             logger.info "Reify #{child}"
             model.appear_as_new_record do
-              model.send(model.send "#{assoc.name}=", child)
+              model.send "#{assoc.name}=", child
             end
           end
         end
@@ -245,16 +245,17 @@ module PaperTrail
         next if assoc.name == model.class.versions_association_name
         version_id_subquery = PaperTrail::VersionAssociation.joins(model.class.version_association_name).
           select("MIN(version_id)").
-          where("#{version_table_name}.item_type = ?", assoc.class_name).
           where(:foreign_key_name => assoc.foreign_key).
           where(:foreign_key_id => model.id).
+          where("#{version_table_name}.item_type = ?", assoc.class_name).
           where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
           group("item_id").to_sql
-        versions = model.class.where("id IN (#{version_id_subquery})")
+        versions = model.class.paper_trail_version_class.where("id IN (#{version_id_subquery})")
 
         # Pass true to force the model to load
         collection = Array.new model.send(assoc.name, true)
 
+        # Iterate all the child records to replace them with the previous values
         versions.each do |version|
           if version.event == 'create'
             if child = version.item
@@ -266,7 +267,7 @@ module PaperTrail
           end
         end
 
-        model.send assoc.name, collection
+        model.send "#{assoc.name}=", collection
       end
     end
 

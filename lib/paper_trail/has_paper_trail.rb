@@ -223,11 +223,11 @@ module PaperTrail
       # Utility method for reifying. Anything executed inside the block will appear like a new record
       def appear_as_new_record
         instance_eval {
-          alias :old_new_record? :new_record?
-          alias :new_record? :present?
+          alias_method :old_new_record?, :new_record?
+          alias_method :new_record?, :present?
         }
         yield
-        instance_eval { alias :new_record? :old_new_record? }
+        instance_eval { alias_method :new_record?, :old_new_record? }
       end
 
       # Mimicks behavior of `touch` method from `ActiveRecord::Persistence`, but generates a version
