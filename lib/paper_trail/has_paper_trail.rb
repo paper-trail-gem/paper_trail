@@ -223,11 +223,11 @@ module PaperTrail
       # Utility method for reifying. Anything executed inside the block will appear like a new record
       def appear_as_new_record
         instance_eval {
-          alias_method :old_new_record?, :new_record?
-          alias_method :new_record?, :present?
+          alias :old_new_record? :new_record?
+          alias :new_record? :present?
         }
         yield
-        instance_eval { alias_method :new_record?, :old_new_record? }
+        instance_eval { alias :new_record? :old_new_record? }
       end
 
       # Mimicks behavior of `touch` method from `ActiveRecord::Persistence`, but generates a version
@@ -283,7 +283,7 @@ module PaperTrail
             data[:object_changes] = self.class.paper_trail_version_class.object_changes_col_is_json? ? changes_for_paper_trail :
               PaperTrail.serializer.dump(changes_for_paper_trail)
           end
-          version = send(self.class.versions_association_name).build merge_metadata(data)
+          version = send(self.class.versions_association_name).create merge_metadata(data)
           set_transaction_id(version)
           save_associations(version)
         end
@@ -315,7 +315,11 @@ module PaperTrail
 
       def save_associations(version)
         self.class.reflect_on_all_associations(:belongs_to).each do |assoc|
-          PaperTrail::VersionAssociation.create(:version_id => version.id, :foreign_key_name => assoc.foreign_key, :foreign_key_id => self.send(assoc.foreign_key))
+          PaperTrail::VersionAssociation.create(
+            :version_id => version.id,
+            :foreign_key_name => assoc.foreign_key,
+            :foreign_key_id => self.send(assoc.foreign_key)
+          )
         end
       end
 

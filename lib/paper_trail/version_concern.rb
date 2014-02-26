@@ -245,8 +245,8 @@ module PaperTrail
         next if assoc.name == model.class.versions_association_name
         version_id_subquery = PaperTrail::VersionAssociation.joins(model.class.version_association_name).
           select("MIN(version_id)").
-          where(:foreign_key_name => assoc.foreign_key).
-          where(:foreign_key_id => model.id).
+          where("foreign_key_name = ?", assoc.foreign_key).
+          where("foreign_key_id = ?", model.id).
           where("#{version_table_name}.item_type = ?", assoc.class_name).
           where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
           group("item_id").to_sql
@@ -257,17 +257,19 @@ module PaperTrail
 
         # Iterate all the child records to replace them with the previous values
         versions.each do |version|
-          if version.event == 'create'
-            if child = version.item
-              collection.delete child
+          collection << version.reify(options) if version.event == 'destroy'
+          collection.map! do |c|
+            if version.event == 'create'
+              c.mark_for_destruction if version.item && version.item.id == c.id
+              c
+            else
+              child = version.reify(options)
+              c.id == child.id ? child : c
             end
-          else
-            child = version.reify(options)
-            collection.map!{ |c| c.id == child.id ? child : c }
           end
         end
 
-        model.send "#{assoc.name}=", collection
+        model.send(assoc.name).proxy_association.target = collection
       end
     end
 
