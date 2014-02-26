@@ -1,4 +1,4 @@
-# PaperTrail [![Build Status](https://img.shields.io/travis/airblade/paper_trail.svg)](https://travis-ci.org/airblade/paper_trail) [![Dependency Status](https://img.shields.io/gemnasium/airblade/paper_trail.svg)](https://gemnasium.com/airblade/paper_trail)
+# PaperTrail [![Build Status](https://img.shields.io/travis/airblade/paper_trail/master.svg)](https://travis-ci.org/airblade/paper_trail) [![Dependency Status](https://img.shields.io/gemnasium/airblade/paper_trail.svg)](https://gemnasium.com/airblade/paper_trail)
 
 PaperTrail lets you track changes to your models' data.  It's good for auditing or versioning.  You can see how a model looked at any stage in its lifecycle, revert it to any version, and even undelete it after it's been destroyed.
 
