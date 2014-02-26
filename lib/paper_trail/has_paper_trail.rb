@@ -14,11 +14,11 @@ module PaperTrail
       #               `:create`, `:update`, `:destroy` as desired.
       # :class_name   the name of a custom Version class.  This class should inherit from `PaperTrail::Version`.
       # :ignore       an array of attributes for which a new `Version` will not be created if only they change.
-      #               it can also aceept a Hash as an argument where the key is the attribute to ignore (a `String` or `Symbol`), 
+      #               it can also aceept a Hash as an argument where the key is the attribute to ignore (a `String` or `Symbol`),
       #               which will only be ignored if the value is a `Proc` which returns truthily.
       # :if, :unless  Procs that allow to specify conditions when to save versions for an object
       # :only         inverse of `ignore` - a new `Version` will be created only for these attributes if supplied
-      #               it can also aceept a Hash as an argument where the key is the attribute to track (a `String` or `Symbol`), 
+      #               it can also aceept a Hash as an argument where the key is the attribute to track (a `String` or `Symbol`),
       #               which will only be counted if the value is a `Proc` which returns truthily.
       # :skip         fields to ignore completely.  As with `ignore`, updates to these fields will not create
       #               a new `Version`.  In addition, these fields will not be included in the serialized versions
@@ -74,6 +74,10 @@ module PaperTrail
         after_create  :record_create, :if => :save_version? if options_on.empty? || options_on.include?(:create)
         before_update :record_update, :if => :save_version? if options_on.empty? || options_on.include?(:update)
         after_destroy :record_destroy, :if => :save_version? if options_on.empty? || options_on.include?(:destroy)
+
+        # Reset the transaction id when the transaction is closed
+        after_commit :reset_transaction_id
+        after_rollback :reset_transaction_id
       end
 
       # Switches PaperTrail off for this class.
@@ -91,7 +95,7 @@ module PaperTrail
         PaperTrail.enabled_for_model(self, true)
       end
 
-	    def paper_trail_on
+      def paper_trail_on
         warn "DEPRECATED: use `paper_trail_on!` instead of `paper_trail_on`. Support for `paper_trail_on` will be removed in PaperTrail 3.1"
         self.paper_trail_on!
       end
@@ -216,6 +220,16 @@ module PaperTrail
         self.class.paper_trail_on! if paper_trail_was_enabled
       end
 
+      # Utility method for reifying. Anything executed inside the block will appear like a new record
+      def appear_as_new_record
+        instance_eval {
+          alias :old_new_record? :new_record?
+          alias :new_record? :present?
+        }
+        yield
+        instance_eval { alias :new_record? :old_new_record? }
+      end
+
       # Mimicks behavior of `touch` method from `ActiveRecord::Persistence`, but generates a version
       #
       # TODO: lookinto leveraging the `after_touch` callback from `ActiveRecord` to allow the
@@ -241,15 +255,18 @@ module PaperTrail
       def record_create
         if paper_trail_switched_on?
           data = {
-            :event     => paper_trail_event || 'create',
-            :whodunnit => PaperTrail.whodunnit
+            :event          => paper_trail_event || 'create',
+            :whodunnit      => PaperTrail.whodunnit,
+            :transaction_id => PaperTrail.transaction_id
           }
 
           if changed_notably? and self.class.paper_trail_version_class.column_names.include?('object_changes')
             data[:object_changes] = self.class.paper_trail_version_class.object_changes_col_is_json? ? changes_for_paper_trail :
               PaperTrail.serializer.dump(changes_for_paper_trail)
           end
-          send(self.class.versions_association_name).create! merge_metadata(data)
+          version = send(self.class.versions_association_name).create! merge_metadata(data)
+          set_transaction_id(version)
+          save_associations(version)
         end
       end
 
@@ -257,15 +274,18 @@ module PaperTrail
         if paper_trail_switched_on? && changed_notably?
           object_attrs = object_attrs_for_paper_trail(item_before_change)
           data = {
-            :event     => paper_trail_event || 'update',
-            :object    => self.class.paper_trail_version_class.object_col_is_json? ? object_attrs : PaperTrail.serializer.dump(object_attrs),
-            :whodunnit => PaperTrail.whodunnit
+            :event          => paper_trail_event || 'update',
+            :object         => self.class.paper_trail_version_class.object_col_is_json? ? object_attrs : PaperTrail.serializer.dump(object_attrs),
+            :whodunnit      => PaperTrail.whodunnit,
+            :transaction_id => PaperTrail.transaction_id
           }
           if self.class.paper_trail_version_class.column_names.include?('object_changes')
             data[:object_changes] = self.class.paper_trail_version_class.object_changes_col_is_json? ? changes_for_paper_trail :
               PaperTrail.serializer.dump(changes_for_paper_trail)
           end
-          send(self.class.versions_association_name).build merge_metadata(data)
+          version = send(self.class.versions_association_name).create merge_metadata(data)
+          set_transaction_id(version)
+          save_associations(version)
         end
       end
 
@@ -279,15 +299,40 @@ module PaperTrail
         if paper_trail_switched_on? and not new_record?
           object_attrs = object_attrs_for_paper_trail(item_before_change)
           data = {
-            :item_id   => self.id,
-            :item_type => self.class.base_class.name,
-            :event     => paper_trail_event || 'destroy',
-            :object    => self.class.paper_trail_version_class.object_col_is_json? ? object_attrs : PaperTrail.serializer.dump(object_attrs),
-            :whodunnit => PaperTrail.whodunnit
+            :item_id        => self.id,
+            :item_type      => self.class.base_class.name,
+            :event          => paper_trail_event || 'destroy',
+            :object         => self.class.paper_trail_version_class.object_col_is_json? ? object_attrs : PaperTrail.serializer.dump(object_attrs),
+            :whodunnit      => PaperTrail.whodunnit,
+            :transaction_id => PaperTrail.transaction_id
           }
-          self.class.paper_trail_version_class.create merge_metadata(data)
+          version = self.class.paper_trail_version_class.create merge_metadata(data)
           send(self.class.versions_association_name).send :load_target
+          set_transaction_id(version)
+          save_associations(version)
         end
+      end
+
+      def save_associations(version)
+        self.class.reflect_on_all_associations(:belongs_to).each do |assoc|
+          PaperTrail::VersionAssociation.create(
+            :version_id => version.id,
+            :foreign_key_name => assoc.foreign_key,
+            :foreign_key_id => self.send(assoc.foreign_key)
+          )
+        end
+      end
+
+      def set_transaction_id(version)
+        if PaperTrail.transaction? && PaperTrail.transaction_id.nil?
+           PaperTrail.transaction_id = version.id
+           version.transaction_id = version.id
+           version.save
+        end
+      end
+
+      def reset_transaction_id
+        PaperTrail.transaction_id = nil
       end
 
       def merge_metadata(data)

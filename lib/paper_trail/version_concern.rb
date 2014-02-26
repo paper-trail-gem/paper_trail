@@ -6,10 +6,14 @@ module PaperTrail
 
     included do
       belongs_to :item, :polymorphic => true
+      has_many :version_associations, :dependent => :destroy
+
       validates_presence_of :event
-      attr_accessible :item_type, :item_id, :event, :whodunnit, :object, :object_changes if PaperTrail.active_record_protected_attributes?
+      attr_accessible :item_type, :item_id, :event, :whodunnit, :object, :object_changes, :transaction_id if PaperTrail.active_record_protected_attributes?
 
       after_create :enforce_version_limit!
+
+      scope :within_transaction, lambda { |id| where :transaction_id => id }
     end
 
     module ClassMethods
@@ -77,8 +81,11 @@ module PaperTrail
       return nil if object.nil?
 
       without_identity_map do
-        options[:has_one] = 3 if options[:has_one] == true
-        options.reverse_merge! :has_one => false
+        options.reverse_merge!(
+          :version_at => created_at,
+          :has_one    => false,
+          :has_many   => false
+        )
 
         attrs = self.class.object_col_is_json? ? object : PaperTrail.serializer.load(object)
 
@@ -119,8 +126,16 @@ module PaperTrail
 
         model.send "#{model.class.version_association_name}=", self
 
+        # unless options[:has_one] == false
+        #   reify_has_ones model, options[:has_one]
+        # end
+
         unless options[:has_one] == false
-          reify_has_ones model, options[:has_one]
+          reify_has_ones model, options
+        end
+
+        unless options[:has_many] == false
+          reify_has_manys model, options
         end
 
         model
@@ -138,6 +153,15 @@ module PaperTrail
       end
     rescue
       {}
+    end
+
+    # Rollback all changes within a transaction
+    def rollback
+      transaction do
+        self.class.within_transaction(transaction_id).reverse_each do |version|
+          version.reify.save!
+        end
+      end
     end
 
     # Returns who put the item into the state stored in this version.
@@ -187,25 +211,65 @@ module PaperTrail
     # Restore the `model`'s has_one associations as they were when this version was
     # superseded by the next (because that's what the user was looking at when they
     # made the change).
-    #
-    # The `lookback` sets how many seconds before the model's change we go.
-    def reify_has_ones(model, lookback)
+    def reify_has_ones(model, options = {})
+      version_table_name = model.class.paper_trail_version_class.table_name
       model.class.reflect_on_all_associations(:has_one).each do |assoc|
-        child = model.send assoc.name
-        if child.respond_to? :version_at
-          # N.B. we use version of the child as it was `lookback` seconds before the parent was updated.
-          # Ideally we want the version of the child as it was just before the parent was updated...
-          # but until PaperTrail knows which updates are "together" (e.g. parent and child being
-          # updated on the same form), it's impossible to tell when the overall update started;
-          # and therefore impossible to know when "just before" was.
-          if (child_as_it_was = child.version_at(send(PaperTrail.timestamp_field) - lookback.seconds))
-            child_as_it_was.attributes.each do |k,v|
-              model.send(assoc.name).send :write_attribute, k.to_sym, v rescue nil
+        version = model.class.paper_trail_version_class.joins(:version_associations).
+          where("version_associations.foreign_key_name = ?", assoc.foreign_key).
+          where("version_associations.foreign_key_id = ?", model.id).
+          where("#{version_table_name}.item_type = ?", assoc.class_name).
+          where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
+          order("#{version_table_name}.id ASC").first
+        if version
+          if version.event == 'create'
+            if child = version.item
+              child.mark_for_destruction
+              model.send "#{assoc.name}=", nil
             end
           else
-            model.send "#{assoc.name}=", nil
+            child = version.reify options
+            logger.info "Reify #{child}"
+            model.appear_as_new_record do
+              model.send "#{assoc.name}=", child
+            end
           end
         end
+      end
+    end
+
+    # Restore the `model`'s has_many associations as they were at version_at timestamp
+    # We lookup the first child versions after version_at timestamp or in same transaction.
+    def reify_has_manys(model, options = {})
+      version_table_name = model.class.paper_trail_version_class.table_name
+      model.class.reflect_on_all_associations(:has_many).each do |assoc|
+        next if assoc.name == model.class.versions_association_name
+        version_id_subquery = PaperTrail::VersionAssociation.joins(model.class.version_association_name).
+          select("MIN(version_id)").
+          where("foreign_key_name = ?", assoc.foreign_key).
+          where("foreign_key_id = ?", model.id).
+          where("#{version_table_name}.item_type = ?", assoc.class_name).
+          where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
+          group("item_id").to_sql
+        versions = model.class.paper_trail_version_class.where("id IN (#{version_id_subquery})")
+
+        # Pass true to force the model to load
+        collection = Array.new model.send(assoc.name, true)
+
+        # Iterate all the child records to replace them with the previous values
+        versions.each do |version|
+          collection << version.reify(options) if version.event == 'destroy'
+          collection.map! do |c|
+            if version.event == 'create'
+              c.mark_for_destruction if version.item && version.item.id == c.id
+              c
+            else
+              child = version.reify(options)
+              c.id == child.id ? child : c
+            end
+          end
+        end
+
+        model.send(assoc.name).proxy_association.target = collection
       end
     end
 
