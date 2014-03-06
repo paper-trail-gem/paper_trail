@@ -736,7 +736,7 @@ Remember to add those extra columns to your `versions` table and use `attr_acces
 
 There are two scenarios: diffing adjacent versions and diffing non-adjacent versions.
 
-The best way to diff adjacent versions is to get PaperTrail to do it for you.  If you add an `object_changes` text column to your `versions` table, either at installation time with the `--with-changes` option or manually, PaperTrail will store the `changes` diff (excluding any attributes PaperTrail is ignoring) in each `update` version.  You can use the `version.changeset` method to retrieve it.  For example:
+The best way to diff adjacent versions is to get PaperTrail to do it for you.  If you add an `object_changes` text column to your `versions` table, either at installation time with the `rails generate paper_trail:install --with-changes` option or manually, PaperTrail will store the `changes` diff (excluding any attributes PaperTrail is ignoring) in each `update` version.  You can use the `version.changeset` method to retrieve it.  For example:
 
 ```ruby
 >> widget = Widget.create :name => 'Bob'
