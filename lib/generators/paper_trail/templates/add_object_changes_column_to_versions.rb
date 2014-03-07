@@ -1,9 +1,5 @@
 class AddObjectChangesColumnToVersions < ActiveRecord::Migration
-  def self.up
+  def change
     add_column :versions, :object_changes, :text
-  end
-
-  def self.down
-    remove_column :versions, :object_changes
   end
 end
