@@ -13,6 +13,7 @@ gemfile:
   - gemfiles/3.0.gemfile
 
 matrix:
+  fast_finish: true
   allow_failures:
     - rvm: jruby-18mode
       gemfile: Gemfile
