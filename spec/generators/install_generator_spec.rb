@@ -53,8 +53,8 @@ describe PaperTrail::InstallGenerator, :type => :generator do
       destination_root.should have_structure {
         directory 'db' do
           directory 'migrate' do
-            migration 'add_object_changes_column_to_versions' do
-              contains 'class AddObjectChangesColumnToVersions'
+            migration 'add_object_changes_to_versions' do
+              contains 'class AddObjectChangesToVersions'
               contains 'def change'
               contains 'add_column :versions, :object_changes, :text'
             end
