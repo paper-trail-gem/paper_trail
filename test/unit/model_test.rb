@@ -771,7 +771,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       should 'store dynamic meta data based on a method of the item' do
         assert_equal @article.action_data_provider_method, @article.versions.last.action
       end
-      
+
       should 'store dynamic meta data based on an attribute of the item prior to creation' do
         assert_equal nil, @article.versions.last.title
       end
@@ -793,7 +793,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         should 'store dynamic meta data which depends on the item' do
           assert_equal @article.id, @article.versions.last.article_id
         end
-        
+
         should 'store dynamic meta data based on an attribute of the item prior to the update' do
           assert_equal @initial_title, @article.versions.last.title
         end
@@ -814,7 +814,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         should 'store dynamic meta data which depends on the item' do
           assert_equal @article.id, @article.versions.last.article_id
         end
-        
+
         should 'store dynamic meta data based on an attribute of the item prior to the destruction' do
           assert_equal @initial_title, @article.versions.last.title
         end
@@ -837,7 +837,6 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     should 'return its previous self' do
       assert_equal @widget.versions[-2].reify, @widget.previous_version
     end
-
   end
 
 

@@ -2,9 +2,10 @@
 
   - [#340](https://github.com/airblade/paper_trail/issues/340) - Prevent potential error encountered when using the `InstallGenerator`
     with Rails `4.1.0.rc1`.
+  - [#334](https://github.com/airblade/paper_trail/pull/334) - Add small-scope `whodunnit` method to `PaperTrail::Model::InstanceMethods`.
   - [#329](https://github.com/airblade/paper_trail/issues/329) - Add `touch_with_version` method to `PaperTrail::Model::InstanceMethods`,
     to allow for generating a version `touch`ing a model.
-  - [#328](https://github.com/airblade/paper_trail/pull/328) / [#326](https://github.com/airblade/paper_trail/issues/326)/
+  - [#328](https://github.com/airblade/paper_trail/pull/328) / [#326](https://github.com/airblade/paper_trail/issues/326) /
     [#307](https://github.com/airblade/paper_trail/issues/307) - `Model.paper_trail_enabled_for_model?` and
     `model_instance.without_versioning` is now thread-safe.
   - [#316](https://github.com/airblade/paper_trail/issues/316) - `user_for_paper_trail` should default to `current_user.try(:id)`
