@@ -53,6 +53,13 @@ describe Widget do
             widget.whodunnit(new_name) { |w| w.update_attributes(:name => 'Elizabeth') }
             PaperTrail.whodunnit.should == orig_name
           end
+
+          context "error within block" do
+            it "should ensure that the whodunnit value still reverts to it's previous value" do
+              expect { widget.whodunnit(new_name) { raise } }.to raise_error
+              PaperTrail.whodunnit.should == orig_name
+            end
+          end
         end
       end
 

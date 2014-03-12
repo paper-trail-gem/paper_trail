@@ -12,6 +12,14 @@ describe "PaperTrail RSpec Helper" do
       end
       ::PaperTrail.should_not be_enabled
     end
+
+    context "error within `with_versioning` block" do
+      it "should revert the value of `PaperTrail.enabled?` to it's previous state" do
+        ::PaperTrail.should_not be_enabled
+        expect { with_versioning { raise } }.to raise_error
+        ::PaperTrail.should_not be_enabled
+      end
+    end
   end
 
   context '`versioning: true`', :versioning => true do

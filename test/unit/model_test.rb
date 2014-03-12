@@ -515,10 +515,24 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
             @widget.without_versioning do
               @widget.update_attributes :name => 'Ford'
             end
+            # The model instance should yield itself for convenience purposes
+            @widget.without_versioning { |w| w.update_attributes :name => 'Nixon' }
           end
 
           should 'not create new version' do
-            assert_equal 1, @widget.versions.length
+            assert_equal @count, @widget.versions.length
+          end
+
+          should 'enable paper trail after call' do
+            assert Widget.paper_trail_enabled_for_model?
+          end
+        end
+
+        context 'when receiving a method name as an argument' do
+          setup { @widget.without_versioning(:touch_with_version) }
+
+          should 'not create new version' do
+            assert_equal @count, @widget.versions.length
           end
 
           should 'enable paper trail after call' do

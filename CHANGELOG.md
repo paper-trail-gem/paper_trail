@@ -13,6 +13,8 @@
   - [#313](https://github.com/airblade/paper_trail/pull/313) - Make the `Rails::Controller` helper compatible with
     `ActionController::API` for compatibility with the [`rails-api`](https://github.com/rails-api/rails-api) gem.
   - [#312](https://github.com/airblade/paper_trail/issues/312) - Fix RSpec `with_versioning` class level helper method.
+  - `model_instance.without_versioning` now yields the `model_instance`, enabling syntax like this:
+    `model_instance.without_versioning { |obj| obj.update_attributes(:name => 'value') }`.
   - Deprecated `Model.paper_trail_on` and `Model.paper_trail_off` in favor of bang versions of the methods. Deprecation warning
     informs users that the non-bang versions of the methods will be removed in version `3.1.0`.
 
