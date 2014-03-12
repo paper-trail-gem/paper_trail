@@ -719,7 +719,7 @@ PaperTrail will call your proc with the current article and store the result in 
 N.B.  You must also:
 
 * Add your metadata columns to the `versions` table.
-* Declare your metadata columns using `attr_accessible`. (If you are using `Rails 3`, or `Rails 4` with the [ProtectedAttributes](https://github.com/rails/protected_attributes) gem)
+* Declare your metadata columns using `attr_accessible`. (If you are using `ActiveRecord 3`, or `ActiveRecord 4` with the [ProtectedAttributes](https://github.com/rails/protected_attributes) gem)
 
 For example:
 
