@@ -483,7 +483,7 @@ You can avoid having to do this manually by setting your initializer to pick up 
 # config/initializers/paper_trail.rb
 module PaperTrail
   class Version < ActiveRecord::Base
-    if defined?(Rails::Console)
+    if defined?(::Rails::Console)
       PaperTrail.whodunnit = "#{`whoami`.strip}: console"
     elsif File.basename($0) == "rake"
       PaperTrail.whodunnit = "#{`whoami`.strip}: rake #{ARGV.join ' '}"
@@ -597,8 +597,14 @@ If you can think of a good way to achieve this, please let me know.
 PaperTrail can restore `:has_one` associations as they were at (actually, 3 seconds before) the time.
 
 ```ruby
+class Location < ActiveRecord::Base
+  belongs_to :treasure
+  has_paper_trail
+end
+
 class Treasure < ActiveRecord::Base
   has_one :location
+  has_paper_trail
 end
 
 >> treasure.amount                  # 100
