@@ -553,7 +553,7 @@ Alternatively you could store certain metadata for one type of version, and othe
 
 If you only use custom version classes and don't use PaperTrail's built-in one, on Rails `>= 3.2` you must:
 
-- either declare PaperTrail's version class abstract like this (in `config/initializers/paper_trail_patch.rb`):
+- either declare the `PaperTrail::Version` class to be abstract like this (in an initializer):
 
 ```ruby
 PaperTrail::Version.module_eval do
