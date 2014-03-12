@@ -597,8 +597,14 @@ If you can think of a good way to achieve this, please let me know.
 PaperTrail can restore `:has_one` associations as they were at (actually, 3 seconds before) the time.
 
 ```ruby
+class Location < ActiveRecord::Base
+  belongs_to :treasure
+  has_paper_trail
+end
+
 class Treasure < ActiveRecord::Base
   has_one :location
+  has_paper_trail
 end
 
 >> treasure.amount                  # 100
