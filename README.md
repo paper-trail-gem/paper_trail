@@ -483,7 +483,7 @@ You can avoid having to do this manually by setting your initializer to pick up 
 # config/initializers/paper_trail.rb
 module PaperTrail
   class Version < ActiveRecord::Base
-    if defined?(Rails::Console)
+    if defined?(::Rails::Console)
       PaperTrail.whodunnit = "#{`whoami`.strip}: console"
     elsif File.basename($0) == "rake"
       PaperTrail.whodunnit = "#{`whoami`.strip}: rake #{ARGV.join ' '}"
