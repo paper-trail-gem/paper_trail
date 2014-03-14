@@ -515,10 +515,24 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
             @widget.without_versioning do
               @widget.update_attributes :name => 'Ford'
             end
+            # The model instance should yield itself for convenience purposes
+            @widget.without_versioning { |w| w.update_attributes :name => 'Nixon' }
           end
 
           should 'not create new version' do
-            assert_equal 1, @widget.versions.length
+            assert_equal @count, @widget.versions.length
+          end
+
+          should 'enable paper trail after call' do
+            assert Widget.paper_trail_enabled_for_model?
+          end
+        end
+
+        context 'when receiving a method name as an argument' do
+          setup { @widget.without_versioning(:touch_with_version) }
+
+          should 'not create new version' do
+            assert_equal @count, @widget.versions.length
           end
 
           should 'enable paper trail after call' do
@@ -771,7 +785,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       should 'store dynamic meta data based on a method of the item' do
         assert_equal @article.action_data_provider_method, @article.versions.last.action
       end
-      
+
       should 'store dynamic meta data based on an attribute of the item prior to creation' do
         assert_equal nil, @article.versions.last.title
       end
@@ -793,7 +807,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         should 'store dynamic meta data which depends on the item' do
           assert_equal @article.id, @article.versions.last.article_id
         end
-        
+
         should 'store dynamic meta data based on an attribute of the item prior to the update' do
           assert_equal @initial_title, @article.versions.last.title
         end
@@ -814,7 +828,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         should 'store dynamic meta data which depends on the item' do
           assert_equal @article.id, @article.versions.last.article_id
         end
-        
+
         should 'store dynamic meta data based on an attribute of the item prior to the destruction' do
           assert_equal @initial_title, @article.versions.last.title
         end
@@ -837,7 +851,6 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     should 'return its previous self' do
       assert_equal @widget.versions[-2].reify, @widget.previous_version
     end
-
   end
 
 

@@ -1,9 +1,10 @@
 require 'rspec/core'
 require 'rspec/matchers'
-require File.expand_path('../rspec/extensions', __FILE__)
+require 'paper_trail/frameworks/rspec/helpers'
 
 RSpec.configure do |config|
-  config.include ::PaperTrail::RSpec::Extensions
+  config.include ::PaperTrail::RSpec::Helpers::InstanceMethods
+  config.extend ::PaperTrail::RSpec::Helpers::ClassMethods
 
   config.before(:each) do
     ::PaperTrail.enabled = false

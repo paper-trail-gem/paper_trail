@@ -57,7 +57,7 @@ The Rails 2.3 code is on the [`rails2`](https://github.com/airblade/paper_trail/
 ### Sinatra
 
 In order to configure `PaperTrail` for usage with [Sinatra](http://www.sinatrarb.com),
-your `Sinatra` app must be using `ActiveRecord` 3 or  `ActiveRecord` 4. It is also recommended to use the 
+your `Sinatra` app must be using `ActiveRecord` 3 or  `ActiveRecord` 4. It is also recommended to use the
 [Sinatra ActiveRecord Extension](https://github.com/janko-m/sinatra-activerecord) or something similar for managing
 your applications `ActiveRecord` connection in a manner similar to the way `Rails` does. If using the aforementioned
 `Sinatra ActiveRecord Extension`, steps for setting up your app with `PaperTrail` will look something like this:
@@ -480,13 +480,26 @@ In a console session you can manually set who is responsible like this:
 You can avoid having to do this manually by setting your initializer to pick up the username of the current user from the OS, like this:
 
 ```ruby
-class PaperTrail::Version < ActiveRecord::Base
-  if defined?(Rails::Console)
-    PaperTrail.whodunnit = "#{`whoami`.strip}: console"
-  elsif File.basename($0) == "rake"
-    PaperTrail.whodunnit = "#{`whoami`.strip}: rake #{ARGV.join ' '}"
-  end
+# config/initializers/paper_trail.rb
+if defined?(::Rails::Console)
+  PaperTrail.whodunnit = "#{`whoami`.strip}: console"
+elsif File.basename($0) == "rake"
+  PaperTrail.whodunnit = "#{`whoami`.strip}: rake #{ARGV.join ' '}"
 end
+```
+
+Sometimes you want to define who is responsible for a change in a small scope without overwriting value of `PaperTrail.whodunnit`. It is possible to define the `whodunnit` value for an operation inside a block like this:
+
+```ruby
+>> PaperTrail.whodunnit = 'Andy Stewart'
+>> widget.whodunnit('Lucas Souza') do
+>>   widget.update_attributes :name => 'Wibble'
+>> end
+>> widget.versions.last.whodunnit              # Lucas Souza
+>> widget.update_attributes :name => 'Clair'
+>> widget.versions.last.whodunnit              # Andy Stewart
+>> widget.whodunnit('Ben Atkins') { |w| w.update_attributes :name => 'Beth' } # this syntax also works
+>> widget.versions.last.whodunnit              # Ben Atkins
 ```
 
 A version's `whodunnit` records who changed the object causing the `version` to be stored.  Because a version stores the object as it looked before the change (see the table above), `whodunnit` returns who stopped the object looking like this -- not who made it look like this.  Hence `whodunnit` is aliased as `terminator`.
@@ -540,7 +553,7 @@ Alternatively you could store certain metadata for one type of version, and othe
 
 If you only use custom version classes and don't use PaperTrail's built-in one, on Rails `>= 3.2` you must:
 
-- either declare PaperTrail's version class abstract like this (in `config/initializers/paper_trail_patch.rb`):
+- either declare the `PaperTrail::Version` class to be abstract like this (in an initializer):
 
 ```ruby
 PaperTrail::Version.module_eval do
@@ -580,8 +593,14 @@ If you can think of a good way to achieve this, please let me know.
 PaperTrail can restore `:has_one` associations as they were at (actually, 3 seconds before) the time.
 
 ```ruby
+class Location < ActiveRecord::Base
+  belongs_to :treasure
+  has_paper_trail
+end
+
 class Treasure < ActiveRecord::Base
   has_one :location
+  has_paper_trail
 end
 
 >> treasure.amount                  # 100
@@ -696,7 +715,7 @@ PaperTrail will call your proc with the current article and store the result in 
 N.B.  You must also:
 
 * Add your metadata columns to the `versions` table.
-* Declare your metadata columns using `attr_accessible`. (If you are using `Rails 3`, or `Rails 4` with the [ProtectedAttributes](https://github.com/rails/protected_attributes) gem)
+* Declare your metadata columns using `attr_accessible`. (If you are using `ActiveRecord 3`, or `ActiveRecord 4` with the [ProtectedAttributes](https://github.com/rails/protected_attributes) gem)
 
 For example:
 
@@ -1062,6 +1081,7 @@ Many thanks to:
 * [Vlad Bokov](https://github.com/razum2um)
 * [Sean Marcia](https://github.com/SeanMarcia)
 * [Chulki Lee](https://github.com/chulkilee)
+* [Lucas Souza](https://github.com/lucasas)
 
 
 ## Inspirations

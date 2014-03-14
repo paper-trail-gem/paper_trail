@@ -23,6 +23,46 @@ describe Widget do
 
   describe "Methods" do
     describe "Instance", :versioning => true do
+      describe :whodunnit do
+        it { should respond_to(:whodunnit) }
+
+        context "no block given" do
+          it "should raise an error" do
+            expect { widget.whodunnit('Ben') }.to raise_error(ArgumentError, 'expected to receive a block')
+          end
+        end
+
+        context "block given" do
+          let(:orig_name) { Faker::Name.name }
+          let(:new_name) { Faker::Name.name }
+
+          before do
+            PaperTrail.whodunnit = orig_name
+            widget.versions.last.whodunnit.should == orig_name # persist `widget`
+          end
+
+          it "should modify value of `PaperTrail.whodunnit` while executing the block" do
+            widget.whodunnit(new_name) do
+              PaperTrail.whodunnit.should == new_name
+              widget.update_attributes(:name => 'Elizabeth')
+            end
+            widget.versions.last.whodunnit.should == new_name
+          end
+
+          it "should revert the value of `PaperTrail.whodunnit` to it's previous value after executing the block" do
+            widget.whodunnit(new_name) { |w| w.update_attributes(:name => 'Elizabeth') }
+            PaperTrail.whodunnit.should == orig_name
+          end
+
+          context "error within block" do
+            it "should ensure that the whodunnit value still reverts to it's previous value" do
+              expect { widget.whodunnit(new_name) { raise } }.to raise_error
+              PaperTrail.whodunnit.should == orig_name
+            end
+          end
+        end
+      end
+
       describe :touch_with_version do
         it { should respond_to(:touch_with_version) }
 

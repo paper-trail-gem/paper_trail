@@ -215,7 +215,7 @@ module PaperTrail
       def without_versioning(method = nil)
         paper_trail_was_enabled = self.paper_trail_enabled_for_model?
         self.class.paper_trail_off!
-        method ? method.to_proc.call(self) : yield
+        method ? method.to_proc.call(self) : yield(self)
       ensure
         self.class.paper_trail_on! if paper_trail_was_enabled
       end
@@ -228,6 +228,16 @@ module PaperTrail
         }
         yield
         instance_eval { alias :new_record? :old_new_record? }
+      end
+
+      # Temporarily overwrites the value of whodunnit and then executes the provided block.
+      def whodunnit(value)
+        raise ArgumentError, 'expected to receive a block' unless block_given?
+        current_whodunnit = PaperTrail.whodunnit
+        PaperTrail.whodunnit = value
+        yield self
+      ensure
+        PaperTrail.whodunnit = current_whodunnit
       end
 
       # Mimicks behavior of `touch` method from `ActiveRecord::Persistence`, but generates a version
