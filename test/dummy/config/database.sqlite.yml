@@ -1,0 +1,15 @@
+# SQLite version 3.x
+#   gem install sqlite3-ruby (not necessary on OS X Leopard)
+test: &test
+  adapter: sqlite3
+  pool: 5
+  timeout: 5000
+  database: db/test.sqlite3
+
+foo:
+  <<: *test
+  database: db/test-foo.sqlite3
+
+bar:
+  <<: *test
+  database: db/test-bar.sqlite3

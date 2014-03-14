@@ -35,7 +35,11 @@ Gem::Specification.new do |s|
   # JRuby support for the test ENV
   unless defined?(JRUBY_VERSION)
     s.add_development_dependency 'sqlite3', '~> 1.2'
+    s.add_development_dependency 'mysql2', '~> 0.3'
+    s.add_development_dependency 'pg', '~> 0.17'
   else
     s.add_development_dependency 'activerecord-jdbcsqlite3-adapter', '~> 1.3'
+    s.add_development_dependency 'activerecord-jdbcpostgresql-adapter', '~> 1.3'
+    s.add_development_dependency 'activerecord-jdbcmysql-adapter', '~> 1.3'
   end
 end
