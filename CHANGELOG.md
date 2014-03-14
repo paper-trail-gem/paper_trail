@@ -1,4 +1,4 @@
-## 3.0.1 (Unreleased)
+## 3.0.1
 
   - [#340](https://github.com/airblade/paper_trail/issues/340) - Prevent potential error encountered when using the `InstallGenerator`
     with Rails `4.1.0.rc1`.
