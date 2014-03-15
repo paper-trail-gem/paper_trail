@@ -65,7 +65,7 @@ class SerializerTest < ActiveSupport::TestCase
     end
 
     should 'store object_changes' do
-      initial_changeset = {"name" => [nil, "Some text."], "id" => [nil, 1]}
+      initial_changeset = {"name" => [nil, "Some text."], "id" => [nil, @fluxor.id]}
       second_changeset =  {"name"=>["Some text.", "Some more text."]}
       assert_equal initial_changeset, @fluxor.versions[0].changeset
       assert_equal second_changeset,  @fluxor.versions[1].changeset
@@ -107,7 +107,7 @@ class SerializerTest < ActiveSupport::TestCase
     end
 
     should 'store object_changes' do
-      initial_changeset = {"id" => [nil, 1]}
+      initial_changeset = {"id" => [nil, @fluxor.id]}
       second_changeset =  {"name"=>[nil, "Some more text."]}
       assert_equal initial_changeset, @fluxor.versions[0].changeset
       assert_equal second_changeset,  @fluxor.versions[1].changeset
