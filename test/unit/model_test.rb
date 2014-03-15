@@ -437,6 +437,10 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         @last = @widget.versions.last
       end
 
+      teardown do 
+        restore_schema
+      end
+
       should 'reify previous version' do
         assert_kind_of Widget, @last.reify
       end

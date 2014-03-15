@@ -33,3 +33,12 @@ def change_schema
   end
   ActiveRecord::Migration.verbose = true
 end
+
+def restore_schema
+  ActiveRecord::Migration.verbose = false
+  ActiveRecord::Schema.define do
+    add_column :widgets, :sacrificial_column, :string
+    remove_column :versions, :custom_created_at
+  end
+  ActiveRecord::Migration.verbose = true
+end
