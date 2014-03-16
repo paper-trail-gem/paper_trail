@@ -12,7 +12,7 @@ module PaperTrail
     def clean_versions!(options = {})
       options = {:keeping => 1, :date => :all}.merge(options)
       gather_versions(options[:item_id], options[:date]).each do |item_id, versions|
-        versions.group_by { |v| v.created_at.to_date }.each do |date, versions| # now group the versions by date and iterate through those
+        versions.group_by { |v| v.send(PaperTrail.timestamp_field).to_date }.each do |date, versions| # now group the versions by date and iterate through those
           versions.pop(options[:keeping]) # remove the number of versions we wish to keep from the collection of versions prior to destruction
           versions.map(&:destroy)
         end
@@ -27,6 +27,7 @@ module PaperTrail
       raise "`date` argument must receive a Timestamp or `:all`" unless date == :all || date.respond_to?(:to_date)
       versions = item_id ? PaperTrail::Version.where(:item_id => item_id) : PaperTrail::Version
       versions = versions.between(date.to_date, date.to_date + 1.day) unless date == :all
+      versions = versions.order("#{PaperTrail.timestamp_field} ASC")
       versions = PaperTrail::Version.all if versions == PaperTrail::Version # if versions has not been converted to an ActiveRecord::Relation yet, do so now
       versions.group_by(&:item_id)
     end

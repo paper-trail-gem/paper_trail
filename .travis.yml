@@ -5,8 +5,21 @@ rvm:
   - 1.8.7
   - jruby-19mode
   - jruby-18mode
+env:
+  - DB=mysql
+  - DB=postgres
+  - DB=sqlite
 
-before_install: gem update --system 2.2.1
+before_install: 
+  - gem update --system 2.2.1
+
+before_script:
+  - sh -c "if [ \"$DB\" = 'mysql' ]; then mysql   -e 'create database paper_trail_test;'; fi"
+  - sh -c "if [ \"$DB\" = 'mysql' ]; then mysql   -e 'create database paper_trail_bar; '; fi"
+  - sh -c "if [ \"$DB\" = 'mysql' ]; then mysql   -e 'create database paper_trail_foo; '; fi"
+  - sh -c "if [ \"$DB\" = 'postgres' ]; then psql -c 'create database paper_trail_test;' -U postgres; fi"
+  - sh -c "if [ \"$DB\" = 'postgres' ]; then psql -c 'create database paper_trail_bar;'  -U postgres; fi"
+  - sh -c "if [ \"$DB\" = 'postgres' ]; then psql -c 'create database paper_trail_foo;'  -U postgres; fi"
 
 gemfile:
   - Gemfile
@@ -19,3 +32,5 @@ matrix:
       gemfile: Gemfile
     - rvm: 1.8.7
       gemfile: Gemfile
+    - env: DB=mysql
+    

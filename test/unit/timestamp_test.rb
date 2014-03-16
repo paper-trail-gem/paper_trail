@@ -19,6 +19,7 @@ class TimestampTest < ActiveSupport::TestCase
 
   teardown do
     PaperTrail.timestamp_field = :created_at
+    restore_schema
   end
 
   test 'versions works with custom timestamp field' do

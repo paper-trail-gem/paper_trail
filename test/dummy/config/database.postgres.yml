@@ -1,0 +1,15 @@
+test: &test
+  adapter: postgresql
+  database: paper_trail_test
+  username: postgres
+  password: 
+  host:     localhost
+  port:     5432
+
+foo:
+  <<: *test
+  database: paper_trail_foo
+
+bar:
+  <<: *test
+  database: paper_trail_bar
