@@ -1,3 +1,8 @@
+## 3.0.2 (Unreleased)
+
+  - `PaperTrail::Cleaner.clean_versions!` should group versions by `PaperTrail.timestamp_field` when deciding which ones to
+    keep / destroy, instead of always grouping by the `created_at` field.
+
 ## 3.0.1
 
   - [#340](https://github.com/airblade/paper_trail/issues/340) - Prevent potential error encountered when using the `InstallGenerator`

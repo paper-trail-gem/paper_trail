@@ -1018,17 +1018,17 @@ require 'rspec/rails'
 require 'paper_trail/frameworks/rspec'
 ```
 
-## Testing Paper Trail
+## Testing PaperTrail
 
-  Paper Trail has facilities to test aganist Postgres, Mysql and SQLite. To switch between DB engines you will need to export the DB Variable for the engine you wish to test aganist. 
+Paper Trail has facilities to test aganist Postgres, Mysql and SQLite. To switch between DB engines you will need to export the DB Variable for the engine you wish to test aganist. 
 
-  Though be aware we do not have the abilty to create the db's (except sqlite) for you.   You can look at .travis.yml before_script for an example of how to create the db's needed.  
+Though be aware we do not have the abilty to create the db's (except sqlite) for you.   You can look at .travis.yml before_script for an example of how to create the db's needed.  
 
-  ```
-  export DB=postgres
-  export DB=mysql
-  export DB=sqlite # this is default
-  ```
+```
+export DB=postgres
+export DB=mysql
+export DB=sqlite # this is default
+```
 
 ## Articles
 
@@ -1094,6 +1094,7 @@ Many thanks to:
 * [Sean Marcia](https://github.com/SeanMarcia)
 * [Chulki Lee](https://github.com/chulkilee)
 * [Lucas Souza](https://github.com/lucasas)
+* [Russell Osborne](https://github.com/rposborne)
 
 
 ## Inspirations
