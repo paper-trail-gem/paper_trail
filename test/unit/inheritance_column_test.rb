@@ -23,19 +23,19 @@ class InheritanceColumnTest < ActiveSupport::TestCase
     should 'work with custom STI inheritance column' do
       assert_equal 12, PaperTrail::Version.count
       assert_equal 4, @animal.versions.count
-      assert @animal.versions.first.reify.nil?
+      assert_nil @animal.versions.first.reify
       @animal.versions[1..-1].each { |v| assert_equal 'Animal', v.reify.class.name }
 
       # For some reason `@dog.versions` doesn't include the final `destroy` version.
       # Neither do `@dog.versions.scoped` nor `@dog.versions(true)` nor `@dog.versions.reload`.
       dog_versions = PaperTrail::Version.where(:item_id => @dog.id)
       assert_equal 4, dog_versions.count
-      assert dog_versions.first.reify.nil?
+      assert_nil dog_versions.first.reify
       dog_versions[1..-1].each { |v| assert_equal 'Dog', v.reify.class.name }
 
       cat_versions = PaperTrail::Version.where(:item_id => @cat.id)
       assert_equal 4, cat_versions.count
-      assert cat_versions.first.reify.nil?
+      assert_nil cat_versions.first.reify
       cat_versions[1..-1].each { |v| assert_equal 'Cat', v.reify.class.name }
     end
   end

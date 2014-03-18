@@ -1,6 +1,6 @@
 # Configure Rails Envinronment
 ENV["RAILS_ENV"] = "test"
-
+ENV["DB"] ||= "sqlite"
 require File.expand_path("../dummy/config/environment.rb",  __FILE__)
 require "rails/test_help"
 require 'shoulda'
@@ -32,4 +32,20 @@ def change_schema
     add_column :versions, :custom_created_at, :datetime
   end
   ActiveRecord::Migration.verbose = true
+  reset_version_class_column_info!
+end
+
+def restore_schema
+  ActiveRecord::Migration.verbose = false
+  ActiveRecord::Schema.define do
+    add_column :widgets, :sacrificial_column, :string
+    remove_column :versions, :custom_created_at
+  end
+  ActiveRecord::Migration.verbose = true
+  reset_version_class_column_info!
+end
+
+def reset_version_class_column_info!
+  PaperTrail::Version.connection.schema_cache.clear!
+  PaperTrail::Version.reset_column_information
 end

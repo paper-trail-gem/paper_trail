@@ -3,7 +3,9 @@ require 'sinatra/base'
 
 # --- Tests for modular `Sinatra::Base` style ----
 class BaseApp < Sinatra::Base
-  ActiveRecord::Base.establish_connection(:adapter => 'sqlite3', :database => File.expand_path('../../dummy/db/test.sqlite3', __FILE__))
+  configs = YAML.load_file(File.expand_path('../../dummy/config/database.yml', __FILE__))
+  ActiveRecord::Base.configurations = configs
+  ActiveRecord::Base.establish_connection(:test)
   register PaperTrail::Sinatra
 
   get '/test' do

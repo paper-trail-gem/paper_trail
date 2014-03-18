@@ -2,6 +2,19 @@ require 'bundler'
 Bundler::GemHelper.install_tasks
 
 require 'rake/testtask'
+
+desc 'Set a relevant database.yml'
+task :prepare do
+  ENV["DB"] ||= "sqlite"
+  if RUBY_VERSION.to_f >= 1.9
+    FileUtils.cp "test/dummy/config/database.#{ENV["DB"]}.yml", "test/dummy/config/database.yml"
+  else
+    require 'ftools'
+    File.cp "test/dummy/config/database.#{ENV["DB"]}.yml", "test/dummy/config/database.yml"
+  end
+end
+
+
 desc 'Run tests on PaperTrail with Test::Unit.'
 Rake::TestTask.new(:test) do |t|
   t.libs << 'lib'
@@ -15,4 +28,4 @@ desc 'Run PaperTrail specs for the RSpec helper.'
 RSpec::Core::RakeTask.new(:spec)
 
 desc 'Default: run all available test suites'
-task :default => [:test, :spec]
+task :default => [:prepare, :test, :spec]

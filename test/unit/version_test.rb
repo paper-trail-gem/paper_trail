@@ -7,6 +7,12 @@ class PaperTrail::VersionTest < ActiveSupport::TestCase
     assert PaperTrail::Version.creates.present?
   end
 
+  teardown do
+    restore_schema
+    Animal.connection.schema_cache.clear!
+    Animal.reset_column_information
+  end
+
   context "PaperTrail::Version.creates" do
     should "return only create events" do
       PaperTrail::Version.creates.each do |version|
