@@ -2,19 +2,21 @@ require 'test_helper'
 
 class PaperTrailCleanerTest < ActiveSupport::TestCase
 
-  setup do
+  def populate_db!
     @animals = [@animal = Animal.new, @dog = Dog.new, @cat = Cat.new]
     @animals.each do |animal|
       3.times { animal.update_attribute(:name, Faker::Name.name) }
     end
   end
 
-  test 'Baseline' do
-    assert_equal 9, PaperTrail::Version.count
-    @animals.each { |animal| assert_equal 3, animal.versions.size }
-  end
-
   context '`clean_versions!` method' do
+    setup { self.populate_db! }
+
+    should 'Baseline' do
+      assert_equal 9, PaperTrail::Version.count
+      @animals.each { |animal| assert_equal 3, animal.versions.size }
+    end
+
     should 'be extended by `PaperTrail` module' do
       assert_respond_to PaperTrail, :clean_versions!
     end
@@ -140,4 +142,41 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
     end
 
   end # clean_versions! method
+
+  context "Custom timestamp field" do
+    setup do
+      change_schema
+      self.populate_db!
+      # now mess with the timestamps
+      @animals.each do |animal|
+        animal.versions.reverse.each_with_index do |version, index|
+          version.update_attribute(:custom_created_at, Time.now.utc + index.days)
+        end
+      end
+      PaperTrail.timestamp_field = :custom_created_at
+      @animals.map { |a| a.versions(true) } # reload the `versions` association for each animal
+    end
+
+    teardown do
+      PaperTrail.timestamp_field = :created_at
+      restore_schema
+    end
+
+    should 'Baseline' do
+      assert_equal 9, PaperTrail::Version.count
+      @animals.each do |animal|
+        assert_equal 3, animal.versions.size
+        animal.versions.each_cons(2) do |a,b|
+          a.created_at.to_date == b.created_at.to_date
+          a.custom_created_at.to_date != b.custom_created_at.to_date
+        end
+      end
+    end
+
+    should 'group by `PaperTrail.timestamp_field` when seperating the versions by date to clean' do
+      assert_equal 9, PaperTrail::Version.count
+      PaperTrail.clean_versions!
+      assert_equal 9, PaperTrail::Version.count
+    end
+  end
 end

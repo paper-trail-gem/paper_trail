@@ -32,6 +32,7 @@ def change_schema
     add_column :versions, :custom_created_at, :datetime
   end
   ActiveRecord::Migration.verbose = true
+  reset_version_class_column_info!
 end
 
 def restore_schema
@@ -41,4 +42,10 @@ def restore_schema
     remove_column :versions, :custom_created_at
   end
   ActiveRecord::Migration.verbose = true
+  reset_version_class_column_info!
+end
+
+def reset_version_class_column_info!
+  PaperTrail::Version.connection.schema_cache.clear!
+  PaperTrail::Version.reset_column_information
 end
