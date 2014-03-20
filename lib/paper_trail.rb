@@ -118,7 +118,7 @@ unless PaperTrail.active_record_protected_attributes?
   rescue LoadError; end # will rescue if `ProtectedAttributes` gem is not available
 end
 
-require 'paper_trail/version'
+require 'paper_trail/engine' if defined?(Rails)
 
 # Require frameworks
 require 'paper_trail/frameworks/rails'
