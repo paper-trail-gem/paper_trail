@@ -1,3 +1,5 @@
+require 'active_support/core_ext/object' # provides the `try` method
+
 module PaperTrail
   module Sinatra
 
@@ -15,7 +17,10 @@ module PaperTrail
     # Override this method in your controller to call a different
     # method, e.g. `current_person`, or anything you like.
     def user_for_paper_trail
-      current_user.try(:id) if defined?(current_user)
+      return unless defined?(current_user)
+      ActiveSupport::VERSION::MAJOR >= 4 ? current_user.try!(:id) : current_user.try(:id)
+    rescue NoMethodError
+      current_user
     end
 
     private

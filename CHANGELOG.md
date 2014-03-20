@@ -1,5 +1,7 @@
 ## 3.0.2 (Unreleased)
 
+  - [#346](https://github.com/airblade/paper_trail/pull/346) - `user_for_paper_trail` method should accomodate different types
+    for return values from `current_user` method.
   - `PaperTrail::Cleaner.clean_versions!` should group versions by `PaperTrail.timestamp_field` when deciding which ones to
     keep / destroy, instead of always grouping by the `created_at` field.
 

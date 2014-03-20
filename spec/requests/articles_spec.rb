@@ -16,4 +16,17 @@ describe "Articles" do
       PaperTrail.should be_enabled_for_controller
     end
   end
+
+  with_versioning do
+    let(:article) { Article.last }
+
+    context "`current_user` method returns a `String`" do
+      it "should set that value as the `whodunnit`" do
+        expect { post articles_path(valid_params) }.to change(PaperTrail::Version, :count).by(1)
+        article.title.should == 'Doh'
+        PaperTrail.whodunnit.should == 'foobar'
+        article.versions.last.whodunnit.should == 'foobar'
+      end
+    end
+  end
 end

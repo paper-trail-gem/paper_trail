@@ -7,4 +7,8 @@ class ArticlesController < ApplicationController
     end
     head :ok
   end
+
+  def current_user
+    'foobar'
+  end
 end
