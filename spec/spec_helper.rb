@@ -1,4 +1,9 @@
 ENV["RAILS_ENV"] ||= 'test'
+ENV["DB"] ||= 'sqlite'
+
+unless File.exists?(File.expand_path('../../test/dummy/config/database.yml', __FILE__))
+  warn "WARNING: No database.yml detected for the dummy app, please run `rake prepare` first"
+end
 
 require File.expand_path('../../test/dummy/config/environment', __FILE__)
 require 'rspec/rails'

@@ -1,9 +1,7 @@
 require 'bundler'
 Bundler::GemHelper.install_tasks
 
-require 'rake/testtask'
-
-desc 'Set a relevant database.yml'
+desc 'Set a relevant database.yml for testing'
 task :prepare do
   ENV["DB"] ||= "sqlite"
   if RUBY_VERSION.to_f >= 1.9
@@ -15,6 +13,7 @@ task :prepare do
 end
 
 
+require 'rake/testtask'
 desc 'Run tests on PaperTrail with Test::Unit.'
 Rake::TestTask.new(:test) do |t|
   t.libs << 'lib'
