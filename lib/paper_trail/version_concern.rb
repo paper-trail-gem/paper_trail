@@ -192,18 +192,21 @@ module PaperTrail
     def reify_has_ones(model, lookback)
       model.class.reflect_on_all_associations(:has_one).each do |assoc|
         child = model.send assoc.name
+
         if child.respond_to? :version_at
           # N.B. we use version of the child as it was `lookback` seconds before the parent was updated.
           # Ideally we want the version of the child as it was just before the parent was updated...
           # but until PaperTrail knows which updates are "together" (e.g. parent and child being
           # updated on the same form), it's impossible to tell when the overall update started;
           # and therefore impossible to know when "just before" was.
-          if (child_as_it_was = child.version_at(self.created_at))
+          child_as_it_was = child.version_at(self.created_at)
+
+          if !child_as_it_was
+            model.send "#{assoc.name}=", nil
+          elsif !child_as_it_was.equal?(child)
             child_as_it_was.attributes.each do |k,v|
               model.send(assoc.name).send :write_attribute, k.to_sym, v rescue nil
             end
-          else
-            model.send "#{assoc.name}=", nil
           end
         end
       end
