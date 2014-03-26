@@ -198,7 +198,7 @@ module PaperTrail
           # but until PaperTrail knows which updates are "together" (e.g. parent and child being
           # updated on the same form), it's impossible to tell when the overall update started;
           # and therefore impossible to know when "just before" was.
-          if (child_as_it_was = child.version_at(send(PaperTrail.timestamp_field) - lookback.seconds))
+          if (child_as_it_was = child.version_at(self.created_at))
             child_as_it_was.attributes.each do |k,v|
               model.send(assoc.name).send :write_attribute, k.to_sym, v rescue nil
             end
