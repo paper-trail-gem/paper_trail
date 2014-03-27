@@ -78,7 +78,7 @@ module PaperTrail
 
       without_identity_map do
         options[:has_one] = 3 if options[:has_one] == true
-        options.reverse_merge! :has_one => false
+        options = { :has_one => false }.merge(options)
 
         attrs = self.class.object_col_is_json? ? object : PaperTrail.serializer.load(object)
 
