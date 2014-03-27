@@ -117,7 +117,7 @@ module PaperTrail
         end
 
         model.send "#{model.class.version_association_name}=", self
-        reify_has_ones(model) if !!options[:has_one]
+        reify_has_ones_for(model, self.created_at) if !!options[:has_one]
 
         model
       end
@@ -183,12 +183,12 @@ module PaperTrail
     # Restore the `model`'s has_one associations as they were when this version was
     # superseded by the next (because that's what the user was looking at when they
     # made the change).
-    def reify_has_ones(model)
+    def reify_has_ones_for(model, version_at_time)
       model.class.reflect_on_all_associations(:has_one).each do |assoc|
         child = model.send assoc.name
 
         if child.respond_to? :version_at
-          child_as_it_was = child.version_at(self.created_at)
+          child_as_it_was = child.version_at(version_at_time)
 
           if !child_as_it_was
             model.send "#{assoc.name}=", nil
