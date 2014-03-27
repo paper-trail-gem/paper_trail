@@ -960,7 +960,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       end
 
       context 'when reified' do
-        setup { @widget_0 = @widget.versions.last.reify(:has_one => 1) }
+        setup { @widget_0 = @widget.versions.last.reify(:has_one => true) }
 
         should 'see the associated as it was at the time' do
           assert_nil @widget_0.wotsit
@@ -977,7 +977,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       end
 
       context 'when reified' do
-        setup { @widget_0 = @widget.versions.last.reify(:has_one => 1) }
+        setup { @widget_0 = @widget.versions.last.reify(:has_one => true) }
 
         should 'see the associated as it was at the time' do
           assert_equal 'wotsit_0', @widget_0.wotsit.name
@@ -996,7 +996,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         end
 
         context 'when reified' do
-          setup { @widget_1 = @widget.versions.last.reify(:has_one => 1) }
+          setup { @widget_1 = @widget.versions.last.reify(:has_one => true) }
 
           should 'see the associated as it was at the time' do
             assert_equal 'wotsit_2', @widget_1.wotsit.name
@@ -1021,7 +1021,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         end
 
         context 'when reified' do
-          setup { @widget_2 = @widget.versions.last.reify(:has_one => 1) }
+          setup { @widget_2 = @widget.versions.last.reify(:has_one => true) }
 
           should 'see the associated as it was at the time' do
             assert_nil @widget_2.wotsit
