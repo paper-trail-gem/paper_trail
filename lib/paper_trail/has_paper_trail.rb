@@ -92,7 +92,7 @@ module PaperTrail
         PaperTrail.enabled_for_model(self, true)
       end
 
-	    def paper_trail_on
+      def paper_trail_on
         warn "DEPRECATED: use `paper_trail_on!` instead of `paper_trail_on`. Support for `paper_trail_on` will be removed in PaperTrail 3.1"
         self.paper_trail_on!
       end
