@@ -33,22 +33,43 @@ module PaperTrail
         where 'event <> ?', 'create'
       end
 
-      # These methods accept a timestamp or a version and returns other versions that come before or after
-      def subsequent(obj)
+      # Expects `obj` to be an instance of `PaperTrail::Version` by default, but can accept a timestamp if
+      # `timestamp_arg` receives `true`
+      def subsequent(obj, timestamp_arg = false)
+        if timestamp_arg != true && self.primary_key_is_int?
+          return where("#{table_name}.#{self.primary_key} > ?", obj).order("#{table_name}.#{self.primary_key} ASC")
+        end
+
         obj = obj.send(PaperTrail.timestamp_field) if obj.is_a?(self)
         where("#{table_name}.#{PaperTrail.timestamp_field} > ?", obj).
-          order("#{table_name}.#{PaperTrail.timestamp_field} ASC")
+          order(self.timestamp_sort_order)
       end
 
-      def preceding(obj)
+      def preceding(obj, timestamp_arg = false)
+        if timestamp_arg != true && self.primary_key_is_int?
+          return where("#{table_name}.#{self.primary_key} < ?", obj).order("#{table_name}.#{self.primary_key} DESC")
+        end
+
         obj = obj.send(PaperTrail.timestamp_field) if obj.is_a?(self)
         where("#{table_name}.#{PaperTrail.timestamp_field} < ?", obj).
-          order("#{table_name}.#{PaperTrail.timestamp_field} DESC")
+          order(self.timestamp_sort_order('DESC'))
       end
+
 
       def between(start_time, end_time)
         where("#{table_name}.#{PaperTrail.timestamp_field} > ? AND #{table_name}.#{PaperTrail.timestamp_field} < ?",
-          start_time, end_time).order("#{table_name}.#{PaperTrail.timestamp_field} ASC")
+          start_time, end_time).order(self.timestamp_sort_order)
+      end
+
+      # defaults to using the primary key as the secondary sort order if possible
+      def timestamp_sort_order(order = 'ASC')
+        self.primary_key_is_int? ?
+          "#{table_name}.#{PaperTrail.timestamp_field} #{order}, #{table_name}.#{self.primary_key} #{order}" :
+          "#{table_name}.#{PaperTrail.timestamp_field} #{order}"
+      end
+
+      def primary_key_is_int?
+        @primary_key_is_int ||= columns_hash[primary_key].type == :integer
       end
 
       # Returns whether the `object` column is using the `json` type supported by PostgreSQL

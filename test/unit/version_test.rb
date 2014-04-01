@@ -66,9 +66,9 @@ class PaperTrail::VersionTest < ActiveSupport::TestCase
 
     context "receiving a TimeStamp" do
       should "return all versions that were created before the Timestamp; descendingly by order of the `PaperTrail.timestamp_field`" do
-        value = PaperTrail::Version.subsequent(1.hour.ago)
+        value = PaperTrail::Version.subsequent(1.hour.ago, true)
         assert_equal value, @animal.versions.to_a
-        assert_not_nil value.to_sql.match(/ORDER BY versions.created_at ASC\z/)
+        assert_not_nil value.to_sql.match(/ORDER BY versions.created_at ASC/)
       end
     end
 
@@ -76,10 +76,6 @@ class PaperTrail::VersionTest < ActiveSupport::TestCase
       should "grab the Timestamp from the version and use that as the value" do
         value = PaperTrail::Version.subsequent(@animal.versions.first)
         assert_equal value, @animal.versions.to_a.tap { |assoc| assoc.shift }
-        # This asssertion can't pass in Ruby18 because the `strftime` method doesn't accept the %6 (milliseconds) command
-        if RUBY_VERSION.to_f >= 1.9 and not defined?(JRUBY_VERSION)
-          assert_not_nil value.to_sql.match(/WHERE \(versions.created_at > '#{@animal.versions.first.send(PaperTrail.timestamp_field).strftime("%F %T.%6N")}'\)/)
-        end
       end
     end
   end
@@ -89,9 +85,9 @@ class PaperTrail::VersionTest < ActiveSupport::TestCase
 
     context "receiving a TimeStamp" do
       should "return all versions that were created before the Timestamp; descendingly by order of the `PaperTrail.timestamp_field`" do
-        value = PaperTrail::Version.preceding(Time.now)
+        value = PaperTrail::Version.preceding(Time.now, true)
         assert_equal value, @animal.versions.reverse
-        assert_not_nil value.to_sql.match(/ORDER BY versions.created_at DESC\z/)
+        assert_not_nil value.to_sql.match(/ORDER BY versions.created_at DESC/)
       end
     end
 
@@ -99,10 +95,6 @@ class PaperTrail::VersionTest < ActiveSupport::TestCase
       should "grab the Timestamp from the version and use that as the value" do
         value = PaperTrail::Version.preceding(@animal.versions.last)
         assert_equal value, @animal.versions.to_a.tap { |assoc| assoc.pop }.reverse
-        # This asssertion can't pass in Ruby18 because the `strftime` method doesn't accept the %6 (milliseconds) command
-        if RUBY_VERSION.to_f >= 1.9 and not defined?(JRUBY_VERSION)
-          assert_not_nil value.to_sql.match(/WHERE \(versions.created_at < '#{@animal.versions.last.send(PaperTrail.timestamp_field).strftime("%F %T.%6N")}'\)/)
-        end
       end
     end
   end
