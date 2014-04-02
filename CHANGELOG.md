@@ -1,5 +1,7 @@
 ## 3.0.2 (Unreleased)
 
+  - [#351](https://github.com/airblade/paper_trail/pull/351) / [#352](https://github.com/airblade/paper_trail/pull/352) -
+    `PaperTrail::Rails::Controller` should hook into all controller types, and should not get loaded unless `ActionController` is.
   - [#346](https://github.com/airblade/paper_trail/pull/346) - `user_for_paper_trail` method should accomodate different types
     for return values from `current_user` method.
   - `PaperTrail::Cleaner.clean_versions!` should group versions by `PaperTrail.timestamp_field` when deciding which ones to
@@ -39,7 +41,7 @@
   - [#281](https://github.com/airblade/paper_trail/issues/281) - `Rails::Controller` helper will return `false` for the
     `paper_trail_enabled_for_controller` method if `PaperTrail.enabled? == false`.
   - [#280](https://github.com/airblade/paper_trail/pull/280) - Don't track virtual timestamp attributes.
-  - [#278](https://github.com/airblade/paper_trail/issues/278)/[#272](https://github.com/airblade/paper_trail/issues/272) -
+  - [#278](https://github.com/airblade/paper_trail/issues/278) / [#272](https://github.com/airblade/paper_trail/issues/272) -
     Make RSpec and Cucumber helpers usable with [Spork](https://github.com/sporkrb/spork) and [Zeus](https://github.com/burke/zeus).
   - [#273](https://github.com/airblade/paper_trail/pull/273) - Make the `only` and `ignore` options accept `Hash` arguments;
     allows for conditional tracking.
