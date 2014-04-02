@@ -3,7 +3,8 @@ module PaperTrail
     module Controller
 
       def self.included(base)
-        if defined?(ActionController) && (base == ActionController::Base || base == ActionController::API)
+        if (defined?(ActionController::Base) && base == ActionController::Base) ||
+            (defined?(ActionController::API) && base == ActionController::API)
           base.before_filter :set_paper_trail_enabled_for_controller
           base.before_filter :set_paper_trail_whodunnit, :set_paper_trail_controller_info
         end
