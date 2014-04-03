@@ -1032,9 +1032,9 @@ export DB=sqlite # this is default
 
 ## Articles
 
-[Using PaperTrail to track stack traces](http://rubyrailsexpert.com/?p=36), T James Corcoran's blog, 1st October 2013.
-[RailsCast #255 - Undo with PaperTrail](http://railscasts.com/episodes/255-undo-with-paper-trail), 28th February 2011.
-[Keep a Paper Trail with PaperTrail](http://www.linux-mag.com/id/7528), Linux Magazine, 16th September 2009.
+* [Using PaperTrail to track stack traces](http://rubyrailsexpert.com/?p=36), T James Corcoran's blog, 1st October 2013.
+* [RailsCast #255 - Undo with PaperTrail](http://railscasts.com/episodes/255-undo-with-paper-trail), 28th February 2011.
+* [Keep a Paper Trail with PaperTrail](http://www.linux-mag.com/id/7528), Linux Magazine, 16th September 2009.
 
 
 ## Problems
