@@ -889,7 +889,7 @@ A valid serializer is a `module` (or `class`) that defines a `load` and `dump` m
 
 ## Limiting the number of versions created per object instance
 
-If you are weary of your `versions` table growing to an unwieldy size, or just don't care to track more than a certain number of versions per object,
+If you are wary of your `versions` table growing to an unwieldy size, or just don't care to track more than a certain number of versions per object,
 there is a configuration option that can be set to cap the number of versions saved per object. Note that this value must be numeric, and it only applies to
 versions other than `create` events (which will always be preserved if they are stored).
 
