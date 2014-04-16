@@ -72,8 +72,11 @@ module PaperTrail
 
         options_on = Array(options[:on]) # so that a single symbol can be passed in without wrapping it in an `Array`
         after_create  :record_create, :if => :save_version? if options_on.empty? || options_on.include?(:create)
-        before_update :record_update, :if => :save_version? if options_on.empty? || options_on.include?(:update)
-        after_update  :clear_version_instance if options_on.empty? || options_on.include?(:update)
+        if options_on.empty? || options_on.include?(:update)
+          before_save   :reset_timestamp_attrs_for_update_if_needed!, :on => :update
+          before_update :record_update, :if => :save_version?
+          after_update  :clear_version_instance!
+        end
         after_destroy :record_destroy, :if => :save_version? if options_on.empty? || options_on.include?(:destroy)
       end
 
@@ -266,12 +269,15 @@ module PaperTrail
 
       def record_update
         if paper_trail_switched_on? && changed_notably?
+          # reset_timestamp_attrs_for_update_if_needed!
+
           object_attrs = object_attrs_for_paper_trail(item_before_change)
           data = {
             :event     => paper_trail_event || 'update',
             :object    => self.class.paper_trail_version_class.object_col_is_json? ? object_attrs : PaperTrail.serializer.dump(object_attrs),
             :whodunnit => PaperTrail.whodunnit
           }
+
           if self.class.paper_trail_version_class.column_names.include?('object_changes')
             data[:object_changes] = self.class.paper_trail_version_class.object_changes_col_is_json? ? changes_for_paper_trail :
               PaperTrail.serializer.dump(changes_for_paper_trail)
@@ -287,8 +293,13 @@ module PaperTrail
       end
 
       # Invoked via `after_update` callback for when a previous version is reified and then saved
-      def clear_version_instance
+      def clear_version_instance!
         send("#{self.class.version_association_name}=", nil)
+      end
+
+      def reset_timestamp_attrs_for_update_if_needed!
+        return if self.live? # invoked via callback when a user attempts to persist a reified `Version`
+        timestamp_attributes_for_update_in_model.each { |column| send("reset_#{column}!") }
       end
 
       def record_destroy

@@ -22,6 +22,18 @@ describe Widget do
   end
 
   describe "Callbacks", :versioning => true do
+    describe :before_save do
+      context ':on => :update' do
+        before { widget.update_attributes!(:name => 'Foobar') }
+
+        subject { widget.versions.last.reify }
+
+        it "should reset the value for the timestamp attrs for update so that value gets updated properly" do
+          expect { subject.save }.to change(subject, :updated_at)
+        end
+      end
+    end
+
     describe :after_update do
       before { widget.update_attributes!(:name => 'Foobar') }
 
