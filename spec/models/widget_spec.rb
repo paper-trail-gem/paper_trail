@@ -5,7 +5,7 @@ describe Widget do
     it { should be_versioned }
   end
 
-  let(:widget) { Widget.create :name => 'Bob', :an_integer => 1 }
+  let(:widget) { Widget.create! :name => 'Bob', :an_integer => 1 }
 
   describe "`versioning` option" do
     context :enabled, :versioning => true do
@@ -22,6 +22,19 @@ describe Widget do
   end
 
   describe "Callbacks", :versioning => true do
+    describe :after_update do
+      before { widget.update_attributes!(:name => 'Foobar') }
+
+      subject { widget.versions.last.reify }
+
+      it { subject.should_not be_live }
+
+      it "should clear the `versions_association_name` virtual attribute" do
+        subject.save!
+        subject.should be_live
+      end
+    end
+
     describe :after_destroy do
       it "should create a version for that event" do
         expect { widget.destroy }.to change(widget.versions, :count).by(1)

@@ -73,6 +73,7 @@ module PaperTrail
         options_on = Array(options[:on]) # so that a single symbol can be passed in without wrapping it in an `Array`
         after_create  :record_create, :if => :save_version? if options_on.empty? || options_on.include?(:create)
         before_update :record_update, :if => :save_version? if options_on.empty? || options_on.include?(:update)
+        after_update  :clear_version_instance if options_on.empty? || options_on.include?(:update)
         after_destroy :record_destroy, :if => :save_version? if options_on.empty? || options_on.include?(:destroy)
       end
 
@@ -165,7 +166,7 @@ module PaperTrail
       # Returns true if this instance is the current, live one;
       # returns false if this instance came from a previous version.
       def live?
-        @is_live ||= source_version.nil?
+        source_version.nil?
       end
 
       # Returns who put the object into its current state.
@@ -283,6 +284,11 @@ module PaperTrail
         self.changes.delete_if do |key, value|
           !notably_changed.include?(key)
         end.tap { |changes| self.class.serialize_attribute_changes(changes) }
+      end
+
+      # Invoked via `after_update` callback for when a previous version is reified and then saved
+      def clear_version_instance
+        send("#{self.class.version_association_name}=", nil)
       end
 
       def record_destroy
