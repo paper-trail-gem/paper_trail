@@ -21,6 +21,21 @@ describe Widget do
     end
   end
 
+  describe "Callbacks", :versioning => true do
+    describe :after_destroy do
+      it "should create a version for that event" do
+        expect { widget.destroy }.to change(widget.versions, :count).by(1)
+      end
+
+      it "should assign the version into the `versions_association_name`" do
+        widget.version.should be_nil
+        widget.destroy
+        widget.version.should_not be_nil
+        widget.version.should == widget.versions.last
+      end
+    end
+  end
+
   describe "Methods" do
     describe "Instance", :versioning => true do
       describe :whodunnit do

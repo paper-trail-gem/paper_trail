@@ -6,6 +6,8 @@
     for return values from `current_user` method.
   - `PaperTrail::Cleaner.clean_versions!` should group versions by `PaperTrail.timestamp_field` when deciding which ones to
     keep / destroy, instead of always grouping by the `created_at` field.
+  - If `destroy` actions are tracked for a versioned model, invoking `destroy` on the model will cause the corresponding version that
+    gets generated to be assigned into the `model_instance#version_association_name` accessor (usally `model_instance#version`).
 
 ## 3.0.1
 
