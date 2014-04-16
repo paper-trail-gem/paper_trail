@@ -942,7 +942,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     should 'store version on join clear' do
       @book.authors << @dostoyevsky
       count = PaperTrail::Version.count
-      @book.authorships(true).clear
+      @book.authorships(true).destroy_all
       assert_equal 1, PaperTrail::Version.count - count
       assert_equal @book, PaperTrail::Version.last.reify.book
       assert_equal @dostoyevsky, PaperTrail::Version.last.reify.person
