@@ -29,7 +29,7 @@ describe Widget do
         subject { widget.versions.last.reify }
 
         it "should reset the value for the timestamp attrs for update so that value gets updated properly" do
-          expect { subject.save }.to change(subject, :updated_at)
+          expect { subject.save! }.to change(subject, :updated_at)
         end
       end
     end
