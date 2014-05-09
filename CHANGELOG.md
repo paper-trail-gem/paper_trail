@@ -13,6 +13,7 @@
     become the live instance.
   - If `destroy` actions are tracked for a versioned model, invoking `destroy` on the model will cause the corresponding version that
     gets generated to be assigned as the source version (`model_instance#version_association_name`, usually `model_instance#version`).
+  - Gem is now tested against `MySQL` and `PostgreSQL` in addition to `SQLite`.
 
 ## 3.0.1
 

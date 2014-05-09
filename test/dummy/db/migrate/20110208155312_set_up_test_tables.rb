@@ -5,7 +5,7 @@ class SetUpTestTables < ActiveRecord::Migration
       t.text      :a_text
       t.integer   :an_integer
       t.float     :a_float
-      t.decimal   :a_decimal
+      t.decimal   :a_decimal, :precision => 6, :scale => 4
       t.datetime  :a_datetime
       t.time      :a_time
       t.date      :a_date

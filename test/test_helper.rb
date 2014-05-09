@@ -5,10 +5,15 @@ unless File.exists?(File.expand_path('../../test/dummy/config/database.yml', __F
   warn "WARNING: No database.yml detected for the dummy app, please run `rake prepare` first"
 end
 
+def using_mysql?
+  @using_mysql ||= ActiveRecord::Base.connection_config[:adapter].to_sym == :mysql2
+end
+
 require File.expand_path("../dummy/config/environment.rb",  __FILE__)
 require "rails/test_help"
 require 'shoulda'
 require 'ffaker'
+require 'database_cleaner' if using_mysql?
 
 Rails.backtrace_cleaner.remove_silencers!
 
@@ -18,9 +23,18 @@ ActiveRecord::Migrator.migrate File.expand_path("../dummy/db/migrate/", __FILE__
 # Load support files
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
+# DatabaseCleaner is apparently necessary for doing proper transactions within MySQL (ugh)
+DatabaseCleaner.strategy = :truncation if using_mysql?
+
 # global setup block resetting Thread.current
 class ActiveSupport::TestCase
+  if using_mysql?
+    self.use_transactional_fixtures = false
+    setup { DatabaseCleaner.start }
+  end
+
   teardown do
+    DatabaseCleaner.clean if using_mysql?
     Thread.current[:paper_trail] = nil
   end
 end

@@ -71,6 +71,7 @@ ActiveRecord::Schema.define(:version => 20110208155312) do
     t.integer  "article_id"
     t.string   "ip"
     t.string   "user_agent"
+    t.text     :object_changes
   end
 
   add_index "versions", ["item_type", "item_id"], :name => "index_versions_on_item_type_and_item_id"

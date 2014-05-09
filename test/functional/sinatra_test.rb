@@ -30,7 +30,6 @@ class SinatraTest < ActionDispatch::IntegrationTest
   end
 
   test 'baseline' do
-    assert_nil Widget.first
     assert_nil Widget.create.versions.first.whodunnit
   end
 
@@ -39,7 +38,7 @@ class SinatraTest < ActionDispatch::IntegrationTest
     should "sets the `user_for_paper_trail` from the `current_user` method" do
       get '/test'
       assert_equal 'Hai', last_response.body
-      widget = Widget.first
+      widget = Widget.last
       assert_not_nil widget
       assert_equal 'bar', widget.name
       assert_equal 1, widget.versions.size
