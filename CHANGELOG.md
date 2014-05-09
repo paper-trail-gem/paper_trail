@@ -6,6 +6,9 @@
     `PaperTrail::Rails::Controller` should hook into all controller types, and should not get loaded unless `ActionController` is.
   - [#346](https://github.com/airblade/paper_trail/pull/346) - `user_for_paper_trail` method should accommodate different types
     for return values from `current_user` method.
+  - [#344](https://github.com/airblade/paper_trail/pull/344) - Gem is now tested against `MySQL` and `PostgreSQL` in addition to `SQLite`.
+  - [#317](https://github.com/airblade/paper_trail/issues/317) / [#314](https://github.com/airblade/paper_trail/issues/314) -
+    `versions` should default to ordering via the primary key if it is an integer to avoid timestamp comparison issues.
   - `PaperTrail::Cleaner.clean_versions!` should group versions by `PaperTrail.timestamp_field` when deciding which ones to
     keep / destroy, instead of always grouping by the `created_at` field.
   - If a `Version` instance is reified and then persisted at that state, it's source version
@@ -13,7 +16,6 @@
     become the live instance.
   - If `destroy` actions are tracked for a versioned model, invoking `destroy` on the model will cause the corresponding version that
     gets generated to be assigned as the source version (`model_instance#version_association_name`, usually `model_instance#version`).
-  - Gem is now tested against `MySQL` and `PostgreSQL` in addition to `SQLite`.
 
 ## 3.0.1
 
