@@ -18,6 +18,9 @@ group :development, :test do
   gem 'rspec-rails', '~> 2.14'
   gem 'generator_spec'
 
+  # To do proper transactional testing with ActiveSupport::TestCase on MySQL
+  gem 'database_cleaner', '~> 1.2'
+
   platforms :ruby do 
     gem 'sqlite3', '~> 1.2'
     gem 'mysql2', '~> 0.3'

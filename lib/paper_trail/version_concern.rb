@@ -70,6 +70,8 @@ module PaperTrail
 
       def primary_key_is_int?
         @primary_key_is_int ||= columns_hash[primary_key].type == :integer
+      rescue
+        true
       end
 
       # Returns whether the `object` column is using the `json` type supported by PostgreSQL
