@@ -65,7 +65,7 @@ class PaperTrail::VersionTest < ActiveSupport::TestCase
     setup { 2.times { @animal.update_attributes(:name => Faker::Lorem.word) } }
 
     context "receiving a TimeStamp" do
-      should "return all versions that were created before the Timestamp; descendingly by order of the `PaperTrail.timestamp_field`" do
+      should "return all versions that were created before the Timestamp" do
         value = PaperTrail::Version.subsequent(1.hour.ago, true)
         assert_equal value, @animal.versions.to_a
         assert_not_nil value.to_sql.match(/ORDER BY versions.created_at ASC/)
@@ -84,8 +84,8 @@ class PaperTrail::VersionTest < ActiveSupport::TestCase
     setup { 2.times { @animal.update_attributes(:name => Faker::Lorem.word) } }
 
     context "receiving a TimeStamp" do
-      should "return all versions that were created before the Timestamp; descendingly by order of the `PaperTrail.timestamp_field`" do
-        value = PaperTrail::Version.preceding(Time.now, true)
+      should "return all versions that were created before the Timestamp" do
+        value = PaperTrail::Version.preceding(5.seconds.from_now, true)
         assert_equal value, @animal.versions.reverse
         assert_not_nil value.to_sql.match(/ORDER BY versions.created_at DESC/)
       end

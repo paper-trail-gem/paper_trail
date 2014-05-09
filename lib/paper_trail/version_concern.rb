@@ -41,8 +41,7 @@ module PaperTrail
         end
 
         obj = obj.send(PaperTrail.timestamp_field) if obj.is_a?(self)
-        where("#{table_name}.#{PaperTrail.timestamp_field} > ?", obj).
-          order(self.timestamp_sort_order)
+        where("#{table_name}.#{PaperTrail.timestamp_field} > ?", obj).order(self.timestamp_sort_order)
       end
 
       def preceding(obj, timestamp_arg = false)
@@ -51,8 +50,7 @@ module PaperTrail
         end
 
         obj = obj.send(PaperTrail.timestamp_field) if obj.is_a?(self)
-        where("#{table_name}.#{PaperTrail.timestamp_field} < ?", obj).
-          order(self.timestamp_sort_order('DESC'))
+        where("#{table_name}.#{PaperTrail.timestamp_field} < ?", obj).order(self.timestamp_sort_order('DESC'))
       end
 
 
@@ -63,9 +61,11 @@ module PaperTrail
 
       # defaults to using the primary key as the secondary sort order if possible
       def timestamp_sort_order(order = 'ASC')
-        self.primary_key_is_int? ?
-          "#{table_name}.#{PaperTrail.timestamp_field} #{order}, #{table_name}.#{self.primary_key} #{order}" :
+        if self.primary_key_is_int?
+          "#{table_name}.#{PaperTrail.timestamp_field} #{order}, #{table_name}.#{self.primary_key} #{order}"
+        else
           "#{table_name}.#{PaperTrail.timestamp_field} #{order}"
+        end
       end
 
       def primary_key_is_int?
