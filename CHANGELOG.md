@@ -1,4 +1,4 @@
-## 3.0.2 (Unreleased)
+## 3.0.2
 
   - [#357](https://github.com/airblade/paper_trail/issues/357) - If a `Version` instance is reified and then persisted at that state,
     it's timestamp attributes for update should still get `touch`ed.
