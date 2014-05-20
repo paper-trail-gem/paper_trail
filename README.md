@@ -40,7 +40,7 @@ The Rails 2.3 code is on the [`rails2`](https://github.com/airblade/paper_trail/
 
 ### Rails 3 & 4
 
-1. Add `PaperTrail` to your `Gemfile`.
+1. Add PaperTrail to your `Gemfile`.
 
     `gem 'paper_trail', '~> 3.0.2'`
 
@@ -56,13 +56,13 @@ The Rails 2.3 code is on the [`rails2`](https://github.com/airblade/paper_trail/
 
 ### Sinatra
 
-In order to configure `PaperTrail` for usage with [Sinatra](http://www.sinatrarb.com),
-your `Sinatra` app must be using `ActiveRecord` 3 or  `ActiveRecord` 4. It is also recommended to use the
+In order to configure PaperTrail for usage with [Sinatra](http://www.sinatrarb.com),
+your `Sinatra` app must be using `ActiveRecord` 3 or 4. It is also recommended to use the
 [Sinatra ActiveRecord Extension](https://github.com/janko-m/sinatra-activerecord) or something similar for managing
 your applications `ActiveRecord` connection in a manner similar to the way `Rails` does. If using the aforementioned
-`Sinatra ActiveRecord Extension`, steps for setting up your app with `PaperTrail` will look something like this:
+`Sinatra ActiveRecord Extension`, steps for setting up your app with PaperTrail will look something like this:
 
-1. Add `PaperTrail` to your `Gemfile`.
+1. Add PaperTrail to your `Gemfile`.
 
     `gem 'paper_trail', '~> 3.0.2'`
 
