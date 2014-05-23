@@ -126,13 +126,6 @@ end
 
 # Require frameworks
 require 'paper_trail/frameworks/sinatra'
+require 'paper_trail/frameworks/rails' if defined? Rails
 require 'paper_trail/frameworks/rspec' if defined? RSpec
 require 'paper_trail/frameworks/cucumber' if defined? World
-
-if defined?(ActionController)
-  require 'paper_trail/frameworks/rails'
-
-  ActiveSupport.on_load(:action_controller) do
-    include PaperTrail::Rails::Controller
-  end
-end
