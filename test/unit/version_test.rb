@@ -68,7 +68,7 @@ class PaperTrail::VersionTest < ActiveSupport::TestCase
       should "return all versions that were created before the Timestamp" do
         value = PaperTrail::Version.subsequent(1.hour.ago, true)
         assert_equal value, @animal.versions.to_a
-        assert_not_nil value.to_sql.match(/ORDER BY versions.created_at ASC/)
+        assert_not_nil value.to_sql.match(/ORDER BY #{PaperTrail::Version.arel_table[:created_at].asc.to_sql}/)
       end
     end
 
@@ -87,7 +87,7 @@ class PaperTrail::VersionTest < ActiveSupport::TestCase
       should "return all versions that were created before the Timestamp" do
         value = PaperTrail::Version.preceding(5.seconds.from_now, true)
         assert_equal value, @animal.versions.reverse
-        assert_not_nil value.to_sql.match(/ORDER BY versions.created_at DESC/)
+        assert_not_nil value.to_sql.match(/ORDER BY #{PaperTrail::Version.arel_table[:created_at].desc.to_sql}/)
       end
     end
 
