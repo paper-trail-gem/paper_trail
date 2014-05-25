@@ -14,57 +14,59 @@ module PaperTrail
 
     module ClassMethods
       def with_item_keys(item_type, item_id)
-        where :item_type => item_type, :item_id => item_id
+        where(:item_type => item_type, :item_id => item_id)
       end
 
       def creates
-        where :event => 'create'
+        where(:event => 'create')
       end
 
       def updates
-        where :event => 'update'
+        where(:event => 'update')
       end
 
       def destroys
-        where :event => 'destroy'
+        where(:event => 'destroy')
       end
 
       def not_creates
-        where 'event <> ?', 'create'
+        where(arel_table[:event].not_eq('create'))
       end
 
       # Expects `obj` to be an instance of `PaperTrail::Version` by default, but can accept a timestamp if
       # `timestamp_arg` receives `true`
       def subsequent(obj, timestamp_arg = false)
-        if timestamp_arg != true && self.primary_key_is_int?
-          return where("#{table_name}.#{self.primary_key} > ?", obj).order("#{table_name}.#{self.primary_key} ASC")
+        if !timestamp_arg && primary_key_is_int?
+          return where(arel_table[primary_key].gt(obj.id)).order(arel_table[primary_key].asc)
         end
 
         obj = obj.send(PaperTrail.timestamp_field) if obj.is_a?(self)
-        where("#{table_name}.#{PaperTrail.timestamp_field} > ?", obj).order(self.timestamp_sort_order)
+        where(arel_table[PaperTrail.timestamp_field].gt(obj)).order(timestamp_sort_order)
       end
 
       def preceding(obj, timestamp_arg = false)
-        if timestamp_arg != true && self.primary_key_is_int?
-          return where("#{table_name}.#{self.primary_key} < ?", obj).order("#{table_name}.#{self.primary_key} DESC")
+        if !timestamp_arg && primary_key_is_int?
+          return where(arel_table[primary_key].lt(obj.id)).order(arel_table[primary_key].desc)
         end
 
         obj = obj.send(PaperTrail.timestamp_field) if obj.is_a?(self)
-        where("#{table_name}.#{PaperTrail.timestamp_field} < ?", obj).order(self.timestamp_sort_order('DESC'))
+        where(arel_table[PaperTrail.timestamp_field].lt(obj)).order(timestamp_sort_order).reverse_order
       end
 
 
       def between(start_time, end_time)
-        where("#{table_name}.#{PaperTrail.timestamp_field} > ? AND #{table_name}.#{PaperTrail.timestamp_field} < ?",
-          start_time, end_time).order(self.timestamp_sort_order)
+        where(
+          arel_table[PaperTrail.timestamp_field].gt(start_time).
+            and(arel_table[PaperTrail.timestamp_field].lt(end_time))
+        ).order(timestamp_sort_order)
       end
 
       # defaults to using the primary key as the secondary sort order if possible
-      def timestamp_sort_order(order = 'ASC')
-        if self.primary_key_is_int?
-          "#{table_name}.#{PaperTrail.timestamp_field} #{order}, #{table_name}.#{self.primary_key} #{order}"
+      def timestamp_sort_order
+        if primary_key_is_int?
+          [arel_table[PaperTrail.timestamp_field].asc, arel_table[primary_key].asc]
         else
-          "#{table_name}.#{PaperTrail.timestamp_field} #{order}"
+          [arel_table[PaperTrail.timestamp_field].asc]
         end
       end
 
@@ -101,7 +103,7 @@ module PaperTrail
 
       without_identity_map do
         options[:has_one] = 3 if options[:has_one] == true
-        options.reverse_merge! :has_one => false
+        options.reverse_merge!(:has_one => false)
 
         attrs = self.class.object_col_is_json? ? object : PaperTrail.serializer.load(object)
 
@@ -140,7 +142,7 @@ module PaperTrail
           end
         end
 
-        model.send "#{model.class.version_association_name}=", self
+        model.send("#{model.class.version_association_name}=", self)
 
         unless options[:has_one] == false
           reify_has_ones model, options[:has_one]
@@ -176,7 +178,7 @@ module PaperTrail
     alias_method :version_author, :terminator
 
     def sibling_versions(reload = false)
-      @sibling_versions = nil if reload == true
+      @sibling_versions = nil if reload
       @sibling_versions ||= self.class.with_item_keys(item_type, item_id)
     end
 
@@ -189,10 +191,9 @@ module PaperTrail
     end
 
     def index
-      table_name = self.class.table_name
       @index ||= sibling_versions.
-        select(["#{table_name}.#{PaperTrail.timestamp_field}", "#{table_name}.#{self.class.primary_key}"]).
-        order("#{table_name}.#{PaperTrail.timestamp_field} ASC").index(self)
+        select([self.class.arel_table[PaperTrail.timestamp_field], self.class.arel_table[self.class.primary_key]]).
+        order(self.class.arel_table[PaperTrail.timestamp_field].asc).index(self)
     end
 
     private
@@ -214,8 +215,8 @@ module PaperTrail
     # The `lookback` sets how many seconds before the model's change we go.
     def reify_has_ones(model, lookback)
       model.class.reflect_on_all_associations(:has_one).each do |assoc|
-        child = model.send assoc.name
-        if child.respond_to? :version_at
+        child = model.send(assoc.name)
+        if child.respond_to?(:version_at)
           # N.B. we use version of the child as it was `lookback` seconds before the parent was updated.
           # Ideally we want the version of the child as it was just before the parent was updated...
           # but until PaperTrail knows which updates are "together" (e.g. parent and child being
@@ -223,10 +224,10 @@ module PaperTrail
           # and therefore impossible to know when "just before" was.
           if (child_as_it_was = child.version_at(send(PaperTrail.timestamp_field) - lookback.seconds))
             child_as_it_was.attributes.each do |k,v|
-              model.send(assoc.name).send :write_attribute, k.to_sym, v rescue nil
+              model.send(assoc.name).send(:write_attribute, k.to_sym, v) rescue nil
             end
           else
-            model.send "#{assoc.name}=", nil
+            model.send("#{assoc.name}=", nil)
           end
         end
       end
@@ -234,9 +235,11 @@ module PaperTrail
 
     # checks to see if a value has been set for the `version_limit` config option, and if so enforces it
     def enforce_version_limit!
-      return unless PaperTrail.config.version_limit.is_a? Numeric
+      return unless PaperTrail.config.version_limit.is_a?(Numeric)
+
       previous_versions = sibling_versions.not_creates
       return unless previous_versions.size > PaperTrail.config.version_limit
+
       excess_previous_versions = previous_versions - previous_versions.last(PaperTrail.config.version_limit)
       excess_previous_versions.map(&:destroy)
     end
