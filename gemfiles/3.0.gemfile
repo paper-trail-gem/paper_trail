@@ -19,7 +19,7 @@ group :development, :test do
   gem 'generator_spec'
 
   # To do proper transactional testing with ActiveSupport::TestCase on MySQL
-  gem 'database_cleaner', '~> 1.2'
+  gem 'database_cleaner', '~> 1.2.0'
 
   platforms :ruby do 
     gem 'sqlite3', '~> 1.2'
