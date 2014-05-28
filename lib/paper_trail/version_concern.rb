@@ -37,34 +37,34 @@ module PaperTrail
       # `timestamp_arg` receives `true`
       def subsequent(obj, timestamp_arg = false)
         if timestamp_arg != true && self.primary_key_is_int?
-          return where("#{table_name}.#{self.primary_key} > ?", obj).order("#{table_name}.#{self.primary_key} ASC")
+          return where(arel_table[primary_key].gt(obj.id)).order(arel_table[primary_key].asc)
         end
 
         obj = obj.send(PaperTrail.timestamp_field) if obj.is_a?(self)
-        where("#{table_name}.#{PaperTrail.timestamp_field} > ?", obj).order(self.timestamp_sort_order)
+        where(arel_table[PaperTrail.timestamp_field].gt(obj)).order(self.timestamp_sort_order)
       end
 
       def preceding(obj, timestamp_arg = false)
         if timestamp_arg != true && self.primary_key_is_int?
-          return where("#{table_name}.#{self.primary_key} < ?", obj).order("#{table_name}.#{self.primary_key} DESC")
+          return where(arel_table[primary_key].lt(obj.id)).order(arel_table[primary_key].desc)
         end
 
         obj = obj.send(PaperTrail.timestamp_field) if obj.is_a?(self)
-        where("#{table_name}.#{PaperTrail.timestamp_field} < ?", obj).order(self.timestamp_sort_order('DESC'))
+        where(arel_table[PaperTrail.timestamp_field].lt(obj)).order(self.timestamp_sort_order('desc'))
       end
 
 
       def between(start_time, end_time)
-        where("#{table_name}.#{PaperTrail.timestamp_field} > ? AND #{table_name}.#{PaperTrail.timestamp_field} < ?",
-          start_time, end_time).order(self.timestamp_sort_order)
+        where(
+          arel_table[PaperTrail.timestamp_field].gt(start_time).
+          and(arel_table[PaperTrail.timestamp_field].lt(end_time))
+        ).order(self.timestamp_sort_order)
       end
 
       # defaults to using the primary key as the secondary sort order if possible
-      def timestamp_sort_order(order = 'ASC')
-        if self.primary_key_is_int?
-          "#{table_name}.#{PaperTrail.timestamp_field} #{order}, #{table_name}.#{self.primary_key} #{order}"
-        else
-          "#{table_name}.#{PaperTrail.timestamp_field} #{order}"
+      def timestamp_sort_order(direction = 'asc')
+        [arel_table[PaperTrail.timestamp_field].send(direction.downcase)].tap do |array|
+          array << arel_table[primary_key].send(direction.downcase) if self.primary_key_is_int?
         end
       end
 
@@ -189,10 +189,14 @@ module PaperTrail
     end
 
     def index
-      table_name = self.class.table_name
-      @index ||= sibling_versions.
-        select(["#{table_name}.#{PaperTrail.timestamp_field}", "#{table_name}.#{self.class.primary_key}"]).
-        order("#{table_name}.#{PaperTrail.timestamp_field} ASC").index(self)
+      table = self.class.arel_table unless @index
+      @index ||= 
+        if self.class.primary_key_is_int?
+          sibling_versions.select(table[self.class.primary_key]).order(table[self.class.primary_key].asc).index(self)
+        else
+          sibling_versions.select([table[PaperTrail.timestamp_field], table[self.class.primary_key]]).
+            order(self.class.timestamp_sort_order).index(self)
+        end
     end
 
     private
