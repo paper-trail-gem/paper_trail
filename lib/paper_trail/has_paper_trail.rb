@@ -74,7 +74,7 @@ module PaperTrail
         after_create  :record_create, :if => :save_version? if options_on.empty? || options_on.include?(:create)
         if options_on.empty? || options_on.include?(:update)
           before_save   :reset_timestamp_attrs_for_update_if_needed!, :on => :update
-          before_update :record_update, :if => :save_version?
+          after_update  :record_update, :if => :save_version?
           after_update  :clear_version_instance!
         end
         after_destroy :record_destroy, :if => :save_version? if options_on.empty? || options_on.include?(:destroy)
@@ -258,7 +258,9 @@ module PaperTrail
             :event     => paper_trail_event || 'create',
             :whodunnit => PaperTrail.whodunnit
           }
-
+          if respond_to?(:created_at)
+            data[PaperTrail.timestamp_field] = created_at
+          end
           if changed_notably? and self.class.paper_trail_version_class.column_names.include?('object_changes')
             data[:object_changes] = self.class.paper_trail_version_class.object_changes_col_is_json? ? changes_for_paper_trail :
               PaperTrail.serializer.dump(changes_for_paper_trail)
@@ -275,12 +277,14 @@ module PaperTrail
             :object    => self.class.paper_trail_version_class.object_col_is_json? ? object_attrs : PaperTrail.serializer.dump(object_attrs),
             :whodunnit => PaperTrail.whodunnit
           }
-
+          if respond_to?(:updated_at)
+            data[PaperTrail.timestamp_field] = updated_at
+          end
           if self.class.paper_trail_version_class.column_names.include?('object_changes')
             data[:object_changes] = self.class.paper_trail_version_class.object_changes_col_is_json? ? changes_for_paper_trail :
               PaperTrail.serializer.dump(changes_for_paper_trail)
           end
-          send(self.class.versions_association_name).build merge_metadata(data)
+          send(self.class.versions_association_name).create merge_metadata(data)
         end
       end
 

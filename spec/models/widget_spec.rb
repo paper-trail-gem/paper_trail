@@ -35,7 +35,7 @@ describe Widget do
     end
 
     describe :after_update do
-      before { widget.update_attributes!(:name => 'Foobar') }
+      before { widget.update_attributes!(:name => 'Foobar', :updated_at => Time.now + 1.week) }
 
       subject { widget.versions.last.reify }
 
@@ -44,6 +44,10 @@ describe Widget do
       it "should clear the `versions_association_name` virtual attribute" do
         subject.save!
         subject.should be_live
+      end
+
+      it "should use the widget updated_at" do
+        widget.versions.last.created_at.to_i.should == widget.updated_at.to_i
       end
     end
 
