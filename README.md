@@ -1046,6 +1046,7 @@ Please use GitHub's [issue tracker](http://github.com/airblade/paper_trail/issue
 
 Many thanks to:
 
+* [Dmitry Polushkin](https://github.com/dmitry)
 * [Russell Osborne](https://github.com/rposborne)
 * [Zachery Hostens](http://github.com/zacheryph)
 * [Jeremy Weiskotten](http://github.com/jeremyw)
