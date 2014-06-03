@@ -61,6 +61,15 @@ describe Widget do
     end
   end
 
+  describe "Association", :versioning => true do
+    describe "sort order" do
+      it "should sort by the timestamp order from the `VersionConcern`" do
+        widget.versions.to_sql.should ==
+          widget.versions.reorder(PaperTrail::Version.timestamp_sort_order).to_sql
+      end
+    end
+  end
+
   describe "Methods" do
     describe "Instance", :versioning => true do
       describe :whodunnit do
