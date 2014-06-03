@@ -1,5 +1,6 @@
 ## 3.0.3 (Unreleased)
 
+  - [#373](https://github.com/airblade/paper_trail/pull/373) - Fix default sort order for the `versions` association in Rails `4.1`
   - [#372](https://github.com/airblade/paper_trail/pull/372) - Use [Arel](https://github.com/rails/arel) for SQL construction.
   - Fixed `VersionConcern#index` instance method so that it conforms to using the primary key for ordering when possible.
 
