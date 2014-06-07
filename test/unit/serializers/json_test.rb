@@ -37,4 +37,37 @@ class JSONTest < ActiveSupport::TestCase
     end
   end
 
+  context '`where_object` class method' do
+    context "when value is a string" do
+      should 'construct correct WHERE query' do
+        sql = PaperTrail::Serializers::JSON.where_object_condition(
+          PaperTrail::Version.arel_table[:object], :arg1, "Val 1").
+          to_sql
+
+        assert sql.include?("LIKE '%\"arg1\":\"Val 1\"%'")
+      end
+    end
+
+    context "when value is `null`" do
+      should 'construct correct WHERE query' do
+        sql = PaperTrail::Serializers::JSON.where_object_condition(
+          PaperTrail::Version.arel_table[:object], :arg1, nil).
+          to_sql
+
+        assert sql.include?("LIKE '%\"arg1\":null%'")
+      end
+    end
+
+    context "when value is a number" do
+      should 'construct correct WHERE query' do
+        sql = PaperTrail::Serializers::JSON.where_object_condition(
+          PaperTrail::Version.arel_table[:object], :arg1, -3.5).
+          to_sql
+
+        assert_equal sql,
+          "(\"versions\".\"object\" LIKE '%\"arg1\":-3.5,%' OR "\
+            "\"versions\".\"object\" LIKE '%\"arg1\":-3.5}%')"
+      end
+    end
+  end
 end

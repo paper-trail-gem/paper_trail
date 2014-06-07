@@ -11,6 +11,7 @@ end
 
 require File.expand_path("../dummy/config/environment.rb",  __FILE__)
 require "rails/test_help"
+require 'minitest/mock'
 require 'shoulda'
 require 'ffaker'
 require 'database_cleaner' if using_mysql?

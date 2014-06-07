@@ -37,4 +37,12 @@ class YamlTest < ActiveSupport::TestCase
     end
   end
 
+  context '`where_object` class method' do
+    should 'construct correct WHERE query' do
+      sql = PaperTrail::Serializers::YAML.where_object_condition(
+        PaperTrail::Version.arel_table[:object], :arg1, "Val 1").
+        to_sql
+      assert sql.include?("LIKE '%\narg1: Val 1\n%'")
+    end
+  end
 end
