@@ -1004,9 +1004,9 @@ Spork.prefork do
 end
 ```
 
-### Zeus
+### Zeus or Spring
 
-If you wish to use the `RSpec` or `Cucumber` heleprs with [Zeus](https://github.com/burke/zeus), you will need to
+If you wish to use the `RSpec` or `Cucumber` helpers with [Zeus](https://github.com/burke/zeus) or [Spring](https://github.com/rails/spring), you will need to
 manually require the helper(s) in your test helper, like so:
 
 ```ruby
