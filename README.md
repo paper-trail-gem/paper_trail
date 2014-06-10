@@ -120,6 +120,9 @@ widget.originator
 # Returns the widget (not a version) as it looked at the given timestamp.
 widget.version_at(timestamp)
 
+# Returns the widget (not a version) as it looked according to the PaperTrail::Version ID.
+widget.by_version_id(id)
+
 # Returns the widget (not a version) as it was most recently.
 widget.previous_version
 

@@ -185,6 +185,12 @@ module PaperTrail
         v ? v.reify(reify_options) : self
       end
 
+      # Returns the object (not a Version) as it was. Searches by the PaperTrail::Version ID
+      def by_version_id(id, reify_options={})
+        v = self.versions.find(id)
+        v ? v.reify(reify_options) : self
+      end
+
       # Returns the objects (not Versions) as they were between the given times.
       def versions_between(start_time, end_time, reify_options={})
         versions = send(self.class.versions_association_name).between(start_time, end_time)
