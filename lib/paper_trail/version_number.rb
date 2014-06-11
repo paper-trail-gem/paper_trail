@@ -1,3 +1,18 @@
 module PaperTrail
-  VERSION = '3.0.2'
+  module VERSION
+    MAJOR = 3
+    MINOR = 0
+    TINY  = 3
+    PRE   = 'alpha'
+
+    STRING = [MAJOR, MINOR, TINY, PRE].compact.join('.')
+
+    def self.to_s
+      STRING
+    end
+  end
+
+  def self.version
+    VERSION::STRING
+  end
 end
