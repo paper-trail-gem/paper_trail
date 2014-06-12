@@ -92,6 +92,10 @@ class SetUpTestTables < ActiveRecord::Migration
       t.string :content
     end
 
+    create_table :post_with_statuses, :force => true do |t|
+      t.integer :status
+    end
+
     create_table :animals, :force => true do |t|
       t.string :name
       t.string :species   # single table inheritance column
@@ -100,7 +104,7 @@ class SetUpTestTables < ActiveRecord::Migration
     create_table :documents, :force => true do |t|
       t.string :name
     end
-    
+
     create_table :legacy_widgets, :force => true do |t|
       t.string    :name
       t.integer   :version

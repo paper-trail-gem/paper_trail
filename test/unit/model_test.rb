@@ -1376,6 +1376,16 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
   end
 
+  context 'A record with enum fields' do
+    should "keep the integer in versions" do
+      post = PostWithStatus.create!(status: "draft")
+      assert post.draft?
+      post.published!
+      post.archived!
+      assert post.previous_version.published?
+    end
+  end
+
 
   private
 
