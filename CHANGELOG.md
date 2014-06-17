@@ -1,7 +1,8 @@
 ## 3.0.3 (Unreleased)
 
   - [#384](https://github.com/airblade/paper_trail/issues/384) - Fix `VersionConcern#originator` instance method.
-  - [#373](https://github.com/airblade/paper_trail/pull/373) - Fix default sort order for the `versions` association in Rails `4.1`
+  - [#383](https://github.com/airblade/paper_trail/pull/383) - Make gem compatible with `ActiveRecord::Enum` (available in `ActiveRecord` 4.1+).
+  - [#373](https://github.com/airblade/paper_trail/pull/373) - Fix default sort order for the `versions` association in Rails `4.1`.
   - [#372](https://github.com/airblade/paper_trail/pull/372) - Use [Arel](https://github.com/rails/arel) for SQL construction.
   - [#347](https://github.com/airblade/paper_trail/pull/347) - Autoload `ActiveRecord` models in via a `Rails::Engine` when
     the gem is used with `Rails`.

@@ -343,9 +343,13 @@ module PaperTrail
         all_timestamp_attributes.each do |column|
           previous[column] = send(column) if self.class.column_names.include?(column.to_s) and not send(column).nil?
         end
+        enums = previous.respond_to?(:defined_enums) ? previous.defined_enums : {}
         previous.tap do |prev|
           prev.id = id # `dup` clears the `id` so we add that back
-          changed_attributes.select { |k,v| self.class.column_names.include?(k) }.each { |attr, before| prev[attr] = before }
+          changed_attributes.select { |k,v| self.class.column_names.include?(k) }.each do |attr, before|
+            before = enums[attr][before] if enums[attr]
+            prev[attr] = before
+          end
         end
       end
 

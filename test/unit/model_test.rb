@@ -1376,7 +1376,6 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
   end
 
-
   private
 
   # Updates `model`'s last version so it looks like the version was
