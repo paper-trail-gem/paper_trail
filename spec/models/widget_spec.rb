@@ -72,6 +72,39 @@ describe Widget do
 
   describe "Methods" do
     describe "Instance", :versioning => true do
+      describe :originator do
+        it { should respond_to(:originator) }
+
+        describe "return value" do
+          let(:orig_name) { Faker::Name.name }
+          let(:new_name) { Faker::Name.name }
+          before { PaperTrail.whodunnit = orig_name }
+
+          context "accessed from live model instance" do
+            specify { widget.should be_live }
+
+            it "should return the originator for the model at a given state" do
+              widget.originator.should == orig_name
+              widget.whodunnit(new_name) { |w| w.update_attributes(:name => 'Elizabeth') }
+              widget.originator.should == new_name
+            end
+          end
+
+          context "accessed from a reified model instance" do
+            before do
+              widget.update_attributes(:name => 'Andy')
+              PaperTrail.whodunnit = new_name
+              widget.update_attributes(:name => 'Elizabeth')
+            end
+            let(:reified_widget) { widget.versions[1].reify }
+
+            it "should return the appropriate originator" do
+              reified_widget.originator.should == orig_name
+            end
+          end
+        end
+      end
+
       describe :whodunnit do
         it { should respond_to(:whodunnit) }
 

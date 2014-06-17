@@ -174,7 +174,8 @@ module PaperTrail
 
       # Returns who put the object into its current state.
       def originator
-        @originator ||= self.class.paper_trail_version_class.with_item_keys(self.class.base_class.name, id).last.try :whodunnit
+        return source_version.whodunnit if source_version
+        send(self.class.versions_association_name).last.try(:whodunnit)
       end
 
       # Returns the object (not a Version) as it was at the given timestamp.
@@ -290,7 +291,7 @@ module PaperTrail
         end.tap { |changes| self.class.serialize_attribute_changes(changes) }
       end
 
-      # Invoked via `after_update` callback for when a previous version is reified and then saved
+      # Invoked via`after_update` callback for when a previous version is reified and then saved
       def clear_version_instance!
         send("#{self.class.version_association_name}=", nil)
       end
