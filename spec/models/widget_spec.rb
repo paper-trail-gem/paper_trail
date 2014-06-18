@@ -105,6 +105,21 @@ describe Widget do
         end
       end
 
+      describe :version_at do
+        it { should respond_to(:version_at) }
+
+        context "Timestamp argument is AFTER object has been destroyed" do
+          before do
+            widget.update_attribute(:name, 'foobar')
+            widget.destroy
+          end
+
+          it "should return `nil`" do
+            widget.version_at(Time.now).should be_nil
+          end
+        end
+      end
+
       describe :whodunnit do
         it { should respond_to(:whodunnit) }
 
