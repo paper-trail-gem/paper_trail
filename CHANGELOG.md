@@ -1,5 +1,7 @@
 ## 3.0.3 (Unreleased)
 
+  - [#386](https://github.com/airblade/paper_trail/issues/386) - Fix eager loading of `versions` association with custom class name
+    in `ActiveRecord` 4.1.
   - [#384](https://github.com/airblade/paper_trail/issues/384) - Fix `VersionConcern#originator` instance method.
   - [#383](https://github.com/airblade/paper_trail/pull/383) - Make gem compatible with `ActiveRecord::Enum` (available in `ActiveRecord` 4.1+).
   - [#373](https://github.com/airblade/paper_trail/pull/373) - Fix default sort order for the `versions` association in `ActiveRecord` 4.1.
