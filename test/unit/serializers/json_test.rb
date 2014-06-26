@@ -40,33 +40,35 @@ class JSONTest < ActiveSupport::TestCase
   context '`where_object` class method' do
     context "when value is a string" do
       should 'construct correct WHERE query' do
-        sql = PaperTrail::Serializers::JSON.where_object_condition(
-          PaperTrail::Version.arel_table[:object], :arg1, "Val 1").
-          to_sql
+        matches = PaperTrail::Serializers::JSON.where_object_condition(
+          PaperTrail::Version.arel_table[:object], :arg1, "Val 1")
 
-        assert sql.include?("LIKE '%\"arg1\":\"Val 1\"%'")
+        assert matches.instance_of?(Arel::Nodes::Matches)
+        assert_equal matches.right, "%\"arg1\":\"Val 1\"%"
       end
     end
 
     context "when value is `null`" do
       should 'construct correct WHERE query' do
-        sql = PaperTrail::Serializers::JSON.where_object_condition(
-          PaperTrail::Version.arel_table[:object], :arg1, nil).
-          to_sql
+        matches = PaperTrail::Serializers::JSON.where_object_condition(
+          PaperTrail::Version.arel_table[:object], :arg1, nil)
 
-        assert sql.include?("LIKE '%\"arg1\":null%'")
+        assert matches.instance_of?(Arel::Nodes::Matches)
+        assert_equal matches.right, "%\"arg1\":null%"
       end
     end
 
     context "when value is a number" do
       should 'construct correct WHERE query' do
-        sql = PaperTrail::Serializers::JSON.where_object_condition(
-          PaperTrail::Version.arel_table[:object], :arg1, -3.5).
-          to_sql
+        grouping = PaperTrail::Serializers::JSON.where_object_condition(
+          PaperTrail::Version.arel_table[:object], :arg1, -3.5)
 
-        assert_equal sql,
-          "(\"versions\".\"object\" LIKE '%\"arg1\":-3.5,%' OR "\
-            "\"versions\".\"object\" LIKE '%\"arg1\":-3.5}%')"
+        assert grouping.instance_of?(Arel::Nodes::Grouping)
+        matches = grouping.select { |v| v.instance_of?(Arel::Nodes::Matches) }
+        # Numeric arguments need to ensure that they match for only the number, not the beginning 
+        # of a #, so it uses an Grouping matcher (See notes on `PaperTrail::Serializers::JSON`)
+        assert_equal matches.first.right, "%\"arg1\":-3.5,%"
+        assert_equal matches.last.right, "%\"arg1\":-3.5}%"
       end
     end
   end
