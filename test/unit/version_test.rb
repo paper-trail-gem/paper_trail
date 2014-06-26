@@ -98,42 +98,4 @@ class PaperTrail::VersionTest < ActiveSupport::TestCase
       end
     end
   end
-
-  context "PaperTrail::Version.where_object" do
-    context "receving something other than a Hash as an argument" do
-      should "raise an error" do
-        assert_raise(ArgumentError) do
-          PaperTrail::Version.where_object(:foo)
-          PaperTrail::Version.where_object([])
-        end
-      end
-    end
-    should "call `where_object` on the serializer" do
-      # Create some args to fake-query on.
-      args = { :a => 1, :b => '2', :c => false, :d => nil }
-      arel_field = PaperTrail::Version.arel_table[:object]
-
-      # Create a dummy value for us to return for each condition that can be
-      # chained together with other conditions with Arel's `and`.
-      chainable_dummy = arel_field.matches("")
-
-      # Mock a serializer to expect to receive `where_object_condition` with the
-      # correct args.
-      serializer = MiniTest::Mock.new
-      serializer.expect :where_object_condition, chainable_dummy, [arel_field, :a, 1]
-      serializer.expect :where_object_condition, chainable_dummy, [arel_field, :b, "2"]
-      serializer.expect :where_object_condition, chainable_dummy, [arel_field, :c, false]
-      serializer.expect :where_object_condition, chainable_dummy, [arel_field, :d, nil]
-
-      # Stub out PaperTrail.serializer to return our mock, and then make the
-      # query call.
-      PaperTrail.stub :serializer, serializer do
-        PaperTrail::Version.where_object(args)
-      end
-
-      # Verify that our serializer mock received the correct
-      # `where_object_condition` calls.
-      assert serializer.verify
-    end
-  end
 end
