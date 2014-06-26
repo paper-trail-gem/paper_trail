@@ -70,7 +70,8 @@ module PaperTrail
 
       # Performs an attribute search on the serialized object by invoking the
       # identically-named method in the serializer being used.
-      def where_object(**args)
+      def where_object(args = {})
+        raise ArgumentError, 'expected to receive a Hash' unless args.is_a?(Hash)
         arel_field = arel_table[:object]
 
         where_conditions = args.map do |field, value|

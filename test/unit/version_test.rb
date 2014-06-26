@@ -100,9 +100,17 @@ class PaperTrail::VersionTest < ActiveSupport::TestCase
   end
 
   context "PaperTrail::Version.where_object" do
+    context "receving something other than a Hash as an argument" do
+      should "raise an error" do
+        assert_raise(ArgumentError) do
+          PaperTrail::Version.where_object(:foo)
+          PaperTrail::Version.where_object([])
+        end
+      end
+    end
     should "call `where_object` on the serializer" do
       # Create some args to fake-query on.
-      args = { a: 1, b: "2", c: false, d: nil }
+      args = { :a => 1, :b => '2', :c => false, :d => nil }
       arel_field = PaperTrail::Version.arel_table[:object]
 
       # Create a dummy value for us to return for each condition that can be
@@ -120,7 +128,7 @@ class PaperTrail::VersionTest < ActiveSupport::TestCase
       # Stub out PaperTrail.serializer to return our mock, and then make the
       # query call.
       PaperTrail.stub :serializer, serializer do
-        PaperTrail::Version.where_object(**args)
+        PaperTrail::Version.where_object(args)
       end
 
       # Verify that our serializer mock received the correct
