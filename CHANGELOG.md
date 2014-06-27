@@ -1,4 +1,4 @@
-## 3.0.3 (Unreleased)
+## 3.0.3
 
   - [#386](https://github.com/airblade/paper_trail/issues/386) - Fix eager loading of `versions` association with custom class name
     in `ActiveRecord` 4.1.
