@@ -37,4 +37,12 @@ class YamlTest < ActiveSupport::TestCase
     end
   end
 
+  context '`where_object` class method' do
+    should 'construct correct WHERE query' do
+      matches = PaperTrail::Serializers::YAML.where_object_condition(
+        PaperTrail::Version.arel_table[:object], :arg1, "Val 1")
+      assert matches.instance_of?(Arel::Nodes::Matches)
+      assert_equal matches.right, "%\narg1: Val 1\n%"
+    end
+  end
 end
