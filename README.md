@@ -721,6 +721,10 @@ For example:
 
 ```ruby
 # config/initializers/paper_trail.rb
+
+# the following line is required for PaperTrail >= 3.0.3 with Rails
+PaperTrail::Rails::Engine.eager_load!
+
 module PaperTrail
   class Version < ActiveRecord::Base
     attr_accessible :author_id, :word_count, :answer
