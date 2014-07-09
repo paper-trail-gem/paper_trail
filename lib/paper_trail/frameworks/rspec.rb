@@ -25,11 +25,5 @@ end
 
 RSpec::Matchers.define :have_a_version_with do |attributes|
   # check if the model has a version with the specified attributes
-  match do |actual|
-    mathing_version = actual.versions.select do |version|
-      object = version.object ? PaperTrail.serializer.load(version.object) : {}
-      (HashWithIndifferentAccess.new(attributes).to_a - object.to_a).empty?
-    end
-    mathing_version.present?
-  end
+  match { |actual| actual.versions.where_object(attributes).any? }
 end

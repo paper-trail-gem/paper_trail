@@ -1,3 +1,7 @@
+## 3.1.0 (Unreleased)
+
+  - [#394](https://github.com/airblade/paper_trail/pull/394) - Add RSpec matcher `have_a_version_with` for easier testing.
+
 ## 3.0.3
 
   - [#386](https://github.com/airblade/paper_trail/issues/386) - Fix eager loading of `versions` association with custom class name
