@@ -7,6 +7,20 @@ describe Widget do
 
   let(:widget) { Widget.create! :name => 'Bob', :an_integer => 1 }
 
+  describe '`have_a_version_with` matcher', :versioning => true do
+    before do
+      widget.update_attributes!(:name => 'Leonard', :an_integer => 1 )
+      widget.update_attributes!(:name => 'Tom')
+      widget.update_attributes!(:name => 'Bob')
+    end
+
+    it "is possible to do assertions on versions" do
+       widget.should have_a_version_with :name => 'Leonard', :an_integer => 1
+       widget.should have_a_version_with :an_integer => 1
+       widget.should have_a_version_with :name => 'Tom'
+    end
+  end
+
   describe "`versioning` option" do
     context :enabled, :versioning => true do
       it 'should enable versioning for models wrapped within a block' do

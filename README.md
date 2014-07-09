@@ -969,6 +969,25 @@ describe Widget do
 end
 ```
 
+It is also possible to do assertions on the versions using `have_a_version_with` matcher
+
+```
+ describe '`have_a_version_with` matcher' do
+    before do
+      widget.update_attributes!(:name => 'Leonard', :an_integer => 1 )
+      widget.update_attributes!(:name => 'Tom')
+      widget.update_attributes!(:name => 'Bob')
+    end
+
+    it "is possible to do assertions on versions" do
+       widget.should have_a_version_with :name => 'Leonard', :an_integer => 1
+       widget.should have_a_version_with :an_integer => 1
+       widget.should have_a_version_with :name => 'Tom'
+    end
+  end
+
+```
+
 ### Cucumber
 
 PaperTrail provides a helper for [Cucumber](http://cukes.info) that works similar to the RSpec helper.
@@ -1024,9 +1043,9 @@ require 'paper_trail/frameworks/rspec'
 
 ## Testing PaperTrail
 
-Paper Trail has facilities to test aganist Postgres, Mysql and SQLite. To switch between DB engines you will need to export the DB Variable for the engine you wish to test aganist. 
+Paper Trail has facilities to test aganist Postgres, Mysql and SQLite. To switch between DB engines you will need to export the DB Variable for the engine you wish to test aganist.
 
-Though be aware we do not have the abilty to create the db's (except sqlite) for you.   You can look at .travis.yml before_script for an example of how to create the db's needed.  
+Though be aware we do not have the abilty to create the db's (except sqlite) for you.   You can look at .travis.yml before_script for an example of how to create the db's needed.
 
 ```
 export DB=postgres
