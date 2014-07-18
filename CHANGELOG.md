@@ -1,5 +1,6 @@
 ## 3.1.0 (Unreleased)
 
+  - [#398](https://github.com/airblade/paper_trail/pull/398) - Only require the `RSpec` helper if `RSpec::Core` is required.
   - [#394](https://github.com/airblade/paper_trail/pull/394) - Add RSpec matcher `have_a_version_with` for easier testing.
 
 ## 3.0.3
