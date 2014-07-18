@@ -146,6 +146,9 @@ And a `PaperTrail::Version` instance has these methods:
 # Returns the item restored from this version.
 version.reify(options = {})
 
+# Return a new item from this version
+version.reify(dup: true)
+
 # Returns who put the item into the state stored in this version.
 version.originator
 

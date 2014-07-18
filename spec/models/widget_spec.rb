@@ -96,10 +96,29 @@ describe Widget do
               PaperTrail.whodunnit = new_name
               widget.update_attributes(:name => 'Elizabeth')
             end
-            let(:reified_widget) { widget.versions[1].reify }
 
-            it "should return the appropriate originator" do
-              reified_widget.originator.should == orig_name
+            context "reverting a change" do
+              let(:reified_widget) { widget.versions[1].reify }
+
+              it "should return the appropriate originator" do
+                reified_widget.originator.should == orig_name
+              end
+
+              it "should not create a new model instance" do
+                reified_widget.should_not be_new_record
+              end
+            end
+
+            context "creating a new instance" do
+              let(:reified_widget) { widget.versions[1].reify(dup: true) }
+
+              it "should return the appropriate originator" do
+                reified_widget.originator.should == orig_name
+              end
+
+              it "should not create a new model instance" do
+                reified_widget.should be_new_record
+              end
             end
           end
         end
