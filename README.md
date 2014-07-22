@@ -481,6 +481,10 @@ You can avoid having to do this manually by setting your initializer to pick up 
 
 ```ruby
 # config/initializers/paper_trail.rb
+
+# the following line is required for PaperTrail >= 3.0.3 with Rails
+PaperTrail::Rails::Engine.eager_load!
+
 if defined?(::Rails::Console)
   PaperTrail.whodunnit = "#{`whoami`.strip}: console"
 elsif File.basename($0) == "rake"
@@ -556,6 +560,11 @@ If you only use custom version classes and don't use PaperTrail's built-in one, 
 - either declare the `PaperTrail::Version` class to be abstract like this (in an initializer):
 
 ```ruby
+# config/initializers/paper_trail.rb
+
+# the following line is required for PaperTrail >= 3.0.3 with Rails
+PaperTrail::Rails::Engine.eager_load!
+
 PaperTrail::Version.module_eval do
   self.abstract_class = true
 end

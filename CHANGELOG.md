@@ -5,6 +5,11 @@
 
 ## 3.0.3
 
+##### Breaking Change: If you use a custom initializer for PaperTrail in conjunction with Rails, you will need to add this line of code to the beginning of it:
+```ruby
+PaperTrail::Rails::Engine.eager_load!
+```
+
   - [#386](https://github.com/airblade/paper_trail/issues/386) - Fix eager loading of `versions` association with custom class name
     in `ActiveRecord` 4.1.
   - [#384](https://github.com/airblade/paper_trail/issues/384) - Fix `VersionConcern#originator` instance method.
