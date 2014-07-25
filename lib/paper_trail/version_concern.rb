@@ -135,7 +135,7 @@ module PaperTrail
         # `item_type` will be the base class, not the actual subclass.
         # If `type` is present but empty, the class is the base class.
 
-        if item && ! options[:dup]
+        if item && options[:dup] != true
           model = item
           # Look for attributes that exist in the model and not in this version. These attributes should be set to nil.
           (model.attribute_names - attrs.keys).each { |k| attrs[k] = nil }

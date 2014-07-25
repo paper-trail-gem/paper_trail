@@ -111,7 +111,7 @@ describe Widget do
               widget.update_attributes(:name => 'Elizabeth')
             end
 
-            context "reverting a change" do
+            context "default behavior (no `options[:dup]` option passed in)" do
               let(:reified_widget) { widget.versions[1].reify }
 
               it "should return the appropriate originator" do
@@ -123,8 +123,8 @@ describe Widget do
               end
             end
 
-            context "creating a new instance" do
-              let(:reified_widget) { widget.versions[1].reify(dup: true) }
+            context "creating a new instance (`options[:dup] == true`)" do
+              let(:reified_widget) { widget.versions[1].reify(:dup => true) }
 
               it "should return the appropriate originator" do
                 reified_widget.originator.should == orig_name

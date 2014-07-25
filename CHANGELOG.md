@@ -1,11 +1,13 @@
 ## 3.1.0 (Unreleased)
 
+  - [#399](https://github.com/airblade/paper_trail/pull/399) - Add `:dup` argument for options hash to `reify` which forces a
+    new model instance.
   - [#398](https://github.com/airblade/paper_trail/pull/398) - Only require the `RSpec` helper if `RSpec::Core` is required.
   - [#394](https://github.com/airblade/paper_trail/pull/394) - Add RSpec matcher `have_a_version_with` for easier testing.
 
 ## 3.0.3
 
-##### Breaking Change: If you use a custom initializer for PaperTrail in conjunction with Rails, you will need to add this line of code to the beginning of it:
+##### Breaking change: if you use a custom initializer for PaperTrail in conjunction with Rails, you will need to add this line of code to the beginning of it:
 ```ruby
 PaperTrail::Rails::Engine.eager_load!
 ```
