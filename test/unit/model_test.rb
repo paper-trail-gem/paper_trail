@@ -191,9 +191,8 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       assert @widget.live?
     end
 
-
     context 'which is then created' do
-      setup { @widget.update_attributes :name => 'Henry' }
+      setup { @widget.update_attributes :name => 'Henry', :created_at => Time.now - 1.day }
 
       should 'have one previous version' do
         assert_equal 1, @widget.versions.length
@@ -210,6 +209,10 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
       should 'be live' do
         assert @widget.live?
+      end
+
+      should 'use the widget created_at' do
+        assert_equal @widget.created_at.to_i, @widget.versions.first.created_at.to_i
       end
 
       should 'have changes' do
@@ -731,7 +734,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       should 'return versions in the time period' do
         assert_equal ['Fidget'], @widget.versions_between(20.days.ago, 10.days.ago).map(&:name)
         assert_equal ['Widget', 'Fidget'], @widget.versions_between(45.days.ago, 10.days.ago).map(&:name)
-        assert_equal ['Fidget', 'Digit'], @widget.versions_between(16.days.ago, 1.minute.ago).map(&:name)
+        assert_equal ['Fidget', 'Digit', 'Digit'], @widget.versions_between(16.days.ago, 1.minute.ago).map(&:name)
         assert_equal [], @widget.versions_between(60.days.ago, 45.days.ago).map(&:name)
       end
     end

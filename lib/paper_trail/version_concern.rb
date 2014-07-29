@@ -7,8 +7,7 @@ module PaperTrail
     included do
       belongs_to :item, :polymorphic => true
       validates_presence_of :event
-      attr_accessible :item_type, :item_id, :event, :whodunnit, :object, :object_changes if PaperTrail.active_record_protected_attributes?
-
+      attr_accessible :item_type, :item_id, :event, :whodunnit, :object, :object_changes, :created_at if PaperTrail.active_record_protected_attributes?
       after_create :enforce_version_limit!
     end
 
