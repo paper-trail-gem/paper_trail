@@ -4,6 +4,10 @@
     new model instance.
   - [#398](https://github.com/airblade/paper_trail/pull/398) - Only require the `RSpec` helper if `RSpec::Core` is required.
   - [#394](https://github.com/airblade/paper_trail/pull/394) - Add RSpec matcher `have_a_version_with` for easier testing.
+  - [#375](https://github.com/airblade/paper_trail/pull/375) / [#374](https://github.com/airblade/paper_trail/issues/374) /
+    [#354](https://github.com/airblade/paper_trail/issues/354) / [#131](https://github.com/airblade/paper_trail/issues/131) -
+    Versions should be built with `after_` callbacks so the timestamp field for a version can be forced to match the
+    corresponding timestamp in the database for the state persistence of a change to the base (versioned) model.
 
 ## 3.0.3
 

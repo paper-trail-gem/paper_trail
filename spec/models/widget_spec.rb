@@ -48,6 +48,14 @@ describe Widget do
       end
     end
 
+    describe :after_create do
+      let(:widget) { Widget.create!(:name => 'Foobar', :created_at => Time.now - 1.week) }
+
+      it "corresponding version should use the widget's `created_at`" do
+        widget.versions.last.created_at.to_i.should == widget.created_at.to_i
+      end
+    end
+
     describe :after_update do
       before { widget.update_attributes!(:name => 'Foobar', :updated_at => Time.now + 1.week) }
 
@@ -60,7 +68,7 @@ describe Widget do
         subject.should be_live
       end
 
-      it "should use the widget updated_at" do
+      it "corresponding version should use the widget updated_at" do
         widget.versions.last.created_at.to_i.should == widget.updated_at.to_i
       end
     end
