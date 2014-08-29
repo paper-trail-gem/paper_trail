@@ -126,10 +126,6 @@ end
 
 # Require frameworks
 require 'paper_trail/frameworks/sinatra'
-if defined? Rails
-  require 'paper_trail/frameworks/rails'
-else
-  require 'paper_trail/frameworks/active_record'
-end
+require 'paper_trail/frameworks/active_record'
 require 'paper_trail/frameworks/rspec' if defined? RSpec
 require 'paper_trail/frameworks/cucumber' if defined? World
