@@ -2,7 +2,7 @@ module PaperTrail
   module VERSION
     MAJOR = 3
     MINOR = 0
-    TINY  = 4
+    TINY  = 5
     PRE   = nil
 
     STRING = [MAJOR, MINOR, TINY, PRE].compact.join('.')
