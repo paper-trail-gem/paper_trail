@@ -1,4 +1,12 @@
+## 3.0.4
+
+  - [#401](https://github.com/airblade/paper_trail/issues/401) / [#406](https://github.com/airblade/paper_trail/issues/406)
+    `PaperTrail::Version` class is not loaded via a `Rails::Engine`, even when the gem is used with in Rails. This feature has
+    will be re-introduced in version `3.1.0`.
+
 ## 3.0.3
+*This version was yanked from RubyGems and has been replaced by version `3.0.4`, which is identical but does not eager load
+in the `PaperTrail::Version` class through a `Rails::Engine` when the gem is used on Rails since it was causing issues for some users.*
 
   - [#386](https://github.com/airblade/paper_trail/issues/386) - Fix eager loading of `versions` association with custom class name
     in `ActiveRecord` 4.1.
