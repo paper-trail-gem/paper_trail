@@ -22,3 +22,8 @@ RSpec::Matchers.define :be_versioned do
   # check to see if the model has `has_paper_trail` declared on it
   match { |actual| actual.kind_of?(::PaperTrail::Model::InstanceMethods) }
 end
+
+RSpec::Matchers.define :have_a_version_with do |attributes|
+  # check if the model has a version with the specified attributes
+  match { |actual| actual.versions.where_object(attributes).any? }
+end

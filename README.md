@@ -146,6 +146,9 @@ And a `PaperTrail::Version` instance has these methods:
 # Returns the item restored from this version.
 version.reify(options = {})
 
+# Return a new item from this version
+version.reify(dup: true)
+
 # Returns who put the item into the state stored in this version.
 version.originator
 
@@ -481,6 +484,10 @@ You can avoid having to do this manually by setting your initializer to pick up 
 
 ```ruby
 # config/initializers/paper_trail.rb
+
+# the following line is required for PaperTrail >= 3.1.0 with Rails
+PaperTrail::Rails::Engine.eager_load!
+
 if defined?(::Rails::Console)
   PaperTrail.whodunnit = "#{`whoami`.strip}: console"
 elsif File.basename($0) == "rake"
@@ -556,6 +563,11 @@ If you only use custom version classes and don't use PaperTrail's built-in one, 
 - either declare the `PaperTrail::Version` class to be abstract like this (in an initializer):
 
 ```ruby
+# config/initializers/paper_trail.rb
+
+# the following line is required for PaperTrail >= 3.1.0 with Rails
+PaperTrail::Rails::Engine.eager_load!
+
 PaperTrail::Version.module_eval do
   self.abstract_class = true
 end
@@ -721,6 +733,10 @@ For example:
 
 ```ruby
 # config/initializers/paper_trail.rb
+
+# the following line is required for PaperTrail >= 3.1.0 with Rails
+PaperTrail::Rails::Engine.eager_load!
+
 module PaperTrail
   class Version < ActiveRecord::Base
     attr_accessible :author_id, :word_count, :answer
@@ -968,6 +984,25 @@ describe Widget do
 end
 ```
 
+It is also possible to do assertions on the versions using `have_a_version_with` matcher
+
+```
+ describe '`have_a_version_with` matcher' do
+    before do
+      widget.update_attributes!(:name => 'Leonard', :an_integer => 1 )
+      widget.update_attributes!(:name => 'Tom')
+      widget.update_attributes!(:name => 'Bob')
+    end
+
+    it "is possible to do assertions on versions" do
+       widget.should have_a_version_with :name => 'Leonard', :an_integer => 1
+       widget.should have_a_version_with :an_integer => 1
+       widget.should have_a_version_with :name => 'Tom'
+    end
+  end
+
+```
+
 ### Cucumber
 
 PaperTrail provides a helper for [Cucumber](http://cukes.info) that works similar to the RSpec helper.
@@ -1023,9 +1058,9 @@ require 'paper_trail/frameworks/rspec'
 
 ## Testing PaperTrail
 
-Paper Trail has facilities to test aganist Postgres, Mysql and SQLite. To switch between DB engines you will need to export the DB Variable for the engine you wish to test aganist. 
+Paper Trail has facilities to test aganist Postgres, Mysql and SQLite. To switch between DB engines you will need to export the DB Variable for the engine you wish to test aganist.
 
-Though be aware we do not have the abilty to create the db's (except sqlite) for you.   You can look at .travis.yml before_script for an example of how to create the db's needed.  
+Though be aware we do not have the abilty to create the db's (except sqlite) for you.   You can look at .travis.yml before_script for an example of how to create the db's needed.
 
 ```
 export DB=postgres

@@ -125,8 +125,11 @@ ActiveSupport.on_load(:active_record) do
 end
 
 # Require frameworks
-require 'paper_trail/frameworks/active_record'
 require 'paper_trail/frameworks/sinatra'
-require 'paper_trail/frameworks/rails' if defined? Rails
+if defined? Rails
+  require 'paper_trail/frameworks/rails'
+else
+  require 'paper_trail/frameworks/active_record'
+end
 require 'paper_trail/frameworks/rspec' if defined? RSpec::Core
 require 'paper_trail/frameworks/cucumber' if defined? World

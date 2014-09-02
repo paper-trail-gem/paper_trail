@@ -1,11 +1,27 @@
+## 3.1.0 (Unreleased)
+
+##### Breaking change: if you use a custom initializer for PaperTrail in conjunction with Rails, you will need to add this line of code to the beginning of it:
+```ruby
+PaperTrail::Rails::Engine.eager_load!
+```
+
+  - [#399](https://github.com/airblade/paper_trail/pull/399) - Add `:dup` argument for options hash to `reify` which forces a
+    new model instance.
+  - [#394](https://github.com/airblade/paper_trail/pull/394) - Add RSpec matcher `have_a_version_with` for easier testing.
+  - [#375](https://github.com/airblade/paper_trail/pull/375) / [#374](https://github.com/airblade/paper_trail/issues/374) /
+    [#354](https://github.com/airblade/paper_trail/issues/354) / [#131](https://github.com/airblade/paper_trail/issues/131) -
+    Versions should be built with `after_` callbacks so the timestamp field for a version can be forced to match the
+    corresponding timestamp in the database for the state persistence of a change to the base (versioned) model.
+
 ## 3.0.5
 
   - [#401](https://github.com/airblade/paper_trail/issues/401) / [#406](https://github.com/airblade/paper_trail/issues/406)
     `PaperTrail::Version` class is not loaded via a `Rails::Engine`, even when the gem is used with in Rails. This feature has
     will be re-introduced in version `3.1.0`.
+  - [#398](https://github.com/airblade/paper_trail/pull/398) - Only require the `RSpec` helper if `RSpec::Core` is required.
 
 ## 3.0.3
-*This version was yanked from RubyGems and has been replaced by version `3.0.5`, which is identical but does not eager load
+*This version was yanked from RubyGems and has been replaced by version `3.0.5`, which is almost identical, but does not eager load
 in the `PaperTrail::Version` class through a `Rails::Engine` when the gem is used on Rails since it was causing issues for some users.*
 
   - [#386](https://github.com/airblade/paper_trail/issues/386) - Fix eager loading of `versions` association with custom class name

@@ -7,8 +7,7 @@ module PaperTrail
     included do
       belongs_to :item, :polymorphic => true
       validates_presence_of :event
-      attr_accessible :item_type, :item_id, :event, :whodunnit, :object, :object_changes if PaperTrail.active_record_protected_attributes?
-
+      attr_accessible :item_type, :item_id, :event, :whodunnit, :object, :object_changes, :created_at if PaperTrail.active_record_protected_attributes?
       after_create :enforce_version_limit!
     end
 
@@ -111,6 +110,8 @@ module PaperTrail
     # :has_one     set to `false` to opt out of has_one reification.
     #              set to a float to change the lookback time (check whether your db supports
     #              sub-second datetimes if you want them).
+    # :dup         `false` default behavior
+    #              `true` it always create a new object instance. It is useful for comparing two versions of the same object
     def reify(options = {})
       return nil if object.nil?
 
@@ -133,7 +134,7 @@ module PaperTrail
         # `item_type` will be the base class, not the actual subclass.
         # If `type` is present but empty, the class is the base class.
 
-        if item
+        if item && options[:dup] != true
           model = item
           # Look for attributes that exist in the model and not in this version. These attributes should be set to nil.
           (model.attribute_names - attrs.keys).each { |k| attrs[k] = nil }

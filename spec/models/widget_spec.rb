@@ -7,6 +7,20 @@ describe Widget do
 
   let(:widget) { Widget.create! :name => 'Bob', :an_integer => 1 }
 
+  describe '`have_a_version_with` matcher', :versioning => true do
+    before do
+      widget.update_attributes!(:name => 'Leonard', :an_integer => 1 )
+      widget.update_attributes!(:name => 'Tom')
+      widget.update_attributes!(:name => 'Bob')
+    end
+
+    it "is possible to do assertions on versions" do
+       widget.should have_a_version_with :name => 'Leonard', :an_integer => 1
+       widget.should have_a_version_with :an_integer => 1
+       widget.should have_a_version_with :name => 'Tom'
+    end
+  end
+
   describe "`versioning` option" do
     context :enabled, :versioning => true do
       it 'should enable versioning for models wrapped within a block' do
@@ -34,8 +48,16 @@ describe Widget do
       end
     end
 
+    describe :after_create do
+      let(:widget) { Widget.create!(:name => 'Foobar', :created_at => Time.now - 1.week) }
+
+      it "corresponding version should use the widget's `created_at`" do
+        widget.versions.last.created_at.to_i.should == widget.created_at.to_i
+      end
+    end
+
     describe :after_update do
-      before { widget.update_attributes!(:name => 'Foobar') }
+      before { widget.update_attributes!(:name => 'Foobar', :updated_at => Time.now + 1.week) }
 
       subject { widget.versions.last.reify }
 
@@ -44,6 +66,10 @@ describe Widget do
       it "should clear the `versions_association_name` virtual attribute" do
         subject.save!
         subject.should be_live
+      end
+
+      it "corresponding version should use the widget updated_at" do
+        widget.versions.last.created_at.to_i.should == widget.updated_at.to_i
       end
     end
 
@@ -96,10 +122,29 @@ describe Widget do
               PaperTrail.whodunnit = new_name
               widget.update_attributes(:name => 'Elizabeth')
             end
-            let(:reified_widget) { widget.versions[1].reify }
 
-            it "should return the appropriate originator" do
-              reified_widget.originator.should == orig_name
+            context "default behavior (no `options[:dup]` option passed in)" do
+              let(:reified_widget) { widget.versions[1].reify }
+
+              it "should return the appropriate originator" do
+                reified_widget.originator.should == orig_name
+              end
+
+              it "should not create a new model instance" do
+                reified_widget.should_not be_new_record
+              end
+            end
+
+            context "creating a new instance (`options[:dup] == true`)" do
+              let(:reified_widget) { widget.versions[1].reify(:dup => true) }
+
+              it "should return the appropriate originator" do
+                reified_widget.originator.should == orig_name
+              end
+
+              it "should not create a new model instance" do
+                reified_widget.should be_new_record
+              end
             end
           end
         end
