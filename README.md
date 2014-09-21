@@ -135,7 +135,7 @@ Widget.paper_trail_off!
 # Turn PaperTrail on for all widgets.
 Widget.paper_trail_on!
 
-# Check wheter PaperTrail is enabled for all widgets
+# Check whether PaperTrail is enabled for all widgets.
 Widget.paper_trail_enabled_for_model?
 widget.paper_trail_enabled_for_model?
 ```
@@ -168,6 +168,9 @@ version.index
 
 # Returns the event that caused this version (create|update|destroy).
 version.event
+
+# Query versions objects by attributes.
+PaperTrail::Version.where_object(attr1: val1, attr2: val2)
 ```
 
 In your controllers you can override these methods:
@@ -436,7 +439,7 @@ You can find out which of an item's versions yours is:
 >> current_version_number = version.index    # 0-based
 ```
 
-Finally, if you got an item by reifying one of its versions, you can navigate back to the version it came from:
+If you got an item by reifying one of its versions, you can navigate back to the version it came from:
 
 ```ruby
 >> latest_version = Widget.find(42).versions.last
@@ -451,6 +454,13 @@ You can find out whether a model instance is the current, live one -- or whether
 >> widget.live?                        # true
 >> widget = widget.previous_version
 >> widget.live?                        # false
+```
+
+And you can perform `WHERE` queries for object versions based on attributes:
+
+```ruby
+>> # All versions that meet these criteria.
+>> PaperTrail::Version.where_object(content: "Hello", title: "Article")
 ```
 
 ## Finding Out Who Was Responsible For A Change
