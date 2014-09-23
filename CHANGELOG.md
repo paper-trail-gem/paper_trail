@@ -12,6 +12,8 @@ PaperTrail::Rails::Engine.eager_load!
     [#354](https://github.com/airblade/paper_trail/issues/354) / [#131](https://github.com/airblade/paper_trail/issues/131) -
     Versions should be built with `after_` callbacks so the timestamp field for a version can be forced to match the
     corresponding timestamp in the database for the state persistence of a change to the base (versioned) model.
+  - Methods handling serialized attributes should fallback to the currently set Serializer instead of always falling back
+    to `PaperTrail::Serializers::YAML`.
 
 ## 3.0.5
 

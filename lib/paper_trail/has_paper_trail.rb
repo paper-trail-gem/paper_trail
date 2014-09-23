@@ -115,7 +115,8 @@ module PaperTrail
 
         serialized_attributes.each do |key, coder|
           if attributes.key?(key)
-            coder = PaperTrail::Serializers::YAML unless coder.respond_to?(:dump) # Fall back to YAML if `coder` has no `dump` method
+            # Fall back to current serializer if `coder` has no `dump` method
+            coder = PaperTrail.serializer unless coder.respond_to?(:dump)
             attributes[key] = coder.dump(attributes[key])
           end
         end
@@ -127,7 +128,7 @@ module PaperTrail
 
         serialized_attributes.each do |key, coder|
           if attributes.key?(key)
-            coder = PaperTrail::Serializers::YAML unless coder.respond_to?(:dump)
+            coder = PaperTrail.serializer unless coder.respond_to?(:dump)
             attributes[key] = coder.load(attributes[key])
           end
         end
@@ -140,7 +141,8 @@ module PaperTrail
 
         serialized_attributes.each do |key, coder|
           if changes.key?(key)
-            coder = PaperTrail::Serializers::YAML unless coder.respond_to?(:dump) # Fall back to YAML if `coder` has no `dump` method
+            # Fall back to current serializer if `coder` has no `dump` method
+            coder = PaperTrail.serializer unless coder.respond_to?(:dump)
             old_value, new_value = changes[key]
             changes[key] = [coder.dump(old_value),
                             coder.dump(new_value)]
@@ -154,7 +156,7 @@ module PaperTrail
 
         serialized_attributes.each do |key, coder|
           if changes.key?(key)
-            coder = PaperTrail::Serializers::YAML unless coder.respond_to?(:dump)
+            coder = PaperTrail.serializer unless coder.respond_to?(:dump)
             old_value, new_value = changes[key]
             changes[key] = [coder.load(old_value),
                             coder.load(new_value)]
