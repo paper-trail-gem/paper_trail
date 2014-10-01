@@ -4,7 +4,7 @@
 ```ruby
 PaperTrail::Rails::Engine.eager_load!
 ```
-
+  - [#427](https://github.com/airblade/paper_trail/pull/427) - Fix `reify` method in context of model where a column has been removed.
   - [#399](https://github.com/airblade/paper_trail/pull/399) - Add `:dup` argument for options hash to `reify` which forces a
     new model instance.
   - [#394](https://github.com/airblade/paper_trail/pull/394) - Add RSpec matcher `have_a_version_with` for easier testing.
