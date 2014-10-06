@@ -367,7 +367,11 @@ module PaperTrail
       end
 
       def changed_notably?
-        notably_changed.any?
+        if self.paper_trail_options[:ignore].any? && (changed & self.paper_trail_options[:ignore]).any?
+          (notably_changed - timestamp_attributes_for_update_in_model.map(&:to_s)).any?
+        else
+          notably_changed.any?
+        end
       end
 
       def notably_changed
