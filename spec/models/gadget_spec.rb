@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Gadget do
   it { should be_versioned }
 
-  let(:gadget) { Gadget.create!(name: 'Wrench', brand: 'Acme') }
+  let(:gadget) { Gadget.create!(:name => 'Wrench', :brand => 'Acme') }
 
   describe "updates", :versioning => true do
     it "should generate a version for updates to `name` attribute" do
