@@ -224,7 +224,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           'id'         => [nil, @widget.id]
         }
 
-        assert_equal "Time", @widget.versions.last.changeset['updated_at'][1].class.to_s
+        assert_equal Time, @widget.versions.last.changeset['updated_at'][1].class
         assert_equal changes, @widget.versions.last.changeset
       end
 

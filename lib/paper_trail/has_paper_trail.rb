@@ -360,8 +360,16 @@ module PaperTrail
         end
       end
 
+      # This method is invoked in order to determine whether it is appropriate to generate a new version instance.
+      # In ActiveRecord 4, the way ActiveModel::Dirty handles the `changes` hash has changed so that
+      # `timestamp_attributes_for_update` get inserted PRIOR to the persistence happening, so we must accomodate
+      # this by checking to ensure attributes other than those ignored and update timestamps are really being modified.
       def changed_notably?
-        notably_changed.any?
+        if self.paper_trail_options[:ignore].any? && (changed & self.paper_trail_options[:ignore]).any?
+          (notably_changed - timestamp_attributes_for_update_in_model.map(&:to_s)).any?
+        else
+          notably_changed.any?
+        end
       end
 
       def notably_changed
