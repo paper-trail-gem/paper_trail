@@ -955,17 +955,17 @@ When you wish to enable PaperTrail for a test you can either wrap the test in a 
 ```ruby
 describe "RSpec test group" do
   it 'by default, PaperTrail will be turned off' do
-    PaperTrail.should_not be_enabled
+    expect(PaperTrail).to_not be_enabled
   end
 
   with_versioning do
     it 'within a `with_versioning` block it will be turned on' do
-      PaperTrail.should be_enabled
+      expect(PaperTrail).to be_enabled
     end
   end
 
   it 'can be turned on at the `it` or `describe` level like this', :versioning => true do
-    PaperTrail.should be_enabled
+    expect(PaperTrail).to be_enabled
   end
 end
 ```
@@ -980,7 +980,9 @@ class Widget < ActiveRecord::Base
 end
 
 describe Widget do
-  it { should_not be_versioned }
+  it "is not versioned by default" do
+    expect(Widget.new).to_not be_versioned
+  end
 
   describe "add versioning to the `Widget` class" do
     before(:all) do
@@ -989,7 +991,9 @@ describe Widget do
       end
     end
 
-    it { should be_versioned }
+    it "enables paper trail" do
+        expect(Widget.new).to be_versioned
+    end
   end
 end
 ```
@@ -1005,9 +1009,9 @@ It is also possible to do assertions on the versions using `have_a_version_with`
     end
 
     it "is possible to do assertions on versions" do
-       widget.should have_a_version_with :name => 'Leonard', :an_integer => 1
-       widget.should have_a_version_with :an_integer => 1
-       widget.should have_a_version_with :name => 'Tom'
+       expect(widget).to have_a_version_with :name => 'Leonard', :an_integer => 1
+       expect(widget).to have_a_version_with :an_integer => 1
+       expect(widget).to have_a_version_with :name => 'Tom'
     end
   end
 
