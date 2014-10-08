@@ -1080,6 +1080,7 @@ export DB=sqlite # this is default
 
 ## Articles
 
+* [Jutsu #8 - Version your RoR models with PaperTrail](http://samurails.com/gems/papertrail/), [Thibault](http://samurails.com/about-me/), 29th September 2014
 * [Versioning with PaperTrail](http://www.sitepoint.com/versioning-papertrail), [Ilya Bodrov](http://www.sitepoint.com/author/ibodrov), 10th April 2014
 * [Using PaperTrail to track stack traces](http://rubyrailsexpert.com/?p=36), T James Corcoran's blog, 1st October 2013.
 * [RailsCast #255 - Undo with PaperTrail](http://railscasts.com/episodes/255-undo-with-paper-trail), 28th February 2011.
