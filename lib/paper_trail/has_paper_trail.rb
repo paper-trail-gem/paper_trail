@@ -366,6 +366,10 @@ module PaperTrail
         end
       end
 
+      # This method is invoked in order to determine whether it is appropriate to generate a new version instance.
+      # Because we are now using `after_(create/update/etc)` callbacks, we need to go out of our way to
+      # ensure that during updates timestamp attributes are not acknowledged as a notable changes
+      # to raise false positives when attributes are ignored.
       def changed_notably?
         if self.paper_trail_options[:ignore].any? && (changed & self.paper_trail_options[:ignore]).any?
           (notably_changed - timestamp_attributes_for_update_in_model.map(&:to_s)).any?
