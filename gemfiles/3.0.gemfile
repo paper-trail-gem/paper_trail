@@ -15,7 +15,7 @@ group :development, :test do
   gem 'rack-test', '>= 0.6'
 
   # RSpec testing
-  gem 'rspec-rails', '~> 2.14'
+  gem 'rspec-rails', '~> 3.1.0'
   gem 'generator_spec'
 
   # To do proper transactional testing with ActiveSupport::TestCase on MySQL

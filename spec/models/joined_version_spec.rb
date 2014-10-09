@@ -1,32 +1,32 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe JoinedVersion, :versioning => true do
-  it { JoinedVersion.superclass.should == PaperTrail::Version }
+describe JoinedVersion, :type => :model, :versioning => true do
+  it { expect(JoinedVersion.superclass).to be PaperTrail::Version }
 
   let(:widget) { Widget.create!(:name => Faker::Name.name) }
   let(:version) { JoinedVersion.first }
 
   describe "Scopes" do
     describe "default_scope" do
-      it { JoinedVersion.default_scopes.should_not be_empty }
+      it { expect(JoinedVersion.default_scopes).not_to be_empty }
     end
 
     describe "VersionConcern::ClassMethods" do
       before { widget } # persist a widget
 
-      describe :subsequent do
+      describe '#subsequent' do
         it "shouldn't error out when there is a default_scope that joins" do
           JoinedVersion.subsequent(version).first
         end
       end
 
-      describe :preceding do
+      describe '#preceding' do
         it "shouldn't error out when there is a default scope that joins" do
           JoinedVersion.preceding(version).first
         end
       end
 
-      describe :between do
+      describe '#between' do
         it "shouldn't error out when there is a default scope that joins" do
           JoinedVersion.between(Time.now, 1.minute.from_now).first
         end
@@ -35,8 +35,8 @@ describe JoinedVersion, :versioning => true do
   end
 
   describe "Methods" do
-    describe :index do
-      it { should respond_to(:index) }
+    describe '#index' do
+      it { is_expected.to respond_to(:index) }
 
       it "shouldn't error out when there is a default scope that joins" do
         widget # persist a widget

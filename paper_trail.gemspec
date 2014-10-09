@@ -29,7 +29,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'railties', ['>= 3.0', '< 5.0']
   s.add_development_dependency 'sinatra', '~> 1.0'
   s.add_development_dependency 'rack-test', '>= 0.6'
-  s.add_development_dependency 'rspec-rails', '~> 2.99'
+  s.add_development_dependency 'rspec-rails', '~> 3.1.0'
   s.add_development_dependency 'generator_spec'
   s.add_development_dependency 'database_cleaner', '~> 1.2'
 

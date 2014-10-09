@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe Widget do
+describe Widget, :type => :model do
   describe '`be_versioned` matcher' do
     it { should be_versioned }
   end
@@ -15,22 +15,22 @@ describe Widget do
     end
 
     it "is possible to do assertions on versions" do
-       widget.should have_a_version_with :name => 'Leonard', :an_integer => 1
-       widget.should have_a_version_with :an_integer => 1
-       widget.should have_a_version_with :name => 'Tom'
+       expect(widget).to have_a_version_with :name => 'Leonard', :an_integer => 1
+       expect(widget).to have_a_version_with :an_integer => 1
+       expect(widget).to have_a_version_with :name => 'Tom'
     end
   end
 
   describe "`versioning` option" do
     context :enabled, :versioning => true do
       it 'should enable versioning for models wrapped within a block' do
-        widget.versions.size.should == 1
+        expect(widget.versions.size).to eq(1)
       end
     end
 
     context '`disabled` (default)' do
       it 'should not enable versioning for models wrapped within a block not marked to used versioning' do
-        widget.versions.size.should == 0
+        expect(widget.versions.size).to eq(0)
       end
     end
   end
@@ -52,7 +52,7 @@ describe Widget do
       let(:widget) { Widget.create!(:name => 'Foobar', :created_at => Time.now - 1.week) }
 
       it "corresponding version should use the widget's `created_at`" do
-        widget.versions.last.created_at.to_i.should == widget.created_at.to_i
+        expect(widget.versions.last.created_at.to_i).to eq(widget.created_at.to_i)
       end
     end
 
@@ -61,15 +61,15 @@ describe Widget do
 
       subject { widget.versions.last.reify }
 
-      it { subject.should_not be_live }
+      it { expect(subject).not_to be_live }
 
       it "should clear the `versions_association_name` virtual attribute" do
         subject.save!
-        subject.should be_live
+        expect(subject).to be_live
       end
 
       it "corresponding version should use the widget updated_at" do
-        widget.versions.last.created_at.to_i.should == widget.updated_at.to_i
+        expect(widget.versions.last.created_at.to_i).to eq(widget.updated_at.to_i)
       end
     end
 
@@ -79,10 +79,10 @@ describe Widget do
       end
 
       it "should assign the version into the `versions_association_name`" do
-        widget.version.should be_nil
+        expect(widget.version).to be_nil
         widget.destroy
-        widget.version.should_not be_nil
-        widget.version.should == widget.versions.last
+        expect(widget.version).not_to be_nil
+        expect(widget.version).to eq(widget.versions.last)
       end
     end
   end
@@ -90,16 +90,16 @@ describe Widget do
   describe "Association", :versioning => true do
     describe "sort order" do
       it "should sort by the timestamp order from the `VersionConcern`" do
-        widget.versions.to_sql.should ==
-          widget.versions.reorder(PaperTrail::Version.timestamp_sort_order).to_sql
+        expect(widget.versions.to_sql).to eq(
+          widget.versions.reorder(PaperTrail::Version.timestamp_sort_order).to_sql)
       end
     end
   end
 
   describe "Methods" do
     describe "Instance", :versioning => true do
-      describe :originator do
-        it { should respond_to(:originator) }
+      describe '#originator' do
+        it { is_expected.to respond_to(:originator) }
 
         describe "return value" do
           let(:orig_name) { Faker::Name.name }
@@ -107,12 +107,12 @@ describe Widget do
           before { PaperTrail.whodunnit = orig_name }
 
           context "accessed from live model instance" do
-            specify { widget.should be_live }
+            specify { expect(widget).to be_live }
 
             it "should return the originator for the model at a given state" do
-              widget.originator.should == orig_name
+              expect(widget.originator).to eq(orig_name)
               widget.whodunnit(new_name) { |w| w.update_attributes(:name => 'Elizabeth') }
-              widget.originator.should == new_name
+              expect(widget.originator).to eq(new_name)
             end
           end
 
@@ -127,11 +127,11 @@ describe Widget do
               let(:reified_widget) { widget.versions[1].reify }
 
               it "should return the appropriate originator" do
-                reified_widget.originator.should == orig_name
+                expect(reified_widget.originator).to eq(orig_name)
               end
 
               it "should not create a new model instance" do
-                reified_widget.should_not be_new_record
+                expect(reified_widget).not_to be_new_record
               end
             end
 
@@ -139,19 +139,19 @@ describe Widget do
               let(:reified_widget) { widget.versions[1].reify(:dup => true) }
 
               it "should return the appropriate originator" do
-                reified_widget.originator.should == orig_name
+                expect(reified_widget.originator).to eq(orig_name)
               end
 
               it "should not create a new model instance" do
-                reified_widget.should be_new_record
+                expect(reified_widget).to be_new_record
               end
             end
           end
         end
       end
 
-      describe :version_at do
-        it { should respond_to(:version_at) }
+      describe '#version_at' do
+        it { is_expected.to respond_to(:version_at) }
 
         context "Timestamp argument is AFTER object has been destroyed" do
           before do
@@ -160,13 +160,13 @@ describe Widget do
           end
 
           it "should return `nil`" do
-            widget.version_at(Time.now).should be_nil
+            expect(widget.version_at(Time.now)).to be_nil
           end
         end
       end
 
-      describe :whodunnit do
-        it { should respond_to(:whodunnit) }
+      describe '#whodunnit' do
+        it { is_expected.to respond_to(:whodunnit) }
 
         context "no block given" do
           it "should raise an error" do
@@ -180,44 +180,44 @@ describe Widget do
 
           before do
             PaperTrail.whodunnit = orig_name
-            widget.versions.last.whodunnit.should == orig_name # persist `widget`
+            expect(widget.versions.last.whodunnit).to eq(orig_name) # persist `widget`
           end
 
           it "should modify value of `PaperTrail.whodunnit` while executing the block" do
             widget.whodunnit(new_name) do
-              PaperTrail.whodunnit.should == new_name
+              expect(PaperTrail.whodunnit).to eq(new_name)
               widget.update_attributes(:name => 'Elizabeth')
             end
-            widget.versions.last.whodunnit.should == new_name
+            expect(widget.versions.last.whodunnit).to eq(new_name)
           end
 
           it "should revert the value of `PaperTrail.whodunnit` to it's previous value after executing the block" do
             widget.whodunnit(new_name) { |w| w.update_attributes(:name => 'Elizabeth') }
-            PaperTrail.whodunnit.should == orig_name
+            expect(PaperTrail.whodunnit).to eq(orig_name)
           end
 
           context "error within block" do
             it "should ensure that the whodunnit value still reverts to it's previous value" do
               expect { widget.whodunnit(new_name) { raise } }.to raise_error
-              PaperTrail.whodunnit.should == orig_name
+              expect(PaperTrail.whodunnit).to eq(orig_name)
             end
           end
         end
       end
 
-      describe :touch_with_version do
-        it { should respond_to(:touch_with_version) }
+      describe '#touch_with_version' do
+        it { is_expected.to respond_to(:touch_with_version) }
 
         it "should generate a version" do
           count = widget.versions.size
           widget.touch_with_version
-          widget.versions.size.should == count + 1
+          expect(widget.versions.size).to eq(count + 1)
         end
 
         it "should increment the `:updated_at` timestamp" do
           time_was = widget.updated_at
           widget.touch_with_version
-          widget.updated_at.should > time_was
+          expect(widget.updated_at).to be > time_was
         end
       end
     end
@@ -225,56 +225,56 @@ describe Widget do
     describe "Class" do
       subject { Widget }
 
-      describe :paper_trail_off! do
-        it { should respond_to(:paper_trail_off!) }
+      describe '#paper_trail_off!' do
+        it { is_expected.to respond_to(:paper_trail_off!) }
 
         it 'should set the `paper_trail_enabled_for_model?` to `false`' do
-          subject.paper_trail_enabled_for_model?.should == true
+          expect(subject.paper_trail_enabled_for_model?).to be true
           subject.paper_trail_off!
-          subject.paper_trail_enabled_for_model?.should == false
+          expect(subject.paper_trail_enabled_for_model?).to be false
         end
       end
 
-      describe :paper_trail_off do
-        it { should respond_to(:paper_trail_off) }
+      describe '#paper_trail_off' do
+        it { is_expected.to respond_to(:paper_trail_off) }
 
         it 'should set the invoke `paper_trail_off!`' do
-          subject.should_receive(:warn)
-          subject.should_receive(:paper_trail_off!)
+          is_expected.to receive(:warn)
+          is_expected.to receive(:paper_trail_off!)
           subject.paper_trail_off
         end
 
         it 'should display a deprecation warning' do
-          subject.should_receive(:warn).with("DEPRECATED: use `paper_trail_on!` instead of `paper_trail_on`. Support for `paper_trail_on` will be removed in PaperTrail 3.1")
+          is_expected.to receive(:warn).with("DEPRECATED: use `paper_trail_on!` instead of `paper_trail_on`. Support for `paper_trail_on` will be removed in PaperTrail 3.1")
           subject.paper_trail_on
         end
       end
 
-      describe :paper_trail_on! do
+      describe '#paper_trail_on!' do
         before { subject.paper_trail_off! }
 
-        it { should respond_to(:paper_trail_on!) }
+        it { is_expected.to respond_to(:paper_trail_on!) }
 
         it 'should set the `paper_trail_enabled_for_model?` to `true`' do
-          subject.paper_trail_enabled_for_model?.should == false
+          expect(subject.paper_trail_enabled_for_model?).to be false
           subject.paper_trail_on!
-          subject.paper_trail_enabled_for_model?.should == true
+          expect(subject.paper_trail_enabled_for_model?).to be true
         end
       end
 
-      describe :paper_trail_on do
+      describe '#paper_trail_on' do
         before { subject.paper_trail_off! }
 
-        it { should respond_to(:paper_trail_on) }
+        it { is_expected.to respond_to(:paper_trail_on) }
 
         it 'should set the invoke `paper_trail_on!`' do
-          subject.should_receive(:warn)
-          subject.should_receive(:paper_trail_on!)
+          is_expected.to receive(:warn)
+          is_expected.to receive(:paper_trail_on!)
           subject.paper_trail_on
         end
 
         it 'should display a deprecation warning' do
-          subject.should_receive(:warn).with("DEPRECATED: use `paper_trail_on!` instead of `paper_trail_on`. Support for `paper_trail_on` will be removed in PaperTrail 3.1")
+          is_expected.to receive(:warn).with("DEPRECATED: use `paper_trail_on!` instead of `paper_trail_on`. Support for `paper_trail_on` will be removed in PaperTrail 3.1")
           subject.paper_trail_on
         end
       end
