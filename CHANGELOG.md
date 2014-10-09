@@ -6,7 +6,8 @@ PaperTrail::Rails::Engine.eager_load!
 ```
 
   - [#427](https://github.com/airblade/paper_trail/pull/427) - Fix `reify` method in context of model where a column has been removed.
-  - [#414](https://github.com/airblade/paper_trail/issues/414) - Fix functionality `ignore` attributes to `has_paper_trail`.
+  - [#414](https://github.com/airblade/paper_trail/issues/414) - Fix functionality `ignore` argument to `has_paper_trail`
+    in `ActiveRecord` 4.
   - [#399](https://github.com/airblade/paper_trail/pull/399) - Add `:dup` argument for options hash to `reify` which forces a
     new model instance.
   - [#394](https://github.com/airblade/paper_trail/pull/394) - Add RSpec matcher `have_a_version_with` for easier testing.
@@ -14,8 +15,15 @@ PaperTrail::Rails::Engine.eager_load!
     [#354](https://github.com/airblade/paper_trail/issues/354) / [#131](https://github.com/airblade/paper_trail/issues/131) -
     Versions should be built with `after_` callbacks so the timestamp field for a version can be forced to match the
     corresponding timestamp in the database for the state persistence of a change to the base (versioned) model.
+  - [#347](https://github.com/airblade/paper_trail/pull/347) - Autoload `ActiveRecord` models in via a `Rails::Engine` when
+    the gem is used with `Rails`.
   - Methods handling serialized attributes should fallback to the currently set Serializer instead of always falling back
     to `PaperTrail::Serializers::YAML`.
+
+## 3.0.6
+
+  - [#414](https://github.com/airblade/paper_trail/issues/414) - Backport fix for `ignore` argument to `has_paper_trail` in
+    `ActiveRecord` 4.
 
 ## 3.0.5
 
