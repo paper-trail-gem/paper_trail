@@ -981,7 +981,7 @@ end
 
 describe Widget do
   it "is not versioned by default" do
-    expect(Widget.new).to_not be_versioned
+    is_expected.to_not be_versioned
   end
 
   describe "add versioning to the `Widget` class" do
@@ -992,7 +992,7 @@ describe Widget do
     end
 
     it "enables paper trail" do
-        expect(Widget.new).to be_versioned
+      is_expected.to be_versioned
     end
   end
 end
