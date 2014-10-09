@@ -1,49 +1,49 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe PaperTrail::Version do
+describe PaperTrail::Version, :type => :model do
   it "should include the `VersionConcern` module to get base functionality" do
-    PaperTrail::Version.should include(PaperTrail::VersionConcern)
+    expect(PaperTrail::Version).to include(PaperTrail::VersionConcern)
   end
 
   describe "Attributes" do
-    it { should have_db_column(:item_type).of_type(:string) }
-    it { should have_db_column(:item_id).of_type(:integer) }
-    it { should have_db_column(:event).of_type(:string) }
-    it { should have_db_column(:whodunnit).of_type(:string) }
-    it { should have_db_column(:object).of_type(:text) }
-    it { should have_db_column(:created_at).of_type(:datetime) }
+    it { is_expected.to have_db_column(:item_type).of_type(:string) }
+    it { is_expected.to have_db_column(:item_id).of_type(:integer) }
+    it { is_expected.to have_db_column(:event).of_type(:string) }
+    it { is_expected.to have_db_column(:whodunnit).of_type(:string) }
+    it { is_expected.to have_db_column(:object).of_type(:text) }
+    it { is_expected.to have_db_column(:created_at).of_type(:datetime) }
   end
 
   describe "Indexes" do
-    it { should have_db_index([:item_type, :item_id]) }
+    it { is_expected.to have_db_index([:item_type, :item_id]) }
   end
 
   describe "Methods" do
     describe "Instance" do
       subject { PaperTrail::Version.new(attributes) rescue PaperTrail::Version.new }
 
-      describe :terminator do
-        it { should respond_to(:terminator) }
+      describe '#terminator' do
+        it { is_expected.to respond_to(:terminator) }
 
         let(:attributes) { {:whodunnit => Faker::Name.first_name} }
 
         it "is an alias for the `whodunnit` attribute" do
-          subject.whodunnit.should == attributes[:whodunnit]
+          expect(subject.whodunnit).to eq(attributes[:whodunnit])
         end
       end
 
-      describe :version_author do
-        it { should respond_to(:version_author) }
+      describe '#version_author' do
+        it { is_expected.to respond_to(:version_author) }
 
         it "should be an alias for the `terminator` method" do
-          subject.method(:version_author).should == subject.method(:terminator)
+          expect(subject.method(:version_author)).to eq(subject.method(:terminator))
         end
       end
     end
 
     describe "Class" do
-      describe :where_object do
-        it { PaperTrail::Version.should respond_to(:where_object) }
+      describe '#where_object' do
+        it { expect(PaperTrail::Version).to respond_to(:where_object) }
 
         context "invalid arguments" do
           it "should raise an error" do
@@ -64,21 +64,21 @@ describe PaperTrail::Version do
           end
 
           context "`serializer == YAML`" do
-            specify { PaperTrail.serializer == PaperTrail::Serializers::YAML }
+            specify { expect(PaperTrail.serializer).to be PaperTrail::Serializers::YAML }
 
             it "should be able to locate versions according to their `object` contents" do
-              PaperTrail::Version.where_object(:name => name).should == [widget.versions[1]]
-              PaperTrail::Version.where_object(:an_integer => 100).should == [widget.versions[2]]
+              expect(PaperTrail::Version.where_object(:name => name)).to eq([widget.versions[1]])
+              expect(PaperTrail::Version.where_object(:an_integer => 100)).to eq([widget.versions[2]])
             end
           end
 
           context "`serializer == JSON`" do
             before { PaperTrail.serializer = PaperTrail::Serializers::JSON }
-            specify { PaperTrail.serializer == PaperTrail::Serializers::JSON }
+            specify { expect(PaperTrail.serializer).to be PaperTrail::Serializers::JSON }
 
             it "should be able to locate versions according to their `object` contents" do
-              PaperTrail::Version.where_object(:name => name).should == [widget.versions[1]]
-              PaperTrail::Version.where_object(:an_integer => 100).should == [widget.versions[2]]
+              expect(PaperTrail::Version.where_object(:name => name)).to eq([widget.versions[1]])
+              expect(PaperTrail::Version.where_object(:an_integer => 100)).to eq([widget.versions[2]])
             end
           end
         end

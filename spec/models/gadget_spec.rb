@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe Gadget do
+describe Gadget, :type => :model do
   it { should be_versioned }
 
   let(:gadget) { Gadget.create!(:name => 'Wrench', :brand => 'Acme') }
@@ -22,16 +22,16 @@ describe Gadget do
   describe "Methods" do
     describe "Instance", :versioning => true do
       describe "private" do
-        describe :changed_notably? do
+        describe '#changed_notably?' do
           subject { Gadget.new(:created_at => Time.now) }
 
           # apparently the private methods list in Ruby18 is different than in Ruby19+
           if RUBY_VERSION.to_f >= 1.9
-            its(:private_methods) { should include(:changed_notably?) }
+            it { expect(subject.private_methods).to include(:changed_notably?) }
           end
 
           context "create events" do
-            it { subject.send(:changed_notably?).should == true }
+            it { expect(subject.send(:changed_notably?)).to be true }
           end
 
           context "update events" do
@@ -40,24 +40,24 @@ describe Gadget do
             context "without update timestamps" do
               it "should only acknowledge non-ignored attrs" do
                 subject.name = 'Wrench'
-                subject.send(:changed_notably?).should == true
+                expect(subject.send(:changed_notably?)).to be true
               end
 
               it "should not acknowledge ignored attrs and timestamps only" do
                 subject.brand = 'Acme'
-                subject.send(:changed_notably?).should == false
+                expect(subject.send(:changed_notably?)).to be false
               end
             end
 
             context "with update timestamps" do
               it "should only acknowledge non-ignored attrs" do
                 subject.name, subject.updated_at = 'Wrench', Time.now
-                subject.send(:changed_notably?).should == true
+                expect(subject.send(:changed_notably?)).to be true
               end
 
               it "should not acknowledge ignored attrs and timestamps only" do
                 subject.brand, subject.updated_at = 'Acme', Time.now
-                subject.send(:changed_notably?).should == false
+                expect(subject.send(:changed_notably?)).to be false
               end
             end
           end

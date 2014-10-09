@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 require 'generator_spec/test_case'
 require File.expand_path('../../../lib/generators/paper_trail/install_generator', __FILE__)
 
@@ -15,7 +15,7 @@ describe PaperTrail::InstallGenerator, :type => :generator do
     end
   
     it "generates a migration for creating the 'versions' table" do
-      destination_root.should have_structure {
+      expect(destination_root).to have_structure {
         directory 'db' do
           directory 'migrate' do
             migration 'create_versions' do
@@ -36,7 +36,7 @@ describe PaperTrail::InstallGenerator, :type => :generator do
     end
 
     it "generates a migration for creating the 'versions' table" do
-      destination_root.should have_structure {
+      expect(destination_root).to have_structure {
         directory 'db' do
           directory 'migrate' do
             migration 'create_versions' do
@@ -50,7 +50,7 @@ describe PaperTrail::InstallGenerator, :type => :generator do
     end
 
     it "generates a migration for adding the 'object_changes' column to the 'versions' table" do
-      destination_root.should have_structure {
+      expect(destination_root).to have_structure {
         directory 'db' do
           directory 'migrate' do
             migration 'add_object_changes_to_versions' do
