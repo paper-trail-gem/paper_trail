@@ -13,7 +13,7 @@ require 'shoulda/matchers'
 require 'ffaker'
 
 # prevent Test::Unit's AutoRunner from executing during RSpec's rake task
-Test::Unit.run = true if defined?(Test::Unit)
+Test::Unit.run = true if defined?(Test::Unit) && Test::Unit.respond_to?(:run=)
 
 # Checks for pending migrations before tests are run.
 # If you are not using ActiveRecord, you can remove this line.
