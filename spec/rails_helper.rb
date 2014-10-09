@@ -12,9 +12,12 @@ require 'rspec/rails'
 require 'shoulda/matchers'
 require 'ffaker'
 
+# prevent Test::Unit's AutoRunner from executing during RSpec's rake task
+Test::Unit.run = true if defined?(Test::Unit)
+
 # Checks for pending migrations before tests are run.
 # If you are not using ActiveRecord, you can remove this line.
-# ActiveRecord::Migration.maintain_test_schema!
+ActiveRecord::Migration.check_pending! if ActiveRecord::Migration.respond_to?(:check_pending!)
 
 RSpec.configure do |config|
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
