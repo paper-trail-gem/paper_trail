@@ -1,3 +1,8 @@
+## 3.0.6 (Unreleased)
+
+  - [#414](https://github.com/airblade/paper_trail/issues/414) - Fix functionality `ignore` argument to `has_paper_trail`
+    in `ActiveRecord` 4.
+
 ## 3.0.5
 
   - [#401](https://github.com/airblade/paper_trail/issues/401) / [#406](https://github.com/airblade/paper_trail/issues/406)
