@@ -875,7 +875,7 @@ end
 
 ### Per class
 
-If you are about change some widgets and you don't want a paper trail of your changes, you can turn PaperTrail off like this:
+If you are about to change some widgets and you don't want a paper trail of your changes, you can turn PaperTrail off like this:
 
 ```ruby
 >> Widget.paper_trail_off!
