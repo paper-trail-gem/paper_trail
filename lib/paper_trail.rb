@@ -142,9 +142,6 @@ unless PaperTrail.active_record_protected_attributes?
   rescue LoadError; end # will rescue if `ProtectedAttributes` gem is not available
 end
 
-require 'paper_trail/version'
-require 'paper_trail/version_association'
-
 ActiveSupport.on_load(:active_record) do
   include PaperTrail::Model
 end
