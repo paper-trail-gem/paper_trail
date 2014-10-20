@@ -94,6 +94,28 @@ module PaperTrail
     @active_record_protected_attributes ||= ::ActiveRecord::VERSION::MAJOR < 4 || !!defined?(ProtectedAttributes)
   end
 
+  def self.transaction?
+    ActiveRecord::Base.connection.open_transactions > 0 || paper_trail_store[:transaction_open]
+  end
+
+  def self.start_transaction
+    paper_trail_store[:transaction_open] = true
+    self.transaction_id = nil
+  end
+
+  def self.end_transaction
+    paper_trail_store[:transaction_open] = false
+    self.transaction_id = nil
+  end
+
+  def self.transaction_id
+    paper_trail_store[:transaction_id]
+  end
+
+  def self.transaction_id=(id)
+    paper_trail_store[:transaction_id] = id
+  end
+
   private
 
   # Thread-safe hash to hold PaperTrail's data.
@@ -119,6 +141,9 @@ unless PaperTrail.active_record_protected_attributes?
     require 'protected_attributes'
   rescue LoadError; end # will rescue if `ProtectedAttributes` gem is not available
 end
+
+require 'paper_trail/version'
+require 'paper_trail/version_association'
 
 ActiveSupport.on_load(:active_record) do
   include PaperTrail::Model
