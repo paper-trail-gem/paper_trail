@@ -21,7 +21,7 @@ describe PaperTrail::Version, :type => :model do
         specify { expect(PaperTrail.serializer).to be PaperTrail::Serializers::YAML }
 
         it "should store out as a plain hash" do
-          expect(value =~ /ActiveSupport::HashWithIndifferentAccess/).to be_nil
+          expect(value =~ /HashWithIndifferentAccess/).to be_nil
         end
       end
 
@@ -29,7 +29,7 @@ describe PaperTrail::Version, :type => :model do
         before(:all) { PaperTrail.serializer = PaperTrail::Serializers::JSON }
 
         it "should store out as a plain hash" do
-          expect(value =~ /ActiveSupport::HashWithIndifferentAccess/).to be_nil
+          expect(value =~ /HashWithIndifferentAccess/).to be_nil
         end
 
         after(:all) { PaperTrail.serializer = PaperTrail::Serializers::YAML }

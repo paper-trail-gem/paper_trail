@@ -294,7 +294,7 @@ module PaperTrail
       def changes_for_paper_trail
         self.changes.delete_if do |key, value|
           !notably_changed.include?(key)
-        end.tap { |changes| self.class.serialize_attribute_changes(changes) }.to_h
+        end.tap { |changes| self.class.serialize_attribute_changes(changes) }.to_hash
       end
 
       # Invoked via`after_update` callback for when a previous version is reified and then saved
