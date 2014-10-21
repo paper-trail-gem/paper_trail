@@ -166,8 +166,8 @@ module PaperTrail
       end
     end
 
-    # Returns what changed in this version of the item.  Cf. `ActiveModel::Dirty#changes`.
-    # Returns `nil` if your `versions` table does not have an `object_changes` text column.
+    # Returns what changed in this version of the item. `ActiveModel::Dirty#changes`.
+    # returns `nil` if your `versions` table does not have an `object_changes` text column.
     def changeset
       return nil unless self.class.column_names.include? 'object_changes'
 

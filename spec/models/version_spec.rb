@@ -12,6 +12,29 @@ describe PaperTrail::Version, :type => :model do
     it { is_expected.to have_db_column(:whodunnit).of_type(:string) }
     it { is_expected.to have_db_column(:object).of_type(:text) }
     it { is_expected.to have_db_column(:created_at).of_type(:datetime) }
+
+    describe "object_changes column", :versioning => true do
+      let(:widget) { Widget.create!(:name => 'Dashboard') }
+      let(:value) { widget.versions.last.object_changes }
+
+      context "serializer is YAML" do
+        specify { expect(PaperTrail.serializer).to be PaperTrail::Serializers::YAML }
+
+        it "should store out as a plain hash" do
+          expect(value =~ /ActiveSupport::HashWithIndifferentAccess/).to be_nil
+        end
+      end
+
+      context "serializer is JSON" do
+        before(:all) { PaperTrail.serializer = PaperTrail::Serializers::JSON }
+
+        it "should store out as a plain hash" do
+          expect(value =~ /ActiveSupport::HashWithIndifferentAccess/).to be_nil
+        end
+
+        after(:all) { PaperTrail.serializer = PaperTrail::Serializers::YAML }
+      end
+    end
   end
 
   describe "Indexes" do
@@ -73,13 +96,15 @@ describe PaperTrail::Version, :type => :model do
           end
 
           context "`serializer == JSON`" do
-            before { PaperTrail.serializer = PaperTrail::Serializers::JSON }
+            before(:all) { PaperTrail.serializer = PaperTrail::Serializers::JSON }
             specify { expect(PaperTrail.serializer).to be PaperTrail::Serializers::JSON }
 
             it "should be able to locate versions according to their `object` contents" do
               expect(PaperTrail::Version.where_object(:name => name)).to eq([widget.versions[1]])
               expect(PaperTrail::Version.where_object(:an_integer => 100)).to eq([widget.versions[2]])
             end
+
+            after(:all) { PaperTrail.serializer = PaperTrail::Serializers::YAML }
           end
         end
       end
