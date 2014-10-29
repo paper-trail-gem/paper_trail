@@ -292,7 +292,7 @@ module PaperTrail
       end
 
       def changes_for_paper_trail
-        self.changes.delete_if do |key, value|
+        self.changes.delete_if do |key, _|
           !notably_changed.include?(key)
         end.tap { |changes| self.class.serialize_attribute_changes(changes) }.to_hash
       end
@@ -352,7 +352,7 @@ module PaperTrail
         enums = previous.respond_to?(:defined_enums) ? previous.defined_enums : {}
         previous.tap do |prev|
           prev.id = id # `dup` clears the `id` so we add that back
-          changed_attributes.select { |k,v| self.class.column_names.include?(k) }.each do |attr, before|
+          changed_attributes.select { |k,_| self.class.column_names.include?(k) }.each do |attr, before|
             before = enums[attr][before] if enums[attr]
             prev[attr] = before
           end
