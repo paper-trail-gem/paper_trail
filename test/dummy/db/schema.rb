@@ -66,6 +66,7 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.string   "event",      null: false
     t.string   "whodunnit"
     t.text     "object"
+    t.integer  "transaction_id"
     t.datetime "created_at"
     t.string   "ip"
     t.string   "user_agent"

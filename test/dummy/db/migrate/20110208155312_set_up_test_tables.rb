@@ -52,6 +52,7 @@ class SetUpTestTables < ActiveRecord::Migration
       t.string   :event,     :null => false
       t.string   :whodunnit
       t.text     :object
+      t.integer  :transaction_id
       t.datetime :created_at
 
       # Controller info columns.
