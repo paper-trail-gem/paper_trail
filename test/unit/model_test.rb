@@ -1,5 +1,13 @@
 require 'test_helper'
 
+# Updates `model`'s last version so it looks like the version was
+# created 2 seconds ago.
+def make_last_version_earlier(model)
+  PaperTrail::Version.record_timestamps = false
+  model.versions.last.update_attributes :created_at => 2.seconds.ago
+  PaperTrail::Version.record_timestamps = true
+end
+
 class HasPaperTrailModelTest < ActiveSupport::TestCase
 
   context "A record with defined 'only' and 'ignore' attributes" do
@@ -952,88 +960,6 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
   end
 
-
-  context 'A model with a has_one association' do
-    setup { @widget = Widget.create :name => 'widget_0' }
-
-    context 'before the associated was created' do
-      setup do
-        @widget.update_attributes :name => 'widget_1'
-        @wotsit = @widget.create_wotsit :name => 'wotsit_0'
-      end
-
-      context 'when reified' do
-        setup { @widget_0 = @widget.versions.last.reify(:has_one => 1) }
-
-        should 'see the associated as it was at the time' do
-          assert_nil @widget_0.wotsit
-        end
-      end
-    end
-
-    context 'where the association is created between model versions' do
-      setup do
-        @wotsit = @widget.create_wotsit :name => 'wotsit_0'
-        make_last_version_earlier @wotsit
-
-        @widget.update_attributes :name => 'widget_1'
-      end
-
-      context 'when reified' do
-        setup { @widget_0 = @widget.versions.last.reify(:has_one => 1) }
-
-        should 'see the associated as it was at the time' do
-          assert_equal 'wotsit_0', @widget_0.wotsit.name
-        end
-      end
-
-      context 'and then the associated is updated between model versions' do
-        setup do
-          @wotsit.update_attributes :name => 'wotsit_1'
-          make_last_version_earlier @wotsit
-          @wotsit.update_attributes :name => 'wotsit_2'
-          make_last_version_earlier @wotsit
-
-          @widget.update_attributes :name => 'widget_2'
-          @wotsit.update_attributes :name => 'wotsit_3'
-        end
-
-        context 'when reified' do
-          setup { @widget_1 = @widget.versions.last.reify(:has_one => 1) }
-
-          should 'see the associated as it was at the time' do
-            assert_equal 'wotsit_2', @widget_1.wotsit.name
-          end
-        end
-
-        context 'when reified opting out of has_one reification' do
-          setup { @widget_1 = @widget.versions.last.reify(:has_one => false) }
-
-          should 'see the associated as it is live' do
-            assert_equal 'wotsit_3', @widget_1.wotsit.name
-          end
-        end
-      end
-
-      context 'and then the associated is destroyed between model versions' do
-        setup do
-          @wotsit.destroy
-          make_last_version_earlier @wotsit
-
-          @widget.update_attributes :name => 'widget_3'
-        end
-
-        context 'when reified' do
-          setup { @widget_2 = @widget.versions.last.reify(:has_one => 1) }
-
-          should 'see the associated as it was at the time' do
-            assert_nil @widget_2.wotsit
-          end
-        end
-      end
-    end
-  end
-
   context 'When an attribute has a custom serializer' do
     setup { @person = Person.new(:time_zone => "Samoa") }
 
@@ -1378,15 +1304,99 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       assert_equal 3, @widget.versions.size
     end
   end
+end
 
-  private
 
-  # Updates `model`'s last version so it looks like the version was
-  # created 2 seconds ago.
-  def make_last_version_earlier(model)
-    PaperTrail::Version.record_timestamps = false
-    model.versions.last.update_attributes :created_at => 2.seconds.ago
-    PaperTrail::Version.record_timestamps = true
+class HasPaperTrailModelTransactionalTest < ActiveSupport::TestCase
+  # These would have been done in test_helper.rb if using_mysql? is true
+  unless using_mysql?
+    self.use_transactional_fixtures = false
+    setup { DatabaseCleaner.start }
   end
 
+  teardown do
+    # This would have been done in test_helper.rb if using_mysql? is true
+    DatabaseCleaner.clean unless using_mysql?
+  end
+
+  context 'A model with a has_one association' do
+    setup { @widget = Widget.create :name => 'widget_0' }
+
+    context 'before the associated was created' do
+      setup do
+        @widget.update_attributes :name => 'widget_1'
+        @wotsit = @widget.create_wotsit :name => 'wotsit_0'
+      end
+
+      context 'when reified' do
+        setup { @widget_0 = @widget.versions.last.reify(:has_one => 1) }
+
+        should 'see the associated as it was at the time' do
+          assert_nil @widget_0.wotsit
+        end
+      end
+    end
+
+    context 'where the association is created between model versions' do
+      setup do
+        @wotsit = @widget.create_wotsit :name => 'wotsit_0'
+        make_last_version_earlier @wotsit
+
+        @widget.update_attributes :name => 'widget_1'
+      end
+
+      context 'when reified' do
+        setup { @widget_0 = @widget.versions.last.reify(:has_one => 1) }
+
+        should 'see the associated as it was at the time' do
+          assert_equal 'wotsit_0', @widget_0.wotsit.name
+        end
+      end
+
+      context 'and then the associated is updated between model versions' do
+        setup do
+          @wotsit.update_attributes :name => 'wotsit_1'
+          make_last_version_earlier @wotsit
+          @wotsit.update_attributes :name => 'wotsit_2'
+          make_last_version_earlier @wotsit
+
+          @widget.update_attributes :name => 'widget_2'
+          @wotsit.update_attributes :name => 'wotsit_3'
+        end
+
+        context 'when reified' do
+          setup { @widget_1 = @widget.versions.last.reify(:has_one => 1) }
+
+          should 'see the associated as it was at the time' do
+            assert_equal 'wotsit_2', @widget_1.wotsit.name
+          end
+        end
+
+        context 'when reified opting out of has_one reification' do
+          setup { @widget_1 = @widget.versions.last.reify(:has_one => false) }
+
+          should 'see the associated as it is live' do
+            assert_equal 'wotsit_3', @widget_1.wotsit.name
+          end
+        end
+      end
+
+      context 'and then the associated is destroyed between model versions' do
+        setup do
+          @wotsit.destroy
+          make_last_version_earlier @wotsit
+
+          @widget.update_attributes :name => 'widget_3'
+        end
+
+        context 'when reified' do
+          setup { @widget_2 = @widget.versions.last.reify(:has_one => 1) }
+
+          should 'see the associated as it was at the time' do
+            assert_nil @widget_2.wotsit
+          end
+        end
+      end
+    end
+  end
 end
