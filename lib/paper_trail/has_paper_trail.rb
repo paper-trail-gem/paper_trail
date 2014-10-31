@@ -101,6 +101,7 @@ module PaperTrail
       end
 
       def paper_trail_enabled_for_model?
+        return false unless self.include?(PaperTrail::Model::InstanceMethods)
         PaperTrail.enabled_for_model?(self)
       end
 
