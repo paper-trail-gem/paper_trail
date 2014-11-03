@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe Gadget, :type => :model do
-  it { should be_versioned }
+  it { is_expected.to be_versioned }
 
   let(:gadget) { Gadget.create!(:name => 'Wrench', :brand => 'Acme') }
 

@@ -5,12 +5,16 @@
 PaperTrail::Rails::Engine.eager_load!
 ```
 
+  - [#438](https://github.com/airblade/paper_trail/issues/438) - `Model.paper_trail_enabled_for_model?` should return `false` if
+    `has_paper_trail` has not been declared on the class.
   - [#427](https://github.com/airblade/paper_trail/pull/427) - Fix `reify` method in context of model where a column has been removed.
   - [#414](https://github.com/airblade/paper_trail/issues/414) - Fix functionality `ignore` argument to `has_paper_trail`
     in `ActiveRecord` 4.
   - [#399](https://github.com/airblade/paper_trail/pull/399) - Add `:dup` argument for options hash to `reify` which forces a
     new model instance.
   - [#394](https://github.com/airblade/paper_trail/pull/394) - Add RSpec matcher `have_a_version_with` for easier testing.
+  - [#391](https://github.com/airblade/paper_trail/issues/391) - `object_changes` value should dump to `YAML` as a normal `Hash`
+    instead of an `ActiveSupport::HashWithIndifferentAccess`.
   - [#375](https://github.com/airblade/paper_trail/pull/375) / [#374](https://github.com/airblade/paper_trail/issues/374) /
     [#354](https://github.com/airblade/paper_trail/issues/354) / [#131](https://github.com/airblade/paper_trail/issues/131) -
     Versions should be built with `after_` callbacks so the timestamp field for a version can be forced to match the

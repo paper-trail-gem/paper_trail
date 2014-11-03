@@ -247,7 +247,7 @@ Here's a helpful table showing what PaperTrail stores:
   <tr>
     <td>update</td>
     <td>widget</td>
-    <td>widget'</td>
+    <td>widget</td>
   <tr>
     <td>destroy</td>
     <td>widget</td>

@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe Widget, :type => :model do
   describe '`be_versioned` matcher' do
-    it { should be_versioned }
+    it { is_expected.to be_versioned }
   end
 
   let(:widget) { Widget.create! :name => 'Bob', :an_integer => 1 }
@@ -224,6 +224,12 @@ describe Widget, :type => :model do
 
     describe "Class" do
       subject { Widget }
+
+      describe "#paper_trail_enabled_for_model?" do
+        it { is_expected.to respond_to(:paper_trail_enabled_for_model?) }
+
+        it { expect(subject.paper_trail_enabled_for_model?).to be true }
+      end
 
       describe '#paper_trail_off!' do
         it { is_expected.to respond_to(:paper_trail_off!) }

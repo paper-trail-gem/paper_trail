@@ -105,6 +105,7 @@ module PaperTrail
       end
 
       def paper_trail_enabled_for_model?
+        return false unless self.include?(PaperTrail::Model::InstanceMethods)
         PaperTrail.enabled_for_model?(self)
       end
 
@@ -314,7 +315,7 @@ module PaperTrail
       def changes_for_paper_trail
         self.changes.delete_if do |key, value|
           !notably_changed.include?(key)
-        end.tap { |changes| self.class.serialize_attribute_changes(changes) }
+        end.tap { |changes| self.class.serialize_attribute_changes(changes) }.to_hash
       end
 
       # Invoked via`after_update` callback for when a previous version is reified and then saved
