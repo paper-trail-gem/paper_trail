@@ -32,7 +32,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec-rails', '~> 3.1.0'
   s.add_development_dependency 'generator_spec'
   s.add_development_dependency 'database_cleaner', '~> 1.2'
-  s.add_development_dependency 'pry-byebug'
   s.add_development_dependency 'timecop'
 
   # JRuby support for the test ENV
