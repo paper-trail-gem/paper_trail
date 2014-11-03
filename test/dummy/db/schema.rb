@@ -34,6 +34,10 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.string "title"
   end
 
+  create_table "customers", force: true do |t|
+    t.string "name"
+  end
+
   create_table "documents", force: true do |t|
     t.string "name"
   end
@@ -55,15 +59,25 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.integer "version"
   end
 
+  create_table "line_items", force: true do |t|
+    t.integer "order_id"
+    t.string  "product"
+  end
+
+  create_table "orders", force: true do |t|
+    t.integer "customer_id"
+    t.string  "order_date"
+  end
+
   create_table "people", force: true do |t|
     t.string "name"
     t.string "time_zone"
   end
 
   create_table "post_versions", force: true do |t|
-    t.string   "item_type",  null: false
-    t.integer  "item_id",    null: false
-    t.string   "event",      null: false
+    t.string   "item_type",      null: false
+    t.integer  "item_id",        null: false
+    t.string   "event",          null: false
     t.string   "whodunnit"
     t.text     "object"
     t.integer  "transaction_id"

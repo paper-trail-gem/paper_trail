@@ -132,6 +132,20 @@ class SetUpTestTables < ActiveRecord::Migration
       t.string    :brand
       t.timestamps
     end
+
+    create_table :customers, :force => true do |t|
+      t.string    :name
+    end
+
+    create_table :orders, :force => true do |t|
+      t.integer :customer_id
+      t.string  :order_date
+    end
+
+    create_table :line_items, :force => true do |t|
+      t.integer :order_id
+      t.string  :product
+    end
   end
 
   def self.down

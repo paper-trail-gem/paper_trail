@@ -1,13 +1,5 @@
 require 'test_helper'
 
-# Updates `model`'s last version so it looks like the version was
-# created 2 seconds ago.
-def make_last_version_earlier(model)
-  PaperTrail::Version.record_timestamps = false
-  model.versions.last.update_attributes :created_at => 2.seconds.ago
-  PaperTrail::Version.record_timestamps = true
-end
-
 class HasPaperTrailModelTest < ActiveSupport::TestCase
 
   context "A record with defined 'only' and 'ignore' attributes" do
@@ -1315,6 +1307,7 @@ class HasPaperTrailModelTransactionalTest < ActiveSupport::TestCase
   end
 
   teardown do
+    Timecop.return
     # This would have been done in test_helper.rb if using_mysql? is true
     DatabaseCleaner.clean unless using_mysql?
   end
@@ -1329,7 +1322,7 @@ class HasPaperTrailModelTransactionalTest < ActiveSupport::TestCase
       end
 
       context 'when reified' do
-        setup { @widget_0 = @widget.versions.last.reify(:has_one => 1) }
+        setup { @widget_0 = @widget.versions.last.reify(:has_one => true) }
 
         should 'see the associated as it was at the time' do
           assert_nil @widget_0.wotsit
@@ -1340,13 +1333,12 @@ class HasPaperTrailModelTransactionalTest < ActiveSupport::TestCase
     context 'where the association is created between model versions' do
       setup do
         @wotsit = @widget.create_wotsit :name => 'wotsit_0'
-        make_last_version_earlier @wotsit
-
+        Timecop.travel 1.second.since
         @widget.update_attributes :name => 'widget_1'
       end
 
       context 'when reified' do
-        setup { @widget_0 = @widget.versions.last.reify(:has_one => 1) }
+        setup { @widget_0 = @widget.versions.last.reify(:has_one => true) }
 
         should 'see the associated as it was at the time' do
           assert_equal 'wotsit_0', @widget_0.wotsit.name
@@ -1356,16 +1348,14 @@ class HasPaperTrailModelTransactionalTest < ActiveSupport::TestCase
       context 'and then the associated is updated between model versions' do
         setup do
           @wotsit.update_attributes :name => 'wotsit_1'
-          make_last_version_earlier @wotsit
           @wotsit.update_attributes :name => 'wotsit_2'
-          make_last_version_earlier @wotsit
-
+          Timecop.travel 1.second.since
           @widget.update_attributes :name => 'widget_2'
           @wotsit.update_attributes :name => 'wotsit_3'
         end
 
         context 'when reified' do
-          setup { @widget_1 = @widget.versions.last.reify(:has_one => 1) }
+          setup { @widget_1 = @widget.versions.last.reify(:has_one => true) }
 
           should 'see the associated as it was at the time' do
             assert_equal 'wotsit_2', @widget_1.wotsit.name
@@ -1384,16 +1374,323 @@ class HasPaperTrailModelTransactionalTest < ActiveSupport::TestCase
       context 'and then the associated is destroyed between model versions' do
         setup do
           @wotsit.destroy
-          make_last_version_earlier @wotsit
-
+          Timecop.travel 1.second.since
           @widget.update_attributes :name => 'widget_3'
         end
 
         context 'when reified' do
-          setup { @widget_2 = @widget.versions.last.reify(:has_one => 1) }
+          setup { @widget_2 = @widget.versions.last.reify(:has_one => true) }
 
           should 'see the associated as it was at the time' do
             assert_nil @widget_2.wotsit
+          end
+        end
+      end
+    end
+  end
+
+  context 'A model with a has_many association' do
+    setup { @customer = Customer.create :name => 'customer_0' }
+
+    context 'updated before the associated was created' do
+      setup do
+        @customer.update_attributes! :name => 'customer_1'
+        @customer.orders.create! :order_date => Date.today
+      end
+
+      context 'when reified' do
+        setup { @customer_0 = @customer.versions.last.reify(:has_many => true) }
+
+        should 'see the associated as it was at the time' do
+          assert_equal [], @customer_0.orders
+        end
+      end
+
+      context 'when reified with option mark_for_destruction' do
+        setup { @customer_0 = @customer.versions.last.reify(:has_many => true, :mark_for_destruction => true) }
+
+        should 'mark the associated for destruction' do
+          assert_equal [true], @customer_0.orders.map(&:marked_for_destruction?)
+        end
+      end
+    end
+
+    context 'where the association is created between model versions' do
+      setup do
+        @order = @customer.orders.create! :order_date => 'order_date_0'
+        Timecop.travel 1.second.since
+        @customer.update_attributes :name => 'customer_1'
+      end
+
+      context 'when reified' do
+        setup { @customer_0 = @customer.versions.last.reify(:has_many => true) }
+
+        should 'see the associated as it was at the time' do
+          assert_equal ['order_date_0'], @customer_0.orders.map(&:order_date)
+        end
+      end
+
+      context 'and then a nested has_many association is created' do
+        setup do
+          @order.line_items.create! :product => 'product_0'
+        end
+
+        context 'when reified' do
+          setup { @customer_0 = @customer.versions.last.reify(:has_many => true) }
+
+          should 'see the live version of the nested association' do
+            assert_equal ['product_0'], @customer_0.orders.first.line_items.map(&:product)
+          end
+        end
+      end
+
+      context 'and then the associated is updated between model versions' do
+        setup do
+          @order.update_attributes :order_date => 'order_date_1'
+          @order.update_attributes :order_date => 'order_date_2'
+          Timecop.travel 1.second.since
+          @customer.update_attributes :name => 'customer_2'
+          @order.update_attributes :order_date => 'order_date_3'
+        end
+
+        context 'when reified' do
+          setup { @customer_1 = @customer.versions.last.reify(:has_many => true) }
+
+          should 'see the associated as it was at the time' do
+            assert_equal ['order_date_2'], @customer_1.orders.map(&:order_date)
+          end
+        end
+
+        context 'when reified opting out of has_many reification' do
+          setup { @customer_1 = @customer.versions.last.reify(:has_many => false) }
+
+          should 'see the associated as it is live' do
+            assert_equal ['order_date_3'], @customer_1.orders.map(&:order_date)
+          end
+        end
+      end
+
+      context 'and then the associated is destroyed between model versions' do
+        setup do
+          @order.destroy
+          Timecop.travel 1.second.since
+          @customer.update_attributes :name => 'customer_2'
+        end
+
+        context 'when reified' do
+          setup { @customer_1 = @customer.versions.last.reify(:has_many => true) }
+
+          should 'see the associated as it was at the time' do
+            assert_equal [], @customer_1.orders
+          end
+        end
+      end
+
+      context 'and then another association is added' do
+        setup do
+          @customer.orders.create! :order_date => 'order_date_1'
+        end
+
+        context 'when reified' do
+          setup { @customer_0 = @customer.versions.last.reify(:has_many => true) }
+
+          should 'see the associated as it was at the time' do
+            assert_equal ['order_date_0'], @customer_0.orders.map(&:order_date)
+          end
+        end
+
+        context 'when reified with option mark_for_destruction' do
+          setup { @customer_0 = @customer.versions.last.reify(:has_many => true, :mark_for_destruction => true) }
+
+          should 'mark the newly associated for destruction' do
+            assert @customer_0.orders.detect { |o| o.order_date == 'order_date_1'}.marked_for_destruction?
+          end
+        end
+      end
+    end
+  end
+
+  context 'A model with a has_many through association' do
+    setup { @book = Book.create :title => 'book_0' }
+
+    context 'updated before the associated was created' do
+      setup do
+        @book.update_attributes! :title => 'book_1'
+        @book.authors.create! :name => 'author_0'
+      end
+
+      context 'when reified' do
+        setup { @book_0 = @book.versions.last.reify(:has_many => true) }
+
+        should 'see the associated as it was at the time' do
+          assert_equal [], @book_0.authors
+        end
+      end
+
+      context 'when reified with option mark_for_destruction' do
+        setup { @book_0 = @book.versions.last.reify(:has_many => true, :mark_for_destruction => true) }
+
+        should 'mark the associated for destruction' do
+          assert_equal [true], @book_0.authors.map(&:marked_for_destruction?)
+        end
+
+        should 'mark the associated-through for destruction' do
+          assert_equal [true], @book_0.authorships.map(&:marked_for_destruction?)
+        end
+      end
+    end
+
+    context 'updated before it is associated with an existing one' do
+      setup do
+        person_existing = Person.create(:name => 'person_existing')
+        Timecop.travel 1.second.since
+        @book.update_attributes! :title => 'book_1'
+        @book.authors << person_existing
+      end
+
+      context 'when reified' do
+        setup { @book_0 = @book.versions.last.reify(:has_many => true) }
+
+        should 'see the associated as it was at the time' do
+          assert_equal [], @book_0.authors
+        end
+      end
+
+      context 'when reified with option mark_for_destruction' do
+        setup { @book_0 = @book.versions.last.reify(:has_many => true, :mark_for_destruction => true) }
+
+        should 'not mark the associated for destruction' do
+          assert_equal [false], @book_0.authors.map(&:marked_for_destruction?)
+        end
+
+        should 'mark the associated-through for destruction' do
+          assert_equal [true], @book_0.authorships.map(&:marked_for_destruction?)
+        end
+      end
+    end
+
+    context 'where the association is created between model versions' do
+      setup do
+        @author = @book.authors.create! :name => 'author_0'
+        @person_existing = Person.create(:name => 'person_existing')
+        Timecop.travel 1.second.since
+        @book.update_attributes! :title => 'book_1'
+      end
+
+      context 'when reified' do
+        setup { @book_0 = @book.versions.last.reify(:has_many => true) }
+
+        should 'see the associated as it was at the time' do
+          assert_equal ['author_0'], @book_0.authors.map(&:name)
+        end
+      end
+
+      context 'and then the associated is updated between model versions' do
+        setup do
+          @author.update_attributes :name => 'author_1'
+          @author.update_attributes :name => 'author_2'
+          Timecop.travel 1.second.since
+          @book.update_attributes :title => 'book_2'
+          @author.update_attributes :name => 'author_3'
+        end
+
+        context 'when reified' do
+          setup { @book_1 = @book.versions.last.reify(:has_many => true) }
+
+          should 'see the associated as it was at the time' do
+            assert_equal ['author_2'], @book_1.authors.map(&:name)
+          end
+        end
+
+        context 'when reified opting out of has_many reification' do
+          setup { @book_1 = @book.versions.last.reify(:has_many => false) }
+
+          should 'see the associated as it is live' do
+            assert_equal ['author_3'], @book_1.authors.map(&:name)
+          end
+        end
+      end
+
+      context 'and then the associated is destroyed between model versions' do
+        setup do
+          @author.destroy
+          Timecop.travel 1.second.since
+          @book.update_attributes :title => 'book_2'
+        end
+
+        context 'when reified' do
+          setup { @book_1 = @book.versions.last.reify(:has_many => true) }
+
+          should 'see the associated as it was at the time' do
+            assert_equal [], @book_1.authors
+          end
+        end
+      end
+
+      context 'and then the associated is dissociated between model versions' do
+        setup do
+          @book.authors = []
+          Timecop.travel 1.second.since
+          @book.update_attributes :title => 'book_2'
+        end
+
+        context 'when reified' do
+          setup { @book_1 = @book.versions.last.reify(:has_many => true) }
+
+          should 'see the associated as it was at the time' do
+            assert_equal [], @book_1.authors
+          end
+        end
+      end
+
+      context 'and then another associated is created' do
+        setup do
+          @book.authors.create! :name => 'author_1'
+        end
+
+        context 'when reified' do
+          setup { @book_0 = @book.versions.last.reify(:has_many => true) }
+
+          should 'only see the first associated' do
+            assert_equal ['author_0'], @book_0.authors.map(&:name)
+          end
+        end
+
+        context 'when reified with option mark_for_destruction' do
+          setup { @book_0 = @book.versions.last.reify(:has_many => true, :mark_for_destruction => true) }
+
+          should 'mark the newly associated for destruction' do
+            assert @book_0.authors.detect { |a| a.name == 'author_1' }.marked_for_destruction?
+          end
+
+          should 'mark the newly associated-through for destruction' do
+            assert @book_0.authorships.detect { |as| as.person.name == 'author_1' }.marked_for_destruction?
+          end
+        end
+      end
+
+      context 'and then an existing one is associated' do
+        setup do
+          @book.authors << @person_existing
+        end
+
+        context 'when reified' do
+          setup { @book_0 = @book.versions.last.reify(:has_many => true) }
+
+          should 'only see the first associated' do
+            assert_equal ['author_0'], @book_0.authors.map(&:name)
+          end
+        end
+
+        context 'when reified with option mark_for_destruction' do
+          setup { @book_0 = @book.versions.last.reify(:has_many => true, :mark_for_destruction => true) }
+
+          should 'not mark the newly associated for destruction' do
+            assert !@book_0.authors.detect { |a| a.name == 'person_existing' }.marked_for_destruction?
+          end
+
+          should 'mark the newly associated-through for destruction' do
+            assert @book_0.authorships.detect { |as| as.person.name == 'person_existing' }.marked_for_destruction?
           end
         end
       end
