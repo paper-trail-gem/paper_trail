@@ -21,6 +21,9 @@ group :development, :test do
   # To do proper transactional testing with ActiveSupport::TestCase on MySQL
   gem 'database_cleaner', '~> 1.2.0'
 
+  # Allow time travel in testing
+  gem 'timecop'
+
   platforms :ruby do 
     gem 'sqlite3', '~> 1.2'
     gem 'mysql2', '~> 0.3'
