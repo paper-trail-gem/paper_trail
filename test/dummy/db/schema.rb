@@ -42,6 +42,15 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.string "name"
   end
 
+  create_table "editors", force: true do |t|
+    t.string "name"
+  end
+
+  create_table "editorships", force: true do |t|
+    t.integer "book_id"
+    t.integer "editor_id"
+  end
+
   create_table "fluxors", force: true do |t|
     t.integer "widget_id"
     t.string  "name"
@@ -114,7 +123,7 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.integer "foreign_key_id"
   end
 
-  add_index "version_associations", ["foreign_key_name", "foreign_key_id"], name: "index_on_foreign_key_name_and foreign_key_id"
+  add_index "version_associations", ["foreign_key_name", "foreign_key_id"], name: "index_version_associations_on_foreign_key"
   add_index "version_associations", ["version_id"], name: "index_version_associations_on_version_id"
 
   create_table "versions", force: true do |t|

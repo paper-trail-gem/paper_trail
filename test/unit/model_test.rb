@@ -1710,5 +1710,20 @@ class HasPaperTrailModelTransactionalTest < ActiveSupport::TestCase
         end
       end
     end
+
+    context 'updated before the associated without paper_trail was created' do
+      setup do
+        @book.update_attributes! :title => 'book_1'
+        @book.editors.create! :name => 'editor_0'
+      end
+
+      context 'when reified' do
+        setup { @book_0 = @book.versions.last.reify(:has_many => true) }
+
+        should 'see the live association' do
+          assert_equal ['editor_0'], @book_0.editors.map(&:name)
+        end
+      end
+    end
   end
 end

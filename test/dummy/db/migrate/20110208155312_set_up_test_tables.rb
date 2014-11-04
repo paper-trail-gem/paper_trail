@@ -93,6 +93,15 @@ class SetUpTestTables < ActiveRecord::Migration
       t.string :time_zone
     end
 
+    create_table :editorships, :force => true do |t|
+      t.integer :book_id
+      t.integer :editor_id
+    end
+
+    create_table :editors, :force => true do |t|
+      t.string :name
+    end
+
     create_table :songs, :force => true do |t|
       t.integer :length
     end
@@ -152,6 +161,8 @@ class SetUpTestTables < ActiveRecord::Migration
     drop_table :animals
     drop_table :posts
     drop_table :songs
+    drop_table :editors
+    drop_table :editorships
     drop_table :people
     drop_table :authorships
     drop_table :books
@@ -167,6 +178,9 @@ class SetUpTestTables < ActiveRecord::Migration
     drop_table :legacy_widgets
     drop_table :translations
     drop_table :gadgets
+    drop_table :customers
+    drop_table :orders
+    drop_table :line_items
     remove_index :version_associations, :column => [:version_id]
     remove_index :version_associations, :name => 'index_version_associations_on_foreign_key'
     drop_table :version_associations

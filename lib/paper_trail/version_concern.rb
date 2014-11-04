@@ -337,6 +337,7 @@ module PaperTrail
     # This must be called after the direct has_manys have been reified (reify_has_many_directly)
     def reify_has_many_through(associations, model, options = {})
       associations.each do |assoc|
+        next unless assoc.klass.paper_trail_enabled_for_model?
         through_collection = model.send(assoc.options[:through])
         collection_keys = through_collection.map { |through_model| through_model.send(assoc.foreign_key) }
 
