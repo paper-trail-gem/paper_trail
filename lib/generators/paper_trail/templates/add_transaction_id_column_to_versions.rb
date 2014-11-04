@@ -5,7 +5,7 @@ class AddTransactionIdColumnToVersions < ActiveRecord::Migration
   end
 
   def self.down
-    remove_column :versions, :transaction_id
     remove_index :versions, [:transaction_id]
+    remove_column :versions, :transaction_id
   end
 end

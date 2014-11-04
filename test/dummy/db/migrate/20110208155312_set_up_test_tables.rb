@@ -44,7 +44,7 @@ class SetUpTestTables < ActiveRecord::Migration
       t.integer  :foreign_key_id
     end
     add_index :version_associations, [:version_id]
-    add_index :version_associations, [:foreign_key_name, :foreign_key_id], :name => 'index_on_foreign_key_name_and foreign_key_id'
+    add_index :version_associations, [:foreign_key_name, :foreign_key_id], :name => 'index_version_associations_on_foreign_key'
 
     create_table :post_versions, :force => true do |t|
       t.string   :item_type, :null => false
@@ -167,8 +167,8 @@ class SetUpTestTables < ActiveRecord::Migration
     drop_table :legacy_widgets
     drop_table :translations
     drop_table :gadgets
-    remove_index :version_associations, column: [:version_id]
-    # remove_index :version_associations, [:foreign_key_name, :foreign_key_id]
+    remove_index :version_associations, :column => [:version_id]
+    remove_index :version_associations, :name => 'index_version_associations_on_foreign_key'
     drop_table :version_associations
   end
 end
