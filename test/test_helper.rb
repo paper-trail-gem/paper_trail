@@ -14,7 +14,6 @@ require "rails/test_help"
 require 'shoulda'
 require 'ffaker'
 require 'database_cleaner'
-require 'timecop'
 
 Rails.backtrace_cleaner.remove_silencers!
 

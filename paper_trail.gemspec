@@ -32,7 +32,13 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec-rails', '~> 3.1.0'
   s.add_development_dependency 'generator_spec'
   s.add_development_dependency 'database_cleaner', '~> 1.2'
-  s.add_development_dependency 'timecop'
+
+  # Allow time travel in testing. timecop is only supported after 1.9.2 but does a better cleanup at 'return'
+  if RUBY_VERSION < "1.9.2"
+    s.add_development_dependency 'delorean'
+  else
+    s.add_development_dependency 'timecop'
+  end
 
   # JRuby support for the test ENV
   unless defined?(JRUBY_VERSION)

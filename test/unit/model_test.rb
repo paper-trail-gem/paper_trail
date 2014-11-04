@@ -1,4 +1,5 @@
 require 'test_helper'
+require 'time_travel_helper'
 
 class HasPaperTrailModelTest < ActiveSupport::TestCase
 
@@ -1466,6 +1467,20 @@ class HasPaperTrailModelTransactionalTest < ActiveSupport::TestCase
 
           should 'see the associated as it is live' do
             assert_equal ['order_date_3'], @customer_1.orders.map(&:order_date)
+          end
+        end
+
+        context 'and then the associated is destroyed' do
+          setup do
+            @order.destroy
+          end
+
+          context 'when reified' do
+            setup { @customer_1 = @customer.versions.last.reify(:has_many => true) }
+
+            should 'see the associated as it was at the time' do
+              assert_equal ['order_date_2'], @customer_1.orders.map(&:order_date)
+            end
           end
         end
       end
