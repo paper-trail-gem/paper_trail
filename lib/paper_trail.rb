@@ -41,7 +41,7 @@ module PaperTrail
 
   # Returns `true` if PaperTrail is enabled for this model in the current request, `false` otherwise.
   def self.enabled_for_model?(model)
-    !!paper_trail_store.fetch(:"enabled_for_#{model}", true)
+    !!paper_trail_store.fetch(:"enabled_for_#{model}", false)
   end
 
   # Set the field which records when a version was created.
