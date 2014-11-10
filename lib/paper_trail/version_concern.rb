@@ -355,7 +355,7 @@ module PaperTrail
 
         # Iterate each child to replace it with the previous value if there is a version after the timestamp
         collection.map! do |c|
-          if (version = versions[c.id]).nil?
+          if (version = versions.delete(c.id)).nil?
             c
           elsif version.event == 'create'
             options[:mark_for_destruction] ? c.tap { |r| r.mark_for_destruction } : nil
@@ -363,6 +363,10 @@ module PaperTrail
             version.reify(options.merge(:has_many => false, :has_one => false))
           end
         end
+
+        # Reify the rest of the versions and add them to the collection, these versions are for those that
+        # have been removed from the live associations
+        collection += versions.values.map { |version| version.reify(options.merge(:has_many => false, :has_one => false)) }
 
         model.send(assoc.name).proxy_association.target = collection.compact
       end

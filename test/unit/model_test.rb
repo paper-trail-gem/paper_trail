@@ -1485,6 +1485,20 @@ class HasPaperTrailModelTransactionalTest < ActiveSupport::TestCase
         end
       end
 
+      context 'and then the associated is destroyed' do
+        setup do
+          @order.destroy
+        end
+
+        context 'when reified' do
+          setup { @customer_1 = @customer.versions.last.reify(:has_many => true) }
+
+          should 'see the associated as it was at the time' do
+            assert_equal [@order.order_date], @customer_1.orders.map(&:order_date)
+          end
+        end
+      end
+
       context 'and then the associated is destroyed between model versions' do
         setup do
           @order.destroy
@@ -1622,6 +1636,20 @@ class HasPaperTrailModelTransactionalTest < ActiveSupport::TestCase
 
           should 'see the associated as it is live' do
             assert_equal ['author_3'], @book_1.authors.map(&:name)
+          end
+        end
+      end
+
+      context 'and then the associated is destroyed' do
+        setup do
+          @author.destroy
+        end
+
+        context 'when reified' do
+          setup { @book_1 = @book.versions.last.reify(:has_many => true) }
+
+          should 'see the associated as it was at the time' do
+            assert_equal [@author.name], @book_1.authors.map(&:name)
           end
         end
       end
