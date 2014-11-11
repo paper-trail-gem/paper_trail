@@ -90,13 +90,15 @@ describe Widget, :type => :model do
       let(:rolled_back_name) { 'Big Moo' }
 
       before do
-        widget.transaction do
-          widget.update_attributes!(name: rolled_back_name)
-          widget.update_attributes!(name: described_class::EXCLUDED_NAME)
+        begin
+          widget.transaction do
+            widget.update_attributes!(name: rolled_back_name)
+            widget.update_attributes!(name: described_class::EXCLUDED_NAME)
+          end
+        rescue ActiveRecord::RecordInvalid
+          widget.name = nil
+          widget.save
         end
-      rescue ActiveRecord::RecordInvalid
-        widget.name = nil
-        widget.save
       end
 
       it 'does not create an event for changes that did not happen' do
