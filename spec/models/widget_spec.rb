@@ -92,10 +92,11 @@ describe Widget, :type => :model do
       before do
         begin
           widget.transaction do
-            widget.update_attributes!(name: rolled_back_name)
-            widget.update_attributes!(name: described_class::EXCLUDED_NAME)
+            widget.update_attributes!(:name => rolled_back_name)
+            widget.update_attributes!(:name => Widget::EXCLUDED_NAME)
           end
         rescue ActiveRecord::RecordInvalid
+          widget.reload
           widget.name = nil
           widget.save
         end
