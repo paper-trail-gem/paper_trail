@@ -85,6 +85,29 @@ describe Widget, :type => :model do
         expect(widget.version).to eq(widget.versions.last)
       end
     end
+
+    describe :after_rollback do
+      let(:rolled_back_name) { 'Big Moo' }
+
+      before do
+        begin
+          widget.transaction do
+            widget.update_attributes!(:name => rolled_back_name)
+            widget.update_attributes!(:name => Widget::EXCLUDED_NAME)
+          end
+        rescue ActiveRecord::RecordInvalid
+          widget.reload
+          widget.name = nil
+          widget.save
+        end
+      end
+
+      it 'does not create an event for changes that did not happen' do
+        widget.versions.map(&:changeset).each do |changeset|
+          expect(changeset.fetch('name', [])).to_not include(rolled_back_name)
+        end
+      end
+    end
   end
 
   describe "Association", :versioning => true do

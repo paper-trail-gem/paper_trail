@@ -78,6 +78,7 @@ module PaperTrail
           after_update  :clear_version_instance!
         end
         after_destroy :record_destroy, :if => :save_version? if options_on.empty? || options_on.include?(:destroy)
+        after_rollback :clear_rolled_back_versions
       end
 
       # Switches PaperTrail off for this class.
@@ -178,6 +179,12 @@ module PaperTrail
       # Returns who put the object into its current state.
       def originator
         (source_version || send(self.class.versions_association_name).last).try(:whodunnit)
+      end
+
+      # Invoked after rollbacks to ensure versions records are not created
+      # for changes that never actually took place
+      def clear_rolled_back_versions
+        send(self.class.versions_association_name).reload
       end
 
       # Returns the object (not a Version) as it was at the given timestamp.
