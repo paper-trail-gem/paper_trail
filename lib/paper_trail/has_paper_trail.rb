@@ -181,6 +181,8 @@ module PaperTrail
         (source_version || send(self.class.versions_association_name).last).try(:whodunnit)
       end
 
+      # Invoked after rollbacks to ensure versions records are not created
+      # for changes that never actually took place
       def clear_rolled_back_versions
         send(self.class.versions_association_name).reload
       end
