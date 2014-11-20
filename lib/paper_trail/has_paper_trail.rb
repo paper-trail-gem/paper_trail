@@ -348,7 +348,7 @@ module PaperTrail
             end
         end
         # Second we merge any extra data from the controller (if available).
-        data.merge(PaperTrail.controller_info || {})
+        data.merge!(PaperTrail.controller_info || {})
       end
 
       def item_before_change
