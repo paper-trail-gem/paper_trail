@@ -355,7 +355,9 @@ module PaperTrail
         previous = self.dup
         # `dup` clears timestamps so we add them back.
         all_timestamp_attributes.each do |column|
-          previous[column] = send(column) if self.class.column_names.include?(column.to_s) and not send(column).nil?
+          if self.class.column_names.include?(column.to_s) and not send("#{column}_was").nil?
+            previous[column] = send("#{column}_was")
+          end
         end
         enums = previous.respond_to?(:defined_enums) ? previous.defined_enums : {}
         previous.tap do |prev|
@@ -369,7 +371,7 @@ module PaperTrail
 
       # returns hash of object attributes (with appropriate attributes serialized), ommitting attributes to be skipped
       def object_attrs_for_paper_trail(object)
-        _attrs = object.attributes.except(*self.paper_trail_options[:skip]).tap do |attributes|
+        object.attributes.except(*self.paper_trail_options[:skip]).tap do |attributes|
           self.class.serialize_attributes_for_paper_trail(attributes)
         end
       end
