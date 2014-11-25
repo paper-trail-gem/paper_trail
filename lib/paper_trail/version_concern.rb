@@ -116,8 +116,7 @@ module PaperTrail
       return nil if object.nil?
 
       without_identity_map do
-        options[:has_one] = 3 if options[:has_one] == true
-        options.reverse_merge! :has_one => false
+        options = { :has_one => false }.merge(options)
 
         attrs = self.class.object_col_is_json? ? object : PaperTrail.serializer.load(object)
 
@@ -157,10 +156,7 @@ module PaperTrail
         end
 
         model.send "#{model.class.version_association_name}=", self
-
-        unless options[:has_one] == false
-          reify_has_ones model, options[:has_one]
-        end
+        reify_has_ones_for(model, self.created_at) if !!options[:has_one]
 
         model
       end
@@ -230,23 +226,19 @@ module PaperTrail
     # Restore the `model`'s has_one associations as they were when this version was
     # superseded by the next (because that's what the user was looking at when they
     # made the change).
-    #
-    # The `lookback` sets how many seconds before the model's change we go.
-    def reify_has_ones(model, lookback)
+    def reify_has_ones_for(model, version_at_time)
       model.class.reflect_on_all_associations(:has_one).each do |assoc|
         child = model.send assoc.name
+
         if child.respond_to? :version_at
-          # N.B. we use version of the child as it was `lookback` seconds before the parent was updated.
-          # Ideally we want the version of the child as it was just before the parent was updated...
-          # but until PaperTrail knows which updates are "together" (e.g. parent and child being
-          # updated on the same form), it's impossible to tell when the overall update started;
-          # and therefore impossible to know when "just before" was.
-          if (child_as_it_was = child.version_at(send(PaperTrail.timestamp_field) - lookback.seconds))
+          child_as_it_was = child.version_at(version_at_time)
+
+          if !child_as_it_was
+            model.send "#{assoc.name}=", nil
+          elsif !child_as_it_was.equal?(child)
             child_as_it_was.attributes.each do |k,v|
               model.send(assoc.name).send :write_attribute, k.to_sym, v rescue nil
             end
-          else
-            model.send "#{assoc.name}=", nil
           end
         end
       end
