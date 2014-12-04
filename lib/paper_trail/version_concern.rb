@@ -250,23 +250,25 @@ module PaperTrail
     def reify_has_ones(model, options = {})
       version_table_name = model.class.paper_trail_version_class.table_name
       model.class.reflect_on_all_associations(:has_one).each do |assoc|
-        version = model.class.paper_trail_version_class.joins(:version_associations).
-          where("version_associations.foreign_key_name = ?", assoc.foreign_key).
-          where("version_associations.foreign_key_id = ?", model.id).
-          where("#{version_table_name}.item_type = ?", assoc.class_name).
-          where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
-          order("#{version_table_name}.id ASC").first
-        if version
-          if version.event == 'create'
-            if options[:mark_for_destruction]
-              model.send(assoc.name).mark_for_destruction if model.send(assoc.name, true)
+        if assoc.klass.paper_trail_enabled_for_model?
+          version = model.class.paper_trail_version_class.joins(:version_associations).
+            where("version_associations.foreign_key_name = ?", assoc.foreign_key).
+            where("version_associations.foreign_key_id = ?", model.id).
+            where("#{version_table_name}.item_type = ?", assoc.class_name).
+            where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
+            order("#{version_table_name}.id ASC").first
+          if version
+            if version.event == 'create'
+              if options[:mark_for_destruction]
+                model.send(assoc.name).mark_for_destruction if model.send(assoc.name, true)
+              else
+                model.send "#{assoc.name}=", nil
+              end
             else
-              model.send "#{assoc.name}=", nil
-            end
-          else
-            child = version.reify(options.merge(:has_many => false, :has_one => false))
-            model.appear_as_new_record do
-              model.send "#{assoc.name}=", child
+              child = version.reify(options.merge(:has_many => false, :has_one => false))
+              model.appear_as_new_record do
+                model.send "#{assoc.name}=", child
+              end
             end
           end
         end
@@ -286,7 +288,7 @@ module PaperTrail
     def reify_has_many_directly(associations, model, options = {})
       version_table_name = model.class.paper_trail_version_class.table_name
       associations.each do |assoc|
-        next if assoc.name == model.class.versions_association_name
+        next unless assoc.klass.paper_trail_enabled_for_model?
         version_id_subquery = PaperTrail::VersionAssociation.joins(model.class.version_association_name).
             select("MIN(version_id)").
             where("foreign_key_name = ?", assoc.foreign_key).
