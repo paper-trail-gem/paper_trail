@@ -95,17 +95,7 @@ module PaperTrail
   end
 
   def self.transaction?
-    ActiveRecord::Base.connection.open_transactions > 0 || paper_trail_store[:transaction_open]
-  end
-
-  def self.start_transaction
-    paper_trail_store[:transaction_open] = true
-    self.transaction_id = nil
-  end
-
-  def self.end_transaction
-    paper_trail_store[:transaction_open] = false
-    self.transaction_id = nil
+    ActiveRecord::Base.connection.open_transactions > 0
   end
 
   def self.transaction_id

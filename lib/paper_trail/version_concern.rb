@@ -171,10 +171,6 @@ module PaperTrail
 
         model.send "#{model.class.version_association_name}=", self
 
-        # unless options[:has_one] == false
-        #   reify_has_ones model, options[:has_one]
-        # end
-
         unless options[:has_one] == false
           reify_has_ones model, options
         end
@@ -198,15 +194,6 @@ module PaperTrail
       end
     rescue
       {}
-    end
-
-    # Rollback all changes within a transaction
-    def rollback
-      transaction do
-        self.class.within_transaction(transaction_id).reverse_each do |version|
-          version.reify.save!
-        end
-      end
     end
 
     # Returns who put the item into the state stored in this version.
