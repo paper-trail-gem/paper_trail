@@ -262,7 +262,9 @@ module PaperTrail
               if options[:mark_for_destruction]
                 model.send(assoc.name).mark_for_destruction if model.send(assoc.name, true)
               else
-                model.send "#{assoc.name}=", nil
+                model.appear_as_new_record do
+                  model.send "#{assoc.name}=", nil
+                end
               end
             else
               child = version.reify(options.merge(:has_many => false, :has_one => false))

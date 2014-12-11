@@ -1369,6 +1369,10 @@ class HasPaperTrailModelTransactionalTest < ActiveSupport::TestCase
           should 'see the associated as it was at the time' do
             assert_equal 'wotsit_2', @widget_1.wotsit.name
           end
+
+          should 'not persist changes to the live association' do
+            assert_equal 'wotsit_3', @widget.wotsit(true).name
+          end
         end
 
         context 'when reified opting out of has_one reification' do
@@ -1380,18 +1384,35 @@ class HasPaperTrailModelTransactionalTest < ActiveSupport::TestCase
         end
       end
 
-      context 'and then the associated is destroyed between model versions' do
+      context 'and then the associated is destroyed' do
         setup do
           @wotsit.destroy
-          Timecop.travel 1.second.since
-          @widget.update_attributes :name => 'widget_3'
         end
 
-        context 'when reified' do
-          setup { @widget_2 = @widget.versions.last.reify(:has_one => true) }
+        context 'when reify' do
+          setup { @widget_1 = @widget.versions.last.reify(:has_one => true) }
 
           should 'see the associated as it was at the time' do
-            assert_nil @widget_2.wotsit
+            assert_equal @wotsit, @widget_1.wotsit
+          end
+
+          should 'not persist changes to the live association' do
+            assert_nil @widget.wotsit(true)
+          end
+        end
+
+        context 'and then the model is updated' do
+          setup do
+            Timecop.travel 1.second.since
+            @widget.update_attributes :name => 'widget_3'
+          end
+
+          context 'when reified' do
+            setup { @widget_2 = @widget.versions.last.reify(:has_one => true) }
+
+            should 'see the associated as it was at the time' do
+              assert_nil @widget_2.wotsit
+            end
           end
         end
       end
@@ -1412,6 +1433,9 @@ class HasPaperTrailModelTransactionalTest < ActiveSupport::TestCase
 
         should 'see the associated as it was at the time' do
           assert_equal [], @customer_0.orders
+        end
+
+        should 'not persist changes to the live association' do
           assert_not_equal [], @customer.orders(true)
         end
       end
@@ -1469,6 +1493,10 @@ class HasPaperTrailModelTransactionalTest < ActiveSupport::TestCase
           should 'see the associated as it was at the time' do
             assert_equal ['order_date_2'], @customer_1.orders.map(&:order_date)
           end
+
+          should 'not persist changes to the live association' do
+            assert_equal ['order_date_3'], @customer.orders(true).map(&:order_date)
+          end
         end
 
         context 'when reified opting out of has_many reification' do
@@ -1490,6 +1518,10 @@ class HasPaperTrailModelTransactionalTest < ActiveSupport::TestCase
             should 'see the associated as it was at the time' do
               assert_equal ['order_date_2'], @customer_1.orders.map(&:order_date)
             end
+
+            should 'not persist changes to the live association' do
+              assert_equal [], @customer.orders(true)
+            end
           end
         end
       end
@@ -1504,6 +1536,10 @@ class HasPaperTrailModelTransactionalTest < ActiveSupport::TestCase
 
           should 'see the associated as it was at the time' do
             assert_equal [@order.order_date], @customer_1.orders.map(&:order_date)
+          end
+
+          should 'not persist changes to the live association' do
+            assert_equal [], @customer.orders(true)
           end
         end
       end
@@ -1535,6 +1571,10 @@ class HasPaperTrailModelTransactionalTest < ActiveSupport::TestCase
           should 'see the associated as it was at the time' do
             assert_equal ['order_date_0'], @customer_0.orders.map(&:order_date)
           end
+
+          should 'not persist changes to the live association' do
+            assert_equal ['order_date_0', 'order_date_1'], @customer.orders(true).map(&:order_date).sort
+          end
         end
 
         context 'when reified with option mark_for_destruction' do
@@ -1562,6 +1602,10 @@ class HasPaperTrailModelTransactionalTest < ActiveSupport::TestCase
 
         should 'see the associated as it was at the time' do
           assert_equal [], @book_0.authors
+        end
+
+        should 'not persist changes to the live association' do
+          assert_equal ['author_0'], @book.authors(true).map(&:name)
         end
       end
 
@@ -1638,6 +1682,10 @@ class HasPaperTrailModelTransactionalTest < ActiveSupport::TestCase
           should 'see the associated as it was at the time' do
             assert_equal ['author_2'], @book_1.authors.map(&:name)
           end
+
+          should 'not persist changes to the live association' do
+            assert_equal ['author_3'], @book.authors(true).map(&:name)
+          end
         end
 
         context 'when reified opting out of has_many reification' do
@@ -1659,6 +1707,10 @@ class HasPaperTrailModelTransactionalTest < ActiveSupport::TestCase
 
           should 'see the associated as it was at the time' do
             assert_equal [@author.name], @book_1.authors.map(&:name)
+          end
+
+          should 'not persist changes to the live association' do
+            assert_equal [], @book.authors(true)
           end
         end
       end
@@ -1706,6 +1758,10 @@ class HasPaperTrailModelTransactionalTest < ActiveSupport::TestCase
           should 'only see the first associated' do
             assert_equal ['author_0'], @book_0.authors.map(&:name)
           end
+
+          should 'not persist changes to the live association' do
+            assert_equal ['author_0', 'author_1'], @book.authors(true).map(&:name)
+          end
         end
 
         context 'when reified with option mark_for_destruction' do
@@ -1731,6 +1787,10 @@ class HasPaperTrailModelTransactionalTest < ActiveSupport::TestCase
 
           should 'only see the first associated' do
             assert_equal ['author_0'], @book_0.authors.map(&:name)
+          end
+
+          should 'not persist changes to the live association' do
+            assert_equal ['author_0', 'person_existing'], @book.authors(true).map(&:name).sort
           end
         end
 
