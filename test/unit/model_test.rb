@@ -305,13 +305,13 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           should 'not copy the has_one association by default when reifying' do
             reified_widget = @widget.versions.last.reify
             assert_equal @wotsit, reified_widget.wotsit  # association hasn't been affected by reifying
-            assert_equal @wotsit, @widget.wotsit  # confirm that the association is correct
+            assert_equal @wotsit, @widget.wotsit(true)  # confirm that the association is correct
           end
 
           should 'copy the has_one association when reifying with :has_one => true' do
             reified_widget = @widget.versions.last.reify(:has_one => true)
             assert_nil reified_widget.wotsit  # wotsit wasn't there at the last version
-            assert_equal @wotsit, @widget.wotsit  # wotsit came into being on the live object
+            assert_equal @wotsit, @widget.wotsit(true)  # wotsit should still exist on live object
           end
         end
 
@@ -1328,6 +1328,10 @@ class HasPaperTrailModelTransactionalTest < ActiveSupport::TestCase
         should 'see the associated as it was at the time' do
           assert_nil @widget_0.wotsit
         end
+
+        should 'not persist changes to the live association' do
+          assert_equal @wotsit, @widget.wotsit(true)
+        end
       end
     end
 
@@ -1343,6 +1347,10 @@ class HasPaperTrailModelTransactionalTest < ActiveSupport::TestCase
 
         should 'see the associated as it was at the time' do
           assert_equal 'wotsit_0', @widget_0.wotsit.name
+        end
+
+        should 'not persist changes to the live association' do
+          assert_equal @wotsit, @widget.wotsit(true)
         end
       end
 
@@ -1404,6 +1412,7 @@ class HasPaperTrailModelTransactionalTest < ActiveSupport::TestCase
 
         should 'see the associated as it was at the time' do
           assert_equal [], @customer_0.orders
+          assert_not_equal [], @customer.orders(true)
         end
       end
 
