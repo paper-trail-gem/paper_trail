@@ -78,10 +78,14 @@ module PaperTrail
           after_update  :clear_version_instance!
         end
         after_destroy :record_destroy, :if => :save_version? if options_on.empty? || options_on.include?(:destroy)
+<<<<<<< HEAD
 
         # Reset the transaction id when the transaction is closed
         after_commit :reset_transaction_id
         after_rollback :reset_transaction_id
+=======
+        after_rollback :clear_rolled_back_versions
+>>>>>>> 42783392c8b3d3383424f8b795d508034b9a7cd1
       end
 
       # Switches PaperTrail off for this class.
@@ -182,6 +186,12 @@ module PaperTrail
       # Returns who put the object into its current state.
       def originator
         (source_version || send(self.class.versions_association_name).last).try(:whodunnit)
+      end
+
+      # Invoked after rollbacks to ensure versions records are not created
+      # for changes that never actually took place
+      def clear_rolled_back_versions
+        send(self.class.versions_association_name).reload
       end
 
       # Returns the object (not a Version) as it was at the given timestamp.
@@ -396,7 +406,9 @@ module PaperTrail
         previous = self.dup
         # `dup` clears timestamps so we add them back.
         all_timestamp_attributes.each do |column|
-          previous[column] = send(column) if self.class.column_names.include?(column.to_s) and not send(column).nil?
+          if self.class.column_names.include?(column.to_s) and not send("#{column}_was").nil?
+            previous[column] = send("#{column}_was")
+          end
         end
         enums = previous.respond_to?(:defined_enums) ? previous.defined_enums : {}
         previous.tap do |prev|
@@ -410,7 +422,7 @@ module PaperTrail
 
       # returns hash of object attributes (with appropriate attributes serialized), ommitting attributes to be skipped
       def object_attrs_for_paper_trail(object)
-        _attrs = object.attributes.except(*self.paper_trail_options[:skip]).tap do |attributes|
+        object.attributes.except(*self.paper_trail_options[:skip]).tap do |attributes|
           self.class.serialize_attributes_for_paper_trail(attributes)
         end
       end
