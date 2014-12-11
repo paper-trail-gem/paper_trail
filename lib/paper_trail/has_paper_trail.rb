@@ -78,14 +78,11 @@ module PaperTrail
           after_update  :clear_version_instance!
         end
         after_destroy :record_destroy, :if => :save_version? if options_on.empty? || options_on.include?(:destroy)
-<<<<<<< HEAD
 
         # Reset the transaction id when the transaction is closed
         after_commit :reset_transaction_id
         after_rollback :reset_transaction_id
-=======
         after_rollback :clear_rolled_back_versions
->>>>>>> 42783392c8b3d3383424f8b795d508034b9a7cd1
       end
 
       # Switches PaperTrail off for this class.
