@@ -114,8 +114,6 @@ module PaperTrail
     # :has_one              set to `true` to also reify has_one associations. Default is `false`.
     # :has_many             set to `true` to also reify has_many and has_many :through associations.
     #                       Default is `false`.
-    # :version_at           the time as at that to reify the has_one/has_many associations.
-    #                       Default is the time this version is created
     # :mark_for_destruction set to `true` to mark the has_one/has_many associations that did not exist in the
     #                       reified version for destruction, instead of remove them. Default is `false`.
     #                       This option is handy for people who want to persist the reified version.
