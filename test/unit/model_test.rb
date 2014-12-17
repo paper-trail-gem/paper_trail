@@ -931,7 +931,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       count = PaperTrail::Version.count
       @book.authors.create :name => 'Tolstoy'
       assert_equal 2, PaperTrail::Version.count - count
-      assert_same_elements [Person.last, Authorship.last], [PaperTrail::Version.all[-2].item, PaperTrail::Version.last.item]
+      assert_same_elements [Person.last, Authorship.last], [PaperTrail::Version.order(:id).to_a[-2].item, PaperTrail::Version.last.item]
     end
 
     should 'store version on join destroy' do
