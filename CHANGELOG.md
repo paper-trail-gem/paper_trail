@@ -5,6 +5,8 @@
 PaperTrail::Rails::Engine.eager_load!
 ```
 
+  - [#439](https://github.com/airblade/paper_trail/pull/439) / [#12](https://github.com/airblade/paper_trail/issues/12) -
+    Support for versioning of associations (Has Many, Has One, HABTM, etc.)
   - [#440](https://github.com/airblade/paper_trail/pull/440) - `versions` association should clear/reload after a transaction rollback.
   - [#438](https://github.com/airblade/paper_trail/issues/438) - `Model.paper_trail_enabled_for_model?` should return `false` if
     `has_paper_trail` has not been declared on the class.
