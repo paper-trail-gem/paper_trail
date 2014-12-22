@@ -15,3 +15,5 @@ Gemfile.lock
 vendor/*
 .idea
 .rvmrc
+.tags
+.tags_sorted_by_file

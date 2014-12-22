@@ -12,7 +12,7 @@ There's an excellent [RailsCast on implementing Undo with Paper Trail](http://ra
 * Allows you to get at every version, including the original, even once destroyed.
 * Allows you to get at every version even if the schema has since changed.
 * Allows you to get at the version as of a particular time.
-* Option to automatically restore `has_one` associations as they were at the time.
+* Option to automatically restore `has_one`, `has_many` and `has_many :through` associations as they were at the time.
 * Automatically records who was responsible via your controller.  PaperTrail calls `current_user` by default, if it exists, but you can have it call any method you like.
 * Allows you to set who is responsible at model-level (useful for migrations).
 * Allows you to store arbitrary model-level metadata with each version (useful for filtering versions).
@@ -605,14 +605,9 @@ end
 
 ## Associations
 
-I haven't yet found a good way to get PaperTrail to automatically restore associations when you reify a model.  See [here for a little more info](http://airbladesoftware.com/notes/undo-and-redo-with-papertrail).
+PaperTrail can restore three types of associations: Has-One, Has-Many, and Has-Many-Through. In order to do this, you will need to create the `version_associations` table, either at installation time with the rails generate paper_trail:install --with-associations option or manually. PaperTrail will store in that table additional information to correlate versions of the association and versions of the model when the associated record is changed. When reifying the model, PaperTrail can use this table, together with the `transaction_id` to find the correct version of the association and reify it. The `transaction_id` is a unique id for version records created in the same transaction. It is used to associate the version of the model and the version of the association that are created in the same transaction.
 
-If you can think of a good way to achieve this, please let me know.
-
-
-## Has-One Associations
-
-PaperTrail can restore `:has_one` associations as they were at (actually, 3 seconds before) the time.
+To restore Has-One associations as they were at the time, pass option `:has_one => true` to `reify`. To restore Has-Many and Has-Many-Through associations, use option `:has_many => true`.  For example:
 
 ```ruby
 class Location < ActiveRecord::Base
@@ -636,21 +631,55 @@ end
 >> t.location.latitude              # 12.345
 ```
 
-The implementation is complicated by the edge case where the parent and child are updated in one go, e.g. in one web request or database transaction.  PaperTrail doesn't know about different models being updated "together", so you can't ask it definitively to get the child as it was before the joint parent-and-child update.
-
-The correct solution is to make PaperTrail aware of requests or transactions (c.f. [Efficiency's transaction ID middleware](http://github.com/efficiency20/ops_middleware/blob/master/lib/e20/ops/middleware/transaction_id_middleware.rb)).  In the meantime we work around the problem by finding the child as it was a few seconds before the parent was updated.  By default we go 3 seconds before but you can change this by passing the desired number of seconds to the `:has_one` option:
+If the parent and child are updated in one go, PaperTrail can use the aforementioned `transaction_id` to reify the models as they were before the transaction (instead of before the update to the model).
 
 ```ruby
->> t = treasure.versions.last.reify(:has_one => 1)  # look back 1 second instead of 3
+>> treasure.amount                  # 100
+>> treasure.location.latitude       # 12.345
+
+>> Treasure.transaction do
+>> treasure.location.update_attributes :latitude => 54.321
+>> treasure.update_attributes :amount => 153
+>> end
+
+>> t = treasure.versions.last.reify(:has_one => true)
+>> t.amount                         # 100
+>> t.location.latitude              # 12.345, instead of 54.321
 ```
 
-If you are shuddering, take solace from knowing PaperTrail opts out of these shenanigans by default. This means your `:has_one` associated objects will be the live ones, not the ones the user saw at the time.  Since PaperTrail doesn't auto-restore `:has_many` associations (I can't get it to work) or `:belongs_to` (I ran out of time looking at `:has_many`), this at least makes your associations wrong consistently ;)
+By default, PaperTrail excludes an associated record from the reified parent model if the associated record exists in the live model but did not exist as at the time the version was created. This is usually what you want if you just want to look at the reified version. But if you want to persist it, it would be better to pass in option `:mark_for_destruction => true` so that the associated record is included and marked for destruction.
 
+```ruby
+class Widget < ActiveRecord::Base
+  has_paper_trail
+  has_one :wotsit, autosave: true
+end
 
+class Wotsit < ActiveRecord::Base
+  has_paper_trail
+  belongs_to :widget
+end
 
-## Has-Many-Through Associations
+>> widget = Widget.create(:name => 'widget_0')
+>> widget.update_attributes(:name => 'widget_1')
+>> widget.create_wotsit(:name => 'wotsit')
 
-PaperTrail can track most changes to the join table.  Specifically it can track all additions but it can only track removals which fire the `after_destroy` callback on the join table.  Here are some examples:
+>> widget_0 = widget.versions.last.reify(:has_one => true)
+>> widget_0.wotsit                                  # nil
+
+>> widget_0 = widget.versions.last.reify(:has_one => true, :mark_for_destruction => true)
+>> widget_0.wotsit.marked_for_destruction?          # true
+>> widget_0.save!
+>> widget.reload.wotsit                             # nil
+```
+
+**Caveats:**
+
+  1. PaperTrail can't restore an association properly if the association record can be updated to replace its parent model (by replacing the foreign key)  
+  2. Currently PaperTrail only support single `version_associations` table. The implication is that you can only use a single table to store the versions for all related models. Sorry for those who use multiple version tables.
+  3. PaperTrail only reifies the first level of associations, i.e., it does not reify any associations of its associations, and so on.
+  4. PaperTrail relies on the callbacks on the association model (and the :through association model for Has-Many-Through associations) to record the versions and the relationship between the versions. If the association is changed without invoking the callbacks, Reification won't work. Below are some examples:  
+
 
 Given these models:
 
@@ -681,13 +710,14 @@ Then each of the following will store authorship versions:
 >> @book.authors.create :name => 'Tolstoy'
 >> @book.authorships.last.destroy
 >> @book.authorships.clear
+>> @book.author_ids = [@solzhenistyn.id, @dostoyevsky.id]
 ```
 
 But none of these will:
 
 ```ruby
 >> @book.authors.delete @tolstoy
->> @book.author_ids = [@solzhenistyn.id, @dostoyevsky.id]
+>> @book.author_ids = []
 >> @book.authors = []
 ```
 
@@ -712,9 +742,6 @@ end
 
 See [issue 113](https://github.com/airblade/paper_trail/issues/113) for a discussion about this.
 
-There may be a way to store authorship versions, probably using association callbacks, no matter how the collection is manipulated but I haven't found it yet.  Let me know if you do.
-
-There has been some discussion of how to implement PaperTrail to fully track HABTM associations. See [pull 90](https://github.com/airblade/paper_trail/pull/90) for an implementation that has worked for some.
 
 ## Storing metadata
 

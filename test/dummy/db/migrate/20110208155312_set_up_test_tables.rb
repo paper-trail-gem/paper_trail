@@ -22,6 +22,7 @@ class SetUpTestTables < ActiveRecord::Migration
       t.string   :whodunnit
       t.text     :object
       t.text     :object_changes
+      t.integer  :transaction_id
       t.datetime :created_at
 
       # Metadata columns.
@@ -37,12 +38,21 @@ class SetUpTestTables < ActiveRecord::Migration
     end
     add_index :versions, [:item_type, :item_id]
 
+    create_table :version_associations do |t|
+      t.integer  :version_id
+      t.string   :foreign_key_name, :null => false
+      t.integer  :foreign_key_id
+    end
+    add_index :version_associations, [:version_id]
+    add_index :version_associations, [:foreign_key_name, :foreign_key_id], :name => 'index_version_associations_on_foreign_key'
+
     create_table :post_versions, :force => true do |t|
       t.string   :item_type, :null => false
       t.integer  :item_id,   :null => false
       t.string   :event,     :null => false
       t.string   :whodunnit
       t.text     :object
+      t.integer  :transaction_id
       t.datetime :created_at
 
       # Controller info columns.
@@ -81,6 +91,15 @@ class SetUpTestTables < ActiveRecord::Migration
     create_table :people, :force => true do |t|
       t.string :name
       t.string :time_zone
+    end
+
+    create_table :editorships, :force => true do |t|
+      t.integer :book_id
+      t.integer :editor_id
+    end
+
+    create_table :editors, :force => true do |t|
+      t.string :name
     end
 
     create_table :songs, :force => true do |t|
@@ -122,12 +141,28 @@ class SetUpTestTables < ActiveRecord::Migration
       t.string    :brand
       t.timestamps
     end
+
+    create_table :customers, :force => true do |t|
+      t.string    :name
+    end
+
+    create_table :orders, :force => true do |t|
+      t.integer :customer_id
+      t.string  :order_date
+    end
+
+    create_table :line_items, :force => true do |t|
+      t.integer :order_id
+      t.string  :product
+    end
   end
 
   def self.down
     drop_table :animals
     drop_table :posts
     drop_table :songs
+    drop_table :editors
+    drop_table :editorships
     drop_table :people
     drop_table :authorships
     drop_table :books
@@ -143,5 +178,11 @@ class SetUpTestTables < ActiveRecord::Migration
     drop_table :legacy_widgets
     drop_table :translations
     drop_table :gadgets
+    drop_table :customers
+    drop_table :orders
+    drop_table :line_items
+    remove_index :version_associations, :column => [:version_id]
+    remove_index :version_associations, :name => 'index_version_associations_on_foreign_key'
+    drop_table :version_associations
   end
 end

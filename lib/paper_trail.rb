@@ -94,6 +94,18 @@ module PaperTrail
     @active_record_protected_attributes ||= ::ActiveRecord::VERSION::MAJOR < 4 || !!defined?(ProtectedAttributes)
   end
 
+  def self.transaction?
+    ActiveRecord::Base.connection.open_transactions > 0
+  end
+
+  def self.transaction_id
+    paper_trail_store[:transaction_id]
+  end
+
+  def self.transaction_id=(id)
+    paper_trail_store[:transaction_id] = id
+  end
+
   private
 
   # Thread-safe hash to hold PaperTrail's data.

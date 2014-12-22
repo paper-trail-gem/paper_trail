@@ -13,7 +13,7 @@ require File.expand_path("../dummy/config/environment.rb",  __FILE__)
 require "rails/test_help"
 require 'shoulda'
 require 'ffaker'
-require 'database_cleaner' if using_mysql?
+require 'database_cleaner'
 
 Rails.backtrace_cleaner.remove_silencers!
 
@@ -24,7 +24,7 @@ ActiveRecord::Migrator.migrate File.expand_path("../dummy/db/migrate/", __FILE__
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
 # DatabaseCleaner is apparently necessary for doing proper transactions within MySQL (ugh)
-DatabaseCleaner.strategy = :truncation if using_mysql?
+DatabaseCleaner.strategy = :truncation
 
 # global setup block resetting Thread.current
 class ActiveSupport::TestCase

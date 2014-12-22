@@ -6,9 +6,15 @@ module PaperTrail
 
     included do
       belongs_to :item, :polymorphic => true
+      has_many :version_associations, :dependent => :destroy
+
       validates_presence_of :event
-      attr_accessible :item_type, :item_id, :event, :whodunnit, :object, :object_changes, :created_at if PaperTrail.active_record_protected_attributes?
+
+      attr_accessible :item_type, :item_id, :event, :whodunnit, :object, :object_changes, :transaction_id, :created_at if PaperTrail.active_record_protected_attributes?
+
       after_create :enforce_version_limit!
+
+      scope :within_transaction, lambda { |id| where :transaction_id => id }
     end
 
     module ClassMethods
@@ -101,23 +107,28 @@ module PaperTrail
 
     # Restore the item from this version.
     #
-    # This will automatically restore all :has_one associations as they were "at the time",
-    # if they are also being versioned by PaperTrail.  NOTE: this isn't always guaranteed
-    # to work so you can either change the lookback period (from the default 3 seconds) or
-    # opt out.
+    # Optionally this can also restore all :has_one and :has_many (including has_many :through) associations as
+    # they were "at the time", if they are also being versioned by PaperTrail.
     #
     # Options:
-    # :has_one     set to `false` to opt out of has_one reification.
-    #              set to a float to change the lookback time (check whether your db supports
-    #              sub-second datetimes if you want them).
-    # :dup         `false` default behavior
-    #              `true` it always create a new object instance. It is useful for comparing two versions of the same object
+    # :has_one              set to `true` to also reify has_one associations. Default is `false`.
+    # :has_many             set to `true` to also reify has_many and has_many :through associations.
+    #                       Default is `false`.
+    # :mark_for_destruction set to `true` to mark the has_one/has_many associations that did not exist in the
+    #                       reified version for destruction, instead of remove them. Default is `false`.
+    #                       This option is handy for people who want to persist the reified version.
+    # :dup                  `false` default behavior
+    #                       `true` it always create a new object instance. It is useful for comparing two versions of the same object
     def reify(options = {})
       return nil if object.nil?
 
       without_identity_map do
-        options[:has_one] = 3 if options[:has_one] == true
-        options.reverse_merge! :has_one => false
+        options.reverse_merge!(
+          :version_at => created_at,
+          :mark_for_destruction => false,
+          :has_one    => false,
+          :has_many   => false
+        )
 
         attrs = self.class.object_col_is_json? ? object : PaperTrail.serializer.load(object)
 
@@ -159,7 +170,11 @@ module PaperTrail
         model.send "#{model.class.version_association_name}=", self
 
         unless options[:has_one] == false
-          reify_has_ones model, options[:has_one]
+          reify_has_ones model, options
+        end
+
+        unless options[:has_many] == false
+          reify_has_manys model, options
         end
 
         model
@@ -230,25 +245,119 @@ module PaperTrail
     # Restore the `model`'s has_one associations as they were when this version was
     # superseded by the next (because that's what the user was looking at when they
     # made the change).
-    #
-    # The `lookback` sets how many seconds before the model's change we go.
-    def reify_has_ones(model, lookback)
+    def reify_has_ones(model, options = {})
+      version_table_name = model.class.paper_trail_version_class.table_name
       model.class.reflect_on_all_associations(:has_one).each do |assoc|
-        child = model.send assoc.name
-        if child.respond_to? :version_at
-          # N.B. we use version of the child as it was `lookback` seconds before the parent was updated.
-          # Ideally we want the version of the child as it was just before the parent was updated...
-          # but until PaperTrail knows which updates are "together" (e.g. parent and child being
-          # updated on the same form), it's impossible to tell when the overall update started;
-          # and therefore impossible to know when "just before" was.
-          if (child_as_it_was = child.version_at(send(PaperTrail.timestamp_field) - lookback.seconds))
-            child_as_it_was.attributes.each do |k,v|
-              model.send(assoc.name).send :write_attribute, k.to_sym, v rescue nil
+        if assoc.klass.paper_trail_enabled_for_model?
+          version = model.class.paper_trail_version_class.joins(:version_associations).
+            where("version_associations.foreign_key_name = ?", assoc.foreign_key).
+            where("version_associations.foreign_key_id = ?", model.id).
+            where("#{version_table_name}.item_type = ?", assoc.class_name).
+            where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
+            order("#{version_table_name}.id ASC").first
+          if version
+            if version.event == 'create'
+              if options[:mark_for_destruction]
+                model.send(assoc.name).mark_for_destruction if model.send(assoc.name, true)
+              else
+                model.appear_as_new_record do
+                  model.send "#{assoc.name}=", nil
+                end
+              end
+            else
+              child = version.reify(options.merge(:has_many => false, :has_one => false))
+              model.appear_as_new_record do
+                model.send "#{assoc.name}=", child
+              end
             end
-          else
-            model.send "#{assoc.name}=", nil
           end
         end
+      end
+    end
+
+    # Restore the `model`'s has_many associations as they were at version_at timestamp
+    # We lookup the first child versions after version_at timestamp or in same transaction.
+    def reify_has_manys(model, options = {})
+      assoc_has_many_through, assoc_has_many_directly =
+          model.class.reflect_on_all_associations(:has_many).partition { |assoc| assoc.options[:through] }
+      reify_has_many_directly(assoc_has_many_directly, model, options)
+      reify_has_many_through(assoc_has_many_through, model, options)
+    end
+
+    # Restore the `model`'s has_many associations not associated through another association
+    def reify_has_many_directly(associations, model, options = {})
+      version_table_name = model.class.paper_trail_version_class.table_name
+      associations.each do |assoc|
+        next unless assoc.klass.paper_trail_enabled_for_model?
+        version_id_subquery = PaperTrail::VersionAssociation.joins(model.class.version_association_name).
+            select("MIN(version_id)").
+            where("foreign_key_name = ?", assoc.foreign_key).
+            where("foreign_key_id = ?", model.id).
+            where("#{version_table_name}.item_type = ?", assoc.class_name).
+            where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
+            group("item_id").to_sql
+        versions = model.class.paper_trail_version_class.where("id IN (#{version_id_subquery})").inject({}) do |acc, v|
+          acc.merge!(v.item_id => v)
+        end
+
+        # Pass true to force the model to load
+        collection = Array.new model.send(assoc.name, true)
+
+        # Iterate each child to replace it with the previous value if there is a version after the timestamp
+        collection.map! do |c|
+          if (version = versions.delete(c.id)).nil?
+            c
+          elsif version.event == 'create'
+            options[:mark_for_destruction] ? c.tap { |r| r.mark_for_destruction } : nil
+          else
+            version.reify(options.merge(:has_many => false, :has_one => false))
+          end
+        end
+
+        # Reify the rest of the versions and add them to the collection, these versions are for those that
+        # have been removed from the live associations
+        collection += versions.values.map { |version| version.reify(options.merge(:has_many => false, :has_one => false)) }
+
+        model.send(assoc.name).proxy_association.target = collection.compact
+      end
+    end
+
+    # Restore the `model`'s has_many associations through another association
+    # This must be called after the direct has_manys have been reified (reify_has_many_directly)
+    def reify_has_many_through(associations, model, options = {})
+      associations.each do |assoc|
+        next unless assoc.klass.paper_trail_enabled_for_model?
+        through_collection = model.send(assoc.options[:through])
+        collection_keys = through_collection.map { |through_model| through_model.send(assoc.foreign_key) }
+
+        version_id_subquery = assoc.klass.paper_trail_version_class.
+            select("MIN(id)").
+            where("item_type = ?", assoc.class_name).
+            where("item_id IN (?)", collection_keys).
+            where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
+            group("item_id").to_sql
+        versions = assoc.klass.paper_trail_version_class.where("id IN (#{version_id_subquery})").inject({}) do |acc, v|
+          acc.merge!(v.item_id => v)
+        end
+
+        collection = Array.new assoc.klass.where(assoc.klass.primary_key => collection_keys)
+
+        # Iterate each child to replace it with the previous value if there is a version after the timestamp
+        collection.map! do |c|
+          if (version = versions.delete(c.id)).nil?
+            c
+          elsif version.event == 'create'
+            options[:mark_for_destruction] ? c.tap { |r| r.mark_for_destruction } : nil
+          else
+            version.reify(options.merge(:has_many => false, :has_one => false))
+          end
+        end
+
+        # Reify the rest of the versions and add them to the collection, these versions are for those that
+        # have been removed from the live associations
+        collection += versions.values.map { |version| version.reify(options.merge(:has_many => false, :has_one => false)) }
+
+        model.send(assoc.name).proxy_association.target = collection.compact
       end
     end
 
