@@ -60,7 +60,7 @@ module Dummy
     # Rails 4 key for generating secret key
     config.secret_key_base = 'A fox regularly kicked the screaming pile of biscuits.'
 
-    # Stop all the warnings!
-    config.active_record.raise_in_transactional_callbacks = true
+    # supress warnings about raises in transactional callbacks on AR 4.2+
+    config.active_record.raise_in_transactional_callbacks = true if ActiveRecord::VERSION::STRING >= '4.2'
   end
 end
