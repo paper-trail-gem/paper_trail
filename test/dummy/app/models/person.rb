@@ -15,12 +15,22 @@ class Person < ActiveRecord::Base
 
   # Store TimeZone objects as strings when serialized to database
   class TimeZoneSerializer
-    def dump(zone)
-      zone.try(:name)
-    end
+    class << self
+      def dump(zone)
+        zone.try(:name)
+      end
    
+      def load(value)
+        ::Time.find_zone!(value) rescue nil
+      end
+    end
+
+    def dump(zone)
+      self.class.dump(zone)
+    end
+
     def load(value)
-      ::Time.find_zone!(value) rescue nil
+      self.class.load(value)
     end
   end
  
