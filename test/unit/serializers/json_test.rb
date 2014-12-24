@@ -44,7 +44,11 @@ class JSONTest < ActiveSupport::TestCase
           PaperTrail::Version.arel_table[:object], :arg1, "Val 1")
 
         assert matches.instance_of?(Arel::Nodes::Matches)
-        assert_equal matches.right, "%\"arg1\":\"Val 1\"%"
+        if Arel::VERSION >= '6'
+          assert_equal matches.right.val, "%\"arg1\":\"Val 1\"%"
+        else
+          assert_equal matches.right, "%\"arg1\":\"Val 1\"%"
+        end
       end
     end
 
@@ -54,7 +58,11 @@ class JSONTest < ActiveSupport::TestCase
           PaperTrail::Version.arel_table[:object], :arg1, nil)
 
         assert matches.instance_of?(Arel::Nodes::Matches)
-        assert_equal matches.right, "%\"arg1\":null%"
+        if Arel::VERSION >= '6'
+          assert_equal matches.right.val, "%\"arg1\":null%"
+        else
+          assert_equal matches.right, "%\"arg1\":null%"
+        end
       end
     end
 
@@ -67,8 +75,13 @@ class JSONTest < ActiveSupport::TestCase
         matches = grouping.select { |v| v.instance_of?(Arel::Nodes::Matches) }
         # Numeric arguments need to ensure that they match for only the number, not the beginning 
         # of a #, so it uses an Grouping matcher (See notes on `PaperTrail::Serializers::JSON`)
-        assert_equal matches.first.right, "%\"arg1\":-3.5,%"
-        assert_equal matches.last.right, "%\"arg1\":-3.5}%"
+        if Arel::VERSION >= '6'
+          assert_equal matches.first.right.val, "%\"arg1\":-3.5,%"
+          assert_equal matches.last.right.val, "%\"arg1\":-3.5}%"
+        else
+          assert_equal matches.first.right, "%\"arg1\":-3.5,%"
+          assert_equal matches.last.right, "%\"arg1\":-3.5}%"
+        end
       end
     end
   end
