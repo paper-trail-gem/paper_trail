@@ -1178,7 +1178,8 @@ Many thanks to:
 * [Chulki Lee](https://github.com/chulkilee)
 * [Lucas Souza](https://github.com/lucasas)
 * [Russell Osborne](https://github.com/rposborne)
-
+* [Ben Li](https://github.com/bli)
+* [Felix Liu](https://github.com/lyfeyaj)
 
 ## Inspirations
 
