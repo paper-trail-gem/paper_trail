@@ -11,11 +11,11 @@ module PaperTrail
     #               Defaults to `nil`.
     def clean_versions!(options = {})
       options = {:keeping => 1, :date => :all}.merge(options)
-      gather_versions(options[:item_id], options[:date]).each do |item_id, versions|
-        versions.group_by { |v| v.send(PaperTrail.timestamp_field).to_date }.each do |date, versions|
+      gather_versions(options[:item_id], options[:date]).each do |_, versions|
+        versions.group_by { |v| v.send(PaperTrail.timestamp_field).to_date }.each do |_, v|
           # remove the number of versions we wish to keep from the collection of versions prior to destruction
-          versions.pop(options[:keeping])
-          versions.map(&:destroy)
+          v.pop(options[:keeping])
+          v.map(&:destroy)
         end
       end
     end
