@@ -320,8 +320,8 @@ module PaperTrail
       end
 
       def changes_for_paper_trail
-        self.changes.delete_if do |key, value|
-          !notably_changed.include?(key)
+        self.changes.delete_if do |k,v|
+          !notably_changed.include?(k)
         end.tap { |changes| self.class.serialize_attribute_changes(changes) }.to_hash
       end
 
