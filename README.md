@@ -30,7 +30,7 @@ There's an excellent [RailsCast on implementing Undo with Paper Trail](http://ra
 
 ## Compatibility
 
-Works with ActiveRecord 4 and ActiveRecord 3. Note: this code is on the `master` branch and tagged `v3.x`.
+Works with `ActiveRecord` 3+. Note: this code is on the `master` branch and tagged `v4.x`.
 
 Version 2 is on the branch named [`2.7-stable`](https://github.com/airblade/paper_trail/tree/2.7-stable) and is tagged `v2.x`, and works with Rails 3.
 
@@ -495,7 +495,7 @@ You can avoid having to do this manually by setting your initializer to pick up 
 ```ruby
 # config/initializers/paper_trail.rb
 
-# the following line is required for PaperTrail >= 3.1.0 with Rails
+# the following line is required for PaperTrail >= 4.0.0 with Rails
 PaperTrail::Rails::Engine.eager_load!
 
 if defined?(::Rails::Console)
@@ -575,7 +575,7 @@ If you only use custom version classes and don't use PaperTrail's built-in one, 
 ```ruby
 # config/initializers/paper_trail.rb
 
-# the following line is required for PaperTrail >= 3.1.0 with Rails
+# the following line is required for PaperTrail >= 4.0.0 with Rails
 PaperTrail::Rails::Engine.eager_load!
 
 PaperTrail::Version.module_eval do
@@ -771,7 +771,7 @@ For example:
 ```ruby
 # config/initializers/paper_trail.rb
 
-# the following line is required for PaperTrail >= 3.1.0 with Rails
+# the following line is required for PaperTrail >= 4.0.0 with Rails
 PaperTrail::Rails::Engine.eager_load!
 
 module PaperTrail

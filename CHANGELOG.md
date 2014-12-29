@@ -1,4 +1,4 @@
-## 3.1.0 (Unreleased)
+## 4.0.0 (Unreleased)
 
 ##### Breaking change: if you use a custom initializer for PaperTrail in conjunction with Rails, you will need to add this line of code to the beginning of it:
 ```ruby
@@ -38,7 +38,7 @@ PaperTrail::Rails::Engine.eager_load!
 
   - [#401](https://github.com/airblade/paper_trail/issues/401) / [#406](https://github.com/airblade/paper_trail/issues/406)
     `PaperTrail::Version` class is not loaded via a `Rails::Engine`, even when the gem is used with in Rails. This feature has
-    will be re-introduced in version `3.1.0`.
+    will be re-introduced in version `4.0`.
   - [#398](https://github.com/airblade/paper_trail/pull/398) - Only require the `RSpec` helper if `RSpec::Core` is required.
 
 ## 3.0.3
@@ -94,8 +94,8 @@ in the `PaperTrail::Version` class through a `Rails::Engine` when the gem is use
   - [#312](https://github.com/airblade/paper_trail/issues/312) - Fix RSpec `with_versioning` class level helper method.
   - `model_instance.without_versioning` now yields the `model_instance`, enabling syntax like this:
     `model_instance.without_versioning { |obj| obj.update_attributes(:name => 'value') }`.
-  - Deprecated `Model.paper_trail_on` and `Model.paper_trail_off` in favor of bang versions of the methods. Deprecation warning
-    informs users that the non-bang versions of the methods will be removed in version `3.1.0`.
+  - Deprecated `Model.paper_trail_on` and `Model.paper_trail_off` in favor of bang versions of the methods.
+    Deprecation warning informs users that the non-bang versions of the methods will be removed in version `4.0`
 
 ## 3.0.0
 
