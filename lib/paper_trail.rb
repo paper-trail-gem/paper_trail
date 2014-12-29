@@ -150,5 +150,3 @@ if defined? Rails
 else
   require 'paper_trail/frameworks/active_record'
 end
-require 'paper_trail/frameworks/rspec' if defined? RSpec::Core
-require 'paper_trail/frameworks/cucumber' if defined? World
