@@ -943,6 +943,23 @@ A valid serializer is a `module` (or `class`) that defines a `load` and `dump` m
 * [PaperTrail::Serializers::YAML](https://github.com/airblade/paper_trail/blob/master/lib/paper_trail/serializers/yaml.rb) - Default
 * [PaperTrail::Serializers::JSON](https://github.com/airblade/paper_trail/blob/master/lib/paper_trail/serializers/json.rb)
 
+## SerializedAttributes support
+
+PaperTrail has a config option that can be used to enable/disable whether PaperTrail attempts to utilize
+`ActiveRecord`'s `serialized_attributes` feature. Note: This is enabled by default when PaperTrail is used
+with `ActiveRecord` version < `4.2`, and disabled by default when used with ActiveRecord `4.2.x`. Since
+`serialized_attributes` will be removed in `ActiveRecord` version `5.0`, this configuration value
+has no functionality when PaperTrail is used with version `5.0` or greater.
+
+```ruby
+# Enable support
+>> PaperTrail.config.serialized_attributes = true
+# Disable support
+>> PaperTrail.config.serialzied_attributes = false
+# Get current setting
+>> PaperTrail.serialized_attributes?
+```
+
 ## Limiting the number of versions created per object instance
 
 If you are wary of your `versions` table growing to an unwieldy size, or just don't care to track more than a certain number of versions per object,
