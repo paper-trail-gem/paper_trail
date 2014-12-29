@@ -320,9 +320,11 @@ module PaperTrail
       end
 
       def changes_for_paper_trail
-        self.changes.delete_if do |k,v|
-          !notably_changed.include?(k)
-        end.tap { |changes| self.class.serialize_attribute_changes(changes) }.to_hash
+        _changes = changes.delete_if { |k,v| !notably_changed.include?(k) }
+        if PaperTrail.serialized_attributes?
+          self.class.serialize_attribute_changes(_changes)
+        end
+        _changes.to_hash
       end
 
       # Invoked via`after_update` callback for when a previous version is reified and then saved
@@ -417,11 +419,14 @@ module PaperTrail
         end
       end
 
-      # returns hash of object attributes (with appropriate attributes serialized), ommitting attributes to be skipped
+      # returns hash of attributes (with appropriate attributes serialized),
+      # ommitting attributes to be skipped
       def object_attrs_for_paper_trail(object)
-        object.attributes.except(*self.paper_trail_options[:skip]).tap do |attributes|
-          self.class.serialize_attributes_for_paper_trail(attributes)
+        attrs = object.attributes.except(*self.paper_trail_options[:skip])
+        if PaperTrail.serialized_attributes?
+          self.class.serialize_attributes_for_paper_trail(attrs)
         end
+        attrs
       end
 
       # This method is invoked in order to determine whether it is appropriate to generate a new version instance.
