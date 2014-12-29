@@ -260,7 +260,7 @@ module PaperTrail
       # TODO: lookinto leveraging the `after_touch` callback from `ActiveRecord` to allow the
       #  regular `touch` method go generate a version as normal. May make sense to switch the `record_update`
       #  method to leverage an `after_update` callback anyways (likely for v3.1.0)
-      def touch_with_version(name = nil)
+      def touch_with_version(name = nil, validated = false)
         raise ActiveRecordError, "can not touch on a new record object" unless persisted?
 
         attributes = timestamp_attributes_for_update_in_model
@@ -268,7 +268,7 @@ module PaperTrail
         current_time = current_time_from_proper_timezone
 
         attributes.each { |column| write_attribute(column, current_time) }
-        save!
+        save!(validate: validated)
       end
 
       private
