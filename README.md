@@ -32,6 +32,8 @@ There's an excellent [RailsCast on implementing Undo with Paper Trail](http://ra
 
 Works with `ActiveRecord` 3+. Note: this code is on the `master` branch and tagged `v4.x`.
 
+Version 3 is on the branch named [`3.0-stable`](https://github.com/airblade/paper_trail/tree/3.0-stable) and is tagged `v3.x`, and works ActiveRecord 4 and ActiveRecord 3.
+
 Version 2 is on the branch named [`2.7-stable`](https://github.com/airblade/paper_trail/tree/2.7-stable) and is tagged `v2.x`, and works with Rails 3.
 
 The Rails 2.3 code is on the [`rails2`](https://github.com/airblade/paper_trail/tree/rails2) branch and tagged `v1.x`. These branches are both stable with their respective versions of Rails but will not have new features added/backported to them.
