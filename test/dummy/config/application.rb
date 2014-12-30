@@ -62,5 +62,8 @@ module Dummy
 
     # supress warnings about raises in transactional callbacks on AR 4.2+
     config.active_record.raise_in_transactional_callbacks = true if ActiveRecord::VERSION::STRING >= '4.2'
+
+    # Set test order for Test::Unit if possible
+    config.active_support.test_order = :sorted if config.active_support.respond_to?(:test_order=)
   end
 end
