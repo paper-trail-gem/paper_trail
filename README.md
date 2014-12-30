@@ -957,7 +957,7 @@ has no functionality when PaperTrail is used with version `5.0` or greater.
 # Enable support
 >> PaperTrail.config.serialized_attributes = true
 # Disable support
->> PaperTrail.config.serialzied_attributes = false
+>> PaperTrail.config.serialized_attributes = false
 # Get current setting
 >> PaperTrail.serialized_attributes?
 ```
