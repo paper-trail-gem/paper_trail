@@ -334,7 +334,14 @@ module PaperTrail
 
       def reset_timestamp_attrs_for_update_if_needed!
         return if self.live? # invoked via callback when a user attempts to persist a reified `Version`
-        timestamp_attributes_for_update_in_model.each { |column| send("reset_#{column}!") }
+        timestamp_attributes_for_update_in_model.each do |column|
+          # ActiveRecord 4.2 deprecated `reset_column!` in favor of `restore_column!`
+          if respond_to?("restore_#{column}!")
+            send("restore_#{column}!")
+          else
+            send("reset_#{column}!")
+          end
+        end
       end
 
       def record_destroy
