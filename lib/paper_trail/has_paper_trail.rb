@@ -281,8 +281,7 @@ module PaperTrail
         if paper_trail_switched_on?
           data = {
             :event          => paper_trail_event || 'create',
-            :whodunnit      => PaperTrail.whodunnit,
-            :transaction_id => PaperTrail.transaction_id
+            :whodunnit      => PaperTrail.whodunnit
           }
           if respond_to?(:created_at)
             data[PaperTrail.timestamp_field] = created_at
@@ -290,6 +289,9 @@ module PaperTrail
           if changed_notably? and self.class.paper_trail_version_class.column_names.include?('object_changes')
             data[:object_changes] = self.class.paper_trail_version_class.object_changes_col_is_json? ? changes_for_paper_trail :
               PaperTrail.serializer.dump(changes_for_paper_trail)
+          end
+          if self.class.paper_trail_version_class.column_names.include?('transaction_id')
+            data[:transaction_id] = PaperTrail.transaction_id
           end
           version = send(self.class.versions_association_name).create! merge_metadata(data)
           set_transaction_id(version)
@@ -303,8 +305,7 @@ module PaperTrail
           data = {
             :event          => paper_trail_event || 'update',
             :object         => self.class.paper_trail_version_class.object_col_is_json? ? object_attrs : PaperTrail.serializer.dump(object_attrs),
-            :whodunnit      => PaperTrail.whodunnit,
-            :transaction_id => PaperTrail.transaction_id
+            :whodunnit      => PaperTrail.whodunnit
           }
           if respond_to?(:updated_at)
             data[PaperTrail.timestamp_field] = updated_at
@@ -312,6 +313,9 @@ module PaperTrail
           if self.class.paper_trail_version_class.column_names.include?('object_changes')
             data[:object_changes] = self.class.paper_trail_version_class.object_changes_col_is_json? ? changes_for_paper_trail :
               PaperTrail.serializer.dump(changes_for_paper_trail)
+          end
+          if self.class.paper_trail_version_class.column_names.include?('transaction_id')
+            data[:transaction_id] = PaperTrail.transaction_id
           end
           version = send(self.class.versions_association_name).create merge_metadata(data)
           set_transaction_id(version)
@@ -352,9 +356,11 @@ module PaperTrail
             :item_type      => self.class.base_class.name,
             :event          => paper_trail_event || 'destroy',
             :object         => self.class.paper_trail_version_class.object_col_is_json? ? object_attrs : PaperTrail.serializer.dump(object_attrs),
-            :whodunnit      => PaperTrail.whodunnit,
-            :transaction_id => PaperTrail.transaction_id
+            :whodunnit      => PaperTrail.whodunnit
           }
+          if self.class.paper_trail_version_class.column_names.include?('transaction_id')
+            data[:transaction_id] = PaperTrail.transaction_id
+          end
           version = self.class.paper_trail_version_class.create(merge_metadata(data))
           send("#{self.class.version_association_name}=", version)
           send(self.class.versions_association_name).send :load_target
@@ -363,7 +369,9 @@ module PaperTrail
         end
       end
 
+      # saves associations if the join table for `VersionAssociation` exists
       def save_associations(version)
+        return unless PaperTrail::VersionAssociation.table_exists?
         self.class.reflect_on_all_associations(:belongs_to).each do |assoc|
           if assoc.klass.paper_trail_enabled_for_model?
             PaperTrail::VersionAssociation.create(
@@ -376,6 +384,7 @@ module PaperTrail
       end
 
       def set_transaction_id(version)
+        return unless self.class.paper_trail_version_class.column_names.include?('transaction_id')
         if PaperTrail.transaction? && PaperTrail.transaction_id.nil?
            PaperTrail.transaction_id = version.id
            version.transaction_id = version.id
