@@ -5,6 +5,10 @@
 PaperTrail::Rails::Engine.eager_load!
 ```
 
+Also
+
+If you depend on the `RSpec` or `Cucumber` helpers, you will need to [manually load them into your test helper](https://github.com/airblade/paper_trail#testing).
+
   - [#439](https://github.com/airblade/paper_trail/pull/439) / [#12](https://github.com/airblade/paper_trail/issues/12) -
     Support for versioning of associations (Has Many, Has One, HABTM, etc.)
   - [#440](https://github.com/airblade/paper_trail/pull/440) - `versions` association should clear/reload after a transaction rollback.
