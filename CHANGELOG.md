@@ -5,16 +5,18 @@
 PaperTrail::Rails::Engine.eager_load!
 ```
 
-Also
+*Also*
 
 If you depend on the `RSpec` or `Cucumber` helpers, you will need to [manually load them into your test helper](https://github.com/airblade/paper_trail#testing).
 
+  - [#440](https://github.com/airblade/paper_trail/pull/440) - `versions` association should clear/reload after a transaction rollback.
   - [#439](https://github.com/airblade/paper_trail/pull/439) / [#12](https://github.com/airblade/paper_trail/issues/12) -
     Support for versioning of associations (Has Many, Has One, HABTM, etc.)
-  - [#440](https://github.com/airblade/paper_trail/pull/440) - `versions` association should clear/reload after a transaction rollback.
   - [#438](https://github.com/airblade/paper_trail/issues/438) - `Model.paper_trail_enabled_for_model?` should return `false` if
     `has_paper_trail` has not been declared on the class.
   - [#427](https://github.com/airblade/paper_trail/pull/427) - Fix `reify` method in context of model where a column has been removed.
+  - [#420](https://github.com/airblade/paper_trail/issues/420) - Add `VersionConcern#where_object_changes` instance method;
+    acts as a helper for querying against the `object_changes` column in versions table.
   - [#416](https://github.com/airblade/paper_trail/issues/416) - Added a `config` option for enabling/disabling
     utilization of `serialized_attributes` for `ActiveRecord`, necessary because `serialized_attributes` has been
     deprecated in `ActiveRecord` version `4.2` and will be removed in version `5.0`

@@ -13,8 +13,8 @@ module PaperTrail
         ActiveSupport::JSON.encode object
       end
 
-      # Returns a SQL condition to be used to match the given field and value in
-      # the serialized object.
+      # Returns a SQL condition to be used to match the given field and value
+      # in the serialized object
       def where_object_condition(arel_field, field, value)
         # Convert to JSON to handle strings and nulls correctly.
         json_value = value.to_json
@@ -30,6 +30,17 @@ module PaperTrail
         else
           arel_field.matches("%\"#{field}\":#{json_value}%")
         end
+      end
+
+      # Returns a SQL condition to be used to match the given field and value
+      # in the serialized object_changes
+      def where_object_changes_condition(arel_field, field, value)
+        # Convert to JSON to handle strings and nulls correctly.
+        json_value = value.to_json
+
+        # Need to check first (before) and secondary (after) fields
+        arel_field.matches("%\"#{field}\":[#{json_value},%").
+          or(arel_field.matches("%\"#{field}\":[%,#{json_value}]%"))
       end
     end
   end

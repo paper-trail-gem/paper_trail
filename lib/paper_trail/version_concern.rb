@@ -88,6 +88,19 @@ module PaperTrail
         where(where_conditions)
       end
 
+      def where_object_changes(args = {})
+        raise ArgumentError, 'expected to receive a Hash' unless args.is_a?(Hash)
+        arel_field = arel_table[:object_changes]
+
+        where_conditions = args.map do |field, value|
+          PaperTrail.serializer.where_object_changes_condition(arel_field, field, value)
+        end.reduce do |condition1, condition2|
+          condition1.and(condition2)
+        end
+
+        where(where_conditions)
+      end
+
       def primary_key_is_int?
         @primary_key_is_int ||= columns_hash[primary_key].type == :integer
       rescue

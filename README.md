@@ -173,6 +173,9 @@ version.event
 
 # Query versions objects by attributes.
 PaperTrail::Version.where_object(attr1: val1, attr2: val2)
+
+# Query versions object_changes field by attributes (requires [`object_changes`](https://github.com/airblade/paper_trail#diffing-versions) column on versions table)
+PaperTrail::Version.where_object_changes(attr1: val1)
 ```
 
 In your controllers you can override these methods:
