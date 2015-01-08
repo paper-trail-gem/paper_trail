@@ -116,6 +116,12 @@ module PaperTrail
       def object_changes_col_is_json?
         @object_changes_col_is_json ||= columns_hash['object_changes'].try(:type) == :json
       end
+
+      # Returns ActiveRecord::Relation [] of recent versions
+      def recent_history(num_versions = 10)
+        raise ArgumentError, 'expected to receive a Fixnum' unless num_versions.is_a?(Fixnum)
+        order(self.timestamp_sort_order('desc')).limit(num_versions)
+      end
     end
 
     # Restore the item from this version.
