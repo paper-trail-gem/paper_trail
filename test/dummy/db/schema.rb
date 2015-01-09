@@ -106,6 +106,12 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.string "content"
   end
 
+  create_table "reviews", force: true do |t|
+    t.integer "reviewable_id"
+    t.string  "reviewable_type"
+    t.integer "rating"
+  end
+
   create_table "songs", force: true do |t|
     t.integer "length"
   end

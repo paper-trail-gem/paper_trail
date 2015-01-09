@@ -1838,4 +1838,25 @@ class HasPaperTrailModelTransactionalTest < ActiveSupport::TestCase
       end
     end
   end
+
+  context 'A model with a polymorphic belongs_to association' do
+    setup do
+      @book = Book.new :title => 'book_0'
+      @review = Review.create :reviewable => @book, :rating => 5
+      @review.update_attributes! :rating => 3
+    end
+
+    context 'when reified' do
+      setup { @review_0 = @review.versions.last.reify }
+
+      should 'be available in its previous version' do
+        assert_equal @review_0.id, @review.id
+        assert_equal @review_0.rating, 5
+      end
+
+      should 'ignore versioning the association' do
+        assert_equal @review.versions.last.version_associations.size, 0
+      end
+    end
+  end
 end
