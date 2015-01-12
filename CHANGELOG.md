@@ -9,6 +9,8 @@ PaperTrail::Rails::Engine.eager_load!
 
 If you depend on the `RSpec` or `Cucumber` helpers, you will need to [manually load them into your test helper](https://github.com/airblade/paper_trail#testing).
 
+  - [#458](https://github.com/airblade/paper_trail/pull/458) - For `create` events, metadata pointing at attributes should attempt
+    to grab the current value instead of looking at the value prior to the change (which would always be `nil`)
   - [#440](https://github.com/airblade/paper_trail/pull/440) - `versions` association should clear/reload after a transaction rollback.
   - [#439](https://github.com/airblade/paper_trail/pull/439) / [#12](https://github.com/airblade/paper_trail/issues/12) -
     Support for versioning of associations (Has Many, Has One, HABTM, etc.)
