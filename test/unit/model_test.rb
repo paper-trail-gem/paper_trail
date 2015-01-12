@@ -800,8 +800,8 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         assert_equal @article.action_data_provider_method, @article.versions.last.action
       end
 
-      should 'store dynamic meta data based on an attribute of the item prior to creation' do
-        assert_equal nil, @article.versions.last.title
+      should 'store dynamic meta data based on an attribute of the item at creation' do
+        assert_equal @initial_title, @article.versions.last.title
       end
 
 
