@@ -27,7 +27,7 @@ module PaperTrail
           arel_field.matches("%\n#{field}:\n- #{value}\n%").
             or(arel_field.matches("%\n#{field}:\n-%\n- #{value}\n%"))
         else # Syck adds extra spaces into array dumps
-          arel_field.matches("%\n#{field}: \n- #{value}\n%").
+          arel_field.matches("%\n#{field}: \n%- #{value}\n%").
             or(arel_field.matches("%\n#{field}: \n-%\n- #{value}\n%"))
         end
       end
