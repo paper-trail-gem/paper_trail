@@ -259,7 +259,7 @@ module PaperTrail
       #
       # TODO: lookinto leveraging the `after_touch` callback from `ActiveRecord` to allow the
       #  regular `touch` method go generate a version as normal. May make sense to switch the `record_update`
-      #  method to leverage an `after_update` callback anyways (likely for v3.1.0)
+      #  method to leverage an `after_update` callback anyways (likely for v4.0.0)
       def touch_with_version(name = nil)
         raise ActiveRecordError, "can not touch on a new record object" unless persisted?
 

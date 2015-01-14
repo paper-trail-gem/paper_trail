@@ -296,7 +296,8 @@ module PaperTrail
     # We lookup the first child versions after version_at timestamp or in same transaction.
     def reify_has_manys(model, options = {})
       assoc_has_many_through, assoc_has_many_directly =
-          model.class.reflect_on_all_associations(:has_many).partition { |assoc| assoc.options[:through] }
+        model.class.reflect_on_all_associations(:has_many).
+        partition { |assoc| assoc.options[:through] }
       reify_has_many_directly(assoc_has_many_directly, model, options)
       reify_has_many_through(assoc_has_many_through, model, options)
     end
@@ -307,12 +308,12 @@ module PaperTrail
       associations.each do |assoc|
         next unless assoc.klass.paper_trail_enabled_for_model?
         version_id_subquery = PaperTrail::VersionAssociation.joins(model.class.version_association_name).
-            select("MIN(version_id)").
-            where("foreign_key_name = ?", assoc.foreign_key).
-            where("foreign_key_id = ?", model.id).
-            where("#{version_table_name}.item_type = ?", assoc.class_name).
-            where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
-            group("item_id").to_sql
+          select("MIN(version_id)").
+          where("foreign_key_name = ?", assoc.foreign_key).
+          where("foreign_key_id = ?", model.id).
+          where("#{version_table_name}.item_type = ?", assoc.class_name).
+          where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
+          group("item_id").to_sql
         versions = model.class.paper_trail_version_class.where("id IN (#{version_id_subquery})").inject({}) do |acc, v|
           acc.merge!(v.item_id => v)
         end
@@ -348,11 +349,11 @@ module PaperTrail
         collection_keys = through_collection.map { |through_model| through_model.send(assoc.foreign_key) }
 
         version_id_subquery = assoc.klass.paper_trail_version_class.
-            select("MIN(id)").
-            where("item_type = ?", assoc.class_name).
-            where("item_id IN (?)", collection_keys).
-            where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
-            group("item_id").to_sql
+          select("MIN(id)").
+          where("item_type = ?", assoc.class_name).
+          where("item_id IN (?)", collection_keys).
+          where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
+          group("item_id").to_sql
         versions = assoc.klass.paper_trail_version_class.where("id IN (#{version_id_subquery})").inject({}) do |acc, v|
           acc.merge!(v.item_id => v)
         end
