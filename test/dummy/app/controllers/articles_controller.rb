@@ -9,6 +9,9 @@ class ArticlesController < ApplicationController
   end
 
   def current_user
-    'foobar'
+    'foobar'.tap do |string|
+      # Invoking `id` returns the `object_id` value in Ruby18 by default
+      string.class_eval { undef_method(:id) } if RUBY_VERSION < '1.9'
+    end
   end
 end

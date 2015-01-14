@@ -21,13 +21,11 @@ describe "Articles management", :type => :request, :order => :defined do
     let(:article) { Article.last }
 
     context "`current_user` method returns a `String`" do
-      if RUBY_VERSION.to_f >= 1.9
-        it "should set that value as the `whodunnit`" do
-          expect { post articles_path, valid_params }.to change(PaperTrail::Version, :count).by(1)
-          expect(article.title).to eq('Doh')
-          expect(PaperTrail.whodunnit).to eq('foobar')
-          expect(article.versions.last.whodunnit).to eq('foobar')
-        end
+      it "should set that value as the `whodunnit`" do
+        expect { post articles_path, valid_params }.to change(PaperTrail::Version, :count).by(1)
+        expect(article.title).to eq('Doh')
+        expect(PaperTrail.whodunnit).to eq('foobar')
+        expect(article.versions.last.whodunnit).to eq('foobar')
       end
     end
   end

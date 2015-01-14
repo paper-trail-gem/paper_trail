@@ -4,7 +4,7 @@ Bundler::GemHelper.install_tasks
 desc 'Set a relevant database.yml for testing'
 task :prepare do
   ENV["DB"] ||= "sqlite"
-  if RUBY_VERSION.to_f >= 1.9
+  if RUBY_VERSION >= '1.9'
     FileUtils.cp "test/dummy/config/database.#{ENV["DB"]}.yml", "test/dummy/config/database.yml"
   else
     require 'ftools'

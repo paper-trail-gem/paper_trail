@@ -9,7 +9,7 @@ configs = YAML.load_file("#{Rails.root}/config/database.yml")
 db_directory = "#{Rails.root}/db"
 # setup alternate databases
 if ENV["DB"] == "sqlite"
-  if  RUBY_VERSION.to_f >= 1.9
+  if  RUBY_VERSION >= '1.9'
     FileUtils.cp "#{db_directory}/test.sqlite3", "#{db_directory}/test-foo.sqlite3"
     FileUtils.cp "#{db_directory}/test.sqlite3", "#{db_directory}/test-bar.sqlite3"
   else
