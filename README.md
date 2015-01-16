@@ -176,7 +176,7 @@ PaperTrail::Version.where_object(attr1: val1, attr2: val2)
 
 # Query versions object_changes field by attributes (requires
 # `object_changes` column on versions table).
-# Also can't guarantee consistent query results for values of type Fixnum
+# Also can't guarantee consistent query results for numeric values
 # due to limitations of SQL wildcard matchers against the serialized objects.
 PaperTrail::Version.where_object_changes(attr1: val1)
 ```
