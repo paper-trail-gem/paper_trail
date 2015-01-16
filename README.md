@@ -139,7 +139,7 @@ Widget.paper_trail_on!
 
 # Check whether PaperTrail is enabled for all widgets.
 Widget.paper_trail_enabled_for_model?
-widget.paper_trail_enabled_for_model?
+widget.paper_trail_enabled_for_model? # only available on instances of versioned models
 ```
 
 And a `PaperTrail::Version` instance has these methods:
