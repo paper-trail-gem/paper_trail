@@ -12,7 +12,7 @@ class SetUpTestTables < ActiveRecord::Migration
       t.boolean   :a_boolean
       t.string    :sacrificial_column
       t.string    :type
-      t.timestamps
+      t.timestamps :null => true
     end
 
     create_table :versions, :force => true do |t|
@@ -63,7 +63,7 @@ class SetUpTestTables < ActiveRecord::Migration
     create_table :wotsits, :force => true do |t|
       t.integer :widget_id
       t.string  :name
-      t.timestamps
+      t.timestamps :null => true
     end
 
     create_table :fluxors, :force => true do |t|
@@ -138,7 +138,7 @@ class SetUpTestTables < ActiveRecord::Migration
     create_table :gadgets, :force => true do |t|
       t.string    :name
       t.string    :brand
-      t.timestamps
+      t.timestamps :null => true
     end
 
     create_table :customers, :force => true do |t|
