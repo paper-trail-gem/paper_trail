@@ -6,7 +6,10 @@ module PaperTrail
 
     included do
       belongs_to :item, :polymorphic => true
-      has_many :version_associations, :dependent => :destroy
+
+      if PaperTrail::VersionAssociation.table_exists?
+        has_many :version_associations, :dependent => :destroy
+      end
 
       validates_presence_of :event
 
