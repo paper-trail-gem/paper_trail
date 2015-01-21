@@ -951,6 +951,17 @@ A valid serializer is a `module` (or `class`) that defines a `load` and `dump` m
 * [PaperTrail::Serializers::YAML](https://github.com/airblade/paper_trail/blob/master/lib/paper_trail/serializers/yaml.rb) - Default
 * [PaperTrail::Serializers::JSON](https://github.com/airblade/paper_trail/blob/master/lib/paper_trail/serializers/json.rb)
 
+If you use a JSON serializer and would like to store the data in a JSON (PostgreSQL) column, specify `json` instead of `text` for these columns in your migration:
+
+```ruby
+create_table :versions do |t|
+  ...
+  t.json :object          # Full object changes
+  t.json :object_changes  # Optional column-level changes
+  ...
+end
+```
+
 ## SerializedAttributes support
 
 PaperTrail has a config option that can be used to enable/disable whether PaperTrail attempts to utilize
