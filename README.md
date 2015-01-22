@@ -951,7 +951,9 @@ A valid serializer is a `module` (or `class`) that defines a `load` and `dump` m
 * [PaperTrail::Serializers::YAML](https://github.com/airblade/paper_trail/blob/master/lib/paper_trail/serializers/yaml.rb) - Default
 * [PaperTrail::Serializers::JSON](https://github.com/airblade/paper_trail/blob/master/lib/paper_trail/serializers/json.rb)
 
-If you use a JSON serializer and would like to store the data in a JSON (PostgreSQL) column, specify `json` instead of `text` for these columns in your migration:
+If you use PostgreSQL, and would like to store your `object` (and/or `object_changes`) data in a column of
+[type `JSON`](http://www.postgresql.org/docs/9.4/static/datatype-json.html),
+specify `json` instead of `text` for these columns in your migration:
 
 ```ruby
 create_table :versions do |t|
@@ -961,6 +963,8 @@ create_table :versions do |t|
   ...
 end
 ```
+
+Note: You don't need to change your serializer for the PostgreSQL `JSON` column type.
 
 ## SerializedAttributes support
 
