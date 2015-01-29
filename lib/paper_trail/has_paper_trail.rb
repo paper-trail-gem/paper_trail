@@ -419,16 +419,8 @@ module PaperTrail
       end
 
       def item_before_change
-        previous = self.dup
-        # `dup` clears timestamps so we add them back.
-        all_timestamp_attributes.each do |column|
-          if self.class.column_names.include?(column.to_s) and not send("#{column}_was").nil?
-            previous[column] = send("#{column}_was")
-          end
-        end
-        enums = previous.respond_to?(:defined_enums) ? previous.defined_enums : {}
-        previous.tap do |prev|
-          prev.id = id # `dup` clears the `id` so we add that back
+        attributes.tap do |prev|
+          enums = self.respond_to?(:defined_enums) ? self.defined_enums : {}
           changed_attributes.select { |k,v| self.class.column_names.include?(k) }.each do |attr, before|
             before = enums[attr][before] if enums[attr]
             prev[attr] = before
@@ -438,8 +430,8 @@ module PaperTrail
 
       # returns hash of attributes (with appropriate attributes serialized),
       # ommitting attributes to be skipped
-      def object_attrs_for_paper_trail(object)
-        attrs = object.attributes.except(*self.paper_trail_options[:skip])
+      def object_attrs_for_paper_trail(attributes_hash)
+        attrs = attributes_hash.except(*self.paper_trail_options[:skip])
         if PaperTrail.serialized_attributes?
           self.class.serialize_attributes_for_paper_trail(attrs)
         end
