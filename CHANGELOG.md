@@ -14,8 +14,10 @@ If you depend on the `RSpec` or `Cucumber` helpers, you will need to [manually l
   - [#440](https://github.com/airblade/paper_trail/pull/440) - `versions` association should clear/reload after a transaction rollback.
   - [#439](https://github.com/airblade/paper_trail/pull/439) / [#12](https://github.com/airblade/paper_trail/issues/12) -
     Support for versioning of associations (Has Many, Has One, HABTM, etc.)
-  - [#438](https://github.com/airblade/paper_trail/issues/438) - `Model.paper_trail_enabled_for_model?` should return `false` if
+  - [#438](https://github.com/airblade/paper_trail/issues/438) - `ModelKlass.paper_trail_enabled_for_model?` should return `false` if
     `has_paper_trail` has not been declared on the class.
+  - [#428](https://github.com/airblade/paper_trail/issues/428) - `model_instance.dup` does not need to be invoked when examining
+    what the instance looked like before changes were persisted, which avoids issues if a 3rd party has overriden the `dup` behavior
   - [#427](https://github.com/airblade/paper_trail/pull/427) - Fix `reify` method in context of model where a column has been removed.
   - [#420](https://github.com/airblade/paper_trail/issues/420) - Add `VersionConcern#where_object_changes` instance method;
     acts as a helper for querying against the `object_changes` column in versions table.
