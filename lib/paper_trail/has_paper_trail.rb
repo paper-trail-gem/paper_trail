@@ -419,9 +419,8 @@ module PaperTrail
       end
 
       def item_before_change
-        previous = attributes.merge(changed_attributes)
-        enums = self.respond_to?(:defined_enums) ? self.defined_enums : {}
-        previous.tap do |prev|
+        attributes.tap do |prev|
+          enums = self.respond_to?(:defined_enums) ? self.defined_enums : {}
           changed_attributes.select { |k,v| self.class.column_names.include?(k) }.each do |attr, before|
             before = enums[attr][before] if enums[attr]
             prev[attr] = before
