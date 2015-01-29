@@ -301,7 +301,7 @@ module PaperTrail
 
       def record_update
         if paper_trail_switched_on? && changed_notably?
-          object_attrs = object_attrs_for_paper_trail(item_before_change)
+          object_attrs = object_attrs_for_paper_trail(attributes_before_change)
           data = {
             :event          => paper_trail_event || 'update',
             :object         => self.class.paper_trail_version_class.object_col_is_json? ? object_attrs : PaperTrail.serializer.dump(object_attrs),
@@ -350,7 +350,7 @@ module PaperTrail
 
       def record_destroy
         if paper_trail_switched_on? and not new_record?
-          object_attrs = object_attrs_for_paper_trail(item_before_change)
+          object_attrs = object_attrs_for_paper_trail(attributes_before_change)
           data = {
             :item_id        => self.id,
             :item_type      => self.class.base_class.name,
@@ -418,7 +418,7 @@ module PaperTrail
         data.merge(PaperTrail.controller_info || {})
       end
 
-      def item_before_change
+      def attributes_before_change
         attributes.tap do |prev|
           enums = self.respond_to?(:defined_enums) ? self.defined_enums : {}
           changed_attributes.select { |k,v| self.class.column_names.include?(k) }.each do |attr, before|
