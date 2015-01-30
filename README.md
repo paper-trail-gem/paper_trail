@@ -570,7 +570,7 @@ If you are using Postgres, you should also define the sequence that your custom 
 ```ruby
 class PostVersion < PaperTrail::Version
   self.table_name = :post_versions
-  self.sequence_name = :post_version_id_seq
+  self.sequence_name = :post_versions_id_seq
 end
 ```
 
