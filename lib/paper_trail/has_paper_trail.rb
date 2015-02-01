@@ -373,11 +373,13 @@ module PaperTrail
       def save_associations(version)
         return unless PaperTrail::VersionAssociation.table_exists?
         self.class.reflect_on_all_associations(:belongs_to).each do |assoc|
-          if assoc.klass.paper_trail_enabled_for_model?
+          associated_record = send(assoc.name)
+
+          if associated_record && associated_record.class.paper_trail_enabled_for_model?
             PaperTrail::VersionAssociation.create(
               :version_id => version.id,
               :foreign_key_name => assoc.foreign_key,
-              :foreign_key_id => self.send(assoc.foreign_key)
+              :foreign_key_id => associated_record.id
             )
           end
         end
@@ -403,7 +405,7 @@ module PaperTrail
             if v.respond_to?(:call)
               v.call(self)
             elsif v.is_a?(Symbol) && respond_to?(v)
-              # if it is an attribute that is changing in an existing object, 
+              # if it is an attribute that is changing in an existing object,
               # be sure to grab the current version
               if has_attribute?(v) && send("#{v}_changed?".to_sym) && data[:event] != 'create'
                 send("#{v}_was".to_sym)

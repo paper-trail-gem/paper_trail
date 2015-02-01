@@ -71,6 +71,12 @@ class SetUpTestTables < ActiveRecord::Migration
       t.string  :name
     end
 
+    create_table :whatchamajiggers, :force => true do |t|
+      t.string  :owner_type, null: false
+      t.integer :owner_id, null: false
+      t.string  :name
+    end
+
     create_table :articles, :force => true do |t|
       t.string :title
       t.string :content
@@ -166,6 +172,7 @@ class SetUpTestTables < ActiveRecord::Migration
     drop_table :authorships
     drop_table :books
     drop_table :articles
+    drop_table :whatchamajiggers
     drop_table :fluxors
     drop_table :wotsits
     remove_index :post_versions, :column => [:item_type, :item_id]
