@@ -66,7 +66,7 @@ your applications `ActiveRecord` connection in a manner similar to the way `Rail
 
 1. Add PaperTrail to your `Gemfile`.
 
-    `gem 'paper_trail', '~> 3.0.6'`
+    `gem 'paper_trail', '~> 4.0.0.beta'`
 
 2. Generate a migration to add a `versions` table to your database.
 
