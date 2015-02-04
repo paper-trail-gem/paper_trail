@@ -70,14 +70,15 @@ module PaperTrail
             :order      => self.paper_trail_version_class.timestamp_sort_order
         end
 
-        options_on = Array(options[:on]) unless options[:on].nil? # so that a single symbol can be passed in without wrapping it in an `Array`
-        after_create  :record_create, :if => :save_version? if options_on.nil? || options_on.include?(:create)
-        if options_on.nil? || options_on.include?(:update)
+        options[:on] ||= [:create, :update, :destroy]
+        options_on = Array(options[:on]) # so that a single symbol can be passed in without wrapping it in an `Array`
+        after_create  :record_create, :if => :save_version? if options_on.include?(:create)
+        if options_on.include?(:update)
           before_save   :reset_timestamp_attrs_for_update_if_needed!, :on => :update
           after_update  :record_update, :if => :save_version?
           after_update  :clear_version_instance!
         end
-        after_destroy :record_destroy, :if => :save_version? if options_on.nil? || options_on.include?(:destroy)
+        after_destroy :record_destroy, :if => :save_version? if options_on.include?(:destroy)
 
         # Reset the transaction id when the transaction is closed
         after_commit :reset_transaction_id
