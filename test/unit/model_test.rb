@@ -1203,6 +1203,22 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         assert_equal 'destroy', @fluxor.versions.last.event
       end
     end
+    context 'on []' do
+      setup do
+        Fluxor.reset_callbacks :create
+        Fluxor.reset_callbacks :update
+        Fluxor.reset_callbacks :destroy
+        Fluxor.instance_eval <<-END
+          has_paper_trail :on => []
+        END
+        @fluxor = Fluxor.create
+        @fluxor.update_attributes :name => 'blah'
+        @fluxor.destroy
+      end
+      should 'not have any versions' do
+        assert_equal 0, @fluxor.versions.length
+      end
+    end
     context 'allows a symbol to be passed' do
       setup do
         Fluxor.reset_callbacks :create
