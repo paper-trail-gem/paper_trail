@@ -218,8 +218,8 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
       should 'have changes' do
 
-        #TODO Postgres does not appear to pass back ActiveSupport::TimeWithZone, 
-        # so chosing the lowest common denominator to test. 
+        #TODO Postgres does not appear to pass back ActiveSupport::TimeWithZone,
+        # so chosing the lowest common denominator to test.
 
         changes = {
           'name'       => [nil, 'Henry'],
@@ -332,6 +332,21 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           end
         end
 
+        context 'and has many associated polymorphic objects' do
+          setup do
+            @f0 = @widget.whatchamajiggers.create :name => 'f-zero'
+            @f1 = @widget.whatchamajiggers.create :name => 'f-zero'
+            @reified_widget = @widget.versions.last.reify
+          end
+
+          should 'copy the has_many associations when reifying' do
+            assert_equal @widget.whatchamajiggers.length, @reified_widget.whatchamajiggers.length
+            assert_same_elements @widget.whatchamajiggers, @reified_widget.whatchamajiggers
+
+            assert_equal @widget.versions.length, @reified_widget.versions.length
+            assert_same_elements @widget.versions, @reified_widget.versions
+          end
+        end
 
         context 'and then destroyed' do
           setup do
@@ -446,7 +461,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         @last = @widget.versions.last
       end
 
-      teardown do 
+      teardown do
         restore_schema
       end
 

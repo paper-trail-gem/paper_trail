@@ -84,12 +84,11 @@ ActiveRecord::Schema.define(version: 20110208155312) do
   end
 
   create_table "post_versions", force: true do |t|
-    t.string   "item_type",      null: false
-    t.integer  "item_id",        null: false
-    t.string   "event",          null: false
+    t.string   "item_type",  null: false
+    t.integer  "item_id",    null: false
+    t.string   "event",      null: false
     t.string   "whodunnit"
     t.text     "object"
-    t.integer  "transaction_id"
     t.datetime "created_at"
     t.string   "ip"
     t.string   "user_agent"
@@ -145,6 +144,12 @@ ActiveRecord::Schema.define(version: 20110208155312) do
   end
 
   add_index "versions", ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
+
+  create_table "whatchamajiggers", force: true do |t|
+    t.string  "owner_type", null: false
+    t.integer "owner_id",   null: false
+    t.string  "name"
+  end
 
   create_table "widgets", force: true do |t|
     t.string   "name"
