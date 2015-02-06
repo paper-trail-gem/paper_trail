@@ -101,6 +101,12 @@ class SetUpTestTables < ActiveRecord::Migration
       t.string :name
     end
 
+    create_table :reviews, :force => true do |t|
+      t.integer :reviewable_id
+      t.string :reviewable_type
+      t.integer :rating
+    end
+
     create_table :songs, :force => true do |t|
       t.integer :length
     end
@@ -160,6 +166,7 @@ class SetUpTestTables < ActiveRecord::Migration
     drop_table :animals
     drop_table :posts
     drop_table :songs
+    drop_table :reviews
     drop_table :editors
     drop_table :editorships
     drop_table :people

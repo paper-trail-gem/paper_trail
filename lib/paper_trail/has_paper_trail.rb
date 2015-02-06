@@ -372,7 +372,7 @@ module PaperTrail
       # saves associations if the join table for `VersionAssociation` exists
       def save_associations(version)
         return unless PaperTrail::VersionAssociation.table_exists?
-        self.class.reflect_on_all_associations(:belongs_to).each do |assoc|
+        self.class.reflect_on_all_associations(:belongs_to).reject { |it| it.options[:polymorphic] }.each do |assoc|
           if assoc.klass.paper_trail_enabled_for_model?
             PaperTrail::VersionAssociation.create(
               :version_id => version.id,
