@@ -954,7 +954,7 @@ A valid serializer is a `module` (or `class`) that defines a `load` and `dump` m
 ### PostgreSQL JSON column type support
 
 If you use PostgreSQL, and would like to store your `object` (and/or `object_changes`) data in a column of
-[type `JSON`](http://www.postgresql.org/docs/9.4/static/datatype-json.html),
+[type `JSON` or type `JSONB`](http://www.postgresql.org/docs/9.4/static/datatype-json.html),
 specify `json` instead of `text` for these columns in your migration:
 
 ```ruby
