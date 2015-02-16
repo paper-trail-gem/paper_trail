@@ -428,7 +428,7 @@ module PaperTrail
       def attributes_before_change
         attributes.tap do |prev|
           enums = self.respond_to?(:defined_enums) ? self.defined_enums : {}
-          changed_attributes.select { |k,v| self.class.column_names.include?(k) }.each do |attr, before|
+          changed.select { |k| self.class.column_names.include?(k) }.each do |attr, before|
             before = enums[attr][before] if enums[attr]
             prev[attr] = before
           end
