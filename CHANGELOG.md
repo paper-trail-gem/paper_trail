@@ -44,6 +44,8 @@ If you depend on the `RSpec` or `Cucumber` helpers, you will need to [manually l
     the gem is used with `Rails`.
   - Methods handling serialized attributes should fallback to the currently set Serializer instead of always falling back
     to `PaperTrail::Serializers::YAML`.
+  - Both `PaperTrail.config` and `PaperTrail.configure` are now identical, and will both return the `PaperTrail::Config`
+    instance and also yield it if a block is provided.
 
 ## 3.0.6
 
