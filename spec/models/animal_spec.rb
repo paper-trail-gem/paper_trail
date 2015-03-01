@@ -7,7 +7,7 @@ describe Animal, :type => :model do
     it { expect(Animal.inheritance_column).to eq('species') }
 
     describe "updates to the `inheritance_column`" do
-      subject { Cat.create!(name: 'Leo') }
+      subject { Cat.create!(:name => 'Leo') }
 
       it "should be allowed" do
         subject.update_attributes(:name => 'Spike', :species => 'Dog')
