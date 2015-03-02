@@ -280,8 +280,8 @@ module PaperTrail
       def record_create
         if paper_trail_switched_on?
           data = {
-            :event          => paper_trail_event || 'create',
-            :whodunnit      => PaperTrail.whodunnit
+            :event     => paper_trail_event || 'create',
+            :whodunnit => PaperTrail.whodunnit
           }
           if respond_to?(:created_at)
             data[PaperTrail.timestamp_field] = created_at
@@ -303,9 +303,9 @@ module PaperTrail
         if paper_trail_switched_on? && changed_notably?
           object_attrs = object_attrs_for_paper_trail(attributes_before_change)
           data = {
-            :event          => paper_trail_event || 'update',
-            :object         => self.class.paper_trail_version_class.object_col_is_json? ? object_attrs : PaperTrail.serializer.dump(object_attrs),
-            :whodunnit      => PaperTrail.whodunnit
+            :event     => paper_trail_event || 'update',
+            :object    => self.class.paper_trail_version_class.object_col_is_json? ? object_attrs : PaperTrail.serializer.dump(object_attrs),
+            :whodunnit => PaperTrail.whodunnit
           }
           if respond_to?(:updated_at)
             data[PaperTrail.timestamp_field] = updated_at
@@ -352,11 +352,11 @@ module PaperTrail
         if paper_trail_switched_on? and not new_record?
           object_attrs = object_attrs_for_paper_trail(attributes_before_change)
           data = {
-            :item_id        => self.id,
-            :item_type      => self.class.base_class.name,
-            :event          => paper_trail_event || 'destroy',
-            :object         => self.class.paper_trail_version_class.object_col_is_json? ? object_attrs : PaperTrail.serializer.dump(object_attrs),
-            :whodunnit      => PaperTrail.whodunnit
+            :item_id   => self.id,
+            :item_type => self.class.base_class.name,
+            :event     => paper_trail_event || 'destroy',
+            :object    => self.class.paper_trail_version_class.object_col_is_json? ? object_attrs : PaperTrail.serializer.dump(object_attrs),
+            :whodunnit => PaperTrail.whodunnit
           }
           if self.class.paper_trail_version_class.column_names.include?('transaction_id')
             data[:transaction_id] = PaperTrail.transaction_id
