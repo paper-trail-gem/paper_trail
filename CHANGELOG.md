@@ -1,4 +1,4 @@
-## 3.0.7 (Unreleased)
+## 3.0.7
 
   - [#404](https://github.com/airblade/paper_trail/issues/404) / [#428](https://github.com/airblade/paper_trail/issues/428) -
     Fix errors occuring when a user attempts to update the inheritance column on an STI model instance in `ActiveRecord` 4.1.x
