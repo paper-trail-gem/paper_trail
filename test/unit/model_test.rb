@@ -635,7 +635,6 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       assert_not_nil @wotsit.versions.last.reify.updated_at
     end
 
-    # Currently the gem generates a bunch of deprecation warnings about serialized attributes on AR 4.2
     should 'not generate warning' do
       # Tests that it doesn't try to write created_on as an attribute just because a created_on
       # method exists.
