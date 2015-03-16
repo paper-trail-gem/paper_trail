@@ -655,7 +655,7 @@ If the parent and child are updated in one go, PaperTrail can use the aforementi
 >> t.location.latitude              # 12.345, instead of 54.321
 ```
 
-By default, PaperTrail excludes an associated record from the reified parent model if the associated record exists in the live model but did not exist as at the time the version was created. This is usually what you want if you just want to look at the reified version. But if you want to persist it, it would be better to pass in option `:mark_for_destruction => true` so that the associated record is included and marked for destruction.
+By default, PaperTrail excludes an associated record from the reified parent model if the associated record exists in the live model but did not exist as at the time the version was created. This is usually what you want if you just want to look at the reified version. But if you want to persist it, it would be better to pass in option `:mark_for_destruction => true` so that the associated record is included and marked for destruction. Note that `mark_for_destruction` only has [an effect on associations marked with `autosave: true`](http://api.rubyonrails.org/classes/ActiveRecord/AutosaveAssociation.html#method-i-mark_for_destruction).
 
 ```ruby
 class Widget < ActiveRecord::Base
