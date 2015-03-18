@@ -270,6 +270,7 @@ module PaperTrail
 
         attributes.each { |column| write_attribute(column, current_time) }
         save!
+        record_update(true) if self.class.paper_trail_options[:on] == []
       end
 
       private
@@ -300,8 +301,8 @@ module PaperTrail
         end
       end
 
-      def record_update
-        if paper_trail_switched_on? && changed_notably?
+      def record_update(force = nil)
+        if paper_trail_switched_on? && (force || changed_notably?)
           object_attrs = object_attrs_for_paper_trail(attributes_before_change)
           data = {
             :event     => paper_trail_event || 'update',
