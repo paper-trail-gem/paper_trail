@@ -9,7 +9,7 @@ module PaperTrail
 
       # Need to inspect inside of a Proc so that tests pass even when DB is not initialized
       # such as when we run on Travis (there won't be a db in `test/dummy/db/`)
-      if lambda { PaperTrail::VersionAssociation.table_exists? }
+      if (lambda { PaperTrail::VersionAssociation.table_exists? }).call
         has_many :version_associations, :dependent => :destroy
       end
 
