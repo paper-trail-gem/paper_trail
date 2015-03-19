@@ -116,12 +116,12 @@ module PaperTrail
 
       # Returns whether the `object` column is using the `json` type supported by PostgreSQL
       def object_col_is_json?
-        @object_col_is_json ||= columns_hash['object'].type == :json
+        @object_col_is_json ||= [:json, :jsonb].include?(columns_hash['object'].type)
       end
 
       # Returns whether the `object_changes` column is using the `json` type supported by PostgreSQL
       def object_changes_col_is_json?
-        @object_changes_col_is_json ||= columns_hash['object_changes'].try(:type) == :json
+        @object_changes_col_is_json ||= [:json, :jsonb].include?(columns_hash['object_changes'].try(:type))
       end
     end
 
@@ -165,7 +165,7 @@ module PaperTrail
         # `item_type` will be the base class, not the actual subclass.
         # If `type` is present but empty, the class is the base class.
 
-        if item && options[:dup] != true
+        if options[:dup] != true && item
           model = item
           # Look for attributes that exist in the model and not in this version. These attributes should be set to nil.
           (model.attribute_names - attrs.keys).each { |k| attrs[k] = nil }

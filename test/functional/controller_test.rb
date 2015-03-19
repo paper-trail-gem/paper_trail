@@ -7,8 +7,10 @@ class ControllerTest < ActionController::TestCase
     @request.env['REMOTE_ADDR'] = '127.0.0.1'
   end
 
+  # Mimick what RequestStore will do outside of the test env, since it is
+  # middleware, and doesn't get executed in controller / request specs
   teardown do
-    PaperTrail.enabled_for_controller = true
+    RequestStore.store[:paper_trail] = nil
   end
 
   test 'disable on create' do
@@ -82,7 +84,7 @@ class ControllerTest < ActionController::TestCase
     @request.env['HTTP_USER_AGENT'] = 'Disable User-Agent'
     post :create, :widget => { :name => 'Flugel' }
     assert_equal 0, assigns(:widget).versions.length
-    assert !PaperTrail.enabled_for_controller?    
+    assert !PaperTrail.enabled_for_controller?
     assert PaperTrail.whodunnit.nil?
     assert PaperTrail.controller_info.nil?
   end

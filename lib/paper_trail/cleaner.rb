@@ -25,7 +25,7 @@ module PaperTrail
     # Returns a hash of versions grouped by the `item_id` attribute formatted like this: {:item_id => PaperTrail::Version}.
     # If `item_id` or `date` is set, versions will be narrowed to those pointing at items with those ids that were created on specified date.
     def gather_versions(item_id = nil, date = :all)
-      raise "`date` argument must receive a Timestamp or `:all`" unless date == :all || date.respond_to?(:to_date)
+      raise ArgumentError.new("`date` argument must receive a Timestamp or `:all`") unless date == :all || date.respond_to?(:to_date)
       versions = item_id ? PaperTrail::Version.where(:item_id => item_id) : PaperTrail::Version
       versions = versions.between(date.to_date, date.to_date + 1.day) unless date == :all
       versions = PaperTrail::Version.all if versions == PaperTrail::Version # if versions has not been converted to an ActiveRecord::Relation yet, do so now

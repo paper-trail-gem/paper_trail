@@ -23,7 +23,7 @@ Rake::TestTask.new(:test) do |t|
 end
 
 require 'rspec/core/rake_task'
-desc 'Run PaperTrail specs for the RSpec helper.'
+desc 'Run tests on PaperTrail with RSpec'
 RSpec::Core::RakeTask.new(:spec)
 
 desc 'Default: run all available test suites'

@@ -1,3 +1,5 @@
+require 'request_store'
+
 # Require core library
 Dir[File.join(File.dirname(__FILE__), 'paper_trail', '*.rb')].each do |file|
   require File.join('paper_trail', File.basename(file, '.rb'))
@@ -118,16 +120,18 @@ module PaperTrail
   # Thread-safe hash to hold PaperTrail's data.
   # Initializing with needed default values.
   def self.paper_trail_store
-    Thread.current[:paper_trail] ||= { :request_enabled_for_controller => true }
+    RequestStore.store[:paper_trail] ||= { :request_enabled_for_controller => true }
   end
 
   # Returns PaperTrail's configuration object.
   def self.config
     @@config ||= PaperTrail::Config.instance
+    yield @@config if block_given?
+    @@config
   end
 
-  def self.configure
-    yield config
+  class << self
+    alias_method :configure, :config
   end
 end
 

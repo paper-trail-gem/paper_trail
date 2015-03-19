@@ -70,14 +70,15 @@ module PaperTrail
             :order      => self.paper_trail_version_class.timestamp_sort_order
         end
 
+        options[:on] ||= [:create, :update, :destroy]
         options_on = Array(options[:on]) # so that a single symbol can be passed in without wrapping it in an `Array`
-        after_create  :record_create, :if => :save_version? if options_on.empty? || options_on.include?(:create)
-        if options_on.empty? || options_on.include?(:update)
+        after_create  :record_create, :if => :save_version? if options_on.include?(:create)
+        if options_on.include?(:update)
           before_save   :reset_timestamp_attrs_for_update_if_needed!, :on => :update
           after_update  :record_update, :if => :save_version?
           after_update  :clear_version_instance!
         end
-        after_destroy :record_destroy, :if => :save_version? if options_on.empty? || options_on.include?(:destroy)
+        after_destroy :record_destroy, :if => :save_version? if options_on.include?(:destroy)
 
         # Reset the transaction id when the transaction is closed
         after_commit :reset_transaction_id
@@ -269,6 +270,7 @@ module PaperTrail
 
         attributes.each { |column| write_attribute(column, current_time) }
         save!
+        record_update(true) if self.class.paper_trail_options[:on] == []
       end
 
       private
@@ -280,8 +282,8 @@ module PaperTrail
       def record_create
         if paper_trail_switched_on?
           data = {
-            :event          => paper_trail_event || 'create',
-            :whodunnit      => PaperTrail.whodunnit
+            :event     => paper_trail_event || 'create',
+            :whodunnit => PaperTrail.whodunnit
           }
           if respond_to?(:created_at)
             data[PaperTrail.timestamp_field] = created_at
@@ -299,13 +301,13 @@ module PaperTrail
         end
       end
 
-      def record_update
-        if paper_trail_switched_on? && changed_notably?
+      def record_update(force = nil)
+        if paper_trail_switched_on? && (force || changed_notably?)
           object_attrs = object_attrs_for_paper_trail(attributes_before_change)
           data = {
-            :event          => paper_trail_event || 'update',
-            :object         => self.class.paper_trail_version_class.object_col_is_json? ? object_attrs : PaperTrail.serializer.dump(object_attrs),
-            :whodunnit      => PaperTrail.whodunnit
+            :event     => paper_trail_event || 'update',
+            :object    => self.class.paper_trail_version_class.object_col_is_json? ? object_attrs : PaperTrail.serializer.dump(object_attrs),
+            :whodunnit => PaperTrail.whodunnit
           }
           if respond_to?(:updated_at)
             data[PaperTrail.timestamp_field] = updated_at
@@ -352,11 +354,11 @@ module PaperTrail
         if paper_trail_switched_on? and not new_record?
           object_attrs = object_attrs_for_paper_trail(attributes_before_change)
           data = {
-            :item_id        => self.id,
-            :item_type      => self.class.base_class.name,
-            :event          => paper_trail_event || 'destroy',
-            :object         => self.class.paper_trail_version_class.object_col_is_json? ? object_attrs : PaperTrail.serializer.dump(object_attrs),
-            :whodunnit      => PaperTrail.whodunnit
+            :item_id   => self.id,
+            :item_type => self.class.base_class.name,
+            :event     => paper_trail_event || 'destroy',
+            :object    => self.class.paper_trail_version_class.object_col_is_json? ? object_attrs : PaperTrail.serializer.dump(object_attrs),
+            :whodunnit => PaperTrail.whodunnit
           }
           if self.class.paper_trail_version_class.column_names.include?('transaction_id')
             data[:transaction_id] = PaperTrail.transaction_id
@@ -373,13 +375,20 @@ module PaperTrail
       def save_associations(version)
         return unless PaperTrail::VersionAssociation.table_exists?
         self.class.reflect_on_all_associations(:belongs_to).each do |assoc|
-          if assoc.klass.paper_trail_enabled_for_model?
-            PaperTrail::VersionAssociation.create(
+          assoc_version_args = {
               :version_id => version.id,
-              :foreign_key_name => assoc.foreign_key,
-              :foreign_key_id => self.send(assoc.foreign_key)
-            )
+              :foreign_key_name => assoc.foreign_key
+          }
+
+          if assoc.options[:polymorphic]
+            if (associated_record = send(assoc.name)).class.paper_trail_enabled_for_model?
+              assoc_version_args.merge!(:foreign_key_id => associated_record.id)
+            end
+          elsif assoc.klass.paper_trail_enabled_for_model?
+            assoc_version_args.merge!(:foreign_key_id => send(assoc.foreign_key))
           end
+
+          PaperTrail::VersionAssociation.create(assoc_version_args) if assoc_version_args.has_key?(:foreign_key_id)
         end
       end
 
@@ -403,7 +412,7 @@ module PaperTrail
             if v.respond_to?(:call)
               v.call(self)
             elsif v.is_a?(Symbol) && respond_to?(v)
-              # if it is an attribute that is changing in an existing object, 
+              # if it is an attribute that is changing in an existing object,
               # be sure to grab the current version
               if has_attribute?(v) && send("#{v}_changed?".to_sym) && data[:event] != 'create'
                 send("#{v}_was".to_sym)

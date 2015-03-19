@@ -5,6 +5,7 @@ module PaperTrail
 
     # Register this module inside your Sinatra application to gain access to controller-level methods used by PaperTrail
     def self.registered(app)
+      app.use RequestStore::Middleware
       app.helpers self
       app.before { set_paper_trail_whodunnit }
     end

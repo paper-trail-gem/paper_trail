@@ -44,7 +44,7 @@ The Rails 2.3 code is on the [`rails2`](https://github.com/airblade/paper_trail/
 
 1. Add PaperTrail to your `Gemfile`.
 
-    `gem 'paper_trail', '~> 3.0.6'`
+    `gem 'paper_trail', '~> 4.0.0.beta'`
 
 2. Generate a migration which will add a `versions` table to your database.
 
@@ -66,7 +66,7 @@ your applications `ActiveRecord` connection in a manner similar to the way `Rail
 
 1. Add PaperTrail to your `Gemfile`.
 
-    `gem 'paper_trail', '~> 3.0.6'`
+    `gem 'paper_trail', '~> 4.0.0.beta'`
 
 2. Generate a migration to add a `versions` table to your database.
 
@@ -655,7 +655,7 @@ If the parent and child are updated in one go, PaperTrail can use the aforementi
 >> t.location.latitude              # 12.345, instead of 54.321
 ```
 
-By default, PaperTrail excludes an associated record from the reified parent model if the associated record exists in the live model but did not exist as at the time the version was created. This is usually what you want if you just want to look at the reified version. But if you want to persist it, it would be better to pass in option `:mark_for_destruction => true` so that the associated record is included and marked for destruction.
+By default, PaperTrail excludes an associated record from the reified parent model if the associated record exists in the live model but did not exist as at the time the version was created. This is usually what you want if you just want to look at the reified version. But if you want to persist it, it would be better to pass in option `:mark_for_destruction => true` so that the associated record is included and marked for destruction. Note that `mark_for_destruction` only has [an effect on associations marked with `autosave: true`](http://api.rubyonrails.org/classes/ActiveRecord/AutosaveAssociation.html#method-i-mark_for_destruction).
 
 ```ruby
 class Widget < ActiveRecord::Base
@@ -954,7 +954,7 @@ A valid serializer is a `module` (or `class`) that defines a `load` and `dump` m
 ### PostgreSQL JSON column type support
 
 If you use PostgreSQL, and would like to store your `object` (and/or `object_changes`) data in a column of
-[type `JSON`](http://www.postgresql.org/docs/9.4/static/datatype-json.html),
+[type `JSON` or type `JSONB`](http://www.postgresql.org/docs/9.4/static/datatype-json.html),
 specify `json` instead of `text` for these columns in your migration:
 
 ```ruby

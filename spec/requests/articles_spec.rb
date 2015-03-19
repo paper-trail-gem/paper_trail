@@ -9,7 +9,6 @@ describe "Articles management", :type => :request, :order => :defined do
     it "should not create a version" do
       expect(PaperTrail).to be_enabled_for_controller
       expect { post(articles_path, valid_params) }.to_not change(PaperTrail::Version, :count)
-      expect(PaperTrail).not_to be_enabled_for_controller
     end
 
     it "should not leak the state of the `PaperTrail.enabled_for_controller?` into the next test" do
@@ -24,7 +23,6 @@ describe "Articles management", :type => :request, :order => :defined do
       it "should set that value as the `whodunnit`" do
         expect { post articles_path, valid_params }.to change(PaperTrail::Version, :count).by(1)
         expect(article.title).to eq('Doh')
-        expect(PaperTrail.whodunnit).to eq('foobar')
         expect(article.versions.last.whodunnit).to eq('foobar')
       end
     end

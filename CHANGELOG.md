@@ -9,6 +9,8 @@ PaperTrail::Rails::Engine.eager_load!
 
 If you depend on the `RSpec` or `Cucumber` helpers, you will need to [manually load them into your test helper](https://github.com/airblade/paper_trail#testing).
 
+  - [#484](https://github.com/airblade/paper_trail/pull/484) - Support for
+    [PostgreSQL's JSONB Type](http://www.postgresql.org/docs/9.4/static/datatype-json.html) for storing `object` and `object_changes`.
   - [#458](https://github.com/airblade/paper_trail/pull/458) - For `create` events, metadata pointing at attributes should attempt
     to grab the current value instead of looking at the value prior to the change (which would always be `nil`)
   - [#440](https://github.com/airblade/paper_trail/pull/440) - `versions` association should clear/reload after a transaction rollback.
@@ -16,8 +18,10 @@ If you depend on the `RSpec` or `Cucumber` helpers, you will need to [manually l
     Support for versioning of associations (Has Many, Has One, HABTM, etc.)
   - [#438](https://github.com/airblade/paper_trail/issues/438) - `ModelKlass.paper_trail_enabled_for_model?` should return `false` if
     `has_paper_trail` has not been declared on the class.
-  - [#428](https://github.com/airblade/paper_trail/issues/428) - `model_instance.dup` does not need to be invoked when examining
-    what the instance looked like before changes were persisted, which avoids issues if a 3rd party has overriden the `dup` behavior
+  - [#404](https://github.com/airblade/paper_trail/issues/404) / [#428](https://github.com/airblade/paper_trail/issues/428) -
+    `model_instance.dup` does not need to be invoked when examining what the instance looked like before changes were persisted,
+    which avoids issues if a 3rd party has overriden the `dup` behavior. Also fixes errors occuring when a user attempts to
+    update the inheritance column on an STI model instance in `ActiveRecord` 4.1.x
   - [#427](https://github.com/airblade/paper_trail/pull/427) - Fix `reify` method in context of model where a column has been removed.
   - [#420](https://github.com/airblade/paper_trail/issues/420) - Add `VersionConcern#where_object_changes` instance method;
     acts as a helper for querying against the `object_changes` column in versions table.
@@ -26,6 +30,8 @@ If you depend on the `RSpec` or `Cucumber` helpers, you will need to [manually l
     deprecated in `ActiveRecord` version `4.2` and will be removed in version `5.0`
   - [#414](https://github.com/airblade/paper_trail/issues/414) - Fix functionality `ignore` argument to `has_paper_trail`
     in `ActiveRecord` 4.
+  - [#413](https://github.com/airblade/paper_trail/issues/413) - Utilize [RequestStore](https://github.com/steveklabnik/request_store)
+    to ensure that the `PaperTrail.whodunnit` is set in a thread safe manner within Rails & Sinatra.
   - [#399](https://github.com/airblade/paper_trail/pull/399) - Add `:dup` argument for options hash to `reify` which forces a new model instance.
   - [#394](https://github.com/airblade/paper_trail/pull/394) - Add RSpec matcher `have_a_version_with` for easier testing.
   - [#391](https://github.com/airblade/paper_trail/issues/391) - `object_changes` value should dump to `YAML` as a normal `Hash`
@@ -40,6 +46,13 @@ If you depend on the `RSpec` or `Cucumber` helpers, you will need to [manually l
     the gem is used with `Rails`.
   - Methods handling serialized attributes should fallback to the currently set Serializer instead of always falling back
     to `PaperTrail::Serializers::YAML`.
+  - Both `PaperTrail.config` and `PaperTrail.configure` are now identical, and will both return the `PaperTrail::Config`
+    instance and also yield it if a block is provided.
+
+## 3.0.7
+
+  - [#404](https://github.com/airblade/paper_trail/issues/404) / [#428](https://github.com/airblade/paper_trail/issues/428) -
+    Fix errors occuring when a user attempts to update the inheritance column on an STI model instance in `ActiveRecord` 4.1.x
 
 ## 3.0.6
 
@@ -48,7 +61,7 @@ If you depend on the `RSpec` or `Cucumber` helpers, you will need to [manually l
 
 ## 3.0.5
 
-  - [#401](https://github.com/airblade/paper_trail/issues/401) / [#406](https://github.com/airblade/paper_trail/issues/406)
+  - [#401](https://github.com/airblade/paper_trail/issues/401) / [#406](https://github.com/airblade/paper_trail/issues/406) -
     `PaperTrail::Version` class is not loaded via a `Rails::Engine`, even when the gem is used with in Rails. This feature has
     will be re-introduced in version `4.0`.
   - [#398](https://github.com/airblade/paper_trail/pull/398) - Only require the `RSpec` helper if `RSpec::Core` is required.

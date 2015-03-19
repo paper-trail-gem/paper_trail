@@ -218,8 +218,8 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
       should 'have changes' do
 
-        #TODO Postgres does not appear to pass back ActiveSupport::TimeWithZone, 
-        # so chosing the lowest common denominator to test. 
+        #TODO Postgres does not appear to pass back ActiveSupport::TimeWithZone,
+        # so chosing the lowest common denominator to test.
 
         changes = {
           'name'       => [nil, 'Henry'],
@@ -332,6 +332,21 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           end
         end
 
+        context 'and has many associated polymorphic objects' do
+          setup do
+            @f0 = @widget.whatchamajiggers.create :name => 'f-zero'
+            @f1 = @widget.whatchamajiggers.create :name => 'f-zero'
+            @reified_widget = @widget.versions.last.reify
+          end
+
+          should 'copy the has_many associations when reifying' do
+            assert_equal @widget.whatchamajiggers.length, @reified_widget.whatchamajiggers.length
+            assert_same_elements @widget.whatchamajiggers, @reified_widget.whatchamajiggers
+
+            assert_equal @widget.versions.length, @reified_widget.versions.length
+            assert_same_elements @widget.versions, @reified_widget.versions
+          end
+        end
 
         context 'and then destroyed' do
           setup do
@@ -446,7 +461,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         @last = @widget.versions.last
       end
 
-      teardown do 
+      teardown do
         restore_schema
       end
 
@@ -620,7 +635,6 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       assert_not_nil @wotsit.versions.last.reify.updated_at
     end
 
-    # Currently the gem generates a bunch of deprecation warnings about serialized attributes on AR 4.2
     should 'not generate warning' do
       # Tests that it doesn't try to write created_on as an attribute just because a created_on
       # method exists.
@@ -1187,6 +1201,31 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       should 'only have a version for the destroy event' do
         assert_equal 1, @fluxor.versions.length
         assert_equal 'destroy', @fluxor.versions.last.event
+      end
+    end
+    context 'on []' do
+      setup do
+        Fluxor.reset_callbacks :create
+        Fluxor.reset_callbacks :update
+        Fluxor.reset_callbacks :destroy
+        Fluxor.instance_eval <<-END
+          has_paper_trail :on => []
+        END
+        @fluxor = Fluxor.create
+        @fluxor.update_attributes :name => 'blah'
+      end
+
+      teardown do
+        @fluxor.destroy
+      end
+
+      should 'not have any versions' do
+        assert_equal 0, @fluxor.versions.length
+      end
+
+      should 'still respond to touch_with_version' do
+        @fluxor.touch_with_version
+        assert_equal 1, @fluxor.versions.length
       end
     end
     context 'allows a symbol to be passed' do

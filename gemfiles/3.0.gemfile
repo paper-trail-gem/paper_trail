@@ -2,11 +2,12 @@ source 'https://rubygems.org'
 
 gem 'activerecord', '~> 3.0'
 gem 'i18n', '~> 0.6.11'
+gem 'request_store', '~> 1.1.0'
 
 group :development, :test do
   gem 'rake', '~> 10.1.1'
   gem 'shoulda', '~> 3.5'
-  gem 'ffaker',  '>= 1.15'
+  gem 'ffaker',  '<= 1.31.0'
 
   # Testing of Rails
   gem 'railties', '~> 3.0'
