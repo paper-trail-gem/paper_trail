@@ -269,8 +269,9 @@ module PaperTrail
         current_time = current_time_from_proper_timezone
 
         attributes.each { |column| write_attribute(column, current_time) }
+        # ensure a version is written even if the 
+        record_update(true) if paper_trail_options[:on] == []
         save!
-        record_update(true) if self.class.paper_trail_options[:on] == []
       end
 
       private
