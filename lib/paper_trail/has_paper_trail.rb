@@ -70,14 +70,15 @@ module PaperTrail
             :order      => self.paper_trail_version_class.timestamp_sort_order
         end
 
+        options[:on] ||= [:create, :update, :destroy]
         options_on = Array(options[:on]) # so that a single symbol can be passed in without wrapping it in an `Array`
-        after_create  :record_create, :if => :save_version? if options_on.empty? || options_on.include?(:create)
-        if options_on.empty? || options_on.include?(:update)
+        after_create  :record_create, :if => :save_version? if options_on.include?(:create)
+        if options_on.include?(:update)
           before_save   :reset_timestamp_attrs_for_update_if_needed!, :on => :update
           after_update  :record_update, :if => :save_version?
           after_update  :clear_version_instance!
         end
-        after_destroy :record_destroy, :if => :save_version? if options_on.empty? || options_on.include?(:destroy)
+        after_destroy :record_destroy, :if => :save_version? if options_on.include?(:destroy)
 
         # Reset the transaction id when the transaction is closed
         after_commit :reset_transaction_id
@@ -269,6 +270,7 @@ module PaperTrail
 
         attributes.each { |column| write_attribute(column, current_time) }
         save!
+        record_update(true) if self.class.paper_trail_options[:on] == []
       end
 
       private
@@ -299,8 +301,8 @@ module PaperTrail
         end
       end
 
-      def record_update
-        if paper_trail_switched_on? && changed_notably?
+      def record_update(force = nil)
+        if paper_trail_switched_on? && (force || changed_notably?)
           object_attrs = object_attrs_for_paper_trail(attributes_before_change)
           data = {
             :event     => paper_trail_event || 'update',
