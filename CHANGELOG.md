@@ -11,6 +11,8 @@ If you depend on the `RSpec` or `Cucumber` helpers, you will need to [manually l
 
   - [#500](https://github.com/airblade/paper_trail/pull/500) - Support for passing `on: []` as an argument, with only manual
     versioning via calls to `touch_with_version`
+  - [#494](https://github.com/airblade/paper_trail/issues/494) - The install generator will warn the user if the migration they are
+    attempting to generate already exists.
   - [#484](https://github.com/airblade/paper_trail/pull/484) - Support for
     [PostgreSQL's JSONB Type](http://www.postgresql.org/docs/9.4/static/datatype-json.html) for storing `object` and `object_changes`.
   - [#458](https://github.com/airblade/paper_trail/pull/458) - For `create` events, metadata pointing at attributes should attempt

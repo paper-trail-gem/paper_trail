@@ -30,8 +30,11 @@ module PaperTrail
     def add_paper_trail_migration(template)
       migration_dir = File.expand_path('db/migrate')
 
-      if !self.class.migration_exists?(migration_dir, template)
+      unless self.class.migration_exists?(migration_dir, template)
         migration_template "#{template}.rb", "db/migrate/#{template}.rb"
+      else
+        warn("ALERT: Migration already exists named '#{template}'." +
+               " Please check your migrations directory before re-running}'")
       end
     end
   end
