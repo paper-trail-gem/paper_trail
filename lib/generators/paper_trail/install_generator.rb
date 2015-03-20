@@ -34,7 +34,7 @@ module PaperTrail
         migration_template "#{template}.rb", "db/migrate/#{template}.rb"
       else
         warn("ALERT: Migration already exists named '#{template}'." +
-               " Please check your migrations directory before re-running}'")
+               " Please check your migrations directory before re-running")
       end
     end
   end
