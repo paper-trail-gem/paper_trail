@@ -72,8 +72,8 @@ class SetUpTestTables < ActiveRecord::Migration
     end
 
     create_table :whatchamajiggers, :force => true do |t|
-      t.string  :owner_type, :null => false
-      t.integer :owner_id, :null => false
+      t.string  :owner_type
+      t.integer :owner_id
       t.string  :name
     end
 

@@ -146,8 +146,8 @@ ActiveRecord::Schema.define(version: 20110208155312) do
   add_index "versions", ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
 
   create_table "whatchamajiggers", force: true do |t|
-    t.string  "owner_type", null: false
-    t.integer "owner_id",   null: false
+    t.string  "owner_type"
+    t.integer "owner_id"
     t.string  "name"
   end
 
