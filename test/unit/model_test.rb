@@ -348,6 +348,16 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           end
         end
 
+        context 'polymorphic objects by themselves' do
+          setup do
+            @widget = Whatchamajigger.new :name => 'f-zero'
+          end
+
+          should 'not fail with a nil pointer on the polymorphic association' do
+            @widget.save!
+          end
+        end
+
         context 'and then destroyed' do
           setup do
             @fluxor = @widget.fluxors.create :name => 'flux'
