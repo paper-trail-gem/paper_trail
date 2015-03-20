@@ -382,7 +382,8 @@ module PaperTrail
           }
 
           if assoc.options[:polymorphic]
-            if (associated_record = send(assoc.name)).class.paper_trail_enabled_for_model?
+            associated_record = send(assoc.name)
+            if associated_record && associated_record.class.paper_trail_enabled_for_model?
               assoc_version_args.merge!(:foreign_key_id => associated_record.id)
             end
           elsif assoc.klass.paper_trail_enabled_for_model?
