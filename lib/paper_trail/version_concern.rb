@@ -7,9 +7,11 @@ module PaperTrail
     included do
       belongs_to :item, :polymorphic => true
 
-      # Need to inspect inside of a Proc so that tests pass even when DB is not initialized
-      # such as when we run on Travis (there won't be a db in `test/dummy/db/`)
-      if lambda { PaperTrail::VersionAssociation.table_exists? }
+      # Since the test suite has test coverage for this, we want to declare the
+      # association when the test suite is running. This makes it pass
+      # when DB is not initialized prior to test runs such as when we run on
+      # Travis CI (there won't be a db in `test/dummy/db/`)
+      if PaperTrail::VersionAssociation.table_exists? || ::Rails.env.test?
         has_many :version_associations, :dependent => :destroy
       end
 
