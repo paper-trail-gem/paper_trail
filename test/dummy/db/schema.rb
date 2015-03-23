@@ -109,6 +109,10 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.integer "length"
   end
 
+  create_table "things", force: true do |t|
+    t.string "name"
+  end
+
   create_table "translations", force: true do |t|
     t.string "headline"
     t.string "content"
