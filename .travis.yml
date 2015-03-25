@@ -6,9 +6,12 @@ rvm:
   - jruby-19mode
   - jruby-18mode
 env:
-  - DB=mysql
-  - DB=postgres
-  - DB=sqlite
+  global:
+    - TRAVIS=true
+  matrix:
+    - DB=mysql
+    - DB=postgres
+    - DB=sqlite
 
 sudo: false
 
