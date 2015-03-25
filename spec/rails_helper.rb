@@ -20,6 +20,9 @@ Test::Unit.run = true if defined?(Test::Unit) && Test::Unit.respond_to?(:run=)
 # If you are not using ActiveRecord, you can remove this line.
 ActiveRecord::Migration.check_pending! if ActiveRecord::Migration.respond_to?(:check_pending!)
 
+# Turn on associations tracking when the test suite is run on Travis CI
+PaperTrail.config.track_associations = true if ENV['TRAVIS']
+
 RSpec.configure do |config|
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
 

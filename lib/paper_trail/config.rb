@@ -5,6 +5,7 @@ module PaperTrail
     include Singleton
     attr_accessor :enabled, :timestamp_field, :serializer, :version_limit
     attr_reader :serialized_attributes
+    attr_writer :track_associations
 
     def initialize
       @enabled         = true # Indicates whether PaperTrail is on or off.
@@ -27,5 +28,10 @@ module PaperTrail
       end
       @serialized_attributes = value
     end
+
+    def track_associations
+      @track_associations ||= PaperTrail::VersionAssociation.table_exists?
+    end
+    alias_method :track_associations?, :track_associations
   end
 end

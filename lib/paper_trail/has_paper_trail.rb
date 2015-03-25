@@ -374,7 +374,7 @@ module PaperTrail
 
       # saves associations if the join table for `VersionAssociation` exists
       def save_associations(version)
-        return unless PaperTrail::VersionAssociation.table_exists?
+        return unless PaperTrail.config.track_associations?
         self.class.reflect_on_all_associations(:belongs_to).each do |assoc|
           assoc_version_args = {
               :version_id => version.id,

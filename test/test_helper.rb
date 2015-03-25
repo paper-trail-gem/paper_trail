@@ -39,6 +39,9 @@ class ActiveSupport::TestCase
   end
 end
 
+# Turn on associations tracking when the test suite is run on Travis CI
+PaperTrail.config.track_associations = true if ENV['TRAVIS']
+
 #
 # Helpers
 #
