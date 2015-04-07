@@ -1,4 +1,5 @@
 require 'active_support/concern'
+require 'json'
 
 module PaperTrail
   module VersionConcern
