@@ -1,4 +1,5 @@
 require 'active_support/concern'
+require 'json'
 
 module PaperTrail
   module VersionConcern
@@ -86,12 +87,17 @@ module PaperTrail
       # identically-named method in the serializer being used.
       def where_object(args = {})
         raise ArgumentError, 'expected to receive a Hash' unless args.is_a?(Hash)
-        arel_field = arel_table[:object]
 
-        where_conditions = args.map do |field, value|
-          PaperTrail.serializer.where_object_condition(arel_field, field, value)
-        end.reduce do |condition1, condition2|
-          condition1.and(condition2)
+        if object_col_is_json?
+          where_conditions = "object @> '#{args.to_json}'::#{columns_hash['object'].type}"
+        else
+          arel_field = arel_table[:object]
+
+          where_conditions = args.map do |field, value|
+            PaperTrail.serializer.where_object_condition(arel_field, field, value)
+          end.reduce do |condition1, condition2|
+            condition1.and(condition2)
+          end
         end
 
         where(where_conditions)
@@ -99,12 +105,17 @@ module PaperTrail
 
       def where_object_changes(args = {})
         raise ArgumentError, 'expected to receive a Hash' unless args.is_a?(Hash)
-        arel_field = arel_table[:object_changes]
 
-        where_conditions = args.map do |field, value|
-          PaperTrail.serializer.where_object_changes_condition(arel_field, field, value)
-        end.reduce do |condition1, condition2|
-          condition1.and(condition2)
+        if object_changes_col_is_json?
+          where_conditions = "object_changes @> '#{args.to_json}'::#{columns_hash['object_changes'].try(:type)}"
+        else
+          arel_field = arel_table[:object_changes]
+
+          where_conditions = args.map do |field, value|
+            PaperTrail.serializer.where_object_changes_condition(arel_field, field, value)
+          end.reduce do |condition1, condition2|
+            condition1.and(condition2)
+          end
         end
 
         where(where_conditions)
