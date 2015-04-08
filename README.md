@@ -473,7 +473,7 @@ And you can perform `WHERE` queries for object versions based on attributes:
 
 ## Finding Out Who Was Responsible For A Change
 
-If your `ApplicationController` has a `current_user` method, PaperTrail will store the value it returns in the version's `whodunnit` column.  Note that this column is of type `String`, so you will have to convert it to an integer if it's an id and you want to look up the user later on:
+If your `ApplicationController` has a `current_user` method, PaperTrail will attempt to store the value returned by `current_user.id` in the version's `whodunnit` column.  Note that this column is of type `String`, so you will have to convert it to an integer if it's an id and you want to look up the user later on:
 
 ```ruby
 >> last_change = widget.versions.last
