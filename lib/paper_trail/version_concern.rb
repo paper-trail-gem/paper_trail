@@ -128,12 +128,12 @@ module PaperTrail
 
       # Returns whether the `object` column is using the `json` type supported by PostgreSQL
       def object_col_is_json?
-        @object_col_is_json ||= [:json, :jsonb].include?(columns_hash['object'].type)
+        [:json, :jsonb].include?(columns_hash['object'].type)
       end
 
       # Returns whether the `object_changes` column is using the `json` type supported by PostgreSQL
       def object_changes_col_is_json?
-        @object_changes_col_is_json ||= [:json, :jsonb].include?(columns_hash['object_changes'].try(:type))
+        [:json, :jsonb].include?(columns_hash['object_changes'].try(:type))
       end
     end
 
