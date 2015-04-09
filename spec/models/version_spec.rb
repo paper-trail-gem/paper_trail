@@ -66,9 +66,9 @@ describe PaperTrail::Version, :type => :model do
 
     describe "Class" do
       column_overrides = [false]
-      column_overrides.concat(%w[jsonb]) if ENV['DB'] == 'postgres'
+      column_overrides.concat(%w[json jsonb]) if ENV['DB'] == 'postgres'
 
-      column_overrides.each do |override|
+      column_overrides.shuffle.each do |override|
         context "with a #{override || 'text'} column" do
           before do
             if override
