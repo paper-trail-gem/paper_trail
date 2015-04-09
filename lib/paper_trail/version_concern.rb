@@ -113,6 +113,11 @@ module PaperTrail
         if columns_hash['object_changes'].type == :jsonb
           args.each { |field, value| args[field] = [value] }
           where_conditions = "object_changes @> '#{args.to_json}'::jsonb"
+        elsif columns_hash['object'].type == :json
+          where_conditions = args.map do |field, value|
+            "((object_changes->>'#{field}' ILIKE '[#{value.to_json},%') OR (object_changes->>'#{field}' ILIKE '[%,#{value.to_json}]%'))"
+          end
+          where_conditions = where_conditions.join(" AND ")
         else
           arel_field = arel_table[:object_changes]
 
