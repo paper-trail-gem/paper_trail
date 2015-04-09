@@ -89,6 +89,11 @@ module PaperTrail
 
         if columns_hash['object'].type == :jsonb
           where_conditions = "object @> '#{args.to_json}'::jsonb"
+        elsif columns_hash['object'].type == :json
+          where_conditions = args.map do |field, value|
+            "object->>'#{field}' = '#{value}'"
+          end
+          where_conditions = where_conditions.join(" AND ")
         else
           arel_field = arel_table[:object]
 
