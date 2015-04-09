@@ -65,46 +65,68 @@ describe PaperTrail::Version, :type => :model do
     end
 
     describe "Class" do
-      describe '#where_object' do
-        it { expect(PaperTrail::Version).to respond_to(:where_object) }
+      column_overrides = [false]
+      column_overrides.concat(['jsonb']) if ENV['DB'] == 'postgres'
 
-        context "invalid arguments" do
-          it "should raise an error" do
-            expect { PaperTrail::Version.where_object(:foo) }.to raise_error(ArgumentError)
-            expect { PaperTrail::Version.where_object([]) }.to raise_error(ArgumentError)
-          end
-        end
-
-        context "valid arguments", :versioning => true do
-          let(:widget) { Widget.new }
-          let(:name) { Faker::Name.first_name }
-          let(:int) { rand(10) + 1 }
-
+      column_overrides.each do |override|
+        context "with a #{override || 'text'} column" do
           before do
-            widget.update_attributes!(:name => name, :an_integer => int)
-            widget.update_attributes!(:name => 'foobar', :an_integer => 100)
-            widget.update_attributes!(:name => Faker::Name.last_name, :an_integer => 15)
+            if override
+              ActiveRecord::Base.connection.execute("SAVEPOINT pgtest;")
+              ActiveRecord::Base.connection.execute("ALTER TABLE versions DROP COLUMN object;")
+              ActiveRecord::Base.connection.execute("ALTER TABLE versions ADD COLUMN object #{override};")
+              PaperTrail::Version.reset_column_information
+            end
           end
-
-          context "`serializer == YAML`" do
-            specify { expect(PaperTrail.serializer).to be PaperTrail::Serializers::YAML }
-
-            it "should be able to locate versions according to their `object` contents" do
-              expect(PaperTrail::Version.where_object(:name => name)).to eq([widget.versions[1]])
-              expect(PaperTrail::Version.where_object(:an_integer => 100)).to eq([widget.versions[2]])
+          after do
+            if override
+              ActiveRecord::Base.connection.execute("ROLLBACK TO SAVEPOINT pgtest;")
+              PaperTrail::Version.reset_column_information
             end
           end
 
-          context "`serializer == JSON`" do
-            before(:all) { PaperTrail.serializer = PaperTrail::Serializers::JSON }
-            specify { expect(PaperTrail.serializer).to be PaperTrail::Serializers::JSON }
+          describe '#where_object' do
+            it { expect(PaperTrail::Version).to respond_to(:where_object) }
 
-            it "should be able to locate versions according to their `object` contents" do
-              expect(PaperTrail::Version.where_object(:name => name)).to eq([widget.versions[1]])
-              expect(PaperTrail::Version.where_object(:an_integer => 100)).to eq([widget.versions[2]])
+            context "invalid arguments" do
+              it "should raise an error" do
+                expect { PaperTrail::Version.where_object(:foo) }.to raise_error(ArgumentError)
+                expect { PaperTrail::Version.where_object([]) }.to raise_error(ArgumentError)
+              end
             end
 
-            after(:all) { PaperTrail.serializer = PaperTrail::Serializers::YAML }
+            context "valid arguments", :versioning => true do
+              let(:widget) { Widget.new }
+              let(:name) { Faker::Name.first_name }
+              let(:int) { rand(10) + 1 }
+
+              before do
+                widget.update_attributes!(:name => name, :an_integer => int)
+                widget.update_attributes!(:name => 'foobar', :an_integer => 100)
+                widget.update_attributes!(:name => Faker::Name.last_name, :an_integer => 15)
+              end
+
+              context "`serializer == YAML`" do
+                specify { expect(PaperTrail.serializer).to be PaperTrail::Serializers::YAML }
+
+                it "should be able to locate versions according to their `object` contents" do
+                  expect(PaperTrail::Version.where_object(:name => name)).to eq([widget.versions[1]])
+                  expect(PaperTrail::Version.where_object(:an_integer => 100)).to eq([widget.versions[2]])
+                end
+              end
+
+              context "`serializer == JSON`" do
+                before(:all) { PaperTrail.serializer = PaperTrail::Serializers::JSON }
+                specify { expect(PaperTrail.serializer).to be PaperTrail::Serializers::JSON }
+
+                it "should be able to locate versions according to their `object` contents" do
+                  expect(PaperTrail::Version.where_object(:name => name)).to eq([widget.versions[1]])
+                  expect(PaperTrail::Version.where_object(:an_integer => 100)).to eq([widget.versions[2]])
+                end
+
+                after(:all) { PaperTrail.serializer = PaperTrail::Serializers::YAML }
+              end
+            end
           end
         end
       end
