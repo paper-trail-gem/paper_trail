@@ -110,7 +110,8 @@ module PaperTrail
       def where_object_changes(args = {})
         raise ArgumentError, 'expected to receive a Hash' unless args.is_a?(Hash)
 
-        if columns_hash['object'].type == :jsonb
+        if columns_hash['object_changes'].type == :jsonb
+          args.each { |field, value| args[field] = [value] }
           where_conditions = "object_changes @> '#{args.to_json}'::jsonb"
         else
           arel_field = arel_table[:object_changes]
