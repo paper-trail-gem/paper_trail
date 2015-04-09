@@ -87,8 +87,8 @@ module PaperTrail
       def where_object(args = {})
         raise ArgumentError, 'expected to receive a Hash' unless args.is_a?(Hash)
 
-        if object_col_is_json?
-          where_conditions = "object @> '#{args.to_json}'::#{columns_hash['object'].type}"
+        if columns_hash['object'].type == :jsonb
+          where_conditions = "object @> '#{args.to_json}'::jsonb"
         else
           arel_field = arel_table[:object]
 
@@ -105,8 +105,8 @@ module PaperTrail
       def where_object_changes(args = {})
         raise ArgumentError, 'expected to receive a Hash' unless args.is_a?(Hash)
 
-        if object_changes_col_is_json?
-          where_conditions = "object_changes @> '#{args.to_json}'::#{columns_hash['object_changes'].try(:type)}"
+        if columns_hash['object'].type == :jsonb
+          where_conditions = "object_changes @> '#{args.to_json}'::jsonb"
         else
           arel_field = arel_table[:object_changes]
 
