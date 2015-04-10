@@ -10,26 +10,28 @@ module PaperTrail
       # the model is available in the `versions` association.
       #
       # Options:
-      # :on           the events to track (optional; defaults to all of them).  Set to an array of
-      #               `:create`, `:update`, `:destroy` as desired.
-      # :class_name   the name of a custom Version class.  This class should inherit from `PaperTrail::Version`.
-      # :ignore       an array of attributes for which a new `Version` will not be created if only they change.
-      #               it can also accept a Hash as an argument where the key is the attribute to ignore (a `String` or `Symbol`),
-      #               which will only be ignored if the value is a `Proc` which returns truthily.
-      # :if, :unless  Procs that allow to specify conditions when to save versions for an object
-      # :only         inverse of `ignore` - a new `Version` will be created only for these attributes if supplied
-      #               it can also accept a Hash as an argument where the key is the attribute to track (a `String` or `Symbol`),
-      #               which will only be counted if the value is a `Proc` which returns truthily.
-      # :skip         fields to ignore completely.  As with `ignore`, updates to these fields will not create
-      #               a new `Version`.  In addition, these fields will not be included in the serialized versions
-      #               of the object whenever a new `Version` is created.
-      # :meta         a hash of extra data to store.  You must add a column to the `versions` table for each key.
-      #               Values are objects or procs (which are called with `self`, i.e. the model with the paper
-      #               trail).  See `PaperTrail::Controller.info_for_paper_trail` for how to store data from
-      #               the controller.
-      # :versions     the name to use for the versions association.  Default is `:versions`.
-      # :version      the name to use for the method which returns the version the instance was reified from.
-      #               Default is `:version`.
+      # :on            the events to track (optional; defaults to all of them).  Set to an array of
+      #                `:create`, `:update`, `:destroy` as desired.
+      # :class_name    the name of a custom Version class.  This class should inherit from `PaperTrail::Version`.
+      # :ignore        an array of attributes for which a new `Version` will not be created if only they change.
+      #                it can also aceept a Hash as an argument where the key is the attribute to ignore (a `String` or `Symbol`),
+      #                which will only be ignored if the value is a `Proc` which returns truthily.
+      # :if, :unless   Procs that allow to specify conditions when to save versions for an object
+      # :only          inverse of `ignore` - a new `Version` will be created only for these attributes if supplied
+      #                it can also aceept a Hash as an argument where the key is the attribute to track (a `String` or `Symbol`),
+      #                which will only be counted if the value is a `Proc` which returns truthily.
+      # :skip          fields to ignore completely.  As with `ignore`, updates to these fields will not create
+      #                a new `Version`.  In addition, these fields will not be included in the serialized versions
+      #                of the object whenever a new `Version` is created.
+      # :meta          a hash of extra data to store.  You must add a column to the `versions` table for each key.
+      #                Values are objects or procs (which are called with `self`, i.e. the model with the paper
+      #                trail).  See `PaperTrail::Controller.info_for_paper_trail` for how to store data from
+      #                the controller.
+      # :versions      the name to use for the versions association.  Default is `:versions`.
+      # :version       the name to use for the method which returns the version the instance was reified from.
+      #                Default is `:version`.
+      # :save_changes  whether or not to save changes to the object_changes column if it exists. Default is true
+      #
       def has_paper_trail(options = {})
         # Lazily include the instance methods so we don't clutter up
         # any more ActiveRecord models than we have to.
@@ -53,6 +55,7 @@ module PaperTrail
         end
 
         paper_trail_options[:meta] ||= {}
+        paper_trail_options[:save_changes] = true if paper_trail_options[:save_changes].nil?
 
         class_attribute :versions_association_name
         self.versions_association_name = options[:versions] || :versions
@@ -289,7 +292,7 @@ module PaperTrail
           if respond_to?(:created_at)
             data[PaperTrail.timestamp_field] = created_at
           end
-          if changed_notably? and self.class.paper_trail_version_class.column_names.include?('object_changes')
+          if paper_trail_options[:save_changes] && changed_notably? && self.class.paper_trail_version_class.column_names.include?('object_changes')
             data[:object_changes] = self.class.paper_trail_version_class.object_changes_col_is_json? ? changes_for_paper_trail :
               PaperTrail.serializer.dump(changes_for_paper_trail)
           end
@@ -313,7 +316,7 @@ module PaperTrail
           if respond_to?(:updated_at)
             data[PaperTrail.timestamp_field] = updated_at
           end
-          if self.class.paper_trail_version_class.column_names.include?('object_changes')
+          if paper_trail_options[:save_changes] && self.class.paper_trail_version_class.column_names.include?('object_changes')
             data[:object_changes] = self.class.paper_trail_version_class.object_changes_col_is_json? ? changes_for_paper_trail :
               PaperTrail.serializer.dump(changes_for_paper_trail)
           end

@@ -134,6 +134,10 @@ class SetUpTestTables < ActiveRecord::Migration
       t.integer   :version
     end
 
+    create_table :things, :force => true do |t|
+      t.string    :name
+    end
+
     create_table :translations, :force => true do |t|
       t.string    :headline
       t.string    :content
