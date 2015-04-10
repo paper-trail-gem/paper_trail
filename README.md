@@ -844,6 +844,7 @@ For diffing two ActiveRecord objects:
 * [Jeremy Weiskotten's PaperTrail fork](http://github.com/jeremyw/paper_trail/blob/master/lib/paper_trail/has_paper_trail.rb#L151-156): uses ActiveSupport's diff to return an array of hashes of the changes.
 * [activerecord-diff](http://github.com/tim/activerecord-diff): rather like ActiveRecord::Dirty but also allows you to specify which columns to compare.
 
+If you wish to selectively record changes for some models but not others you can opt out of recording changes by passing `:save_changes => false` to your `has_paper_trail` method declaration.
 
 ## Turning PaperTrail Off/On
 
