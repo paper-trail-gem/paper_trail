@@ -274,7 +274,7 @@ module PaperTrail
         attributes.each { |column| write_attribute(column, current_time) }
         # ensure a version is written even if the `:on` collection is empty
         record_update(true) if paper_trail_options[:on] == []
-        save!
+        save!(:validate => false)
       end
 
       private
