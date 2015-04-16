@@ -44,8 +44,9 @@ group :development, :test do
 
   platforms :jruby do 
     # Use jRuby's sqlite3 adapter for jRuby
-    gem 'activerecord-jdbcsqlite3-adapter', '1.3.15'
-    gem 'activerecord-jdbcpostgresql-adapter', '1.3.15'
-    gem 'activerecord-jdbcmysql-adapter', '1.3.15'
+    gem 'activerecord-jdbcsqlite3-adapter', '~> 1.3'
+    gem 'activerecord-jdbcpostgresql-adapter', '~> 1.3'
+    gem 'activerecord-jdbcmysql-adapter', '~> 1.3'
+    gem 'activerecord-jdbc-adapter', '1.3.15'
   end
 end
