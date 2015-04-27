@@ -13,15 +13,19 @@ class Song < ActiveRecord::Base
 
   # override attributes hashes like some libraries do
   def attributes_with_name
-    attributes_without_name.tap do |_hash|
-      _hash.merge!(:name => name) if name
+    if name
+      attributes_without_name.merge(:name => name)
+    else
+      attributes_without_name
     end
   end
   alias_method_chain :attributes, :name
 
   def changed_attributes_with_name
-    changed_attributes_without_name.tap do |_hash|
-      _hash.merge!(:name => name) if name
+    if name
+      changed_attributes_without_name.merge(:name => name)
+    else
+      changed_attributes_without_name
     end
   end
   alias_method_chain :changed_attributes, :name
