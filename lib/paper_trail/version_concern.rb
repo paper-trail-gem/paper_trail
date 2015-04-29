@@ -148,8 +148,10 @@ module PaperTrail
 
         # Set all the attributes in this version on the model
         attrs.each do |k, v|
-          if model.respond_to?("#{k}=")
+          if model.has_attribute?(k)
             model[k.to_sym] = v
+          elsif model.respond_to?("#{k}=")
+            model.send("#{k}=", v)
           else
             logger.warn "Attribute #{k} does not exist on #{item_type} (Version id: #{id})."
           end
