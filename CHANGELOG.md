@@ -9,6 +9,8 @@ PaperTrail::Rails::Engine.eager_load!
 
 If you depend on the `RSpec` or `Cucumber` helpers, you will need to [manually load them into your test helper](https://github.com/airblade/paper_trail#testing).
 
+  - [#512](https://github.com/airblade/paper_trail/pull/512) / [#525](https://github.com/airblade/paper_trail/issues/525) -
+    Support for virtual accessors and redefined setter and getter methods.
   - [#507](https://github.com/airblade/paper_trail/pull/507) - Support for opting out of saving changesets on models by choice
     when the `object_changes` column exists on the default `versions` table.
   - [#500](https://github.com/airblade/paper_trail/pull/500) - Support for passing `on: []` as an argument, with only manual
