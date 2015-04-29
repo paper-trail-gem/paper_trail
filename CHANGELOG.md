@@ -1,12 +1,18 @@
+## 3.0.8 (Unreleased)
+
+  - [#525](https://github.com/airblade/paper_trail/pull/525) / [#512](https://github.com/airblade/paper_trail/issues/512) -
+    Support for virtual accessors and redefined setter and getter methods. (Backported from v4)
+
 ## 3.0.7
 
   - [#404](https://github.com/airblade/paper_trail/issues/404) / [#428](https://github.com/airblade/paper_trail/issues/428) -
-    Fix errors occuring when a user attempts to update the inheritance column on an STI model instance in `ActiveRecord` 4.1.x
+    Fix errors occuring when a user attempts to update the inheritance column on an STI model instance in `ActiveRecord` 4.1.x.
+    (Backported from v4)
 
 ## 3.0.6
 
   - [#414](https://github.com/airblade/paper_trail/issues/414) - Fix functionality `ignore` argument to `has_paper_trail`
-    in `ActiveRecord` 4
+    in `ActiveRecord` 4. (Backported from v4)
 
 ## 3.0.5
 
