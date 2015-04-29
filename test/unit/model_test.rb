@@ -1126,6 +1126,21 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     should 'return "overwritten" value on reified instance' do
       assert_equal 4, @song.versions.last.reify.length
     end
+
+    context 'Has a virtual attribute injected into the ActiveModel::Dirty changes' do
+      setup do
+        @song.name = 'Good Vibrations'
+        @song.save
+        @song.name = 'Yellow Submarine'
+      end
+
+      should 'return persist the changes on the live instance properly' do
+        assert_equal 'Yellow Submarine', @song.name
+      end
+      should 'return "overwritten" virtual attribute on the reified instance' do
+        assert_equal 'Good Vibrations', @song.versions.last.reify.name
+      end
+    end
   end
 
 
