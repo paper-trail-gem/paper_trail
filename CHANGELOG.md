@@ -1,4 +1,4 @@
-## 3.0.8 (Unreleased)
+## 3.0.8
 
   - [#525](https://github.com/airblade/paper_trail/pull/525) / [#512](https://github.com/airblade/paper_trail/issues/512) -
     Support for virtual accessors and redefined setter and getter methods. (Backported from v4)
