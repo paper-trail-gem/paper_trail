@@ -66,7 +66,7 @@ describe PaperTrail::Version, :type => :model do
 
     describe "Class" do
       column_overrides = [false]
-      if ENV['DB'] == 'postgres'
+      if ENV['DB'] == 'postgres' && ::ActiveRecord::VERSION::MAJOR >= 4
         column_overrides << 'json'
         # 'jsonb' column types are only supported for ActiveRecord 4.2+
         column_overrides << 'jsonb' if ::ActiveRecord::VERSION::STRING >= '4.2'
