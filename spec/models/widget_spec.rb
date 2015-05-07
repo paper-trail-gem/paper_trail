@@ -200,7 +200,7 @@ describe Widget do
         end
 
         it 'should display a deprecation warning' do
-          subject.should_receive(:warn).with("DEPRECATED: use `paper_trail_on!` instead of `paper_trail_on`. Support for `paper_trail_on` will be removed in PaperTrail 3.1")
+          subject.should_receive(:warn).with("DEPRECATED: use `paper_trail_on!` instead of `paper_trail_on`. Support for `paper_trail_on` will be removed in PaperTrail 4.0")
           subject.paper_trail_on
         end
       end
@@ -229,7 +229,7 @@ describe Widget do
         end
 
         it 'should display a deprecation warning' do
-          subject.should_receive(:warn).with("DEPRECATED: use `paper_trail_on!` instead of `paper_trail_on`. Support for `paper_trail_on` will be removed in PaperTrail 3.1")
+          subject.should_receive(:warn).with("DEPRECATED: use `paper_trail_on!` instead of `paper_trail_on`. Support for `paper_trail_on` will be removed in PaperTrail 4.0")
           subject.paper_trail_on
         end
       end

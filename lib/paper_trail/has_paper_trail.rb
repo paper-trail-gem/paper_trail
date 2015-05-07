@@ -86,7 +86,7 @@ module PaperTrail
       end
 
       def paper_trail_off
-        warn "DEPRECATED: use `paper_trail_off!` instead of `paper_trail_off`. Support for `paper_trail_off` will be removed in PaperTrail 3.1"
+        warn "DEPRECATED: use `paper_trail_off!` instead of `paper_trail_off`. Support for `paper_trail_off` will be removed in PaperTrail 4.0"
         self.paper_trail_off!
       end
 
@@ -96,7 +96,7 @@ module PaperTrail
       end
 
       def paper_trail_on
-        warn "DEPRECATED: use `paper_trail_on!` instead of `paper_trail_on`. Support for `paper_trail_on` will be removed in PaperTrail 3.1"
+        warn "DEPRECATED: use `paper_trail_on!` instead of `paper_trail_on`. Support for `paper_trail_on` will be removed in PaperTrail 4.0"
         self.paper_trail_on!
       end
 
