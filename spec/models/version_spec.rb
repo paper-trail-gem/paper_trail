@@ -66,7 +66,11 @@ describe PaperTrail::Version, :type => :model do
 
     describe "Class" do
       column_overrides = [false]
-      column_overrides.concat(%w[json jsonb]) if ENV['DB'] == 'postgres'
+      if ENV['DB'] == 'postgres'
+        column_overrides << 'json'
+        # 'jsonb' column types are only supported for ActiveRecord 4.2+
+        column_overrides << 'jsonb' if ::ActiveRecord::VERSION::STRING >= '4.2'
+      end
 
       column_overrides.shuffle.each do |override|
         context "with a #{override || 'text'} column" do
