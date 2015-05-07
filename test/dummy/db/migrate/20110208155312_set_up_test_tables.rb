@@ -60,6 +60,19 @@ class SetUpTestTables < ActiveRecord::Migration
     end
     add_index :post_versions, [:item_type, :item_id]
 
+    if ENV['DB'] == 'postgres'
+      create_table :json_versions, :force => true do |t|
+        t.string   :item_type, :null => false
+        t.integer  :item_id,   :null => false
+        t.string   :event,     :null => false
+        t.string   :whodunnit
+        t.json     :object
+        t.json     :object_changes
+        t.datetime :created_at
+      end
+      add_index :json_versions, [:item_type, :item_id]
+    end
+
     create_table :wotsits, :force => true do |t|
       t.integer :widget_id
       t.string  :name
@@ -164,6 +177,11 @@ class SetUpTestTables < ActiveRecord::Migration
       t.integer :order_id
       t.string  :product
     end
+
+    create_table :fruits, :force => true do |t|
+      t.string :name
+      t.string :color
+    end
   end
 
   def self.down
@@ -183,14 +201,20 @@ class SetUpTestTables < ActiveRecord::Migration
     drop_table :post_versions
     remove_index :versions, :column => [:item_type, :item_id]
     drop_table :versions
+    if JsonVersion.table_exists?
+      remove_index :json_versions, :column => [:item_type, :item_id]
+      drop_table :json_versions
+    end
     drop_table :widgets
     drop_table :documents
     drop_table :legacy_widgets
+    drop_table :things
     drop_table :translations
     drop_table :gadgets
     drop_table :customers
     drop_table :orders
     drop_table :line_items
+    drop_table :fruits
     remove_index :version_associations, :column => [:version_id]
     remove_index :version_associations, :name => 'index_version_associations_on_foreign_key'
     drop_table :version_associations
