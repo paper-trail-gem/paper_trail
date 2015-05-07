@@ -86,12 +86,22 @@ module PaperTrail
       # identically-named method in the serializer being used.
       def where_object(args = {})
         raise ArgumentError, 'expected to receive a Hash' unless args.is_a?(Hash)
-        arel_field = arel_table[:object]
 
-        where_conditions = args.map do |field, value|
-          PaperTrail.serializer.where_object_condition(arel_field, field, value)
-        end.reduce do |condition1, condition2|
-          condition1.and(condition2)
+        if columns_hash['object'].type == :jsonb
+          where_conditions = "object @> '#{args.to_json}'::jsonb"
+        elsif columns_hash['object'].type == :json
+          where_conditions = args.map do |field, value|
+            "object->>'#{field}' = '#{value}'"
+          end
+          where_conditions = where_conditions.join(" AND ")
+        else
+          arel_field = arel_table[:object]
+
+          where_conditions = args.map do |field, value|
+            PaperTrail.serializer.where_object_condition(arel_field, field, value)
+          end.reduce do |condition1, condition2|
+            condition1.and(condition2)
+          end
         end
 
         where(where_conditions)
@@ -99,12 +109,23 @@ module PaperTrail
 
       def where_object_changes(args = {})
         raise ArgumentError, 'expected to receive a Hash' unless args.is_a?(Hash)
-        arel_field = arel_table[:object_changes]
 
-        where_conditions = args.map do |field, value|
-          PaperTrail.serializer.where_object_changes_condition(arel_field, field, value)
-        end.reduce do |condition1, condition2|
-          condition1.and(condition2)
+        if columns_hash['object_changes'].type == :jsonb
+          args.each { |field, value| args[field] = [value] }
+          where_conditions = "object_changes @> '#{args.to_json}'::jsonb"
+        elsif columns_hash['object'].type == :json
+          where_conditions = args.map do |field, value|
+            "((object_changes->>'#{field}' ILIKE '[#{value.to_json},%') OR (object_changes->>'#{field}' ILIKE '[%,#{value.to_json}]%'))"
+          end
+          where_conditions = where_conditions.join(" AND ")
+        else
+          arel_field = arel_table[:object_changes]
+
+          where_conditions = args.map do |field, value|
+            PaperTrail.serializer.where_object_changes_condition(arel_field, field, value)
+          end.reduce do |condition1, condition2|
+            condition1.and(condition2)
+          end
         end
 
         where(where_conditions)
@@ -118,12 +139,12 @@ module PaperTrail
 
       # Returns whether the `object` column is using the `json` type supported by PostgreSQL
       def object_col_is_json?
-        @object_col_is_json ||= [:json, :jsonb].include?(columns_hash['object'].type)
+        [:json, :jsonb].include?(columns_hash['object'].type)
       end
 
       # Returns whether the `object_changes` column is using the `json` type supported by PostgreSQL
       def object_changes_col_is_json?
-        @object_changes_col_is_json ||= [:json, :jsonb].include?(columns_hash['object_changes'].try(:type))
+        [:json, :jsonb].include?(columns_hash['object_changes'].try(:type))
       end
     end
 

@@ -34,4 +34,6 @@ matrix:
       gemfile: Gemfile
     - rvm: 1.8.7
       gemfile: Gemfile
-    
+
+addons:
+  postgresql: "9.4"
