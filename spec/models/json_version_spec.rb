@@ -1,11 +1,12 @@
-require 'rails_helper'
+if JsonVersion.table_exists?
 
-describe JsonVersion, :type => :model do
-  it "should include the `VersionConcern` module to get base functionality" do
-    expect(JsonVersion).to include(PaperTrail::VersionConcern)
-  end
+  require 'rails_helper'
 
-  if ENV['DB'] == 'postgres' || JsonVersion.table_exists?
+  describe JsonVersion, :type => :model do
+    it "should include the `VersionConcern` module to get base functionality" do
+      expect(JsonVersion).to include(PaperTrail::VersionConcern)
+    end
+
     describe "Methods" do
       describe "Class" do
 
@@ -71,8 +72,9 @@ describe JsonVersion, :type => :model do
             end
           end
         end
-
       end
+
     end
   end
+
 end

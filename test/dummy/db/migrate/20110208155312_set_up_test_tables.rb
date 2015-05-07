@@ -60,7 +60,7 @@ class SetUpTestTables < ActiveRecord::Migration
     end
     add_index :post_versions, [:item_type, :item_id]
 
-    if ENV['DB'] == 'postgres'
+    if ENV['DB'] == 'postgres' && ::ActiveRecord::VERSION::MAJOR >= 4
       create_table :json_versions, :force => true do |t|
         t.string   :item_type, :null => false
         t.integer  :item_id,   :null => false
