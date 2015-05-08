@@ -119,7 +119,7 @@ module PaperTrail
       end
 
       # Used for Version#object attribute
-      def serialize_attributes_for_paper_trail(attributes)
+      def serialize_attributes_for_paper_trail!(attributes)
         # don't serialize before values before inserting into columns of type `JSON` on `PostgreSQL` databases
         return attributes if self.paper_trail_version_class.object_col_is_json?
 
@@ -132,7 +132,7 @@ module PaperTrail
         end
       end
 
-      def unserialize_attributes_for_paper_trail(attributes)
+      def unserialize_attributes_for_paper_trail!(attributes)
         # don't serialize before values before inserting into columns of type `JSON` on `PostgreSQL` databases
         return attributes if self.paper_trail_version_class.object_col_is_json?
 
@@ -145,7 +145,7 @@ module PaperTrail
       end
 
       # Used for Version#object_changes attribute
-      def serialize_attribute_changes(changes)
+      def serialize_attribute_changes_for_paper_trail!(changes)
         # don't serialize before values before inserting into columns of type `JSON` on `PostgreSQL` databases
         return changes if self.paper_trail_version_class.object_changes_col_is_json?
 
@@ -160,7 +160,7 @@ module PaperTrail
         end
       end
 
-      def unserialize_attribute_changes(changes)
+      def unserialize_attribute_changes_for_paper_trail!(changes)
         # don't serialize before values before inserting into columns of type `JSON` on `PostgreSQL` databases
         return changes if self.paper_trail_version_class.object_changes_col_is_json?
 
@@ -332,7 +332,7 @@ module PaperTrail
       def changes_for_paper_trail
         _changes = changes.delete_if { |k,v| !notably_changed.include?(k) }
         if PaperTrail.serialized_attributes?
-          self.class.serialize_attribute_changes(_changes)
+          self.class.serialize_attribute_changes_for_paper_trail!(_changes)
         end
         _changes.to_hash
       end
@@ -447,7 +447,7 @@ module PaperTrail
       def object_attrs_for_paper_trail(attributes_hash)
         attrs = attributes_hash.except(*self.paper_trail_options[:skip])
         if PaperTrail.serialized_attributes?
-          self.class.serialize_attributes_for_paper_trail(attrs)
+          self.class.serialize_attributes_for_paper_trail!(attrs)
         end
         attrs
       end

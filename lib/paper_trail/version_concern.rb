@@ -200,7 +200,7 @@ module PaperTrail
         end
 
         if PaperTrail.serialized_attributes?
-          model.class.unserialize_attributes_for_paper_trail attrs
+          model.class.unserialize_attributes_for_paper_trail! attrs
         end
 
         # Set all the attributes in this version on the model
@@ -236,7 +236,7 @@ module PaperTrail
       _changes = self.class.object_changes_col_is_json? ? object_changes : PaperTrail.serializer.load(object_changes)
       @changeset ||= HashWithIndifferentAccess.new(_changes).tap do |changes|
         if PaperTrail.serialized_attributes?
-          item_type.constantize.unserialize_attribute_changes(changes)
+          item_type.constantize.unserialize_attribute_changes_for_paper_trail!(changes)
         end
       end
     rescue
