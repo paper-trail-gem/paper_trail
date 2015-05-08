@@ -596,9 +596,9 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
       should 'track who made the change' do
         assert_equal 'Alice', @version.whodunnit
-        assert_nil   @version.originator
+        assert_nil   @version.paper_trail_originator
         assert_equal 'Alice', @version.terminator
-        assert_equal 'Alice', @widget.originator
+        assert_equal 'Alice', @widget.paper_trail_originator
       end
 
       context 'when a record is updated' do
@@ -610,9 +610,9 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
         should 'track who made the change' do
           assert_equal 'Bob',   @version.whodunnit
-          assert_equal 'Alice', @version.originator
+          assert_equal 'Alice', @version.paper_trail_originator
           assert_equal 'Bob',   @version.terminator
-          assert_equal 'Bob',   @widget.originator
+          assert_equal 'Bob',   @widget.paper_trail_originator
         end
 
         context 'when a record is destroyed' do
@@ -624,9 +624,9 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
           should 'track who made the change' do
             assert_equal 'Charlie', @version.whodunnit
-            assert_equal 'Bob',     @version.originator
+            assert_equal 'Bob',     @version.paper_trail_originator
             assert_equal 'Charlie', @version.terminator
-            assert_equal 'Charlie', @widget.originator
+            assert_equal 'Charlie', @widget.paper_trail_originator
           end
         end
       end
@@ -675,7 +675,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     should 'should return the correct originator' do
       PaperTrail.whodunnit = 'Ben'
       @foo.update_attribute(:name, 'Geoffrey')
-      assert_equal PaperTrail.whodunnit, @foo.originator
+      assert_equal PaperTrail.whodunnit, @foo.paper_trail_originator
     end
 
     context 'when destroyed' do

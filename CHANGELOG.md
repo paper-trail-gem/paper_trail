@@ -21,7 +21,10 @@ If you depend on the `RSpec` or `Cucumber` helpers, you will need to [manually l
   - [#494](https://github.com/airblade/paper_trail/issues/494) - The install generator will warn the user if the migration they are
     attempting to generate already exists.
   - [#484](https://github.com/airblade/paper_trail/pull/484) - Support for
-    [PostgreSQL's `JSONB` Type](http://www.postgresql.org/docs/9.4/static/datatype-json.html) for storing `object` and `object_changes`.
+    [PostgreSQL's `JSONB` Type](http://www.postgresql.org/docs/9.4/static/datatype-json.html) for storing `object`
+    and `object_changes`.
+  - [#479](https://github.com/airblade/paper_trail/issues/479) - Deprecated `originator` method in favor of `paper_trail_originator`
+    Deprecation warning informs users that the `originator` of the methods will be removed in version `4.0`
   - [#458](https://github.com/airblade/paper_trail/pull/458) - For `create` events, metadata pointing at attributes should attempt
     to grab the current value instead of looking at the value prior to the change (which would always be `nil`)
   - [#451](https://github.com/airblade/paper_trail/issues/451) - Fix `reify` method in context of model where the base class

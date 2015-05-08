@@ -1,3 +1,5 @@
+require 'active_support/core_ext/object' # provides the `try` method
+
 module PaperTrail
   module Model
 
@@ -185,8 +187,13 @@ module PaperTrail
       end
 
       # Returns who put the object into its current state.
-      def originator
+      def paper_trail_originator
         (source_version || send(self.class.versions_association_name).last).try(:whodunnit)
+      end
+
+      def originator
+        warn "DEPRECATED: use `paper_trail_originator` instead of `originator`. Support for `originator` will be removed in PaperTrail 4.0"
+        self.paper_trail_originator
       end
 
       # Invoked after rollbacks to ensure versions records are not created
