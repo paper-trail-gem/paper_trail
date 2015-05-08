@@ -115,7 +115,7 @@ widget.version
 widget.live?
 
 # Returns who put the widget into its current state.
-widget.originator
+widget.paper_trail_originator
 
 # Returns the widget (not a version) as it looked at the given timestamp.
 widget.version_at(timestamp)
@@ -147,7 +147,7 @@ And a `PaperTrail::Version` instance has these methods:
 version.reify(options = {})
 
 # Returns who put the item into the state stored in this version.
-version.originator
+version.paper_trail_originator
 
 # Returns who changed the item from the state it had in this version.
 version.terminator
@@ -504,22 +504,22 @@ Sometimes you want to define who is responsible for a change in a small scope wi
 
 A version's `whodunnit` records who changed the object causing the `version` to be stored.  Because a version stores the object as it looked before the change (see the table above), `whodunnit` returns who stopped the object looking like this -- not who made it look like this.  Hence `whodunnit` is aliased as `terminator`.
 
-To find out who made a version's object look that way, use `version.originator`.  And to find out who made a "live" object look like it does, use `originator` on the object.
+To find out who made a version's object look that way, use `version.paper_trail_originator`.  And to find out who made a "live" object look like it does, call `paper_trail_originator` on the object.
 
 ```ruby
 >> widget = Widget.find 153                    # assume widget has 0 versions
 >> PaperTrail.whodunnit = 'Alice'
 >> widget.update_attributes :name => 'Yankee'
->> widget.originator                           # 'Alice'
+>> widget..paper_trail_originator              # 'Alice'
 >> PaperTrail.whodunnit = 'Bob'
 >> widget.update_attributes :name => 'Zulu'
->> widget.originator                           # 'Bob'
+>> widget.paper_trail_originator               # 'Bob'
 >> first_version, last_version = widget.versions.first, widget.versions.last
 >> first_version.whodunnit                     # 'Alice'
->> first_version.originator                    # nil
+>> first_version.paper_trail_originator        # nil
 >> first_version.terminator                    # 'Alice'
 >> last_version.whodunnit                      # 'Bob'
->> last_version.originator                     # 'Alice'
+>> last_version.paper_trail_originator         # 'Alice'
 >> last_version.terminator                     # 'Bob'
 ```
 

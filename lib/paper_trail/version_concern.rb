@@ -181,8 +181,13 @@ module PaperTrail
     end
 
     # Returns who put the item into the state stored in this version.
+    def paper_trail_originator
+      @paper_trail_originator ||= previous.whodunnit rescue nil
+    end
+
     def originator
-      @originator ||= previous.whodunnit rescue nil
+      warn "DEPRECATED: use `paper_trail_originator` instead of `originator`. Support for `originator` will be removed in PaperTrail 4.0"
+      self.paper_trail_originator
     end
 
     # Returns who changed the item from the state it had in this version.

@@ -1,3 +1,11 @@
+## 3.0.9 (Unreleased)
+
+  - [#479](https://github.com/airblade/paper_trail/issues/479) - Deprecated `originator` method in favor of
+    `paper_trail_originator` Deprecation warning informs users that the `originator` of the methods will be
+    removed in version `4.0`. (Backported from v4)
+  - Updated deprecation warnings for `Model.paper_trail_on` and `Model.paper_trail_off` to have display correct
+    version number the methods will be removed (`4.0`)
+
 ## 3.0.8
 
   - [#525](https://github.com/airblade/paper_trail/issues/525) / [#512](https://github.com/airblade/paper_trail/pull/512) -
@@ -63,7 +71,7 @@ in the `PaperTrail::Version` class through a `Rails::Engine` when the gem is use
     with Rails `4.1.0.rc1`.
   - [#334](https://github.com/airblade/paper_trail/pull/334) - Add small-scope `whodunnit` method to `PaperTrail::Model::InstanceMethods`.
   - [#329](https://github.com/airblade/paper_trail/issues/329) - Add `touch_with_version` method to `PaperTrail::Model::InstanceMethods`,
-    to allow for generating a version `touch`ing a model.
+    to allow for generating a version while `touch`ing a model.
   - [#328](https://github.com/airblade/paper_trail/pull/328) / [#326](https://github.com/airblade/paper_trail/issues/326) /
     [#307](https://github.com/airblade/paper_trail/issues/307) - `Model.paper_trail_enabled_for_model?` and
     `model_instance.without_versioning` is now thread-safe.
@@ -74,8 +82,8 @@ in the `PaperTrail::Version` class through a `Rails::Engine` when the gem is use
   - [#312](https://github.com/airblade/paper_trail/issues/312) - Fix RSpec `with_versioning` class level helper method.
   - `model_instance.without_versioning` now yields the `model_instance`, enabling syntax like this:
     `model_instance.without_versioning { |obj| obj.update_attributes(:name => 'value') }`.
-  - Deprecated `Model.paper_trail_on` and `Model.paper_trail_off` in favor of bang versions of the methods. Deprecation warning
-    informs users that the non-bang versions of the methods will be removed in version `4.0`.
+  - Deprecated `Model.paper_trail_on` and `Model.paper_trail_off` in favor of bang versions of the methods.
+    Deprecation warning informs users that the non-bang versions of the methods will be removed in version `4.0`
 
 ## 3.0.0
 

@@ -72,8 +72,8 @@ describe Widget do
 
   describe "Methods" do
     describe "Instance", :versioning => true do
-      describe :originator do
-        it { should respond_to(:originator) }
+      describe '#paper_trail_originator' do
+        it { should respond_to(:paper_trail_originator) }
 
         describe "return value" do
           let(:orig_name) { Faker::Name.name }
@@ -84,9 +84,9 @@ describe Widget do
             specify { widget.should be_live }
 
             it "should return the originator for the model at a given state" do
-              widget.originator.should == orig_name
+              widget.paper_trail_originator.should == orig_name
               widget.whodunnit(new_name) { |w| w.update_attributes(:name => 'Elizabeth') }
-              widget.originator.should == new_name
+              widget.paper_trail_originator.should == new_name
             end
           end
 
@@ -99,13 +99,34 @@ describe Widget do
             let(:reified_widget) { widget.versions[1].reify }
 
             it "should return the appropriate originator" do
-              reified_widget.originator.should == orig_name
+              reified_widget.paper_trail_originator.should == orig_name
             end
           end
         end
       end
 
-      describe :version_at do
+      describe "#originator" do
+        subject { widget }
+
+        it { is_expected.to respond_to(:originator) }
+        let(:warning_msg) do
+          "DEPRECATED: use `paper_trail_originator` instead of `originator`." +
+          " Support for `originator` will be removed in PaperTrail 4.0"
+        end
+
+        it 'should set the invoke `paper_trail_originator`' do
+          is_expected.to receive(:warn)
+          is_expected.to receive(:paper_trail_originator)
+          subject.originator
+        end
+
+        it 'should display a deprecation warning' do
+          is_expected.to receive(:warn).with(warning_msg)
+          subject.originator
+        end
+      end
+
+      describe '#version_at' do
         it { should respond_to(:version_at) }
 
         context "Timestamp argument is AFTER object has been destroyed" do

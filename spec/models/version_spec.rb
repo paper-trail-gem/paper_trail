@@ -22,13 +22,60 @@ describe PaperTrail::Version do
     describe "Instance" do
       subject { PaperTrail::Version.new(attributes) rescue PaperTrail::Version.new }
 
-      describe :terminator do
+      describe '#paper_trail_originator' do
+        it { is_expected.to respond_to(:paper_trail_originator) }
+
+        context "No previous versions" do
+          specify { expect(subject.previous).to be_nil }
+
+          it "should return nil" do
+            expect(subject.paper_trail_originator).to be_nil
+          end
+        end
+
+        context "Has previous version", :versioning => true do
+          let(:name) { Faker::Name.name }
+          let(:widget) { Widget.create!(name: Faker::Name.name) }
+          before do
+            widget.versions.first.update_attributes!(:whodunnit => name)
+            widget.update_attributes!(name: Faker::Name.first_name)
+          end
+          subject { widget.versions.last }
+
+          specify { expect(subject.previous).to be_instance_of(PaperTrail::Version) }
+
+          it "should return nil" do
+            expect(subject.paper_trail_originator).to eq(name)
+          end
+        end
+      end
+
+      describe "#originator" do
+        it { is_expected.to respond_to(:originator) }
+        let(:warning_msg) do
+          "DEPRECATED: use `paper_trail_originator` instead of `originator`." +
+          " Support for `originator` will be removed in PaperTrail 4.0"
+        end
+
+        it 'should set the invoke `paper_trail_originator`' do
+          is_expected.to receive(:warn)
+          is_expected.to receive(:paper_trail_originator)
+          subject.originator
+        end
+
+        it 'should display a deprecation warning' do
+          is_expected.to receive(:warn).with(warning_msg)
+          subject.originator
+        end
+      end
+
+      describe '#terminator' do
         it { should respond_to(:terminator) }
 
         let(:attributes) { {:whodunnit => Faker::Name.first_name} }
 
         it "is an alias for the `whodunnit` attribute" do
-          subject.whodunnit.should == attributes[:whodunnit]
+          subject.terminator.should == attributes[:whodunnit]
         end
       end
 
