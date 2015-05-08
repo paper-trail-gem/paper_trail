@@ -182,6 +182,11 @@ class SetUpTestTables < ActiveRecord::Migration
       t.string :name
       t.string :color
     end
+
+    create_table :boolits, :force => true do |t|
+      t.string :name
+      t.boolean :scoped, :default => true
+    end
   end
 
   def self.down
@@ -215,6 +220,7 @@ class SetUpTestTables < ActiveRecord::Migration
     drop_table :orders
     drop_table :line_items
     drop_table :fruits
+    drop_table :boolits
     remove_index :version_associations, :column => [:version_id]
     remove_index :version_associations, :name => 'index_version_associations_on_foreign_key'
     drop_table :version_associations
