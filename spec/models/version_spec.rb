@@ -58,10 +58,10 @@ describe PaperTrail::Version, :type => :model do
 
         context "Has previous version", :versioning => true do
           let(:name) { Faker::Name.name }
-          let(:widget) { Widget.create!(name: Faker::Name.name) }
+          let(:widget) { Widget.create!(:name => Faker::Name.name) }
           before do
             widget.versions.first.update_attributes!(:whodunnit => name)
-            widget.update_attributes!(name: Faker::Name.first_name)
+            widget.update_attributes!(:name => Faker::Name.first_name)
           end
           subject { widget.versions.last }
 
