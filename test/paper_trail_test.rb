@@ -8,6 +8,13 @@ class PaperTrailTest < ActiveSupport::TestCase
   test 'Version Number' do
     assert PaperTrail.const_defined?(:VERSION)
   end
+  
+  test 'enabled is thread-safe' do
+    Thread.new do
+      PaperTrail.enabled = false
+    end.join
+    assert PaperTrail.enabled?
+  end
 
   test 'create with plain model class' do
     widget = Widget.create
