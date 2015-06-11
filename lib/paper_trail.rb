@@ -104,7 +104,7 @@ module PaperTrail
   end
 
   def self.transaction?
-    ActiveRecord::Base.connection.open_transactions > 0
+    ::ActiveRecord::Base.connection.open_transactions > 0
   end
 
   def self.transaction_id
@@ -149,7 +149,7 @@ end
 
 # Require frameworks
 require 'paper_trail/frameworks/sinatra'
-if defined? Rails
+if defined? ::Rails
   require 'paper_trail/frameworks/rails'
 else
   require 'paper_trail/frameworks/active_record'
