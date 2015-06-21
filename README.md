@@ -563,7 +563,13 @@ class Post < ActiveRecord::Base
 end
 ```
 
-This allows you to store each model's versions in a separate table, which is useful if you have a lot of versions being created.
+### Advantages
+
+1. For models which have a lot of versions, storing each model's versions in a
+   separate table can improve the performance of certain database queries.
+1. Store different version [metadata](#storing-metadata) for different models.
+
+### Configuration
 
 If you are using Postgres, you should also define the sequence that your custom version class will use:
 
@@ -573,8 +579,6 @@ class PostVersion < PaperTrail::Version
   self.sequence_name = :post_versions_id_seq
 end
 ```
-
-Alternatively you could store certain metadata for one type of version, and other metadata for other versions.
 
 If you only use custom version classes and don't use PaperTrail's built-in one, on Rails `>= 3.2` you must:
 
