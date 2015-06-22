@@ -416,8 +416,10 @@ Undeleting is just as simple:
 >> widget.save                         # the widget lives!
 ```
 
-In fact you could use PaperTrail to implement an undo system, though I haven't had the opportunity yet to do it myself.  However [Ryan Bates has](http://railscasts.com/episodes/255-undo-with-paper-trail)!
+You could even use PaperTrail to implement an undo system, [Ryan Bates has!][3]
 
+If your model uses [optimistic locking][1] don't forget to [increment your
+`lock_version`][2] before saving or you'll get a `StaleObjectError`.
 
 ## Navigating Versions
 
@@ -1265,3 +1267,7 @@ Many thanks to:
 
 Copyright (c) 2011 Andy Stewart (boss@airbladesoftware.com).
 Released under the MIT licence.
+
+[1]: http://api.rubyonrails.org/classes/ActiveRecord/Locking/Optimistic.html
+[2]: https://github.com/airblade/paper_trail/issues/163
+[3]: http://railscasts.com/episodes/255-undo-with-paper-trail
