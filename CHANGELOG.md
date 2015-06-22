@@ -65,6 +65,8 @@ If you depend on the `RSpec` or `Cucumber` helpers, you will need to [manually l
     to `PaperTrail::Serializers::YAML`.
   - Both `PaperTrail.config` and `PaperTrail.configure` are now identical, and will both return the `PaperTrail::Config`
     instance and also yield it if a block is provided.
+  - [#248](https://github.com/airblade/paper_trail/issues/248) - The migrations
+    created by the generator now use `longtext` instead of `text` in MySQL.
 
 ## 3.0.8
 
