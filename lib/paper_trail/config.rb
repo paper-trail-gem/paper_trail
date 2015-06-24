@@ -1,4 +1,5 @@
 require 'singleton'
+require 'paper_trail/serializers/yaml'
 
 module PaperTrail
   class Config
