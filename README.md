@@ -237,21 +237,22 @@ This gives you a `versions` method which returns the paper trail of changes to
 your model.
 
 ```ruby
->> widget = Widget.find 42
->> widget.versions             # [<PaperTrail::Version>, <PaperTrail::Version>, ...]
+widget = Widget.find 42
+widget.versions
+# [<PaperTrail::Version>, <PaperTrail::Version>, ...]
 ```
 
 Once you have a version, you can find out what happened:
 
 ```ruby
->> v = widget.versions.last
->> v.event                     # 'update' (or 'create' or 'destroy')
->> v.whodunnit                 # '153'  (if the update was via a controller and
-                               #         the controller has a current_user method,
-                               #         here returning the id of the current user)
->> v.created_at                # when the update occurred
->> widget = v.reify            # the widget as it was before the update;
-                               # would be nil for a create event
+v = widget.versions.last
+v.event                     # 'update' (or 'create' or 'destroy')
+v.whodunnit                 # '153'  (if the update was via a controller and
+                            #         the controller has a current_user method,
+                            #         here returning the id of the current user)
+v.created_at                # when the update occurred
+widget = v.reify            # the widget as it was before the update;
+                            # would be nil for a create event
 ```
 
 PaperTrail stores the pre-change version of the model, unlike some other
@@ -260,15 +261,15 @@ useful when you start keeping a paper trail for models that already have records
 in the database.
 
 ```ruby
->> widget = Widget.find 153
->> widget.name                                 # 'Doobly'
+widget = Widget.find 153
+widget.name                                 # 'Doobly'
 
 # Add has_paper_trail to Widget model.
 
->> widget.versions                             # []
->> widget.update_attributes :name => 'Wotsit'
->> widget.versions.last.reify.name             # 'Doobly'
->> widget.versions.last.event                  # 'update'
+widget.versions                             # []
+widget.update_attributes :name => 'Wotsit'
+widget.versions.last.reify.name             # 'Doobly'
+widget.versions.last.event                  # 'update'
 ```
 
 This also means that PaperTrail does not waste space storing a version of the
@@ -322,17 +323,17 @@ attempt to use to fill the `event` field before falling back on one of the
 default events.
 
 ```ruby
->> a = Article.create
->> a.versions.size                           # 1
->> a.versions.last.event                     # 'create'
->> a.paper_trail_event = 'update title'
->> a.update_attributes :title => 'My Title'
->> a.versions.size                           # 2
->> a.versions.last.event                     # 'update title'
->> a.paper_trail_event = nil
->> a.update_attributes :title => "Alternate"
->> a.versions.size                           # 3
->> a.versions.last.event                     # 'update'
+a = Article.create
+a.versions.size                           # 1
+a.versions.last.event                     # 'create'
+a.paper_trail_event = 'update title'
+a.update_attributes :title => 'My Title'
+a.versions.size                           # 2
+a.versions.last.event                     # 'update title'
+a.paper_trail_event = nil
+a.update_attributes :title => "Alternate"
+a.versions.size                           # 3
+a.versions.last.event                     # 'update'
 ```
 
 ## Choosing When To Save New Versions
@@ -365,13 +366,13 @@ attributes will be ignored if some other change causes a new
 `PaperTrail::Version` to be created.  For example:
 
 ```ruby
->> a = Article.create
->> a.versions.length                         # 1
->> a.update_attributes :title => 'My Title', :rating => 3
->> a.versions.length                         # 1
->> a.update_attributes :title => 'Greeting', :content => 'Hello'
->> a.versions.length                         # 2
->> a.previous_version.title                  # 'My Title'
+a = Article.create
+a.versions.length                         # 1
+a.update_attributes :title => 'My Title', :rating => 3
+a.versions.length                         # 1
+a.update_attributes :title => 'Greeting', :content => 'Hello'
+a.versions.length                         # 2
+a.previous_version.title                  # 'My Title'
 ```
 
 Or, you can specify a list of all attributes you care about:
@@ -385,13 +386,13 @@ end
 This means that only changes to the `title` will save a version of the article:
 
 ```ruby
->> a = Article.create
->> a.versions.length                         # 1
->> a.update_attributes :title => 'My Title'
->> a.versions.length                         # 2
->> a.update_attributes :content => 'Hello'
->> a.versions.length                         # 2
->> a.previous_version.content                # nil
+a = Article.create
+a.versions.length                         # 1
+a.update_attributes :title => 'My Title'
+a.versions.length                         # 2
+a.update_attributes :content => 'Hello'
+a.versions.length                         # 2
+a.previous_version.content                # nil
 ```
 
 The `:ignore` and `:only` options can also accept `Hash` arguments, where the :
@@ -406,18 +407,18 @@ This means that if the `title` is not blank, then only changes to the `title`
 will save a version of the article:
 
 ```ruby
->> a = Article.create
->> a.versions.length                         # 1
->> a.update_attributes :content => 'Hello'
->> a.versions.length                         # 2
->> a.update_attributes :title => 'My Title'
->> a.versions.length                         # 3
->> a.update_attributes :content => 'Hai'
->> a.versions.length                         # 3
->> a.previous_version.content                # "Hello"
->> a.update_attributes :title => 'Dif Title'
->> a.versions.length                         # 4
->> a.previous_version.content                # "Hai"
+a = Article.create
+a.versions.length                         # 1
+a.update_attributes :content => 'Hello'
+a.versions.length                         # 2
+a.update_attributes :title => 'My Title'
+a.versions.length                         # 3
+a.update_attributes :content => 'Hai'
+a.versions.length                         # 3
+a.previous_version.content                # "Hello"
+a.update_attributes :title => 'Dif Title'
+a.versions.length                         # 4
+a.previous_version.content                # "Hai"
 ```
 
 Passing both `:ignore` and `:only` options will result in the article being
@@ -441,18 +442,18 @@ end
 PaperTrail makes reverting to a previous version easy:
 
 ```ruby
->> widget = Widget.find 42
->> widget.update_attributes :name => 'Blah blah'
+widget = Widget.find 42
+widget.update_attributes :name => 'Blah blah'
 # Time passes....
->> widget = widget.previous_version  # the widget as it was before the update
->> widget.save                       # reverted
+widget = widget.previous_version  # the widget as it was before the update
+widget.save                       # reverted
 ```
 
 Alternatively you can find the version at a given time:
 
 ```ruby
->> widget = widget.version_at(1.day.ago)  # the widget as it was one day ago
->> widget.save                            # reverted
+widget = widget.version_at(1.day.ago)  # the widget as it was one day ago
+widget.save                            # reverted
 ```
 
 Note `version_at` gives you the object, not a version, so you don't need to call
@@ -461,11 +462,11 @@ Note `version_at` gives you the object, not a version, so you don't need to call
 Undeleting is just as simple:
 
 ```ruby
->> widget = Widget.find 42
->> widget.destroy
+widget = Widget.find 42
+widget.destroy
 # Time passes....
->> widget = PaperTrail::Version.find(153).reify  # the widget as it was before destruction
->> widget.save                         # the widget lives!
+widget = PaperTrail::Version.find(153).reify  # the widget as it was before destruction
+widget.save                         # the widget lives!
 ```
 
 You could even use PaperTrail to implement an undo system, [Ryan Bates has!][3]
@@ -479,54 +480,54 @@ You can call `previous_version` and `next_version` on an item to get it as it
 was/became.  Note that these methods reify the item for you.
 
 ```ruby
->> live_widget = Widget.find 42
->> live_widget.versions.length           # 4 for example
->> widget = live_widget.previous_version # => widget == live_widget.versions.last.reify
->> widget = widget.previous_version      # => widget == live_widget.versions[-2].reify
->> widget = widget.next_version          # => widget == live_widget.versions.last.reify
->> widget.next_version                   # live_widget
+live_widget = Widget.find 42
+live_widget.versions.length           # 4 for example
+widget = live_widget.previous_version # => widget == live_widget.versions.last.reify
+widget = widget.previous_version      # => widget == live_widget.versions[-2].reify
+widget = widget.next_version          # => widget == live_widget.versions.last.reify
+widget.next_version                   # live_widget
 ```
 
 If instead you have a particular `version` of an item you can navigate to the
 previous and next versions.
 
 ```ruby
->> widget = Widget.find 42
->> version = widget.versions[-2]    # assuming widget has several versions
->> previous = version.previous
->> next = version.next
+widget = Widget.find 42
+version = widget.versions[-2]    # assuming widget has several versions
+previous = version.previous
+next = version.next
 ```
 
 You can find out which of an item's versions yours is:
 
 ```ruby
->> current_version_number = version.index    # 0-based
+current_version_number = version.index    # 0-based
 ```
 
 If you got an item by reifying one of its versions, you can navigate back to the
 version it came from:
 
 ```ruby
->> latest_version = Widget.find(42).versions.last
->> widget = latest_version.reify
->> widget.version == latest_version    # true
+latest_version = Widget.find(42).versions.last
+widget = latest_version.reify
+widget.version == latest_version    # true
 ```
 
 You can find out whether a model instance is the current, live one -- or whether
 it came instead from a previous version -- with `live?`:
 
 ```ruby
->> widget = Widget.find 42
->> widget.live?                        # true
->> widget = widget.previous_version
->> widget.live?                        # false
+widget = Widget.find 42
+widget.live?                        # true
+widget = widget.previous_version
+widget.live?                        # false
 ```
 
 And you can perform `WHERE` queries for object versions based on attributes:
 
 ```ruby
->> # All versions that meet these criteria.
->> PaperTrail::Version.where_object(content: "Hello", title: "Article")
+# All versions that meet these criteria.
+PaperTrail::Version.where_object(content: "Hello", title: "Article")
 ```
 
 ## Finding Out Who Was Responsible For A Change
@@ -550,9 +551,9 @@ end
 In a console session you can manually set who is responsible like this:
 
 ```ruby
->> PaperTrail.whodunnit = 'Andy Stewart'
->> widget.update_attributes :name => 'Wibble'
->> widget.versions.last.whodunnit              # Andy Stewart
+PaperTrail.whodunnit = 'Andy Stewart'
+widget.update_attributes :name => 'Wibble'
+widget.versions.last.whodunnit              # Andy Stewart
 ```
 
 You can avoid having to do this manually by setting your initializer to pick up
@@ -576,15 +577,15 @@ without overwriting value of `PaperTrail.whodunnit`. It is possible to define
 the `whodunnit` value for an operation inside a block like this:
 
 ```ruby
->> PaperTrail.whodunnit = 'Andy Stewart'
->> widget.whodunnit('Lucas Souza') do
->>   widget.update_attributes :name => 'Wibble'
->> end
->> widget.versions.last.whodunnit              # Lucas Souza
->> widget.update_attributes :name => 'Clair'
->> widget.versions.last.whodunnit              # Andy Stewart
->> widget.whodunnit('Ben Atkins') { |w| w.update_attributes :name => 'Beth' } # this syntax also works
->> widget.versions.last.whodunnit              # Ben Atkins
+PaperTrail.whodunnit = 'Andy Stewart'
+widget.whodunnit('Lucas Souza') do
+  widget.update_attributes :name => 'Wibble'
+end
+widget.versions.last.whodunnit              # Lucas Souza
+widget.update_attributes :name => 'Clair'
+widget.versions.last.whodunnit              # Andy Stewart
+widget.whodunnit('Ben Atkins') { |w| w.update_attributes :name => 'Beth' } # this syntax also works
+widget.versions.last.whodunnit              # Ben Atkins
 ```
 
 A version's `whodunnit` records who changed the object causing the `version` to
@@ -598,20 +599,20 @@ To find out who made a version's object look that way, use
 like it does, call `paper_trail_originator` on the object.
 
 ```ruby
->> widget = Widget.find 153                    # assume widget has 0 versions
->> PaperTrail.whodunnit = 'Alice'
->> widget.update_attributes :name => 'Yankee'
->> widget..paper_trail_originator              # 'Alice'
->> PaperTrail.whodunnit = 'Bob'
->> widget.update_attributes :name => 'Zulu'
->> widget.paper_trail_originator               # 'Bob'
->> first_version, last_version = widget.versions.first, widget.versions.last
->> first_version.whodunnit                     # 'Alice'
->> first_version.paper_trail_originator        # nil
->> first_version.terminator                    # 'Alice'
->> last_version.whodunnit                      # 'Bob'
->> last_version.paper_trail_originator         # 'Alice'
->> last_version.terminator                     # 'Bob'
+widget = Widget.find 153                    # assume widget has 0 versions
+PaperTrail.whodunnit = 'Alice'
+widget.update_attributes :name => 'Yankee'
+widget..paper_trail_originator              # 'Alice'
+PaperTrail.whodunnit = 'Bob'
+widget.update_attributes :name => 'Zulu'
+widget.paper_trail_originator               # 'Bob'
+first_version, last_version = widget.versions.first, widget.versions.last
+first_version.whodunnit                     # 'Alice'
+first_version.paper_trail_originator        # nil
+first_version.terminator                    # 'Alice'
+last_version.whodunnit                      # 'Bob'
+last_version.paper_trail_originator         # 'Alice'
+last_version.terminator                     # 'Bob'
 ```
 
 ## Custom Version Classes
@@ -716,15 +717,15 @@ class Treasure < ActiveRecord::Base
   has_paper_trail
 end
 
->> treasure.amount                  # 100
->> treasure.location.latitude       # 12.345
+treasure.amount                  # 100
+treasure.location.latitude       # 12.345
 
->> treasure.update_attributes :amount => 153
->> treasure.location.update_attributes :latitude => 54.321
+treasure.update_attributes :amount => 153
+treasure.location.update_attributes :latitude => 54.321
 
->> t = treasure.versions.last.reify(:has_one => true)
->> t.amount                         # 100
->> t.location.latitude              # 12.345
+t = treasure.versions.last.reify(:has_one => true)
+t.amount                         # 100
+t.location.latitude              # 12.345
 ```
 
 If the parent and child are updated in one go, PaperTrail can use the
@@ -732,17 +733,17 @@ aforementioned `transaction_id` to reify the models as they were before the
 transaction (instead of before the update to the model).
 
 ```ruby
->> treasure.amount                  # 100
->> treasure.location.latitude       # 12.345
+treasure.amount                  # 100
+treasure.location.latitude       # 12.345
 
->> Treasure.transaction do
->> treasure.location.update_attributes :latitude => 54.321
->> treasure.update_attributes :amount => 153
->> end
+Treasure.transaction do
+treasure.location.update_attributes :latitude => 54.321
+treasure.update_attributes :amount => 153
+end
 
->> t = treasure.versions.last.reify(:has_one => true)
->> t.amount                         # 100
->> t.location.latitude              # 12.345, instead of 54.321
+t = treasure.versions.last.reify(:has_one => true)
+t.amount                         # 100
+t.location.latitude              # 12.345, instead of 54.321
 ```
 
 By default, PaperTrail excludes an associated record from the reified parent
@@ -764,17 +765,17 @@ class Wotsit < ActiveRecord::Base
   belongs_to :widget
 end
 
->> widget = Widget.create(:name => 'widget_0')
->> widget.update_attributes(:name => 'widget_1')
->> widget.create_wotsit(:name => 'wotsit')
+widget = Widget.create(:name => 'widget_0')
+widget.update_attributes(:name => 'widget_1')
+widget.create_wotsit(:name => 'wotsit')
 
->> widget_0 = widget.versions.last.reify(:has_one => true)
->> widget_0.wotsit                                  # nil
+widget_0 = widget.versions.last.reify(:has_one => true)
+widget_0.wotsit                                  # nil
 
->> widget_0 = widget.versions.last.reify(:has_one => true, :mark_for_destruction => true)
->> widget_0.wotsit.marked_for_destruction?          # true
->> widget_0.save!
->> widget.reload.wotsit                             # nil
+widget_0 = widget.versions.last.reify(:has_one => true, :mark_for_destruction => true)
+widget_0.wotsit.marked_for_destruction?          # true
+widget_0.save!
+widget.reload.wotsit                             # nil
 ```
 
 **Caveats:**
@@ -817,19 +818,19 @@ end
 Then each of the following will store authorship versions:
 
 ```ruby
->> @book.authors << @dostoyevsky
->> @book.authors.create :name => 'Tolstoy'
->> @book.authorships.last.destroy
->> @book.authorships.clear
->> @book.author_ids = [@solzhenistyn.id, @dostoyevsky.id]
+@book.authors << @dostoyevsky
+@book.authors.create :name => 'Tolstoy'
+@book.authorships.last.destroy
+@book.authorships.clear
+@book.author_ids = [@solzhenistyn.id, @dostoyevsky.id]
 ```
 
 But none of these will:
 
 ```ruby
->> @book.authors.delete @tolstoy
->> @book.author_ids = []
->> @book.authors = []
+@book.authors.delete @tolstoy
+@book.author_ids = []
+@book.authors = []
 ```
 
 Having said that, you can apparently get all these working (I haven't tested it
@@ -941,12 +942,12 @@ attributes PaperTrail is ignoring) in each `update` version.  You can use the
 `version.changeset` method to retrieve it.  For example:
 
 ```ruby
->> widget = Widget.create :name => 'Bob'
->> widget.versions.last.changeset                # {'name' => [nil, 'Bob']}
->> widget.update_attributes :name => 'Robert'
->> widget.versions.last.changeset                # {'name' => ['Bob', 'Robert']}
->> widget.destroy
->> widget.versions.last.changeset                # {}
+widget = Widget.create :name => 'Bob'
+widget.versions.last.changeset                # {'name' => [nil, 'Bob']}
+widget.update_attributes :name => 'Robert'
+widget.versions.last.changeset                # {'name' => ['Bob', 'Robert']}
+widget.destroy
+widget.versions.last.changeset                # {}
 ```
 
 Note PaperTrail only stores the changes for creation and updates; it doesn't
@@ -996,7 +997,7 @@ class.
 On a global level you can turn PaperTrail off like this:
 
 ```ruby
->> PaperTrail.enabled = false
+PaperTrail.enabled = false
 ```
 
 For example, you might want to disable PaperTrail in your Rails application's
@@ -1060,13 +1061,13 @@ If you are about to change some widgets and you don't want a paper trail of your
 changes, you can turn PaperTrail off like this:
 
 ```ruby
->> Widget.paper_trail_off!
+Widget.paper_trail_off!
 ```
 
 And on again like this:
 
 ```ruby
->> Widget.paper_trail_on!
+Widget.paper_trail_on!
 ```
 
 ### Per method call
@@ -1092,7 +1093,7 @@ By default, PaperTrail stores your changes as a `YAML` dump. You can override
 this with the serializer config option:
 
 ```ruby
->> PaperTrail.serializer = MyCustomSerializer
+PaperTrail.serializer = MyCustomSerializer
 ```
 
 A valid serializer is a `module` (or `class`) that defines a `load` and `dump`
@@ -1131,11 +1132,11 @@ version `5.0` or greater.
 
 ```ruby
 # Enable support
->> PaperTrail.config.serialized_attributes = true
+PaperTrail.config.serialized_attributes = true
 # Disable support
->> PaperTrail.config.serialized_attributes = false
+PaperTrail.config.serialized_attributes = false
 # Get current setting
->> PaperTrail.serialized_attributes?
+PaperTrail.serialized_attributes?
 ```
 
 ## Limiting the number of versions created per object instance
@@ -1149,9 +1150,9 @@ other than `create` events (which will always be preserved if they are stored).
 ```ruby
 # will make it so that a maximum of 4 versions will be stored for each object
 # (the 3 most recent ones plus a `create` event)
->> PaperTrail.config.version_limit = 3
+PaperTrail.config.version_limit = 3
 # disables/removes the version limit
->> PaperTrail.config.version_limit = nil
+PaperTrail.config.version_limit = nil
 ```
 
 ## Deleting Old Versions
@@ -1165,7 +1166,7 @@ sql> delete from versions where created_at < 2010-06-01;
 ```
 
 ```ruby
->> PaperTrail::Version.delete_all ["created_at < ?", 1.week.ago]
+PaperTrail::Version.delete_all ["created_at < ?", 1.week.ago]
 ```
 
 ## Testing
