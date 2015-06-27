@@ -4,8 +4,6 @@ PaperTrail lets you track changes to your models' data.  It's good for auditing
 or versioning.  You can see how a model looked at any stage in its lifecycle,
 revert it to any version, and even undelete it after it's been destroyed.
 
-There's an excellent [RailsCast on implementing Undo with Paper Trail][8].
-
 - [Features](#features)
 - [Compatibility](#compatibility)
 - [Installation](#installation)
@@ -1364,6 +1362,7 @@ export DB=sqlite # this is default
   [Ilya Bodrov](http://www.sitepoint.com/author/ibodrov), 10th April 2014
 * [Using PaperTrail to track stack traces](http://rubyrailsexpert.com/?p=36),
   T James Corcoran's blog, 1st October 2013.
+* [RailsCast #255 - Undo with Paper Trail][3], Feb 28, 2011
 * [RailsCast #255 - Undo with PaperTrail](http://railscasts.com/episodes/255-undo-with-paper-trail),
   28th February 2011.
 * [Keep a Paper Trail with PaperTrail](http://www.linux-mag.com/id/7528),
@@ -1450,7 +1449,6 @@ Released under the MIT licence.
 [5]: https://travis-ci.org/airblade/paper_trail
 [6]: https://img.shields.io/gemnasium/airblade/paper_trail.svg
 [7]: https://gemnasium.com/airblade/paper_trail
-[8]: http://railscasts.com/episodes/255-undo-with-paper-trail
 [9]: https://github.com/airblade/paper_trail/tree/3.0-stable
 [10]: https://github.com/airblade/paper_trail/tree/2.7-stable
 [11]: https://github.com/airblade/paper_trail/tree/rails2
