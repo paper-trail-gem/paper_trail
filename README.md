@@ -4,6 +4,28 @@ PaperTrail lets you track changes to your models' data.  It's good for auditing 
 
 There's an excellent [RailsCast on implementing Undo with Paper Trail](http://railscasts.com/episodes/255-undo-with-paper-trail).
 
+- [Features](#features)
+- [Compatibility](#compatibility)
+- [Installation](#installation)
+- [API Summary](#api-summary)
+- [Basic Usage](#basic-usage)
+- [Choosing Lifecycle Events To Monitor](#choosing-lifecycle-events-to-monitor)
+- [Choosing When To Save New Versions](#choosing-when-to-save-new-versions)
+- [Choosing Attributes To Monitor](#choosing-attributes-to-monitor)
+- [Reverting And Undeleting A Model](#reverting-and-undeleting-a-model)
+- [Navigating Versions](#navigating-versions)
+- [Finding Out Who Was Responsible For A Change](#finding-out-who-was-responsible-for-a-change)
+- [Custom Version Classes](#custom-version-classes)
+- [Associations](#associations)
+- [Storing metadata](#storing-metadata)
+- [Diffing Versions](#diffing-versions)
+- [Turning PaperTrail Off/On](#turning-papertrail-offon)
+- [Using a custom serializer](#using-a-custom-serializer)
+- [SerializedAttributes support](#serializedattributes-support)
+- [Limiting the number of versions created per object instance](#limiting-the-number-of-versions-created-per-object-instance)
+- [Deleting Old Versions](#deleting-old-versions)
+- [Testing](#testing)
+
 ## Features
 
 * Stores every create, update and destroy (or only the lifecycle events you specify).
