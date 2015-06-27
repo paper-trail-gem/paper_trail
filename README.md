@@ -22,7 +22,7 @@ revert it to any version, and even undelete it after it's been destroyed.
 - [Turning PaperTrail Off/On](#turning-papertrail-offon)
 - [Using a custom serializer](#using-a-custom-serializer)
 - [SerializedAttributes support](#serializedattributes-support)
-- [Limiting the number of versions created per object instance](#limiting-the-number-of-versions-created-per-object-instance)
+- [Limiting the Number of Versions Created](#limiting-the-number-of-versions-created)
 - [Deleting Old Versions](#deleting-old-versions)
 - [Testing](#testing)
 
@@ -1137,19 +1137,15 @@ PaperTrail.config.serialized_attributes = false
 PaperTrail.serialized_attributes?
 ```
 
-## Limiting the number of versions created per object instance
+## Limiting the Number of Versions Created
 
-If you are wary of your `versions` table growing to an unwieldy size, or just
-don't care to track more than a certain number of versions per object, there is
-a configuration option that can be set to cap the number of versions saved per
-object. Note that this value must be numeric, and it only applies to versions
-other than `create` events (which will always be preserved if they are stored).
+Configure `version_limit` to cap the number of versions saved per record. This
+does not apply to `create` events.
 
 ```ruby
-# will make it so that a maximum of 4 versions will be stored for each object
-# (the 3 most recent ones plus a `create` event)
+# Limit: 4 versions per record (3 most recent, plus a `create` event)
 PaperTrail.config.version_limit = 3
-# disables/removes the version limit
+# Remove the limit
 PaperTrail.config.version_limit = nil
 ```
 
