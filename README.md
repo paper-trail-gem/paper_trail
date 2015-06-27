@@ -475,14 +475,13 @@ And you can perform `WHERE` queries for object versions based on attributes:
 
 ## Finding Out Who Was Responsible For A Change
 
-If your `ApplicationController` has a `current_user` method, PaperTrail will attempt to store the value returned by `current_user.id` in the version's `whodunnit` column (if it returns).  Note that this column is of type `String`, so you will have to convert it to an integer if it's an id and you want to look up the user later on:
+If your `ApplicationController` has a `current_user` method, PaperTrail will
+attempt to store the value returned by `current_user.id` in the version's
+`whodunnit` column.
 
-```ruby
->> last_change = widget.versions.last
->> user_who_made_the_change = User.find last_change.whodunnit.to_i
-```
-
-You may want PaperTrail to call a different method to find out who is responsible.  To do so, override the `user_for_paper_trail` method in your controller like this:
+You may want PaperTrail to call a different method to find out who is
+responsible.  To do so, override the `user_for_paper_trail` method in your
+controller like this:
 
 ```ruby
 class ApplicationController
@@ -694,7 +693,6 @@ end
   3. PaperTrail only reifies the first level of associations, i.e., it does not reify any associations of its associations, and so on.
   4. PaperTrail relies on the callbacks on the association model (and the :through association model for Has-Many-Through associations) to record the versions and the relationship between the versions. If the association is changed without invoking the callbacks, Reification won't work. Below are some examples:  
 
-
 Given these models:
 
 ```ruby
@@ -755,7 +753,6 @@ end
 ```
 
 See [issue 113](https://github.com/airblade/paper_trail/issues/113) for a discussion about this.
-
 
 ## Storing metadata
 
