@@ -1,8 +1,8 @@
-# PaperTrail [![Build Status](https://img.shields.io/travis/airblade/paper_trail/master.svg)](https://travis-ci.org/airblade/paper_trail) [![Dependency Status](https://img.shields.io/gemnasium/airblade/paper_trail.svg)](https://gemnasium.com/airblade/paper_trail)
+# PaperTrail [![Build Status][4]][5] [![Dependency Status][6]][7]
 
 PaperTrail lets you track changes to your models' data.  It's good for auditing or versioning.  You can see how a model looked at any stage in its lifecycle, revert it to any version, and even undelete it after it's been destroyed.
 
-There's an excellent [RailsCast on implementing Undo with Paper Trail](http://railscasts.com/episodes/255-undo-with-paper-trail).
+There's an excellent [RailsCast on implementing Undo with Paper Trail][8].
 
 - [Features](#features)
 - [Compatibility](#compatibility)
@@ -54,11 +54,11 @@ There's an excellent [RailsCast on implementing Undo with Paper Trail](http://ra
 
 Works with `ActiveRecord` 3+. Note: this code is on the `master` branch and tagged `v4.x`.
 
-Version 3 is on the branch named [`3.0-stable`](https://github.com/airblade/paper_trail/tree/3.0-stable) and is tagged `v3.x`, and works ActiveRecord 4 and ActiveRecord 3.
+Version 3 is on the branch named [`3.0-stable`][9] and is tagged `v3.x`, and works ActiveRecord 4 and ActiveRecord 3.
 
-Version 2 is on the branch named [`2.7-stable`](https://github.com/airblade/paper_trail/tree/2.7-stable) and is tagged `v2.x`, and works with Rails 3.
+Version 2 is on the branch named [`2.7-stable`][10] and is tagged `v2.x`, and works with Rails 3.
 
-The Rails 2.3 code is on the [`rails2`](https://github.com/airblade/paper_trail/tree/rails2) branch and tagged `v1.x`. These branches are both stable with their respective versions of Rails but will not have new features added/backported to them.
+The Rails 2.3 code is on the [`rails2`][11] branch and tagged `v1.x`. These branches are both stable with their respective versions of Rails but will not have new features added/backported to them.
 
 ## Installation
 
@@ -80,9 +80,9 @@ The Rails 2.3 code is on the [`rails2`](https://github.com/airblade/paper_trail/
 
 ### Sinatra
 
-In order to configure PaperTrail for usage with [Sinatra](http://www.sinatrarb.com),
+In order to configure PaperTrail for usage with [Sinatra][12],
 your `Sinatra` app must be using `ActiveRecord` 3 or 4. It is also recommended to use the
-[Sinatra ActiveRecord Extension](https://github.com/janko-m/sinatra-activerecord) or something similar for managing
+[Sinatra ActiveRecord Extension][13] or something similar for managing
 your applications `ActiveRecord` connection in a manner similar to the way `Rails` does. If using the aforementioned
 `Sinatra ActiveRecord Extension`, steps for setting up your app with PaperTrail will look something like this:
 
@@ -94,7 +94,7 @@ your applications `ActiveRecord` connection in a manner similar to the way `Rail
 
     `bundle exec rake db:create_migration NAME=create_versions`
 
-3. Copy contents of [create_versions.rb](https://raw.github.com/airblade/paper_trail/master/lib/generators/paper_trail/templates/create_versions.rb)
+3. Copy contents of [create_versions.rb][14]
 into the `create_versions` migration that was generated into your `db/migrate` directory.
 
 4. Run the migration.
@@ -108,7 +108,7 @@ PaperTrail provides a helper extension that acts similar to the controller mixin
 
 It will set `PaperTrail.whodunnit` to whatever is returned by a method named `user_for_paper_trail` which you can define inside your Sinatra Application. (by default it attempts to invoke a method named `current_user`)
 
-If you're using the modular [`Sinatra::Base`](http://www.sinatrarb.com/intro.html#Modular%20vs.%20Classic%20Style) style of application, you will need to register the extension:
+If you're using the modular [`Sinatra::Base`][15] style of application, you will need to register the extension:
 
 ```ruby
 # bleh_app.rb
@@ -774,7 +774,7 @@ module ActiveRecord
 end
 ```
 
-See [issue 113](https://github.com/airblade/paper_trail/issues/113) for a discussion about this.
+See [issue 113][16] for a discussion about this.
 
 ## Storing metadata
 
@@ -797,7 +797,7 @@ PaperTrail will call your proc with the current article and store the result in 
 N.B.  You must also:
 
 * Add your metadata columns to the `versions` table.
-* Declare your metadata columns using `attr_accessible`. (If you are using `ActiveRecord 3`, or `ActiveRecord 4` with the [ProtectedAttributes](https://github.com/rails/protected_attributes) gem)
+* Declare your metadata columns using `attr_accessible`. (If you are using `ActiveRecord 3`, or `ActiveRecord 4` with the [ProtectedAttributes][17] gem)
 
 For example:
 
@@ -834,7 +834,7 @@ end
 
 Remember to add those extra columns to your `versions` table and use `attr_accessible` ;)
 
-**NOTE FOR RAILS 4:** If you're using [Strong Parameters](https://github.com/rails/strong_parameters) in Rails 4 and have *not* included the `protected_attributes` gem, there's no need to declare your metadata columns using `attr_accessible`.
+**NOTE FOR RAILS 4:** If you're using [Strong Parameters][18] in Rails 4 and have *not* included the `protected_attributes` gem, there's no need to declare your metadata columns using `attr_accessible`.
 
 
 ## Diffing Versions
@@ -860,14 +860,14 @@ To diff non-adjacent versions you'll have to write your own code.  These librari
 
 For diffing two strings:
 
-* [htmldiff](http://github.com/myobie/htmldiff): expects but doesn't require HTML input and produces HTML output.  Works very well but slows down significantly on large (e.g. 5,000 word) inputs.
-* [differ](http://github.com/pvande/differ): expects plain text input and produces plain text/coloured/HTML/any output.  Can do character-wise, word-wise, line-wise, or arbitrary-boundary-string-wise diffs.  Works very well on non-HTML input.
-* [diff-lcs](https://github.com/halostatue/diff-lcs): old-school, line-wise diffs.
+* [htmldiff][19]: expects but doesn't require HTML input and produces HTML output.  Works very well but slows down significantly on large (e.g. 5,000 word) inputs.
+* [differ][20]: expects plain text input and produces plain text/coloured/HTML/any output.  Can do character-wise, word-wise, line-wise, or arbitrary-boundary-string-wise diffs.  Works very well on non-HTML input.
+* [diff-lcs][21]: old-school, line-wise diffs.
 
 For diffing two ActiveRecord objects:
 
-* [Jeremy Weiskotten's PaperTrail fork](http://github.com/jeremyw/paper_trail/blob/master/lib/paper_trail/has_paper_trail.rb#L151-156): uses ActiveSupport's diff to return an array of hashes of the changes.
-* [activerecord-diff](http://github.com/tim/activerecord-diff): rather like ActiveRecord::Dirty but also allows you to specify which columns to compare.
+* [Jeremy Weiskotten's PaperTrail fork][22]: uses ActiveSupport's diff to return an array of hashes of the changes.
+* [activerecord-diff][23]: rather like ActiveRecord::Dirty but also allows you to specify which columns to compare.
 
 If you wish to selectively record changes for some models but not others you can opt out of recording changes by passing `:save_changes => false` to your `has_paper_trail` method declaration.
 
@@ -974,13 +974,13 @@ By default, PaperTrail stores your changes as a `YAML` dump. You can override th
 
 A valid serializer is a `module` (or `class`) that defines a `load` and `dump` method.  These serializers are included in the gem for your convenience:
 
-* [PaperTrail::Serializers::YAML](https://github.com/airblade/paper_trail/blob/master/lib/paper_trail/serializers/yaml.rb) - Default
-* [PaperTrail::Serializers::JSON](https://github.com/airblade/paper_trail/blob/master/lib/paper_trail/serializers/json.rb)
+* [PaperTrail::Serializers::YAML][24] - Default
+* [PaperTrail::Serializers::JSON][25]
 
 ### PostgreSQL JSON column type support
 
 If you use PostgreSQL, and would like to store your `object` (and/or `object_changes`) data in a column of
-[type `JSON` or type `JSONB`](http://www.postgresql.org/docs/9.4/static/datatype-json.html),
+[type `JSON` or type `JSONB`][26],
 specify `json` instead of `text` for these columns in your migration:
 
 ```ruby
@@ -1043,7 +1043,7 @@ You may want to turn PaperTrail off to speed up your tests.  See the [Turning Pa
 
 ### RSpec
 
-PaperTrail provides a helper that works with [RSpec](https://github.com/rspec/rspec)
+PaperTrail provides a helper that works with [RSpec][27]
 to make it easier to control when `PaperTrail` is enabled during testing.
 
 If you wish to use the helper, you will need to require it in your RSpec test helper like so:
@@ -1129,7 +1129,7 @@ It is also possible to do assertions on the versions using `have_a_version_with`
 
 ### Cucumber
 
-PaperTrail provides a helper for [Cucumber](http://cukes.info) that works similar to the RSpec helper.
+PaperTrail provides a helper for [Cucumber][28] that works similar to the RSpec helper.
 If you wish to use the helper, you will need to require in your cucumber helper like so:
 
 ```ruby
@@ -1157,7 +1157,7 @@ If you are using PaperTrail with Rails, the helper will automatically set the `P
 
 ### Spork
 
-If you wish to use the `RSpec` or `Cucumber` helpers with [Spork](https://github.com/sporkrb/spork), you will need to
+If you wish to use the `RSpec` or `Cucumber` helpers with [Spork][29], you will need to
 manually require the helper(s) in your `prefork` block on your test helper, like so:
 
 ```ruby
@@ -1179,7 +1179,7 @@ end
 
 ### Zeus or Spring
 
-If you wish to use the `RSpec` or `Cucumber` helpers with [Zeus](https://github.com/burke/zeus) or [Spring](https://github.com/rails/spring), you will need to
+If you wish to use the `RSpec` or `Cucumber` helpers with [Zeus][30] or [Spring][31], you will need to
 manually require the helper(s) in your test helper, like so:
 
 ```ruby
@@ -1290,3 +1290,31 @@ Released under the MIT licence.
 [1]: http://api.rubyonrails.org/classes/ActiveRecord/Locking/Optimistic.html
 [2]: https://github.com/airblade/paper_trail/issues/163
 [3]: http://railscasts.com/episodes/255-undo-with-paper-trail
+[4]: https://img.shields.io/travis/airblade/paper_trail/master.svg
+[5]: https://travis-ci.org/airblade/paper_trail
+[6]: https://img.shields.io/gemnasium/airblade/paper_trail.svg
+[7]: https://gemnasium.com/airblade/paper_trail
+[8]: http://railscasts.com/episodes/255-undo-with-paper-trail
+[9]: https://github.com/airblade/paper_trail/tree/3.0-stable
+[10]: https://github.com/airblade/paper_trail/tree/2.7-stable
+[11]: https://github.com/airblade/paper_trail/tree/rails2
+[12]: http://www.sinatrarb.com
+[13]: https://github.com/janko-m/sinatra-activerecord
+[14]: https://raw.github.com/airblade/paper_trail/master/lib/generators/paper_trail/templates/create_versions.rb
+[15]: http://www.sinatrarb.com/intro.html#Modular%20vs.%20Classic%20Style
+[16]: https://github.com/airblade/paper_trail/issues/113
+[17]: https://github.com/rails/protected_attributes
+[18]: https://github.com/rails/strong_parameters
+[19]: http://github.com/myobie/htmldiff
+[20]: http://github.com/pvande/differ
+[21]: https://github.com/halostatue/diff-lcs
+[22]: http://github.com/jeremyw/paper_trail/blob/master/lib/paper_trail/has_paper_trail.rb#L151-156
+[23]: http://github.com/tim/activerecord-diff
+[24]: https://github.com/airblade/paper_trail/blob/master/lib/paper_trail/serializers/yaml.rb
+[25]: https://github.com/airblade/paper_trail/blob/master/lib/paper_trail/serializers/json.rb
+[26]: http://www.postgresql.org/docs/9.4/static/datatype-json.html
+[27]: https://github.com/rspec/rspec
+[28]: http://cukes.info
+[29]: https://github.com/sporkrb/spork
+[30]: https://github.com/burke/zeus
+[31]: https://github.com/rails/spring
