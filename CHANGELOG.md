@@ -1,3 +1,20 @@
+## 5.0.0 (Unreleased)
+
+### Changed
+
+- If you are tracking who is responsible for changes with `whodunnit`, be aware
+  that PaperTrail no longer adds the `set_paper_trail_whodunnit` before_filter
+  for you. Please add this before_filter to your ApplicationController to
+  continue recording whodunnit. See the readme for an example.
+
+### Added
+
+None
+
+### Fixed
+
+None
+
 ## 4.1.0 (Unreleased)
 
 ### Changed
@@ -6,7 +23,6 @@
   [#588](https://github.com/airblade/paper_trail/issues/588) -
   `PaperTrail.timestamp_field` should be assigned to match the `updated_at`
   value when a version is generated for new versions.
-  
 
 ### Added
 
