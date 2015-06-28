@@ -1,11 +1,12 @@
 ## 4.0.0 (Unreleased)
 
-##### Breaking change: if you use a custom initializer for PaperTrail in conjunction with Rails, you will need to add this line of code to the beginning of it:
-```ruby
-PaperTrail::Rails::Engine.eager_load!
-```
+### Changes
 
-*Also*
+- If you use a Rails initializer for PaperTrail add
+  `PaperTrail::Rails::Engine.eager_load!` to the beginning of it.
+  See the readme for an example.
+
+### Enhancements
 
 If you depend on the `RSpec` or `Cucumber` helpers, you will need to [manually load them into your test helper](https://github.com/airblade/paper_trail#testing).
 
@@ -171,7 +172,7 @@ in the `PaperTrail::Version` class through a `Rails::Engine` when the gem is use
   - [#216](https://github.com/airblade/paper_trail/pull/216) - Added helper & extension for [RSpec](https://github.com/rspec/rspec),
     and helper for [Cucumber](http://cukes.info).
   - [#212](https://github.com/airblade/paper_trail/pull/212) - Added `PaperTrail::Cleaner` module, useful for discarding draft versions.
-  - [#207](https://github.com/airblade/paper_trail/issues/207) - Versions for `'create'` events are now created with `create!` instead of 
+  - [#207](https://github.com/airblade/paper_trail/issues/207) - Versions for `'create'` events are now created with `create!` instead of
     `create` so that an exception gets raised if it is appropriate to do so.
   - [#199](https://github.com/airblade/paper_trail/pull/199) - Rails 4 compatibility.
   - [#165](https://github.com/airblade/paper_trail/pull/165) - Namespaced the `Version` class under the `PaperTrail` module.
