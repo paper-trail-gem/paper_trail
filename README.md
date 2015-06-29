@@ -646,25 +646,19 @@ class PostVersion < PaperTrail::Version
 end
 ```
 
-If you only use custom version classes and don't use PaperTrail's built-in one,
-on Rails `>= 3.2` you must:
-
-- either declare the `PaperTrail::Version` class to be abstract like this (in an
-  initializer):
+If you only use custom version classes and don't have a `versions` table, you
+must let ActiveRecord know that the `PaperTrail::Version` class is an
+`abstract_class`.
 
 ```ruby
-# config/initializers/paper_trail.rb
-
-# the following line is required for PaperTrail >= 4.0.0 with Rails
-PaperTrail::Rails::Engine.eager_load!
-
-PaperTrail::Version.module_eval do
-  self.abstract_class = true
+# app/models/paper_trail/version.rb
+module PaperTrail
+  class Version < ActiveRecord::Base
+    include PaperTrail::VersionConcern
+    self.abstract_class = true
+  end
 end
 ```
-
-- or create a `versions` table in the database so Rails can instantiate the
-  `PaperTrail::Version` superclass.
 
 You can also specify custom names for the versions and version associations.
 This is useful if you already have `versions` or/and `version` methods on your
@@ -853,7 +847,7 @@ end
 
 See [issue 113][16] for a discussion about this.
 
-## Storing metadata
+## Storing Metadata
 
 You can store arbitrary model-level metadata alongside each version like this:
 
@@ -872,26 +866,7 @@ end
 PaperTrail will call your proc with the current article and store the result in
 the `author_id` column of the `versions` table.
 
-N.B.  You must also:
-
-* Add your metadata columns to the `versions` table.
-* Declare your metadata columns using `attr_accessible`. (If you are using
-  `ActiveRecord 3`, or `ActiveRecord 4` with the [ProtectedAttributes][17] gem)
-
-For example:
-
-```ruby
-# config/initializers/paper_trail.rb
-
-# the following line is required for PaperTrail >= 4.0.0 with Rails
-PaperTrail::Rails::Engine.eager_load!
-
-module PaperTrail
-  class Version < ActiveRecord::Base
-    attr_accessible :author_id, :word_count, :answer
-  end
-end
-```
+### Advantages of Metadata
 
 Why would you do this?  In this example, `author_id` is an attribute of
 `Article` and PaperTrail will store it anyway in a serialized form in the
@@ -905,12 +880,11 @@ those versions you want:
 PaperTrail::Version.where(:author_id => author_id)
 ```
 
-Note you can pass a symbol as a value in the `meta` hash to signal a method to
-call.
+### Metadata from Controllers
 
-You can also store any information you like from your controller.  Just override
+You can also store any information you like from your controller.  Override
 the `info_for_paper_trail` method in your controller to return a hash whose keys
-correspond to columns in your `versions` table.  E.g.:
+correspond to columns in your `versions` table.
 
 ```ruby
 class ApplicationController
@@ -920,12 +894,23 @@ class ApplicationController
 end
 ```
 
-Remember to add those extra columns to your `versions` table and use
-`attr_accessible` ;)
+### Protected Attributes and Metadata
 
-**NOTE FOR RAILS 4:** If you're using [Strong Parameters][18] in Rails 4 and
-*have *not* included the `protected_attributes` gem, there's no need to declare
-*your metadata columns using `attr_accessible`.
+If you are using rails 3 or the [protected_attributes][17] gem you must declare 
+your metadata columns to be `attr_accessible`.
+
+```ruby
+# app/models/paper_trail/version.rb
+module PaperTrail
+  class Version < ActiveRecord::Base
+    include PaperTrail::VersionConcern
+    attr_accessible :author_id, :word_count, :answer
+  end
+end
+```
+
+If you're using [strong_parameters][18] instead of [protected_attributes][17]
+then there is no need to use `attr_accessible`.
 
 ## Diffing Versions
 
