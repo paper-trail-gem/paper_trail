@@ -73,6 +73,20 @@ class SetUpTestTables < ActiveRecord::Migration
       add_index :json_versions, [:item_type, :item_id]
     end
 
+    create_table :bananas, :force => true do |t|
+      t.timestamps :null => true
+    end
+
+    create_table :banana_versions, :force => true do |t|
+      t.string   :item_type, :null => false
+      t.integer  :item_id,   :null => false
+      t.string   :event,     :null => false
+      t.string   :whodunnit
+      t.text     :object
+      t.datetime :created_at
+    end
+    add_index :banana_versions, [:item_type, :item_id]
+
     create_table :wotsits, :force => true do |t|
       t.integer :widget_id
       t.string  :name
