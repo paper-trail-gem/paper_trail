@@ -628,6 +628,8 @@ class Post < ActiveRecord::Base
 end
 ```
 
+Unlike ActiveRecord's `class_name`, you'll have to supply the complete module path to the class (e.g. `Foo::BarVersion` if your class is inside the module `Foo`).
+
 ### Advantages
 
 1. For models which have a lot of versions, storing each model's versions in a
