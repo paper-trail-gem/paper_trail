@@ -266,8 +266,9 @@ module PaperTrail
         PaperTrail.whodunnit = current_whodunnit
       end
 
-      # Mimicks behavior of `touch` method from `ActiveRecord::Persistence`,
-      # but generates a version
+      # Mimics the `touch` method from `ActiveRecord::Persistence`, but also
+      # creates a version. A version is created regardless of options such as
+      # `:on`, `:if`, or `:unless`.
       #
       # TODO: look into leveraging the `after_touch` callback from
       # `ActiveRecord` to allow the regular `touch` method go generate a version
@@ -281,12 +282,19 @@ module PaperTrail
         current_time = current_time_from_proper_timezone
 
         attributes.each { |column| write_attribute(column, current_time) }
-        # ensure a version is written even if the `:on` collection is empty
-        record_update(true) if paper_trail_options[:on] == []
+
+        record_update(true) unless will_record_after_update?
         save!(:validate => false)
       end
 
       private
+
+      # Returns true if `save` will cause `record_update`
+      # to be called via the `after_update` callback.
+      def will_record_after_update?
+        on = paper_trail_options[:on]
+        on.nil? || on.include?(:update)
+      end
 
       def source_version
         send self.class.version_association_name

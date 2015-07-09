@@ -252,13 +252,13 @@ describe Widget, :type => :model do
       describe '#touch_with_version' do
         it { is_expected.to respond_to(:touch_with_version) }
 
-        it "should generate a version" do
+        it "creates a version" do
           count = widget.versions.size
           widget.touch_with_version
           expect(widget.versions.size).to eq(count + 1)
         end
 
-        it "should increment the `:updated_at` timestamp" do
+        it "increments the `:updated_at` timestamp" do
           time_was = widget.updated_at
           widget.touch_with_version
           expect(widget.updated_at).to be > time_was

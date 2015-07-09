@@ -73,6 +73,10 @@ class SetUpTestTables < ActiveRecord::Migration
       add_index :json_versions, [:item_type, :item_id]
     end
 
+    create_table :not_on_updates, :force => true do |t|
+      t.timestamps :null => true
+    end
+
     create_table :bananas, :force => true do |t|
       t.timestamps :null => true
     end
@@ -205,6 +209,7 @@ class SetUpTestTables < ActiveRecord::Migration
 
   def self.down
     drop_table :animals
+    drop_table :not_on_updates
     drop_table :posts
     drop_table :songs
     drop_table :editors
