@@ -10,6 +10,9 @@
 
 If you depend on the `RSpec` or `Cucumber` helpers, you will need to [manually load them into your test helper](https://github.com/airblade/paper_trail#testing).
 
+  - [#563](https://github.com/airblade/paper_trail/pull/563) - Fixed a bug in 
+    `PaperTrail::Model::InstanceMethods#touch_with_version` so that it will trigger a version when the `on` option
+    was set to `[:create]`
   - [#541](https://github.com/airblade/paper_trail/pull/541) - `PaperTrail.config.enabled` should be Thread Safe
   - [#525](https://github.com/airblade/paper_trail/issues/525) / [#512](https://github.com/airblade/paper_trail/pull/512) -
     Support for virtual accessors and redefined setter and getter methods.
