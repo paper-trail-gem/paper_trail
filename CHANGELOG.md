@@ -1,6 +1,6 @@
 ## 4.0.0 (Unreleased)
 
-### Changes
+### Changed
 
 - Using a Rails initializer to reopen PaperTrail::Version or otherwise extend
   PaperTrail is no longer recommended. An alternative is described in the
@@ -9,11 +9,8 @@
 - If you depend on the `RSpec` or `Cucumber` helpers, you must
   [require them in your test helper](https://github.com/airblade/paper_trail#testing).
 
-### Enhancements
+### Added
 
-  - [#563](https://github.com/airblade/paper_trail/pull/563) - Fixed a bug in 
-    `PaperTrail::Model::InstanceMethods#touch_with_version` so that it will trigger a version when the `on` option
-    was set to `[:create]`
   - [#541](https://github.com/airblade/paper_trail/pull/541) - `PaperTrail.config.enabled` should be Thread Safe
   - [#525](https://github.com/airblade/paper_trail/issues/525) / [#512](https://github.com/airblade/paper_trail/pull/512) -
     Support for virtual accessors and redefined setter and getter methods.
@@ -72,6 +69,12 @@
     instance and also yield it if a block is provided.
   - [#248](https://github.com/airblade/paper_trail/issues/248) - The migrations
     created by the generator now use `longtext` instead of `text` in MySQL.
+
+### Fixed
+
+  - [#563](https://github.com/airblade/paper_trail/pull/563) - Fixed a bug in
+    `touch_with_version` so that it will still create a version even when the
+    `on` option is, e.g. `[:create]`.
 
 ## 3.0.8
 
