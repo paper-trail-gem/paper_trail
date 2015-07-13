@@ -2,9 +2,10 @@
 
 ### Changes
 
-- If you use a Rails initializer for PaperTrail add
-  `PaperTrail::Rails::Engine.eager_load!` to the beginning of it.
-  See the readme for an example.
+- Using a Rails initializer to reopen PaperTrail::Version or otherwise extend
+  PaperTrail is no longer recommended. An alternative is described in the
+  readme. See https://github.com/airblade/paper_trail/pull/557 and
+  https://github.com/airblade/paper_trail/pull/492.
 
 ### Enhancements
 
