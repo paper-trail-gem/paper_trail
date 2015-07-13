@@ -67,14 +67,14 @@
     to `PaperTrail::Serializers::YAML`.
   - Both `PaperTrail.config` and `PaperTrail.configure` are now identical, and will both return the `PaperTrail::Config`
     instance and also yield it if a block is provided.
-  - [#248](https://github.com/airblade/paper_trail/issues/248) - The migrations
-    created by the generator now use `longtext` instead of `text` in MySQL.
 
 ### Fixed
 
   - [#563](https://github.com/airblade/paper_trail/pull/563) - Fixed a bug in
     `touch_with_version` so that it will still create a version even when the
     `on` option is, e.g. `[:create]`.
+  - [#248](https://github.com/airblade/paper_trail/issues/248) - In MySQL, to
+    prevent truncation, generated migrations now use `longtext` instead of `text`.
 
 ## 3.0.8
 
