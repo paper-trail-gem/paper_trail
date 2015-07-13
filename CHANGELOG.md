@@ -6,10 +6,10 @@
   PaperTrail is no longer recommended. An alternative is described in the
   readme. See https://github.com/airblade/paper_trail/pull/557 and
   https://github.com/airblade/paper_trail/pull/492.
+- If you depend on the `RSpec` or `Cucumber` helpers, you must
+  [require them in your test helper](https://github.com/airblade/paper_trail#testing).
 
 ### Enhancements
-
-If you depend on the `RSpec` or `Cucumber` helpers, you will need to [manually load them into your test helper](https://github.com/airblade/paper_trail#testing).
 
   - [#563](https://github.com/airblade/paper_trail/pull/563) - Fixed a bug in 
     `PaperTrail::Model::InstanceMethods#touch_with_version` so that it will trigger a version when the `on` option
