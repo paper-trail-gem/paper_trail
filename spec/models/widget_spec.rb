@@ -282,21 +282,6 @@ describe Widget, :type => :model do
         end
       end
 
-      describe '#paper_trail_off' do
-        it { is_expected.to respond_to(:paper_trail_off) }
-
-        it 'should set the invoke `paper_trail_off!`' do
-          is_expected.to receive(:warn)
-          is_expected.to receive(:paper_trail_off!)
-          subject.paper_trail_off
-        end
-
-        it 'should display a deprecation warning' do
-          is_expected.to receive(:warn).with("DEPRECATED: use `paper_trail_on!` instead of `paper_trail_on`. Support for `paper_trail_on` will be removed in PaperTrail 4.0")
-          subject.paper_trail_on
-        end
-      end
-
       describe '#paper_trail_on!' do
         before { subject.paper_trail_off! }
 
@@ -306,23 +291,6 @@ describe Widget, :type => :model do
           expect(subject.paper_trail_enabled_for_model?).to be false
           subject.paper_trail_on!
           expect(subject.paper_trail_enabled_for_model?).to be true
-        end
-      end
-
-      describe '#paper_trail_on' do
-        before { subject.paper_trail_off! }
-
-        it { is_expected.to respond_to(:paper_trail_on) }
-
-        it 'should set the invoke `paper_trail_on!`' do
-          is_expected.to receive(:warn)
-          is_expected.to receive(:paper_trail_on!)
-          subject.paper_trail_on
-        end
-
-        it 'should display a deprecation warning' do
-          is_expected.to receive(:warn).with("DEPRECATED: use `paper_trail_on!` instead of `paper_trail_on`. Support for `paper_trail_on` will be removed in PaperTrail 4.0")
-          subject.paper_trail_on
         end
       end
     end
