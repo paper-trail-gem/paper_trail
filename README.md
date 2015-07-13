@@ -554,21 +554,7 @@ widget.update_attributes :name => 'Wibble'
 widget.versions.last.whodunnit              # Andy Stewart
 ```
 
-You can avoid having to do this manually by setting your initializer to pick up
-the username of the current user from the OS, like this:
-
-```ruby
-# config/initializers/paper_trail.rb
-
-# the following line is required for PaperTrail >= 4.0.0 with Rails
-PaperTrail::Rails::Engine.eager_load!
-
-if defined?(::Rails::Console)
-  PaperTrail.whodunnit = "#{`whoami`.strip}: console"
-elsif File.basename($0) == "rake"
-  PaperTrail.whodunnit = "#{`whoami`.strip}: rake #{ARGV.join ' '}"
-end
-```
+See also: [Setting whodunnit in the rails console][33]
 
 Sometimes you want to define who is responsible for a change in a small scope
 without overwriting value of `PaperTrail.whodunnit`. It is possible to define
@@ -1456,3 +1442,4 @@ Released under the MIT licence.
 [30]: https://github.com/burke/zeus
 [31]: https://github.com/rails/spring
 [32]: http://api.rubyonrails.org/classes/ActiveRecord/AutosaveAssociation.html#method-i-mark_for_destruction
+[33]: https://github.com/airblade/paper_trail/wiki/Setting-whodunnit-in-the-rails-console
