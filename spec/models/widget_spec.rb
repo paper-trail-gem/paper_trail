@@ -177,18 +177,16 @@ describe Widget, :type => :model do
         subject { widget }
 
         it { is_expected.to respond_to(:originator) }
-        let(:warning_msg) do
-          "DEPRECATED: use paper_trail_originator instead of originator."
-        end
 
         it 'should set the invoke `paper_trail_originator`' do
-          is_expected.to receive(:warn)
+          allow(ActiveSupport::Deprecation).to receive(:warn)
           is_expected.to receive(:paper_trail_originator)
           subject.originator
         end
 
         it 'should display a deprecation warning' do
-          is_expected.to receive(:warn).with(warning_msg)
+          expect(ActiveSupport::Deprecation).to receive(:warn).
+            with(/Use paper_trail_originator instead of originator/)
           subject.originator
         end
       end

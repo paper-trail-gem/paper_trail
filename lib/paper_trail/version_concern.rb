@@ -257,7 +257,7 @@ module PaperTrail
     end
 
     def originator
-      warn "DEPRECATED: use paper_trail_originator instead of originator."
+      ActiveSupport::Deprecation.warn "Use paper_trail_originator instead of originator."
       self.paper_trail_originator
     end
 
