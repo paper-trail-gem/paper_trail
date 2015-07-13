@@ -178,8 +178,7 @@ describe Widget, :type => :model do
 
         it { is_expected.to respond_to(:originator) }
         let(:warning_msg) do
-          "DEPRECATED: use `paper_trail_originator` instead of `originator`." +
-          " Support for `originator` will be removed in PaperTrail 4.0"
+          "DEPRECATED: use paper_trail_originator instead of originator."
         end
 
         it 'should set the invoke `paper_trail_originator`' do

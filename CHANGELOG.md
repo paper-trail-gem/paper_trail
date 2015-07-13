@@ -34,9 +34,7 @@
     [PostgreSQL's `JSONB` Type](http://www.postgresql.org/docs/9.4/static/datatype-json.html)
     for storing `object` and `object_changes`.
   - [#479](https://github.com/airblade/paper_trail/issues/479) - Deprecated
-    `originator` method in favor of `paper_trail_originator`. Deprecation
-    warning informs users that the `originator` of the methods will be removed
-    in version `4.0`.
+    `originator` method, use `paper_trail_originator`.
   - [#458](https://github.com/airblade/paper_trail/pull/458) - For `create`
     events, metadata pointing at attributes should attempt to grab the current
     value instead of looking at the value prior to the change (which would
