@@ -22,9 +22,11 @@ module PaperTrail
 
     def serialized_attributes=(value)
       if ::ActiveRecord::VERSION::MAJOR >= 5
-        warn("DEPRECATED: ActiveRecord 5.0 deprecated `serialized_attributes` "  +
+        ::ActiveSupport::Deprecation.warn(
+          "ActiveRecord 5.0 deprecated `serialized_attributes` "  +
           "without replacement, so this PaperTrail config setting does " +
-          "nothing with this version, and is always turned off")
+          "nothing with this version, and is always turned off"
+        )
       end
       @serialized_attributes = value
     end
@@ -33,12 +35,12 @@ module PaperTrail
       @track_associations ||= PaperTrail::VersionAssociation.table_exists?
     end
     alias_method :track_associations?, :track_associations
-    
+
     # Indicates whether PaperTrail is on or off.
     def enabled
       PaperTrail.paper_trail_store[:paper_trail_enabled].nil? || PaperTrail.paper_trail_store[:paper_trail_enabled]
     end
-    
+
     def enabled= enable
       PaperTrail.paper_trail_store[:paper_trail_enabled] = enable
     end
