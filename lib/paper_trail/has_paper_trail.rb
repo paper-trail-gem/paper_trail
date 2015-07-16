@@ -469,16 +469,25 @@ module PaperTrail
         attrs
       end
 
-      # This method is invoked in order to determine whether it is appropriate to generate a new version instance.
-      # Because we are now using `after_(create/update/etc)` callbacks, we need to go out of our way to
-      # ensure that during updates timestamp attributes are not acknowledged as a notable changes
-      # to raise false positives when attributes are ignored.
+      # This method determines whether it is appropriate to generate a new
+      # version instance. A timestamp-only update (e.g. only `updated_at`
+      # changed) is considered notable unless an ignored attribute was also
+      # changed.
       def changed_notably?
-        if self.paper_trail_options[:ignore].any? && (changed & self.paper_trail_options[:ignore]).any?
-          (notably_changed - timestamp_attributes_for_update_in_model.map(&:to_s)).any?
+        if ignored_attr_has_changed?
+          timestamps = timestamp_attributes_for_update_in_model.map(&:to_s)
+          (notably_changed - timestamps).any?
         else
           notably_changed.any?
         end
+      end
+
+      # An attributed is "ignored" if it is listed in the `:ignore` option
+      # and/or the `:skip` option.  Returns true if an ignored attribute
+      # has changed.
+      def ignored_attr_has_changed?
+        ignored = self.paper_trail_options[:ignore] + self.paper_trail_options[:skip]
+        ignored.any? && (changed & ignored).any?
       end
 
       def notably_changed
