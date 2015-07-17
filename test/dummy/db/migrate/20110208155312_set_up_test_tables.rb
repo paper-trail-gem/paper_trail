@@ -1,5 +1,10 @@
 class SetUpTestTables < ActiveRecord::Migration
   def self.up
+    create_table :skippers, :force => true do |t|
+      t.datetime :another_timestamp
+      t.timestamps :null => true
+    end
+
     create_table :widgets, :force => true do |t|
       t.string    :name
       t.text      :a_text
@@ -209,6 +214,7 @@ class SetUpTestTables < ActiveRecord::Migration
 
   def self.down
     drop_table :animals
+    drop_table :skippers
     drop_table :not_on_updates
     drop_table :posts
     drop_table :songs

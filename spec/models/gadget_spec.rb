@@ -45,7 +45,7 @@ describe Gadget, :type => :model do
                 expect(subject.send(:changed_notably?)).to be true
               end
 
-              it "should not acknowledge ignored attrs and timestamps only" do
+              it "should not acknowledge ignored attr (brand)" do
                 subject.brand = 'Acme'
                 expect(subject.send(:changed_notably?)).to be false
               end
