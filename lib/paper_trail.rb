@@ -149,7 +149,7 @@ end
 
 # Require frameworks
 require 'paper_trail/frameworks/sinatra'
-if defined? ::Rails
+if defined?(::Rails) && ActiveRecord::VERSION::STRING >= '3.2'
   require 'paper_trail/frameworks/rails'
 else
   require 'paper_trail/frameworks/active_record'
