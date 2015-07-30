@@ -13,9 +13,6 @@ candidates.
   https://github.com/airblade/paper_trail/pull/492.
 - If you depend on the `RSpec` or `Cucumber` helpers, you must
   [require them in your test helper](https://github.com/airblade/paper_trail#testing).
-- [#577](https://github.com/airblade/paper_trail/pull/577) - Removed deprecated
-  methods `paper_trail_on` and `paper_trail_off`. Use `paper_trail_on!` and
-  `paper_trail_off!` instead.
 - [#458](https://github.com/airblade/paper_trail/pull/458) - Version metadata
   (the `:meta` option) from AR attributes for `create` events will now save the
   current value instead of `nil`.
@@ -32,6 +29,12 @@ candidates.
 - `3da1f104` - `PaperTrail.config` and `PaperTrail.configure` are now
   identical: both return the `PaperTrail::Config` instance and also
   yield it if a block is provided.
+  
+### Removed
+
+- [#577](https://github.com/airblade/paper_trail/pull/577) - Removed deprecated
+  methods `paper_trail_on` and `paper_trail_off`. Use `paper_trail_on!` and
+  `paper_trail_off!` instead.
 
 ### Added
 
