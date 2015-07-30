@@ -66,7 +66,7 @@ The Rails 2.3 code is on the [`rails2`][11] branch and tagged `v1.x`. These bran
 
 1. Add PaperTrail to your `Gemfile`.
 
-    `gem 'paper_trail', '~> 4.0.0.rc'`
+    `gem 'paper_trail', '~> 4.0.0'`
 
 2. Generate a migration which will add a `versions` table to your database.
 
@@ -89,7 +89,7 @@ setting up your app with PaperTrail will look something like this:
 
 1. Add PaperTrail to your `Gemfile`.
 
-    `gem 'paper_trail', '~> 4.0.0.rc'`
+    `gem 'paper_trail', '~> 4.0.0'`
 
 2. Generate a migration to add a `versions` table to your database.
 

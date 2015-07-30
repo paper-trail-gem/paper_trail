@@ -1,4 +1,4 @@
-## 4.0.0 (Unreleased)
+## 4.0.0
 
 This major release adds JSON column support in PostgreSQL, limited support for
 versioning associations, various new configuration options, and a year's worth
