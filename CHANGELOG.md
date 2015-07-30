@@ -32,7 +32,7 @@ candidates.
   
 ### Removed
 
-- [#577](https://github.com/airblade/paper_trail/pull/577) - Removed deprecated
+- [#566](https://github.com/airblade/paper_trail/pull/566) - Removed deprecated
   methods `paper_trail_on` and `paper_trail_off`. Use `paper_trail_on!` and
   `paper_trail_off!` instead.
 
