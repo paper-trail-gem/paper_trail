@@ -29,6 +29,12 @@ candidates.
 - `3da1f104` - `PaperTrail.config` and `PaperTrail.configure` are now
   identical: both return the `PaperTrail::Config` instance and also
   yield it if a block is provided.
+  
+### Removed
+
+- [#566](https://github.com/airblade/paper_trail/pull/566) - Removed deprecated
+  methods `paper_trail_on` and `paper_trail_off`. Use `paper_trail_on!` and
+  `paper_trail_off!` instead.
 
 ### Added
 

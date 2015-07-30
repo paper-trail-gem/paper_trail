@@ -96,19 +96,9 @@ module PaperTrail
         PaperTrail.enabled_for_model(self, false)
       end
 
-      def paper_trail_off
-        warn "DEPRECATED: use `paper_trail_off!` instead of `paper_trail_off`. Support for `paper_trail_off` will be removed in PaperTrail 4.0"
-        self.paper_trail_off!
-      end
-
       # Switches PaperTrail on for this class.
       def paper_trail_on!
         PaperTrail.enabled_for_model(self, true)
-      end
-
-      def paper_trail_on
-        warn "DEPRECATED: use `paper_trail_on!` instead of `paper_trail_on`. Support for `paper_trail_on` will be removed in PaperTrail 4.0"
-        self.paper_trail_on!
       end
 
       def paper_trail_enabled_for_model?
