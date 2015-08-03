@@ -3,7 +3,8 @@ require 'active_support/core_ext/object' # provides the `try` method
 module PaperTrail
   module Sinatra
 
-    # Register this module inside your Sinatra application to gain access to controller-level methods used by PaperTrail
+    # Register this module inside your Sinatra application to gain access to
+    # controller-level methods used by PaperTrail.
     def self.registered(app)
       app.use RequestStore::Middleware
       app.helpers self

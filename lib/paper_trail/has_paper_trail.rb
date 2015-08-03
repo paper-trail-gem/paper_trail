@@ -8,31 +8,42 @@ module PaperTrail
     end
 
     module ClassMethods
-      # Declare this in your model to track every create, update, and destroy.  Each version of
-      # the model is available in the `versions` association.
+      # Declare this in your model to track every create, update, and destroy.
+      # Each version of the model is available in the `versions` association.
       #
       # Options:
-      # :on            the events to track (optional; defaults to all of them).  Set to an array of
-      #                `:create`, `:update`, `:destroy` as desired.
-      # :class_name    the name of a custom Version class.  This class should inherit from `PaperTrail::Version`.
-      # :ignore        an array of attributes for which a new `Version` will not be created if only they change.
-      #                it can also aceept a Hash as an argument where the key is the attribute to ignore (a `String` or `Symbol`),
-      #                which will only be ignored if the value is a `Proc` which returns truthily.
-      # :if, :unless   Procs that allow to specify conditions when to save versions for an object
-      # :only          inverse of `ignore` - a new `Version` will be created only for these attributes if supplied
-      #                it can also aceept a Hash as an argument where the key is the attribute to track (a `String` or `Symbol`),
-      #                which will only be counted if the value is a `Proc` which returns truthily.
-      # :skip          fields to ignore completely.  As with `ignore`, updates to these fields will not create
-      #                a new `Version`.  In addition, these fields will not be included in the serialized versions
-      #                of the object whenever a new `Version` is created.
-      # :meta          a hash of extra data to store.  You must add a column to the `versions` table for each key.
-      #                Values are objects or procs (which are called with `self`, i.e. the model with the paper
-      #                trail).  See `PaperTrail::Controller.info_for_paper_trail` for how to store data from
-      #                the controller.
-      # :versions      the name to use for the versions association.  Default is `:versions`.
-      # :version       the name to use for the method which returns the version the instance was reified from.
-      #                Default is `:version`.
-      # :save_changes  whether or not to save changes to the object_changes column if it exists. Default is true
+      #
+      # - :on - The events to track (optional; defaults to all of them). Set
+      #   to an array of `:create`, `:update`, `:destroy` as desired.
+      # - :class_name - The name of a custom Version class.  This class should
+      #   inherit from `PaperTrail::Version`.
+      # - :ignore - An array of attributes for which a new `Version` will not be
+      #   created if only they change. It can also aceept a Hash as an
+      #   argument where the key is the attribute to ignore (a `String` or
+      #   `Symbol`), which will only be ignored if the value is a `Proc` which
+      #   returns truthily.
+      # - :if, :unless - Procs that allow to specify conditions when to save
+      #   versions for an object.
+      # - :only - Inverse of `ignore`. A new `Version` will be created only
+      #   for these attributes if supplied it can also aceept a Hash as an
+      #   argument where the key is the attribute to track (a `String` or
+      #   `Symbol`), which will only be counted if the value is a `Proc` which
+      #   returns truthily.
+      # - :skip - Fields to ignore completely.  As with `ignore`, updates to
+      #   these fields will not create a new `Version`.  In addition, these
+      #   fields will not be included in the serialized versions of the object
+      #   whenever a new `Version` is created.
+      # - :meta - A hash of extra data to store. You must add a column to the
+      #   `versions` table for each key. Values are objects or procs (which
+      #   are called with `self`, i.e. the model with the paper trail).  See
+      #   `PaperTrail::Controller.info_for_paper_trail` for how to store data
+      #   from the controller.
+      # - :versions - The name to use for the versions association.  Default
+      #   is `:versions`.
+      # - :version - The name to use for the method which returns the version
+      #   the instance was reified from. Default is `:version`.
+      # - :save_changes - Whether or not to save changes to the object_changes
+      #   column if it exists. Default is true
       #
       def has_paper_trail(options = {})
         # Lazily include the instance methods so we don't clutter up
@@ -64,7 +75,8 @@ module PaperTrail
 
         attr_accessor :paper_trail_event
 
-        if ::ActiveRecord::VERSION::MAJOR >= 4 # `has_many` syntax for specifying order uses a lambda in Rails 4
+        # `has_many` syntax for specifying order uses a lambda in Rails 4
+        if ::ActiveRecord::VERSION::MAJOR >= 4
           has_many self.versions_association_name,
             lambda { order(model.timestamp_sort_order) },
             :class_name => self.version_class_name, :as => :item
@@ -76,7 +88,11 @@ module PaperTrail
         end
 
         options[:on] ||= [:create, :update, :destroy]
-        options_on = Array(options[:on]) # so that a single symbol can be passed in without wrapping it in an `Array`
+
+        # Wrap the :on option in an array if necessary. This allows a single
+        # symbol to be passed in.
+        options_on = Array(options[:on])
+
         after_create  :record_create, :if => :save_version? if options_on.include?(:create)
         if options_on.include?(:update)
           before_save   :reset_timestamp_attrs_for_update_if_needed!, :on => :update
@@ -85,7 +101,7 @@ module PaperTrail
         end
         after_destroy :record_destroy, :if => :save_version? if options_on.include?(:destroy)
 
-        # Reset the transaction id when the transaction is closed
+        # Reset the transaction id when the transaction is closed.
         after_commit :reset_transaction_id
         after_rollback :reset_transaction_id
         after_rollback :clear_rolled_back_versions
@@ -110,40 +126,47 @@ module PaperTrail
         @paper_trail_version_class ||= version_class_name.constantize
       end
 
-      # Used for Version#object attribute
+      # Used for `Version#object` attribute.
       def serialize_attributes_for_paper_trail!(attributes)
-        # don't serialize before values before inserting into columns of type `JSON` on `PostgreSQL` databases
+        # Don't serialize before values before inserting into columns of type
+        # `JSON` on `PostgreSQL` databases.
         return attributes if self.paper_trail_version_class.object_col_is_json?
 
         serialized_attributes.each do |key, coder|
           if attributes.key?(key)
-            # Fall back to current serializer if `coder` has no `dump` method
+            # Fall back to current serializer if `coder` has no `dump` method.
             coder = PaperTrail.serializer unless coder.respond_to?(:dump)
             attributes[key] = coder.dump(attributes[key])
           end
         end
       end
 
+      # TODO: There is a lot of duplication between this and
+      # `serialize_attributes_for_paper_trail!`.
       def unserialize_attributes_for_paper_trail!(attributes)
-        # don't serialize before values before inserting into columns of type `JSON` on `PostgreSQL` databases
+        # Don't serialize before values before inserting into columns of type
+        # `JSON` on `PostgreSQL` databases.
         return attributes if self.paper_trail_version_class.object_col_is_json?
 
         serialized_attributes.each do |key, coder|
           if attributes.key?(key)
+            # Fall back to current serializer if `coder` has no `dump` method.
+            # TODO: Shouldn't this be `:load`?
             coder = PaperTrail.serializer unless coder.respond_to?(:dump)
             attributes[key] = coder.load(attributes[key])
           end
         end
       end
 
-      # Used for Version#object_changes attribute
+      # Used for Version#object_changes attribute.
       def serialize_attribute_changes_for_paper_trail!(changes)
-        # don't serialize before values before inserting into columns of type `JSON` on `PostgreSQL` databases
+        # Don't serialize before values before inserting into columns of type `JSON`
+# on `PostgreSQL` databases.
         return changes if self.paper_trail_version_class.object_changes_col_is_json?
 
         serialized_attributes.each do |key, coder|
           if changes.key?(key)
-            # Fall back to current serializer if `coder` has no `dump` method
+            # Fall back to current serializer if `coder` has no `dump` method.
             coder = PaperTrail.serializer unless coder.respond_to?(:dump)
             old_value, new_value = changes[key]
             changes[key] = [coder.dump(old_value),
@@ -152,12 +175,17 @@ module PaperTrail
         end
       end
 
+      # TODO: There is a lot of duplication between this and
+      # `serialize_attribute_changes_for_paper_trail!`.
       def unserialize_attribute_changes_for_paper_trail!(changes)
-        # don't serialize before values before inserting into columns of type `JSON` on `PostgreSQL` databases
+        # Don't serialize before values before inserting into columns of type
+        # `JSON` on `PostgreSQL` databases.
         return changes if self.paper_trail_version_class.object_changes_col_is_json?
 
         serialized_attributes.each do |key, coder|
           if changes.key?(key)
+            # Fall back to current serializer if `coder` has no `dump` method.
+            # TODO: Shouldn't this be `:load`?
             coder = PaperTrail.serializer unless coder.respond_to?(:dump)
             old_value, new_value = changes[key]
             changes[key] = [coder.load(old_value),
@@ -236,7 +264,8 @@ module PaperTrail
         self.class.paper_trail_on! if paper_trail_was_enabled
       end
 
-      # Utility method for reifying. Anything executed inside the block will appear like a new record
+      # Utility method for reifying. Anything executed inside the block will
+      # appear like a new record.
       def appear_as_new_record
         instance_eval {
           alias :old_new_record? :new_record?
@@ -246,7 +275,8 @@ module PaperTrail
         instance_eval { alias :new_record? :old_new_record? }
       end
 
-      # Temporarily overwrites the value of whodunnit and then executes the provided block.
+      # Temporarily overwrites the value of whodunnit and then executes the
+      # provided block.
       def whodunnit(value)
         raise ArgumentError, 'expected to receive a block' unless block_given?
         current_whodunnit = PaperTrail.whodunnit
@@ -344,15 +374,19 @@ module PaperTrail
         _changes.to_hash
       end
 
-      # Invoked via`after_update` callback for when a previous version is reified and then saved
+      # Invoked via`after_update` callback for when a previous version is
+      # reified and then saved.
       def clear_version_instance!
         send("#{self.class.version_association_name}=", nil)
       end
 
+      # Invoked via callback when a user attempts to persist a reified
+      # `Version`.
       def reset_timestamp_attrs_for_update_if_needed!
-        return if self.live? # invoked via callback when a user attempts to persist a reified `Version`
+        return if self.live?
         timestamp_attributes_for_update_in_model.each do |column|
-          # ActiveRecord 4.2 deprecated `reset_column!` in favor of `restore_column!`
+          # ActiveRecord 4.2 deprecated `reset_column!` in favor of
+          # `restore_column!`.
           if respond_to?("restore_#{column}!")
             send("restore_#{column}!")
           else
@@ -382,7 +416,7 @@ module PaperTrail
         end
       end
 
-      # saves associations if the join table for `VersionAssociation` exists
+      # Saves associations if the join table for `VersionAssociation` exists.
       def save_associations(version)
         return unless PaperTrail.config.track_associations?
         self.class.reflect_on_all_associations(:belongs_to).each do |assoc|
@@ -424,8 +458,8 @@ module PaperTrail
             if v.respond_to?(:call)
               v.call(self)
             elsif v.is_a?(Symbol) && respond_to?(v)
-              # if it is an attribute that is changing in an existing object,
-              # be sure to grab the current version
+              # If it is an attribute that is changing in an existing object,
+              # be sure to grab the current version.
               if has_attribute?(v) && send("#{v}_changed?".to_sym) && data[:event] != 'create'
                 send("#{v}_was".to_sym)
               else
@@ -435,6 +469,7 @@ module PaperTrail
               v
             end
         end
+
         # Second we merge any extra data from the controller (if available).
         data.merge(PaperTrail.controller_info || {})
       end
@@ -449,8 +484,8 @@ module PaperTrail
         end
       end
 
-      # returns hash of attributes (with appropriate attributes serialized),
-      # ommitting attributes to be skipped
+      # Returns hash of attributes (with appropriate attributes serialized),
+      # ommitting attributes to be skipped.
       def object_attrs_for_paper_trail(attributes_hash)
         attrs = attributes_hash.except(*self.paper_trail_options[:skip])
         if PaperTrail.serialized_attributes?
@@ -459,10 +494,9 @@ module PaperTrail
         attrs
       end
 
-      # This method determines whether it is appropriate to generate a new
-      # version instance. A timestamp-only update (e.g. only `updated_at`
-      # changed) is considered notable unless an ignored attribute was also
-      # changed.
+      # Determines whether it is appropriate to generate a new version
+      # instance. A timestamp-only update (e.g. only `updated_at` changed) is
+      # considered notable unless an ignored attribute was also changed.
       def changed_notably?
         if ignored_attr_has_changed?
           timestamps = timestamp_attributes_for_update_in_model.map(&:to_s)
@@ -473,8 +507,8 @@ module PaperTrail
       end
 
       # An attributed is "ignored" if it is listed in the `:ignore` option
-      # and/or the `:skip` option.  Returns true if an ignored attribute
-      # has changed.
+      # and/or the `:skip` option.  Returns true if an ignored attribute has
+      # changed.
       def ignored_attr_has_changed?
         ignored = self.paper_trail_options[:ignore] + self.paper_trail_options[:skip]
         ignored.any? && (changed & ignored).any?
@@ -482,7 +516,8 @@ module PaperTrail
 
       def notably_changed
         only = self.paper_trail_options[:only].dup
-        # remove Hash arguments and then evaluate whether the attributes (the keys of the hash) should also get pushed into the collection
+        # Remove Hash arguments and then evaluate whether the attributes (the
+        # keys of the hash) should also get pushed into the collection.
         only.delete_if do |obj|
           obj.is_a?(Hash) && obj.each { |attr, condition| only << attr if condition.respond_to?(:call) && condition.call(self) }
         end
@@ -491,7 +526,8 @@ module PaperTrail
 
       def changed_and_not_ignored
         ignore = self.paper_trail_options[:ignore].dup
-         # remove Hash arguments and then evaluate whether the attributes (the keys of the hash) should also get pushed into the collection
+        # Remove Hash arguments and then evaluate whether the attributes (the
+        # keys of the hash) should also get pushed into the collection.
         ignore.delete_if do |obj|
           obj.is_a?(Hash) && obj.each { |attr, condition| ignore << attr if condition.respond_to?(:call) && condition.call(self) }
         end

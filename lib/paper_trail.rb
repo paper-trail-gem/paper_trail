@@ -25,7 +25,7 @@ module PaperTrail
   end
 
   # ActiveRecord 5 drops support for serialized attributes; for previous
-  # versions of ActiveRecord it is supported, we have a config option 
+  # versions of ActiveRecord it is supported, we have a config option
   # to enable it within PaperTrail.
   def self.serialized_attributes?
     !!PaperTrail.config.serialized_attributes && ::ActiveRecord::VERSION::MAJOR < 5
@@ -43,12 +43,14 @@ module PaperTrail
     !!paper_trail_store[:request_enabled_for_controller]
   end
 
-  # Sets whether PaperTrail is enabled or disabled for this model in the current request.
+  # Sets whether PaperTrail is enabled or disabled for this model in the
+  # current request.
   def self.enabled_for_model(model, value)
     paper_trail_store[:"enabled_for_#{model}"] = value
   end
 
-  # Returns `true` if PaperTrail is enabled for this model in the current request, `false` otherwise.
+  # Returns `true` if PaperTrail is enabled for this model in the current
+  # request, `false` otherwise.
   def self.enabled_for_model?(model)
     !!paper_trail_store.fetch(:"enabled_for_#{model}", true)
   end
@@ -63,10 +65,9 @@ module PaperTrail
     PaperTrail.config.timestamp_field
   end
 
-  # Sets who is responsible for any changes that occur.
-  # You would normally use this in a migration or on the console,
-  # when working with models directly.  In a controller it is set
-  # automatically to the `current_user`.
+  # Sets who is responsible for any changes that occur. You would normally use
+  # this in a migration or on the console, when working with models directly.
+  # In a controller it is set automatically to the `current_user`.
   def self.whodunnit=(value)
     paper_trail_store[:whodunnit] = value
   end
@@ -76,8 +77,8 @@ module PaperTrail
     paper_trail_store[:whodunnit]
   end
 
-  # Sets any information from the controller that you want PaperTrail
-  # to store.  By default this is set automatically by a before filter.
+  # Sets any information from the controller that you want PaperTrail to
+  # store.  By default this is set automatically by a before filter.
   def self.controller_info=(value)
     paper_trail_store[:controller_info] = value
   end
@@ -117,8 +118,8 @@ module PaperTrail
 
   private
 
-  # Thread-safe hash to hold PaperTrail's data.
-  # Initializing with needed default values.
+  # Thread-safe hash to hold PaperTrail's data. Initializing with needed
+  # default values.
   def self.paper_trail_store
     RequestStore.store[:paper_trail] ||= { :request_enabled_for_controller => true }
   end
@@ -135,12 +136,15 @@ module PaperTrail
   end
 end
 
-# Ensure `ProtectedAttributes` gem gets required if it is available before the `Version` class gets loaded in
+# Ensure `ProtectedAttributes` gem gets required if it is available before the
+# `Version` class gets loaded in.
 unless PaperTrail.active_record_protected_attributes?
   PaperTrail.send(:remove_instance_variable, :@active_record_protected_attributes)
   begin
     require 'protected_attributes'
-  rescue LoadError; end # will rescue if `ProtectedAttributes` gem is not available
+  rescue LoadError
+    # In case `ProtectedAttributes` gem is not available.
+  end
 end
 
 ActiveSupport.on_load(:active_record) do
