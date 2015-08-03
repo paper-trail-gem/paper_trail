@@ -1,3 +1,18 @@
+## 4.1.0 (Unreleased)
+
+### Changed
+
+None
+
+### Added
+
+- Added `unversioned_attributes` option to `reify`.
+  [#579](https://github.com/airblade/paper_trail/pull/579)
+
+### Fixed
+
+None
+
 ## 4.0.0
 
 This major release adds JSON column support in PostgreSQL, limited support for
