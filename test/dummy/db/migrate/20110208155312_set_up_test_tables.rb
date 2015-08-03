@@ -1,6 +1,7 @@
 class SetUpTestTables < ActiveRecord::Migration
   def self.up
     create_table :skippers, :force => true do |t|
+      t.string   :name
       t.datetime :another_timestamp
       t.timestamps :null => true
     end
