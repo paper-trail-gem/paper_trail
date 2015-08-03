@@ -154,14 +154,18 @@ module PaperTrail
     # they were "at the time", if they are also being versioned by PaperTrail.
     #
     # Options:
-    # :has_one              set to `true` to also reify has_one associations. Default is `false`.
-    # :has_many             set to `true` to also reify has_many and has_many :through associations.
-    #                       Default is `false`.
-    # :mark_for_destruction set to `true` to mark the has_one/has_many associations that did not exist in the
-    #                       reified version for destruction, instead of remove them. Default is `false`.
-    #                       This option is handy for people who want to persist the reified version.
-    # :dup                  `false` default behavior
-    #                       `true` it always create a new object instance. It is useful for comparing two versions of the same object
+    # :has_one                  set to `true` to also reify has_one associations. Default is `false`.
+    # :has_many                 set to `true` to also reify has_many and has_many :through associations.
+    #                           Default is `false`.
+    # :mark_for_destruction     set to `true` to mark the has_one/has_many associations that did not exist in the
+    #                           reified version for destruction, instead of remove them. Default is `false`.
+    #                           This option is handy for people who want to persist the reified version.
+    # :dup                      `false` default behavior
+    #                           `true` it always create a new object instance. It is useful for comparing two versions of the same object
+    # :unversioned_attributes   `:nil` - (default) attributes undefined in version record
+    #                            are set to nil in reified record
+    #                            `:preserve` - attributes undefined in version record are
+    #                            not modified
     def reify(options = {})
       return nil if object.nil?
 
@@ -170,7 +174,8 @@ module PaperTrail
           :version_at => created_at,
           :mark_for_destruction => false,
           :has_one    => false,
-          :has_many   => false
+          :has_many   => false,
+          :unversioned_attributes => :nil
         )
 
         attrs = self.class.object_col_is_json? ? object : PaperTrail.serializer.load(object)
@@ -191,7 +196,9 @@ module PaperTrail
         if options[:dup] != true && item
           model = item
           # Look for attributes that exist in the model and not in this version. These attributes should be set to nil.
-          (model.attribute_names - attrs.keys).each { |k| attrs[k] = nil }
+          if options[:unversioned_attributes] == :nil
+            (model.attribute_names - attrs.keys).each { |k| attrs[k] = nil }
+          end
         else
           inheritance_column_name = item_type.constantize.inheritance_column
           class_name = attrs[inheritance_column_name].blank? ? item_type : attrs[inheritance_column_name]
@@ -200,7 +207,7 @@ module PaperTrail
           # to look for the item outside of default scope(s)
           if options[:dup] || (_item = klass.unscoped.find_by_id(item_id)).nil?
             model = klass.new
-          else
+          elsif options[:unversioned_attributes] == :nil
             model = _item
             # Look for attributes that exist in the model and not in this version. These attributes should be set to nil.
             (model.attribute_names - attrs.keys).each { |k| attrs[k] = nil }
