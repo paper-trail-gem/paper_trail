@@ -36,24 +36,26 @@ module PaperTrail
       #
       # The columns `ip` and `user_agent` must exist in your `versions` # table.
       #
-      # Use the `:meta` option to `PaperTrail::Model::ClassMethods.has_paper_trail`
-      # to store any extra model-level data you need.
+      # Use the `:meta` option to
+      # `PaperTrail::Model::ClassMethods.has_paper_trail` to store any extra
+      # model-level data you need.
       def info_for_paper_trail
         {}
       end
 
-      # Returns `true` (default) or `false` depending on whether PaperTrail should
-      # be active for the current request.
+      # Returns `true` (default) or `false` depending on whether PaperTrail
+      # should be active for the current request.
       #
-      # Override this method in your controller to specify when PaperTrail should
-      # be off.
+      # Override this method in your controller to specify when PaperTrail
+      # should be off.
       def paper_trail_enabled_for_controller
         ::PaperTrail.enabled?
       end
 
       private
 
-      # Tells PaperTrail whether versions should be saved in the current request.
+      # Tells PaperTrail whether versions should be saved in the current
+      # request.
       def set_paper_trail_enabled_for_controller
         ::PaperTrail.enabled_for_controller = paper_trail_enabled_for_controller
       end
@@ -63,8 +65,8 @@ module PaperTrail
         ::PaperTrail.whodunnit = user_for_paper_trail if ::PaperTrail.enabled_for_controller?
       end
 
-      # Tells PaperTrail any information from the controller you want
-      # to store alongside any changes that occur.
+      # Tells PaperTrail any information from the controller you want to store
+      # alongside any changes that occur.
       def set_paper_trail_controller_info
         ::PaperTrail.controller_info = info_for_paper_trail if ::PaperTrail.enabled_for_controller?
       end
