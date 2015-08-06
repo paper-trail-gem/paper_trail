@@ -2,9 +2,9 @@
 
 [![Build Status][4]][5] [![Dependency Status][6]][7]
 
-PaperTrail lets you track changes to your models' data.  It's good for auditing
-or versioning.  You can see how a model looked at any stage in its lifecycle,
-revert it to any version, and even undelete it after it's been destroyed.
+Track changes to your models, for auditing or versioning. See how a model looked
+at any stage in its lifecycle, revert it to any version, or restore it after it
+has been destroyed.
 
 - [Features](#features)
 - [Compatibility](#compatibility)
