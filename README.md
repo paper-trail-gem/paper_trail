@@ -31,27 +31,28 @@ revert it to any version, and even undelete it after it's been destroyed.
 
 ## Features
 
-* Stores every create, update and destroy (or only the lifecycle events you specify).
-* Does not store updates which don't change anything.
-* Allows you to specify attributes (by inclusion or exclusion) which must change for a Version to be stored.
-* Allows you to get at every version, including the original, even once destroyed.
-* Allows you to get at every version even if the schema has since changed.
-* Allows you to get at the version as of a particular time.
-* Option to automatically restore `has_one`, `has_many` and `has_many :through` associations as they were at the time.
-* Automatically records who was responsible via your controller.  PaperTrail calls `current_user` by default, if it exists, but you can have it call any method you like.
-* Allows you to set who is responsible at model-level (useful for migrations).
-* Allows you to store arbitrary model-level metadata with each version (useful for filtering versions).
-* Allows you to store arbitrary controller-level information with each version, e.g. remote IP.
-* Can be turned off/on per class (useful for migrations).
-* Can be turned off/on per request (useful for testing with an external service).
-* Can be turned off/on globally (useful for testing).
-* No configuration necessary.
-* Stores everything in a single database table by default (generates migration for you), or can use separate tables for separate models.
-* Supports custom version classes so different models' versions can have different behaviour.
-* Supports custom name for versions association.
-* Thoroughly tested.
-* Threadsafe.
-
+* Stores create, update and destroy events
+  * Does not store updates which don't change anything
+  * Support for versioning associated records
+* Can store metadata with each version record
+  * Who was responsible for a change
+  * Arbitrary model-level metadata (useful for filtering versions)
+  * Arbitrary controller-level information e.g. remote IP
+* Configurable
+  * No configuration necessary, but if you want to ..
+  * Configure which events (create, update and destroy) are versioned
+  * Configure which attributes must change for an update to be versioned
+  * Turn off/on by model, request, or globally
+  * Use separate tables for separate models
+* Extensible
+  * Write a custom version class for complete control
+  * Write custom version classes for each of your models
+* Work with versions
+  * Restore any version, including the original, even once destroyed
+  * Restore any version even if the schema has since changed
+  * Restore the version as of a particular time
+* Thoroughly tested
+* Threadsafe
 
 ## Compatibility
 
