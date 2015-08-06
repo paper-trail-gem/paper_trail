@@ -55,17 +55,16 @@ revert it to any version, and even undelete it after it's been destroyed.
 
 ## Compatibility
 
-Works with `ActiveRecord` 3+. Note: this code is on the `master` branch and tagged `v4.x`.
-
-Version 3 is on the branch named [`3.0-stable`][9] and is tagged `v3.x`, and works ActiveRecord 4 and ActiveRecord 3.
-
-Version 2 is on the branch named [`2.7-stable`][10] and is tagged `v2.x`, and works with Rails 3.
-
-The Rails 2.3 code is on the [`rails2`][11] branch and tagged `v1.x`. These branches are both stable with their respective versions of Rails but will not have new features added/backported to them.
+| paper_trail | branch     | tags   | ruby     | activerecord |
+| ----------- | ---------- | ------ | -------- | ------------ |
+| 4           | master     | v4.x   | >= 1.8.7 | >= 3.0       |
+| 3           | 3.0-stable | v3.x   | >= 1.8.7 | >= 3.0       |
+| 2           | 2.7-stable | v2.x   | >= 1.8.7 | >= 3.0, < 4  |
+| 1           | rails2     | v1.x   | >= 1.8.7 | >= 2.3, < 3  |
 
 ## Installation
 
-### Rails 3 & 4
+### Rails 3 and 4
 
 1. Add PaperTrail to your `Gemfile`.
 
