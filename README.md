@@ -11,9 +11,12 @@ revert it to any version, and even undelete it after it's been destroyed.
 - [Installation](#installation)
 - [API Summary](#api-summary)
 - [Basic Usage](#basic-usage)
-- [Choosing Lifecycle Events To Monitor](#choosing-lifecycle-events-to-monitor)
-- [Choosing When To Save New Versions](#choosing-when-to-save-new-versions)
-- [Choosing Attributes To Monitor](#choosing-attributes-to-monitor)
+- Limiting what is versioned, and when
+  - [Choosing Lifecycle Events To Monitor](#choosing-lifecycle-events-to-monitor)
+  - [Choosing When To Save New Versions](#choosing-when-to-save-new-versions)
+  - [Choosing Attributes To Monitor](#choosing-attributes-to-monitor)
+  - [Turning PaperTrail Off/On](#turning-papertrail-offon)
+  - [Limiting the Number of Versions Created](#limiting-the-number-of-versions-created)
 - [Reverting And Undeleting A Model](#reverting-and-undeleting-a-model)
 - [Navigating Versions](#navigating-versions)
 - [Finding Out Who Was Responsible For A Change](#finding-out-who-was-responsible-for-a-change)
@@ -21,10 +24,8 @@ revert it to any version, and even undelete it after it's been destroyed.
 - [Associations](#associations)
 - [Storing metadata](#storing-metadata)
 - [Diffing Versions](#diffing-versions)
-- [Turning PaperTrail Off/On](#turning-papertrail-offon)
 - [Using a custom serializer](#using-a-custom-serializer)
 - [SerializedAttributes support](#serializedattributes-support)
-- [Limiting the Number of Versions Created](#limiting-the-number-of-versions-created)
 - [Deleting Old Versions](#deleting-old-versions)
 - [Testing](#testing)
 
@@ -435,6 +436,122 @@ For example:
 class Article < ActiveRecord::Base
   has_paper_trail :skip => [:file_upload]
 end
+```
+
+## Turning PaperTrail Off/On
+
+Sometimes you don't want to store changes.  Perhaps you are only interested in
+changes made by your users and don't need to store changes you make yourself in,
+say, a migration -- or when testing your application.
+
+You can turn PaperTrail on or off in three ways: globally, per request, or per
+class.
+
+### Globally
+
+On a global level you can turn PaperTrail off like this:
+
+```ruby
+PaperTrail.enabled = false
+```
+
+For example, you might want to disable PaperTrail in your Rails application's
+test environment to speed up your tests.  This will do it (note: this gets done
+automatically for `RSpec` and `Cucumber`, please see the [Testing
+section](#testing)):
+
+```ruby
+# in config/environments/test.rb
+config.after_initialize do
+  PaperTrail.enabled = false
+end
+```
+
+If you disable PaperTrail in your test environment but want to enable it for
+specific tests, you can add a helper like this to your test helper:
+
+```ruby
+# in test/test_helper.rb
+def with_versioning
+  was_enabled = PaperTrail.enabled?
+  was_enabled_for_controller = PaperTrail.enabled_for_controller?
+  PaperTrail.enabled = true
+  PaperTrail.enabled_for_controller = true
+  begin
+    yield
+  ensure
+    PaperTrail.enabled = was_enabled
+    PaperTrail.enabled_for_controller = was_enabled_for_controller
+  end
+end
+```
+
+And then use it in your tests like this:
+
+```ruby
+test "something that needs versioning" do
+  with_versioning do
+    # your test
+  end
+end
+```
+
+### Per request
+
+You can turn PaperTrail on or off per request by adding a
+`paper_trail_enabled_for_controller` method to your controller which returns
+`true` or `false`:
+
+```ruby
+class ApplicationController < ActionController::Base
+  def paper_trail_enabled_for_controller
+    request.user_agent != 'Disable User-Agent'
+  end
+end
+```
+
+### Per class
+
+If you are about to change some widgets and you don't want a paper trail of your
+changes, you can turn PaperTrail off like this:
+
+```ruby
+Widget.paper_trail_off!
+```
+
+And on again like this:
+
+```ruby
+Widget.paper_trail_on!
+```
+
+### Per method call
+
+You can call a method without creating a new version using `without_versioning`.
+ It takes either a method name as a symbol:
+
+```ruby
+@widget.without_versioning :destroy
+```
+
+Or a block:
+
+```ruby
+@widget.without_versioning do
+  @widget.update_attributes :name => 'Ford'
+end
+```
+
+## Limiting the Number of Versions Created
+
+Configure `version_limit` to cap the number of versions saved per record. This
+does not apply to `create` events.
+
+```ruby
+# Limit: 4 versions per record (3 most recent, plus a `create` event)
+PaperTrail.config.version_limit = 3
+# Remove the limit
+PaperTrail.config.version_limit = nil
 ```
 
 ## Reverting And Undeleting A Model
@@ -956,110 +1073,6 @@ If you wish to selectively record changes for some models but not others you
 can opt out of recording changes by passing `:save_changes => false` to your
 `has_paper_trail` method declaration.
 
-## Turning PaperTrail Off/On
-
-Sometimes you don't want to store changes.  Perhaps you are only interested in
-changes made by your users and don't need to store changes you make yourself in,
-say, a migration -- or when testing your application.
-
-You can turn PaperTrail on or off in three ways: globally, per request, or per
-class.
-
-### Globally
-
-On a global level you can turn PaperTrail off like this:
-
-```ruby
-PaperTrail.enabled = false
-```
-
-For example, you might want to disable PaperTrail in your Rails application's
-test environment to speed up your tests.  This will do it (note: this gets done
-automatically for `RSpec` and `Cucumber`, please see the [Testing
-section](#testing)):
-
-```ruby
-# in config/environments/test.rb
-config.after_initialize do
-  PaperTrail.enabled = false
-end
-```
-
-If you disable PaperTrail in your test environment but want to enable it for
-specific tests, you can add a helper like this to your test helper:
-
-```ruby
-# in test/test_helper.rb
-def with_versioning
-  was_enabled = PaperTrail.enabled?
-  was_enabled_for_controller = PaperTrail.enabled_for_controller?
-  PaperTrail.enabled = true
-  PaperTrail.enabled_for_controller = true
-  begin
-    yield
-  ensure
-    PaperTrail.enabled = was_enabled
-    PaperTrail.enabled_for_controller = was_enabled_for_controller
-  end
-end
-```
-
-And then use it in your tests like this:
-
-```ruby
-test "something that needs versioning" do
-  with_versioning do
-    # your test
-  end
-end
-```
-
-### Per request
-
-You can turn PaperTrail on or off per request by adding a
-`paper_trail_enabled_for_controller` method to your controller which returns
-`true` or `false`:
-
-```ruby
-class ApplicationController < ActionController::Base
-  def paper_trail_enabled_for_controller
-    request.user_agent != 'Disable User-Agent'
-  end
-end
-```
-
-### Per class
-
-If you are about to change some widgets and you don't want a paper trail of your
-changes, you can turn PaperTrail off like this:
-
-```ruby
-Widget.paper_trail_off!
-```
-
-And on again like this:
-
-```ruby
-Widget.paper_trail_on!
-```
-
-### Per method call
-
-You can call a method without creating a new version using `without_versioning`.
- It takes either a method name as a symbol:
-
-```ruby
-@widget.without_versioning :destroy
-```
-
-Or a block:
-
-```ruby
-@widget.without_versioning do
-  @widget.update_attributes :name => 'Ford'
-end
-```
-
 ## Using a custom serializer
 
 By default, PaperTrail stores your changes as a `YAML` dump. You can override
@@ -1110,18 +1123,6 @@ PaperTrail.config.serialized_attributes = true
 PaperTrail.config.serialized_attributes = false
 # Get current setting
 PaperTrail.serialized_attributes?
-```
-
-## Limiting the Number of Versions Created
-
-Configure `version_limit` to cap the number of versions saved per record. This
-does not apply to `create` events.
-
-```ruby
-# Limit: 4 versions per record (3 most recent, plus a `create` event)
-PaperTrail.config.version_limit = 3
-# Remove the limit
-PaperTrail.config.version_limit = nil
 ```
 
 ## Deleting Old Versions
