@@ -11,22 +11,23 @@ revert it to any version, and even undelete it after it's been destroyed.
 - [Installation](#installation)
 - [API Summary](#api-summary)
 - [Basic Usage](#basic-usage)
-- Limiting what is versioned, and when
+- Limiting What is Versioned, and When
   - [Choosing Lifecycle Events To Monitor](#choosing-lifecycle-events-to-monitor)
   - [Choosing When To Save New Versions](#choosing-when-to-save-new-versions)
   - [Choosing Attributes To Monitor](#choosing-attributes-to-monitor)
   - [Turning PaperTrail Off/On](#turning-papertrail-offon)
   - [Limiting the Number of Versions Created](#limiting-the-number-of-versions-created)
-- [Reverting And Undeleting A Model](#reverting-and-undeleting-a-model)
-- [Navigating Versions](#navigating-versions)
+- Working With Versions
+  - [Reverting And Undeleting A Model](#reverting-and-undeleting-a-model)
+  - [Navigating Versions](#navigating-versions)
+  - [Diffing Versions](#diffing-versions)
+  - [Deleting Old Versions](#deleting-old-versions)
 - [Finding Out Who Was Responsible For A Change](#finding-out-who-was-responsible-for-a-change)
 - [Custom Version Classes](#custom-version-classes)
 - [Associations](#associations)
 - [Storing metadata](#storing-metadata)
-- [Diffing Versions](#diffing-versions)
 - [Using a custom serializer](#using-a-custom-serializer)
 - [SerializedAttributes support](#serializedattributes-support)
-- [Deleting Old Versions](#deleting-old-versions)
 - [Testing](#testing)
 
 ## Features
@@ -647,6 +648,74 @@ And you can perform `WHERE` queries for object versions based on attributes:
 PaperTrail::Version.where_object(content: "Hello", title: "Article")
 ```
 
+## Diffing Versions
+
+There are two scenarios: diffing adjacent versions and diffing non-adjacent
+versions.
+
+The best way to diff adjacent versions is to get PaperTrail to do it for you.
+If you add an `object_changes` text column to your `versions` table, either at
+installation time with the `rails generate paper_trail:install --with-changes`
+option or manually, PaperTrail will store the `changes` diff (excluding any
+attributes PaperTrail is ignoring) in each `update` version.  You can use the
+`version.changeset` method to retrieve it.  For example:
+
+```ruby
+widget = Widget.create :name => 'Bob'
+widget.versions.last.changeset                # {'name' => [nil, 'Bob']}
+widget.update_attributes :name => 'Robert'
+widget.versions.last.changeset                # {'name' => ['Bob', 'Robert']}
+widget.destroy
+widget.versions.last.changeset                # {}
+```
+
+Note PaperTrail only stores the changes for creation and updates; it doesn't
+store anything when an object is destroyed.
+
+Please be aware that PaperTrail doesn't use diffs internally.  When I designed
+PaperTrail I wanted simplicity and robustness so I decided to make each version
+of an object self-contained.  A version stores all of its object's data, not a
+diff from the previous version.  This means you can delete any version without
+affecting any other.
+
+To diff non-adjacent versions you'll have to write your own code.  These
+libraries may help:
+
+For diffing two strings:
+
+* [htmldiff][19]: expects but doesn't require HTML input and produces HTML
+  output.  Works very well but slows down significantly on large (e.g. 5,000
+  word) inputs.
+* [differ][20]: expects plain text input and produces plain
+  text/coloured/HTML/any output.  Can do character-wise, word-wise, line-wise,
+  or arbitrary-boundary-string-wise diffs.  Works very well on non-HTML input.
+* [diff-lcs][21]: old-school, line-wise diffs.
+
+For diffing two ActiveRecord objects:
+
+* [Jeremy Weiskotten's PaperTrail fork][22]: uses ActiveSupport's diff to return
+  an array of hashes of the changes.
+* [activerecord-diff][23]: rather like ActiveRecord::Dirty but also allows you
+  to specify which columns to compare.
+
+If you wish to selectively record changes for some models but not others you
+can opt out of recording changes by passing `:save_changes => false` to your
+`has_paper_trail` method declaration.
+
+## Deleting Old Versions
+
+Over time your `versions` table will grow to an unwieldy size.  Because each
+version is self-contained (see the Diffing section above for more) you can
+simply delete any records you don't want any more.  For example:
+
+```sql
+sql> delete from versions where created_at < 2010-06-01;
+```
+
+```ruby
+PaperTrail::Version.delete_all ["created_at < ?", 1.week.ago]
+```
+
 ## Finding Out Who Was Responsible For A Change
 
 If your `ApplicationController` has a `current_user` method, PaperTrail will
@@ -1019,60 +1088,6 @@ end
 If you're using [strong_parameters][18] instead of [protected_attributes][17]
 then there is no need to use `attr_accessible`.
 
-## Diffing Versions
-
-There are two scenarios: diffing adjacent versions and diffing non-adjacent
-versions.
-
-The best way to diff adjacent versions is to get PaperTrail to do it for you.
-If you add an `object_changes` text column to your `versions` table, either at
-installation time with the `rails generate paper_trail:install --with-changes`
-option or manually, PaperTrail will store the `changes` diff (excluding any
-attributes PaperTrail is ignoring) in each `update` version.  You can use the
-`version.changeset` method to retrieve it.  For example:
-
-```ruby
-widget = Widget.create :name => 'Bob'
-widget.versions.last.changeset                # {'name' => [nil, 'Bob']}
-widget.update_attributes :name => 'Robert'
-widget.versions.last.changeset                # {'name' => ['Bob', 'Robert']}
-widget.destroy
-widget.versions.last.changeset                # {}
-```
-
-Note PaperTrail only stores the changes for creation and updates; it doesn't
-store anything when an object is destroyed.
-
-Please be aware that PaperTrail doesn't use diffs internally.  When I designed
-PaperTrail I wanted simplicity and robustness so I decided to make each version
-of an object self-contained.  A version stores all of its object's data, not a
-diff from the previous version.  This means you can delete any version without
-affecting any other.
-
-To diff non-adjacent versions you'll have to write your own code.  These
-libraries may help:
-
-For diffing two strings:
-
-* [htmldiff][19]: expects but doesn't require HTML input and produces HTML
-  output.  Works very well but slows down significantly on large (e.g. 5,000
-  word) inputs.
-* [differ][20]: expects plain text input and produces plain
-  text/coloured/HTML/any output.  Can do character-wise, word-wise, line-wise,
-  or arbitrary-boundary-string-wise diffs.  Works very well on non-HTML input.
-* [diff-lcs][21]: old-school, line-wise diffs.
-
-For diffing two ActiveRecord objects:
-
-* [Jeremy Weiskotten's PaperTrail fork][22]: uses ActiveSupport's diff to return
-  an array of hashes of the changes.
-* [activerecord-diff][23]: rather like ActiveRecord::Dirty but also allows you
-  to specify which columns to compare.
-
-If you wish to selectively record changes for some models but not others you
-can opt out of recording changes by passing `:save_changes => false` to your
-`has_paper_trail` method declaration.
-
 ## Using a custom serializer
 
 By default, PaperTrail stores your changes as a `YAML` dump. You can override
@@ -1123,20 +1138,6 @@ PaperTrail.config.serialized_attributes = true
 PaperTrail.config.serialized_attributes = false
 # Get current setting
 PaperTrail.serialized_attributes?
-```
-
-## Deleting Old Versions
-
-Over time your `versions` table will grow to an unwieldy size.  Because each
-version is self-contained (see the Diffing section above for more) you can
-simply delete any records you don't want any more.  For example:
-
-```sql
-sql> delete from versions where created_at < 2010-06-01;
-```
-
-```ruby
-PaperTrail::Version.delete_all ["created_at < ?", 1.week.ago]
 ```
 
 ## Testing
