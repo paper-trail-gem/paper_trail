@@ -2,69 +2,71 @@
 
 [![Build Status][4]][5] [![Dependency Status][6]][7]
 
-PaperTrail lets you track changes to your models' data.  It's good for auditing
-or versioning.  You can see how a model looked at any stage in its lifecycle,
-revert it to any version, and even undelete it after it's been destroyed.
+Track changes to your models, for auditing or versioning. See how a model looked
+at any stage in its lifecycle, revert it to any version, or restore it after it
+has been destroyed.
 
 - [Features](#features)
 - [Compatibility](#compatibility)
 - [Installation](#installation)
 - [API Summary](#api-summary)
 - [Basic Usage](#basic-usage)
-- [Choosing Lifecycle Events To Monitor](#choosing-lifecycle-events-to-monitor)
-- [Choosing When To Save New Versions](#choosing-when-to-save-new-versions)
-- [Choosing Attributes To Monitor](#choosing-attributes-to-monitor)
-- [Reverting And Undeleting A Model](#reverting-and-undeleting-a-model)
-- [Navigating Versions](#navigating-versions)
+- Limiting What is Versioned, and When
+  - [Choosing Lifecycle Events To Monitor](#choosing-lifecycle-events-to-monitor)
+  - [Choosing When To Save New Versions](#choosing-when-to-save-new-versions)
+  - [Choosing Attributes To Monitor](#choosing-attributes-to-monitor)
+  - [Turning PaperTrail Off/On](#turning-papertrail-offon)
+  - [Limiting the Number of Versions Created](#limiting-the-number-of-versions-created)
+- Working With Versions
+  - [Reverting And Undeleting A Model](#reverting-and-undeleting-a-model)
+  - [Navigating Versions](#navigating-versions)
+  - [Diffing Versions](#diffing-versions)
+  - [Deleting Old Versions](#deleting-old-versions)
 - [Finding Out Who Was Responsible For A Change](#finding-out-who-was-responsible-for-a-change)
 - [Custom Version Classes](#custom-version-classes)
 - [Associations](#associations)
 - [Storing metadata](#storing-metadata)
-- [Diffing Versions](#diffing-versions)
-- [Turning PaperTrail Off/On](#turning-papertrail-offon)
 - [Using a custom serializer](#using-a-custom-serializer)
 - [SerializedAttributes support](#serializedattributes-support)
-- [Limiting the Number of Versions Created](#limiting-the-number-of-versions-created)
-- [Deleting Old Versions](#deleting-old-versions)
 - [Testing](#testing)
 
 ## Features
 
-* Stores every create, update and destroy (or only the lifecycle events you specify).
-* Does not store updates which don't change anything.
-* Allows you to specify attributes (by inclusion or exclusion) which must change for a Version to be stored.
-* Allows you to get at every version, including the original, even once destroyed.
-* Allows you to get at every version even if the schema has since changed.
-* Allows you to get at the version as of a particular time.
-* Option to automatically restore `has_one`, `has_many` and `has_many :through` associations as they were at the time.
-* Automatically records who was responsible via your controller.  PaperTrail calls `current_user` by default, if it exists, but you can have it call any method you like.
-* Allows you to set who is responsible at model-level (useful for migrations).
-* Allows you to store arbitrary model-level metadata with each version (useful for filtering versions).
-* Allows you to store arbitrary controller-level information with each version, e.g. remote IP.
-* Can be turned off/on per class (useful for migrations).
-* Can be turned off/on per request (useful for testing with an external service).
-* Can be turned off/on globally (useful for testing).
-* No configuration necessary.
-* Stores everything in a single database table by default (generates migration for you), or can use separate tables for separate models.
-* Supports custom version classes so different models' versions can have different behaviour.
-* Supports custom name for versions association.
-* Thoroughly tested.
-* Threadsafe.
-
+* Stores create, update and destroy events
+  * Does not store updates which don't change anything
+  * Support for versioning associated records
+* Can store metadata with each version record
+  * Who was responsible for a change
+  * Arbitrary model-level metadata (useful for filtering versions)
+  * Arbitrary controller-level information e.g. remote IP
+* Configurable
+  * No configuration necessary, but if you want to ..
+  * Configure which events (create, update and destroy) are versioned
+  * Configure which attributes must change for an update to be versioned
+  * Turn off/on by model, request, or globally
+  * Use separate tables for separate models
+* Extensible
+  * Write a custom version class for complete control
+  * Write custom version classes for each of your models
+* Work with versions
+  * Restore any version, including the original, even once destroyed
+  * Restore any version even if the schema has since changed
+  * Restore the version as of a particular time
+* Thoroughly tested
+* Threadsafe
 
 ## Compatibility
 
-Works with `ActiveRecord` 3+. Note: this code is on the `master` branch and tagged `v4.x`.
-
-Version 3 is on the branch named [`3.0-stable`][9] and is tagged `v3.x`, and works ActiveRecord 4 and ActiveRecord 3.
-
-Version 2 is on the branch named [`2.7-stable`][10] and is tagged `v2.x`, and works with Rails 3.
-
-The Rails 2.3 code is on the [`rails2`][11] branch and tagged `v1.x`. These branches are both stable with their respective versions of Rails but will not have new features added/backported to them.
+| paper_trail | branch     | tags   | ruby     | activerecord |
+| ----------- | ---------- | ------ | -------- | ------------ |
+| 4           | master     | v4.x   | >= 1.8.7 | >= 3.0       |
+| 3           | 3.0-stable | v3.x   | >= 1.8.7 | >= 3.0       |
+| 2           | 2.7-stable | v2.x   | >= 1.8.7 | >= 3.0, < 4  |
+| 1           | rails2     | v1.x   | >= 1.8.7 | >= 2.3, < 3  |
 
 ## Installation
 
-### Rails 3 & 4
+### Rails 3 and 4
 
 1. Add PaperTrail to your `Gemfile`.
 
@@ -437,6 +439,122 @@ class Article < ActiveRecord::Base
 end
 ```
 
+## Turning PaperTrail Off/On
+
+Sometimes you don't want to store changes.  Perhaps you are only interested in
+changes made by your users and don't need to store changes you make yourself in,
+say, a migration -- or when testing your application.
+
+You can turn PaperTrail on or off in three ways: globally, per request, or per
+class.
+
+### Globally
+
+On a global level you can turn PaperTrail off like this:
+
+```ruby
+PaperTrail.enabled = false
+```
+
+For example, you might want to disable PaperTrail in your Rails application's
+test environment to speed up your tests.  This will do it (note: this gets done
+automatically for `RSpec` and `Cucumber`, please see the [Testing
+section](#testing)):
+
+```ruby
+# in config/environments/test.rb
+config.after_initialize do
+  PaperTrail.enabled = false
+end
+```
+
+If you disable PaperTrail in your test environment but want to enable it for
+specific tests, you can add a helper like this to your test helper:
+
+```ruby
+# in test/test_helper.rb
+def with_versioning
+  was_enabled = PaperTrail.enabled?
+  was_enabled_for_controller = PaperTrail.enabled_for_controller?
+  PaperTrail.enabled = true
+  PaperTrail.enabled_for_controller = true
+  begin
+    yield
+  ensure
+    PaperTrail.enabled = was_enabled
+    PaperTrail.enabled_for_controller = was_enabled_for_controller
+  end
+end
+```
+
+And then use it in your tests like this:
+
+```ruby
+test "something that needs versioning" do
+  with_versioning do
+    # your test
+  end
+end
+```
+
+### Per request
+
+You can turn PaperTrail on or off per request by adding a
+`paper_trail_enabled_for_controller` method to your controller which returns
+`true` or `false`:
+
+```ruby
+class ApplicationController < ActionController::Base
+  def paper_trail_enabled_for_controller
+    request.user_agent != 'Disable User-Agent'
+  end
+end
+```
+
+### Per class
+
+If you are about to change some widgets and you don't want a paper trail of your
+changes, you can turn PaperTrail off like this:
+
+```ruby
+Widget.paper_trail_off!
+```
+
+And on again like this:
+
+```ruby
+Widget.paper_trail_on!
+```
+
+### Per method call
+
+You can call a method without creating a new version using `without_versioning`.
+ It takes either a method name as a symbol:
+
+```ruby
+@widget.without_versioning :destroy
+```
+
+Or a block:
+
+```ruby
+@widget.without_versioning do
+  @widget.update_attributes :name => 'Ford'
+end
+```
+
+## Limiting the Number of Versions Created
+
+Configure `version_limit` to cap the number of versions saved per record. This
+does not apply to `create` events.
+
+```ruby
+# Limit: 4 versions per record (3 most recent, plus a `create` event)
+PaperTrail.config.version_limit = 3
+# Remove the limit
+PaperTrail.config.version_limit = nil
+```
+
 ## Reverting And Undeleting A Model
 
 PaperTrail makes reverting to a previous version easy:
@@ -528,6 +646,74 @@ And you can perform `WHERE` queries for object versions based on attributes:
 ```ruby
 # All versions that meet these criteria.
 PaperTrail::Version.where_object(content: "Hello", title: "Article")
+```
+
+## Diffing Versions
+
+There are two scenarios: diffing adjacent versions and diffing non-adjacent
+versions.
+
+The best way to diff adjacent versions is to get PaperTrail to do it for you.
+If you add an `object_changes` text column to your `versions` table, either at
+installation time with the `rails generate paper_trail:install --with-changes`
+option or manually, PaperTrail will store the `changes` diff (excluding any
+attributes PaperTrail is ignoring) in each `update` version.  You can use the
+`version.changeset` method to retrieve it.  For example:
+
+```ruby
+widget = Widget.create :name => 'Bob'
+widget.versions.last.changeset                # {'name' => [nil, 'Bob']}
+widget.update_attributes :name => 'Robert'
+widget.versions.last.changeset                # {'name' => ['Bob', 'Robert']}
+widget.destroy
+widget.versions.last.changeset                # {}
+```
+
+Note PaperTrail only stores the changes for creation and updates; it doesn't
+store anything when an object is destroyed.
+
+Please be aware that PaperTrail doesn't use diffs internally.  When I designed
+PaperTrail I wanted simplicity and robustness so I decided to make each version
+of an object self-contained.  A version stores all of its object's data, not a
+diff from the previous version.  This means you can delete any version without
+affecting any other.
+
+To diff non-adjacent versions you'll have to write your own code.  These
+libraries may help:
+
+For diffing two strings:
+
+* [htmldiff][19]: expects but doesn't require HTML input and produces HTML
+  output.  Works very well but slows down significantly on large (e.g. 5,000
+  word) inputs.
+* [differ][20]: expects plain text input and produces plain
+  text/coloured/HTML/any output.  Can do character-wise, word-wise, line-wise,
+  or arbitrary-boundary-string-wise diffs.  Works very well on non-HTML input.
+* [diff-lcs][21]: old-school, line-wise diffs.
+
+For diffing two ActiveRecord objects:
+
+* [Jeremy Weiskotten's PaperTrail fork][22]: uses ActiveSupport's diff to return
+  an array of hashes of the changes.
+* [activerecord-diff][23]: rather like ActiveRecord::Dirty but also allows you
+  to specify which columns to compare.
+
+If you wish to selectively record changes for some models but not others you
+can opt out of recording changes by passing `:save_changes => false` to your
+`has_paper_trail` method declaration.
+
+## Deleting Old Versions
+
+Over time your `versions` table will grow to an unwieldy size.  Because each
+version is self-contained (see the Diffing section above for more) you can
+simply delete any records you don't want any more.  For example:
+
+```sql
+sql> delete from versions where created_at < 2010-06-01;
+```
+
+```ruby
+PaperTrail::Version.delete_all ["created_at < ?", 1.week.ago]
 ```
 
 ## Finding Out Who Was Responsible For A Change
@@ -902,164 +1088,6 @@ end
 If you're using [strong_parameters][18] instead of [protected_attributes][17]
 then there is no need to use `attr_accessible`.
 
-## Diffing Versions
-
-There are two scenarios: diffing adjacent versions and diffing non-adjacent
-versions.
-
-The best way to diff adjacent versions is to get PaperTrail to do it for you.
-If you add an `object_changes` text column to your `versions` table, either at
-installation time with the `rails generate paper_trail:install --with-changes`
-option or manually, PaperTrail will store the `changes` diff (excluding any
-attributes PaperTrail is ignoring) in each `update` version.  You can use the
-`version.changeset` method to retrieve it.  For example:
-
-```ruby
-widget = Widget.create :name => 'Bob'
-widget.versions.last.changeset                # {'name' => [nil, 'Bob']}
-widget.update_attributes :name => 'Robert'
-widget.versions.last.changeset                # {'name' => ['Bob', 'Robert']}
-widget.destroy
-widget.versions.last.changeset                # {}
-```
-
-Note PaperTrail only stores the changes for creation and updates; it doesn't
-store anything when an object is destroyed.
-
-Please be aware that PaperTrail doesn't use diffs internally.  When I designed
-PaperTrail I wanted simplicity and robustness so I decided to make each version
-of an object self-contained.  A version stores all of its object's data, not a
-diff from the previous version.  This means you can delete any version without
-affecting any other.
-
-To diff non-adjacent versions you'll have to write your own code.  These
-libraries may help:
-
-For diffing two strings:
-
-* [htmldiff][19]: expects but doesn't require HTML input and produces HTML
-  output.  Works very well but slows down significantly on large (e.g. 5,000
-  word) inputs.
-* [differ][20]: expects plain text input and produces plain
-  text/coloured/HTML/any output.  Can do character-wise, word-wise, line-wise,
-  or arbitrary-boundary-string-wise diffs.  Works very well on non-HTML input.
-* [diff-lcs][21]: old-school, line-wise diffs.
-
-For diffing two ActiveRecord objects:
-
-* [Jeremy Weiskotten's PaperTrail fork][22]: uses ActiveSupport's diff to return
-  an array of hashes of the changes.
-* [activerecord-diff][23]: rather like ActiveRecord::Dirty but also allows you
-  to specify which columns to compare.
-
-If you wish to selectively record changes for some models but not others you
-can opt out of recording changes by passing `:save_changes => false` to your
-`has_paper_trail` method declaration.
-
-## Turning PaperTrail Off/On
-
-Sometimes you don't want to store changes.  Perhaps you are only interested in
-changes made by your users and don't need to store changes you make yourself in,
-say, a migration -- or when testing your application.
-
-You can turn PaperTrail on or off in three ways: globally, per request, or per
-class.
-
-### Globally
-
-On a global level you can turn PaperTrail off like this:
-
-```ruby
-PaperTrail.enabled = false
-```
-
-For example, you might want to disable PaperTrail in your Rails application's
-test environment to speed up your tests.  This will do it (note: this gets done
-automatically for `RSpec` and `Cucumber`, please see the [Testing
-section](#testing)):
-
-```ruby
-# in config/environments/test.rb
-config.after_initialize do
-  PaperTrail.enabled = false
-end
-```
-
-If you disable PaperTrail in your test environment but want to enable it for
-specific tests, you can add a helper like this to your test helper:
-
-```ruby
-# in test/test_helper.rb
-def with_versioning
-  was_enabled = PaperTrail.enabled?
-  was_enabled_for_controller = PaperTrail.enabled_for_controller?
-  PaperTrail.enabled = true
-  PaperTrail.enabled_for_controller = true
-  begin
-    yield
-  ensure
-    PaperTrail.enabled = was_enabled
-    PaperTrail.enabled_for_controller = was_enabled_for_controller
-  end
-end
-```
-
-And then use it in your tests like this:
-
-```ruby
-test "something that needs versioning" do
-  with_versioning do
-    # your test
-  end
-end
-```
-
-### Per request
-
-You can turn PaperTrail on or off per request by adding a
-`paper_trail_enabled_for_controller` method to your controller which returns
-`true` or `false`:
-
-```ruby
-class ApplicationController < ActionController::Base
-  def paper_trail_enabled_for_controller
-    request.user_agent != 'Disable User-Agent'
-  end
-end
-```
-
-### Per class
-
-If you are about to change some widgets and you don't want a paper trail of your
-changes, you can turn PaperTrail off like this:
-
-```ruby
-Widget.paper_trail_off!
-```
-
-And on again like this:
-
-```ruby
-Widget.paper_trail_on!
-```
-
-### Per method call
-
-You can call a method without creating a new version using `without_versioning`.
- It takes either a method name as a symbol:
-
-```ruby
-@widget.without_versioning :destroy
-```
-
-Or a block:
-
-```ruby
-@widget.without_versioning do
-  @widget.update_attributes :name => 'Ford'
-end
-```
-
 ## Using a custom serializer
 
 By default, PaperTrail stores your changes as a `YAML` dump. You can override
@@ -1110,32 +1138,6 @@ PaperTrail.config.serialized_attributes = true
 PaperTrail.config.serialized_attributes = false
 # Get current setting
 PaperTrail.serialized_attributes?
-```
-
-## Limiting the Number of Versions Created
-
-Configure `version_limit` to cap the number of versions saved per record. This
-does not apply to `create` events.
-
-```ruby
-# Limit: 4 versions per record (3 most recent, plus a `create` event)
-PaperTrail.config.version_limit = 3
-# Remove the limit
-PaperTrail.config.version_limit = nil
-```
-
-## Deleting Old Versions
-
-Over time your `versions` table will grow to an unwieldy size.  Because each
-version is self-contained (see the Diffing section above for more) you can
-simply delete any records you don't want any more.  For example:
-
-```sql
-sql> delete from versions where created_at < 2010-06-01;
-```
-
-```ruby
-PaperTrail::Version.delete_all ["created_at < ?", 1.week.ago]
 ```
 
 ## Testing
