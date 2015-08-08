@@ -107,6 +107,14 @@ module PaperTrail
     paper_trail_store[:controller_info]
   end
 
+  # controller_info for a given block of code
+  def self.with_controller_info(info)
+    old, self.controller_info = controller_info, value
+    yield
+  ensure
+    self.controller_info = old
+  end
+
   # Getter and Setter for PaperTrail Serializer
   def self.serializer=(value)
     PaperTrail.config.serializer = value
