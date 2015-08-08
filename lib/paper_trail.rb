@@ -85,6 +85,14 @@ module PaperTrail
     paper_trail_store[:whodunnit]
   end
 
+  # whodunnit for a given block of code
+  def self.with_whodunnit(value)
+    old, self.whodunnit = whodunnit, value
+    yield
+  ensure
+    self.whodunnit = old
+  end
+
   # Sets any information from the controller that you want PaperTrail to
   # store.  By default this is set automatically by a before filter.
   def self.controller_info=(value)

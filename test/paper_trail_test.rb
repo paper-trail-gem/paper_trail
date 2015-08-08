@@ -24,6 +24,14 @@ class PaperTrailTest < ActiveSupport::TestCase
     assert PaperTrail.enabled?
   end
 
+  test 'with_whodunnit' do
+    refute PaperTrail.whodunnit
+    PaperTrail.with_whodunnit("Pete") do
+      assert_equal "Pete", PaperTrail.whodunnit
+    end
+    refute PaperTrail.whodunnit
+  end
+
   test 'create with plain model class' do
     widget = Widget.create
     assert_equal 1, widget.versions.length
