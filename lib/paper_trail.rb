@@ -24,6 +24,14 @@ module PaperTrail
     !!PaperTrail.config.enabled
   end
 
+  # Disable or enable for a given block of code
+  def self.with_enabled(value)
+    old, self.enabled = enabled?, value
+    yield
+  ensure
+    self.enabled = old
+  end
+
   # ActiveRecord 5 drops support for serialized attributes; for previous
   # versions of ActiveRecord it is supported, we have a config option
   # to enable it within PaperTrail.
