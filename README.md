@@ -662,15 +662,26 @@ attributes PaperTrail is ignoring) in each `update` version.  You can use the
 
 ```ruby
 widget = Widget.create :name => 'Bob'
-widget.versions.last.changeset                # {'name' => [nil, 'Bob']}
+widget.versions.last.changeset
+# {
+#   "name"=>[nil, "Bob"],
+#   "created_at"=>[nil, 2015-08-10 04:10:40 UTC],
+#   "updated_at"=>[nil, 2015-08-10 04:10:40 UTC],
+#   "id"=>[nil, 1]
+# }
 widget.update_attributes :name => 'Robert'
-widget.versions.last.changeset                # {'name' => ['Bob', 'Robert']}
+widget.versions.last.changeset
+# {
+#   "name"=>["Bob", "Robert"],
+#   "updated_at"=>[2015-08-10 04:13:19 UTC, 2015-08-10 04:13:19 UTC]
+# }
 widget.destroy
-widget.versions.last.changeset                # {}
+widget.versions.last.changeset
+# {}
 ```
 
-Note PaperTrail only stores the changes for creation and updates; it doesn't
-store anything when an object is destroyed.
+The `object_changes` are only stored for creation and updates, not when an
+object is destroyed.
 
 Please be aware that PaperTrail doesn't use diffs internally.  When I designed
 PaperTrail I wanted simplicity and robustness so I decided to make each version
@@ -1072,7 +1083,7 @@ end
 
 ### Protected Attributes and Metadata
 
-If you are using rails 3 or the [protected_attributes][17] gem you must declare 
+If you are using rails 3 or the [protected_attributes][17] gem you must declare
 your metadata columns to be `attr_accessible`.
 
 ```ruby
