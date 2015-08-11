@@ -326,8 +326,8 @@ module PaperTrail
             :event     => paper_trail_event || 'create',
             :whodunnit => PaperTrail.whodunnit
           }
-          if respond_to?(:created_at)
-            data[PaperTrail.timestamp_field] = created_at
+          if respond_to?(:updated_at)
+            data[PaperTrail.timestamp_field] = updated_at
           end
           if paper_trail_options[:save_changes] && changed_notably? && self.class.paper_trail_version_class.column_names.include?('object_changes')
             data[:object_changes] = self.class.paper_trail_version_class.object_changes_col_is_json? ? changes_for_paper_trail :
