@@ -4,7 +4,7 @@ module PaperTrail
 
       def self.included(base)
         base.before_filter :set_paper_trail_enabled_for_controller
-        base.before_filter :set_paper_trail_whodunnit, :set_paper_trail_controller_info
+        base.around_filter :set_paper_trail_whodunnit, :set_paper_trail_controller_info
       end
 
       protected
@@ -61,14 +61,22 @@ module PaperTrail
       end
 
       # Tells PaperTrail who is responsible for any changes that occur.
-      def set_paper_trail_whodunnit
-        ::PaperTrail.whodunnit = user_for_paper_trail if ::PaperTrail.enabled_for_controller?
+      def set_paper_trail_whodunnit(&block)
+        if ::PaperTrail.enabled_for_controller?
+          ::PaperTrail.with_whodunnit(user_for_paper_trail, &block)
+        else
+          yield
+        end
       end
 
       # Tells PaperTrail any information from the controller you want to store
       # alongside any changes that occur.
-      def set_paper_trail_controller_info
-        ::PaperTrail.controller_info = info_for_paper_trail if ::PaperTrail.enabled_for_controller?
+      def set_paper_trail_controller_info(&block)
+        if ::PaperTrail.enabled_for_controller?
+          ::PaperTrail.with_controller_info(info_for_paper_trail, &block)
+        else
+          yield
+        end
       end
 
     end

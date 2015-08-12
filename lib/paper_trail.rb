@@ -24,6 +24,14 @@ module PaperTrail
     !!PaperTrail.config.enabled
   end
 
+  # Disable or enable for a given block of code
+  def self.with_enabled(value)
+    old, self.enabled = enabled?, value
+    yield
+  ensure
+    self.enabled = old
+  end
+
   # ActiveRecord 5 drops support for serialized attributes; for previous
   # versions of ActiveRecord it is supported, we have a config option
   # to enable it within PaperTrail.
@@ -77,6 +85,14 @@ module PaperTrail
     paper_trail_store[:whodunnit]
   end
 
+  # whodunnit for a given block of code
+  def self.with_whodunnit(value)
+    old, self.whodunnit = whodunnit, value
+    yield
+  ensure
+    self.whodunnit = old
+  end
+
   # Sets any information from the controller that you want PaperTrail to
   # store.  By default this is set automatically by a before filter.
   def self.controller_info=(value)
@@ -89,6 +105,14 @@ module PaperTrail
   # See `PaperTrail::Rails::Controller#info_for_paper_trail`.
   def self.controller_info
     paper_trail_store[:controller_info]
+  end
+
+  # controller_info for a given block of code
+  def self.with_controller_info(info)
+    old, self.controller_info = controller_info, value
+    yield
+  ensure
+    self.controller_info = old
   end
 
   # Getter and Setter for PaperTrail Serializer
