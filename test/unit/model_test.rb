@@ -212,8 +212,8 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         assert @widget.live?
       end
 
-      should 'use the widget created_at' do
-        assert_equal @widget.created_at.to_i, @widget.versions.first.created_at.to_i
+      should "use the widget `updated_at` as the version's `created_at`" do
+        assert_equal @widget.updated_at.to_i, @widget.versions.first.created_at.to_i
       end
 
       should 'have changes' do

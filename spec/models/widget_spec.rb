@@ -51,8 +51,8 @@ describe Widget, :type => :model do
     describe :after_create do
       let(:widget) { Widget.create!(:name => 'Foobar', :created_at => Time.now - 1.week) }
 
-      it "corresponding version should use the widget's `created_at`" do
-        expect(widget.versions.last.created_at.to_i).to eq(widget.created_at.to_i)
+      it "corresponding version should use the widget's `updated_at`" do
+        expect(widget.versions.last.created_at.to_i).to eq(widget.updated_at.to_i)
       end
     end
 
