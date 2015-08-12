@@ -2,7 +2,11 @@
 
 ### Changed
 
-None
+- [#589](https://github.com/airblade/paper_trail/pull/589) /
+  [#588](https://github.com/airblade/paper_trail/issues/588) -
+  `PaperTrail.timestamp_field` should be assigned to match the `updated_at`
+  value when a version is generated for new versions.
+  
 
 ### Added
 
