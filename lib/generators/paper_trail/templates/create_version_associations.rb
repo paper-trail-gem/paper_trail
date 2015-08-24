@@ -4,6 +4,7 @@ class CreateVersionAssociations < ActiveRecord::Migration
       t.integer  :version_id
       t.string   :foreign_key_name, :null => false
       t.integer  :foreign_key_id
+      t.datetime :created_at
     end
     add_index :version_associations, [:version_id]
     add_index :version_associations, [:foreign_key_name, :foreign_key_id], :name => 'index_version_associations_on_foreign_key'
