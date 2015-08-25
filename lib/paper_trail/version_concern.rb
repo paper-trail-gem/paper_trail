@@ -373,12 +373,23 @@ module PaperTrail
     # another association.
     def reify_has_many_directly(associations, model, options = {})
       version_table_name = model.class.paper_trail_version_class.table_name
+      version_association_name = model.class.version_association_name
       associations.each do |assoc|
         next unless assoc.klass.paper_trail_enabled_for_model?
-        version_id_subquery = "SELECT v1.id from #{model.class.version_association_name.table_name} v1 where exists (
-select distinct on (item_id) version_id, min(created_at) from #{model.class.version_association_name.table_name} v2 where v1.id = v2.version_id
-and foreign_key_name = '#{assoc.foreign_key}' and foreign_key_id = '#{model.id}' and #{version_table_name}.item_type = #{assoc.class_name} and #{version_table_name}.created_at >= '#{options[:version_at]}'
-OR transaction_id = #{transaction_id.blank? ? "null" : transaction_id} group by item_id, id)"
+        version_id_subquery = %Q{
+          SELECT v1.id
+          FROM #{version_association_name} v1
+          WHERE exists (
+            SELECT DISTINCT ON (item_id) version_id, MIN(created_at)
+            FROM #{version_association_name} v2
+            WHERE v1.id = v2.version_id
+            AND foreign_key_name = '#{assoc.foreign_key}'
+            AND foreign_key_id = '#{model.id}'
+            AND #{version_table_name}.item_type = #{assoc.class_name}
+            AND #{version_table_name}.created_at >= '#{options[:version_at]}'
+            OR transaction_id = #{transaction_id.blank? ? "null" : transaction_id}
+            GROUP BY item_id, id)
+        }
 
         versions = ActiveRecord::Base.connection.execute(version_id_subquery).inject({}) do |acc, v|
           acc.merge!(v.item_id => v)
@@ -412,15 +423,25 @@ OR transaction_id = #{transaction_id.blank? ? "null" : transaction_id} group by 
     # This must be called after the direct has_manys have been reified
     # (reify_has_many_directly).
     def reify_has_many_through(associations, model, options = {})
+      version_table_name = model.class.paper_trail_version_class.table_name
       associations.each do |assoc|
         next unless assoc.klass.paper_trail_enabled_for_model?
         through_collection = model.send(assoc.options[:through])
         collection_keys = through_collection.map { |through_model| through_model.send(assoc.foreign_key) }
 
-         version_id_subquery = "SELECT v1.id from #{assoc.klass.paper_trail_version_class.table_name} v1 where exists (
-select distinct on (item_id) id, min(created_at) from #{assoc.klass.paper_trail_version_class.table_name} v2 where v1.id = v2.id
-and item_type = #{assoc.class_name} and item_id IN (#{collection_keys.blank? ? "null" : collection_keys.map {|str| "'#{str}'"}.join(',')})
-and created_at >= '#{options[:version_at]}' OR transaction_id = #{transaction_id.blank? ? "null" : transaction_id} group by item_id, id)"
+        version_id_subquery = %Q{
+          SELECT v1.id
+          FROM #{version_table_name} v1
+          WHERE EXISTS (
+            SELECT DISTINCT ON (item_id) id, min(created_at)
+            FROM #{version_table_name} v2
+            WHERE v1.id = v2.id
+            AND item_type = #{assoc.class_name}
+            AND item_id IN (#{collection_keys.blank? ? "null" : collection_keys.map {|str| "'#{str}'"}.join(',')})
+            AND created_at >= '#{options[:version_at]}'
+            OR transaction_id = #{transaction_id.blank? ? "null" : transaction_id}
+            GROUP BY item_id, id)
+        }
 
         versions = ActiveRecord::Base.connection.execute(version_id_subquery).inject({}) do |acc, v|
           acc.merge!(v.item_id => v)
