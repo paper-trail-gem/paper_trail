@@ -216,9 +216,33 @@ class SetUpTestTables < ActiveRecord::Migration
       t.string  :some_content
       t.boolean :deleted, :default => false
     end
+
+    create_table :chapters, :force => true do |t|
+      t.string :name
+    end
+
+    create_table :sections, :force => true do |t|
+      t.integer :chapter_id
+      t.string :name
+    end
+
+    create_table :paragraphs, :force => true do |t|
+      t.integer :section_id
+      t.string :name
+    end
+
+    create_table :quotations, :force => true do |t|
+      t.integer :chapter_id
+    end
+
+    create_table :citations, :force => true do |t|
+      t.integer :quotation_id
+    end
   end
 
   def self.down
+    drop_table :citations
+    drop_table :quotations
     drop_table :animals
     drop_table :skippers
     drop_table :not_on_updates
@@ -252,6 +276,9 @@ class SetUpTestTables < ActiveRecord::Migration
     drop_table :line_items
     drop_table :fruits
     drop_table :boolits
+    drop_table :chapters
+    drop_table :sections
+    drop_table :paragraphs
     remove_index :version_associations, :column => [:version_id]
     remove_index :version_associations, :name => 'index_version_associations_on_foreign_key'
     drop_table :version_associations
