@@ -336,7 +336,7 @@ module PaperTrail
             where("version_associations.foreign_key_name = ?", assoc.foreign_key).
             where("version_associations.foreign_key_id = ?", model.id).
             where("#{version_table_name}.item_type = ?", assoc.class_name).
-            where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
+            where("#{version_table_name}.created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
             order("#{version_table_name}.id ASC").first
           if version
             if version.event == 'create'
@@ -373,16 +373,25 @@ module PaperTrail
     # another association.
     def reify_has_many_directly(associations, model, options = {})
       version_table_name = model.class.paper_trail_version_class.table_name
+      version_association_name = model.class.version_association_name
       associations.each do |assoc|
         next unless assoc.klass.paper_trail_enabled_for_model?
-        version_id_subquery = PaperTrail::VersionAssociation.joins(model.class.version_association_name).
-          select("MIN(version_id)").
-          where("foreign_key_name = ?", assoc.foreign_key).
-          where("foreign_key_id = ?", model.id).
-          where("#{version_table_name}.item_type = ?", assoc.class_name).
-          where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
-          group("item_id").to_sql
-        versions = model.class.paper_trail_version_class.where("id IN (#{version_id_subquery})").inject({}) do |acc, v|
+        version_id_subquery = %Q{
+          SELECT v1.id
+          FROM #{version_association_name} v1
+          WHERE exists (
+            SELECT DISTINCT ON (item_id) version_id, MIN(created_at)
+            FROM #{version_association_name} v2
+            WHERE v1.id = v2.version_id
+            AND foreign_key_name = '#{assoc.foreign_key}'
+            AND foreign_key_id = '#{model.id}'
+            AND #{version_table_name}.item_type = #{assoc.class_name}
+            AND #{version_table_name}.created_at >= '#{options[:version_at]}'
+            OR transaction_id = #{transaction_id.blank? ? "null" : transaction_id}
+            GROUP BY item_id, id)
+        }
+
+        versions = ActiveRecord::Base.connection.execute(version_id_subquery).inject({}) do |acc, v|
           acc.merge!(v.item_id => v)
         end
 
@@ -414,18 +423,27 @@ module PaperTrail
     # This must be called after the direct has_manys have been reified
     # (reify_has_many_directly).
     def reify_has_many_through(associations, model, options = {})
+      version_table_name = model.class.paper_trail_version_class.table_name
       associations.each do |assoc|
         next unless assoc.klass.paper_trail_enabled_for_model?
         through_collection = model.send(assoc.options[:through])
         collection_keys = through_collection.map { |through_model| through_model.send(assoc.foreign_key) }
 
-        version_id_subquery = assoc.klass.paper_trail_version_class.
-          select("MIN(id)").
-          where("item_type = ?", assoc.class_name).
-          where("item_id IN (?)", collection_keys).
-          where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
-          group("item_id").to_sql
-        versions = assoc.klass.paper_trail_version_class.where("id IN (#{version_id_subquery})").inject({}) do |acc, v|
+        version_id_subquery = %Q{
+          SELECT v1.id
+          FROM #{version_table_name} v1
+          WHERE EXISTS (
+            SELECT DISTINCT ON (item_id) id, min(created_at)
+            FROM #{version_table_name} v2
+            WHERE v1.id = v2.id
+            AND item_type = #{assoc.class_name}
+            AND item_id IN (#{collection_keys.blank? ? "null" : collection_keys.map {|str| "'#{str}'"}.join(',')})
+            AND created_at >= '#{options[:version_at]}'
+            OR transaction_id = #{transaction_id.blank? ? "null" : transaction_id}
+            GROUP BY item_id, id)
+        }
+
+        versions = ActiveRecord::Base.connection.execute(version_id_subquery).inject({}) do |acc, v|
           acc.merge!(v.item_id => v)
         end
 
