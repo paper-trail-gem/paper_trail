@@ -870,8 +870,8 @@ end
 ## Associations
 
 **Experimental Feature: Known Issues:**
-[#542][https://github.com/airblade/paper_trail/issues/542],
-[#590][https://github.com/airblade/paper_trail/issues/590].
+[#542](https://github.com/airblade/paper_trail/issues/542),
+[#590](https://github.com/airblade/paper_trail/issues/590).
 See also: Caveats below.
 
 PaperTrail can restore three types of associations: Has-One, Has-Many, and
