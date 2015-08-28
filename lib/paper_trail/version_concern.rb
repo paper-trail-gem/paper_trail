@@ -417,7 +417,8 @@ module PaperTrail
       associations.each do |assoc|
         next unless assoc.klass.paper_trail_enabled_for_model?
         through_collection = model.send(assoc.options[:through])
-        collection_keys = through_collection.map { |through_model| through_model.send(assoc.foreign_key) }
+        #collect all the record_ids associated with the has_many through assoication
+        collection_keys = through_collection.map { |through_model| through_model.send(assoc.name).collect { |associated_model| associated_model.id} }.flatten
 
         version_id_subquery = assoc.klass.paper_trail_version_class.
           select("MIN(id)").
