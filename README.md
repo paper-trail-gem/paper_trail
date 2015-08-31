@@ -1137,6 +1137,17 @@ end
 Note: You don't need to use a particular serializer for the PostgreSQL `JSON`
 column type.
 
+#### Convert a column from text to json
+
+Postgres' `alter column` command will not automatically convert a `text`
+column to `json`, but it can still be done with plain SQL.
+
+```sql
+alter table versions
+alter column object type json
+using object::json;
+```
+
 ## SerializedAttributes support
 
 PaperTrail has a config option that can be used to enable/disable whether
