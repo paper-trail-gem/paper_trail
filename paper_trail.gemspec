@@ -44,7 +44,12 @@ Gem::Specification.new do |s|
   # JRuby support for the test ENV
   unless defined?(JRUBY_VERSION)
     s.add_development_dependency 'sqlite3', '~> 1.2'
-    s.add_development_dependency 'mysql2', '~> 0.3'
+
+    # We would prefer to only constrain mysql2 to '~> 0.3',
+    # but a rails bug (https://github.com/rails/rails/issues/21544)
+    # requires us to constrain to '~> 0.3.20' for now.
+    s.add_development_dependency 'mysql2', '~> 0.3.20'
+
     s.add_development_dependency 'pg', '~> 0.17'
   else
     s.add_development_dependency 'activerecord-jdbcsqlite3-adapter', '~> 1.3'
