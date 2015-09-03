@@ -346,7 +346,7 @@ track the according events - so `paper_trail_create` is basically the same as
 ```ruby
 class Article < ActiveRecord::Base
   paper_trail_destroy
-  # or paper_trail_destroy_after
+  # or paper_trail_after_destroy
   # paper_trail_destroy(:before) will create the version before the actual
   # destroy event
 
