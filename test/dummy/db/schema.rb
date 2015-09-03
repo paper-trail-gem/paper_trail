@@ -55,6 +55,11 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.boolean "scoped", default: true
   end
 
+  create_table "callback_modifiers", force: :cascade do |t|
+    t.string  "some_content"
+    t.boolean "deleted",      default: false
+  end
+
   create_table "customers", force: :cascade do |t|
     t.string "name"
   end
