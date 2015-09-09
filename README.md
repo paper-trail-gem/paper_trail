@@ -57,12 +57,13 @@ has been destroyed.
 
 ## Compatibility
 
-| paper_trail | branch     | tags   | ruby     | activerecord |
-| ----------- | ---------- | ------ | -------- | ------------ |
-| 4           | master     | v4.x   | >= 1.8.7 | >= 3.0, < 6  |
-| 3           | 3.0-stable | v3.x   | >= 1.8.7 | >= 3.0, < 5  |
-| 2           | 2.7-stable | v2.x   | >= 1.8.7 | >= 3.0, < 4  |
-| 1           | rails2     | v1.x   | >= 1.8.7 | >= 2.3, < 3  |
+| paper_trail    | branch     | tags   | ruby     | activerecord |
+| -------------- | ---------- | ------ | -------- | ------------ |
+| 5 (unreleased) | master     | none   | >= 1.9.3 | >= 3.0, < 6  |
+| 4              | 4.0-stable | v4.x   | >= 1.8.7 | >= 3.0, < 6  |
+| 3              | 3.0-stable | v3.x   | >= 1.8.7 | >= 3.0, < 5  |
+| 2              | 2.7-stable | v2.x   | >= 1.8.7 | >= 3.0, < 4  |
+| 1              | rails2     | v1.x   | >= 1.8.7 | >= 2.3, < 3  |
 
 ## Installation
 
