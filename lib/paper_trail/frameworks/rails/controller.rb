@@ -4,7 +4,8 @@ module PaperTrail
 
       def self.included(base)
         base.before_filter :set_paper_trail_enabled_for_controller
-        base.before_filter :set_paper_trail_whodunnit, :set_paper_trail_controller_info
+        base.before_filter :set_paper_trail_controller_info
+        base.after_filter :warn_about_not_setting_whodunnit
       end
 
       protected
@@ -71,6 +72,20 @@ module PaperTrail
         ::PaperTrail.controller_info = info_for_paper_trail if ::PaperTrail.enabled_for_controller?
       end
 
+      def warn_about_not_setting_whodunnit
+        enabled = ::PaperTrail.enabled_for_controller?
+        user_present = user_for_paper_trail.present?
+        whodunnit_blank = ::PaperTrail.whodunnit.blank?
+        if enabled && user_present && whodunnit_blank
+          warn <<-EOS.strip_heredoc
+            user_for_paper_trail is present, but whodunnit has not been set.
+            PaperTrail no longer adds the set_paper_trail_whodunnit
+            before_filter for you. Please add this before_filter to your
+            ApplicationController to continue recording whodunnit. See the
+            PaperTrail readme for an example.
+          EOS
+        end
+      end
     end
   end
 

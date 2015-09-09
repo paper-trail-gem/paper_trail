@@ -10,7 +10,7 @@ class ArticlesController < ApplicationController
 
   def current_user
     'foobar'.tap do |string|
-      # Invoking `id` returns the `object_id` value in Ruby18 by default
+      # Support ruby 1.8, in which `String` responds to `id`.
       string.class_eval { undef_method(:id) } if RUBY_VERSION < '1.9'
     end
   end
