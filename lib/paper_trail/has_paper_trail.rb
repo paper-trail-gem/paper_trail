@@ -47,7 +47,6 @@ module PaperTrail
       #   column if it exists. Default is true
       #
       def has_paper_trail(options = {})
-        send :include, InstanceMethods
         setup_model_for_paper_trail(options)
 
         options[:on] ||= [:create, :update, :destroy]
