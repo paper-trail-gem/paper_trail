@@ -26,6 +26,9 @@ None
 
 ### Added
 
+- Added callback-methods `paper_trail_update` `paper_trail_create` `paper_trail_destroy`
+  instead of has_paper_trail
+  [#593](https://github.com/airblade/paper_trail/pull/607)
 - Added `unversioned_attributes` option to `reify`.
   [#579](https://github.com/airblade/paper_trail/pull/579)
 
