@@ -134,17 +134,19 @@ When you declare `has_paper_trail` in your model, you get these methods:
 
 ```ruby
 class Widget < ActiveRecord::Base
-  has_paper_trail   # you can pass various options here
+  has_paper_trail
 end
 
-# Returns this widget's versions.  You can customise the name of the association.
+# Returns this widget's versions.  You can customise the name of the
+# association.
 widget.versions
 
 # Return the version this widget was reified from, or nil if it is live.
 # You can customise the name of the method.
 widget.version
 
-# Returns true if this widget is the current, live one; or false if it is from a previous version.
+# Returns true if this widget is the current, live one; or false if it is from
+# a previous version.
 widget.live?
 
 # Returns who put the widget into its current state.
@@ -159,7 +161,8 @@ widget.previous_version
 # Returns the widget (not a version) as it became next.
 widget.next_version
 
-# Generates a version for a `touch` event (`widget.touch` does NOT generate a version)
+# Generates a version for a `touch` event (`widget.touch` does NOT generate a
+# version)
 widget.touch_with_version
 
 # Turn PaperTrail off for all widgets.
@@ -168,9 +171,11 @@ Widget.paper_trail_off!
 # Turn PaperTrail on for all widgets.
 Widget.paper_trail_on!
 
-# Check whether PaperTrail is enabled for all widgets.
+# Is PaperTrail enabled for Widget, the class?
 Widget.paper_trail_enabled_for_model?
-widget.paper_trail_enabled_for_model? # only available on instances of versioned models
+
+# Is PaperTrail enabled for widget, the instance?
+widget.paper_trail_enabled_for_model?
 ```
 
 And a `PaperTrail::Version` instance has these methods:
@@ -281,31 +286,13 @@ usual.
 
 Here's a helpful table showing what PaperTrail stores:
 
-<table>
-  <tr>
-    <th>Event</th>
-    <th>Model Before</th>
-    <th>Model After</th>
-  </tr>
-  <tr>
-    <td>create</td>
-    <td>nil</td>
-    <td>widget</td>
-  </tr>
-  <tr>
-    <td>update</td>
-    <td>widget</td>
-    <td>widget</td>
-  <tr>
-    <td>destroy</td>
-    <td>widget</td>
-    <td>nil</td>
-  </tr>
-</table>
+| *Event*        | *create* | *update* | *destroy* |
+| -------------- | -------- | -------- | --------- |
+| *Model Before* | nil      | widget   | widget    |
+| *Model After*  | widget   | widget   | nil       |
 
 PaperTrail stores the values in the Model Before column.  Most other
 auditing/versioning plugins store the After column.
-
 
 ## Choosing Lifecycle Events To Monitor
 
@@ -317,6 +304,10 @@ class Article < ActiveRecord::Base
   has_paper_trail :on => [:update, :destroy]
 end
 ```
+
+`has_paper_trail` installs callbacks for these lifecycle events. If there are
+other callbacks in your model, their order relative to those installed by
+PaperTrail may matter, so be aware of any potential interactions.
 
 You may also have the `PaperTrail::Version` model save a custom string in it's
 `event` field instead of the typical `create`, `update`, `destroy`. PaperTrail
