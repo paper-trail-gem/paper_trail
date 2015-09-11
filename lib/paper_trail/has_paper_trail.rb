@@ -1,13 +1,14 @@
 require 'active_support/core_ext/object' # provides the `try` method
+require 'paper_trail/callbacks'
 
 module PaperTrail
   module Model
-
     def self.included(base)
       base.send :extend, ClassMethods
     end
 
     module ClassMethods
+      include Callbacks
       # Declare this in your model to track every create, update, and destroy.
       # Each version of the model is available in the `versions` association.
       #
@@ -46,9 +47,21 @@ module PaperTrail
       #   column if it exists. Default is true
       #
       def has_paper_trail(options = {})
+        setup_model_for_paper_trail(options)
+
+        options[:on] ||= [:create, :update, :destroy]
+
+        # Wrap the :on option in an array if necessary. This allows a single
+        # symbol to be passed in.
+        options_on = Array(options[:on])
+
+        setup_callbacks_from_options options_on, options
+      end
+
+      def setup_model_for_paper_trail(options = {})
         # Lazily include the instance methods so we don't clutter up
         # any more ActiveRecord models than we have to.
-        send :include, InstanceMethods
+        send :include, PaperTrail::Model::InstanceMethods
 
         class_attribute :version_association_name
         self.version_association_name = options[:version] || :version
@@ -86,20 +99,6 @@ module PaperTrail
             :as         => :item,
             :order      => self.paper_trail_version_class.timestamp_sort_order
         end
-
-        options[:on] ||= [:create, :update, :destroy]
-
-        # Wrap the :on option in an array if necessary. This allows a single
-        # symbol to be passed in.
-        options_on = Array(options[:on])
-
-        after_create  :record_create, :if => :save_version? if options_on.include?(:create)
-        if options_on.include?(:update)
-          before_save   :reset_timestamp_attrs_for_update_if_needed!, :on => :update
-          after_update  :record_update, :if => :save_version?
-          after_update  :clear_version_instance!
-        end
-        after_destroy :record_destroy, :if => :save_version? if options_on.include?(:destroy)
 
         # Reset the transaction id when the transaction is closed.
         after_commit :reset_transaction_id
@@ -195,8 +194,6 @@ module PaperTrail
       end
     end
 
-    # Wrap the following methods in a module so we can include them only in the
-    # ActiveRecord models that declare `has_paper_trail`.
     module InstanceMethods
       # Returns true if this instance is the current, live one;
       # returns false if this instance came from a previous version.
@@ -487,7 +484,7 @@ module PaperTrail
       # Returns hash of attributes (with appropriate attributes serialized),
       # ommitting attributes to be skipped.
       def object_attrs_for_paper_trail(attributes_hash)
-        attrs = attributes_hash.except(*self.paper_trail_options[:skip])
+        attrs = attributes_hash.except(*paper_trail_options[:skip])
         if PaperTrail.serialized_attributes?
           self.class.serialize_attributes_for_paper_trail!(attrs)
         end
@@ -510,12 +507,12 @@ module PaperTrail
       # and/or the `:skip` option.  Returns true if an ignored attribute has
       # changed.
       def ignored_attr_has_changed?
-        ignored = self.paper_trail_options[:ignore] + self.paper_trail_options[:skip]
+        ignored = paper_trail_options[:ignore] + paper_trail_options[:skip]
         ignored.any? && (changed & ignored).any?
       end
 
       def notably_changed
-        only = self.paper_trail_options[:only].dup
+        only = paper_trail_options[:only].dup
         # Remove Hash arguments and then evaluate whether the attributes (the
         # keys of the hash) should also get pushed into the collection.
         only.delete_if do |obj|

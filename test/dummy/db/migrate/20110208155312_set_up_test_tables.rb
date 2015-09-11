@@ -211,6 +211,11 @@ class SetUpTestTables < ActiveRecord::Migration
       t.string :name
       t.boolean :scoped, :default => true
     end
+
+    create_table :callback_modifiers, :force => true do |t|
+      t.string  :some_content
+      t.boolean :deleted, :default => false
+    end
   end
 
   def self.down
@@ -250,5 +255,6 @@ class SetUpTestTables < ActiveRecord::Migration
     remove_index :version_associations, :column => [:version_id]
     remove_index :version_associations, :name => 'index_version_associations_on_foreign_key'
     drop_table :version_associations
+    drop_table :filter_modifier
   end
 end

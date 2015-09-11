@@ -330,6 +330,30 @@ a.versions.size                           # 3
 a.versions.last.event                     # 'update'
 ```
 
+You can also use the corresponding callback-methods seperately instead of using
+the :on option. If you choose to use the callback-methods, PaperTrail will only
+track the according events - so `paper_trail_create` is basically the same as
+`has_paper_trail :on => :create`.
+
+```ruby
+class Article < ActiveRecord::Base
+  paper_trail_destroy
+  # or paper_trail_after_destroy
+  # paper_trail_destroy(:before) will create the version before the actual
+  # destroy event
+
+  paper_trail_update
+  paper_trail_create
+end
+```
+
+The `paper_trail_destroy` method can be configured to be called `:before` or `:after` the
+destroy event. This can be usefull if you are using a third party tool that alters the
+destroy method (for example paranoia). If you do not pass an argument, it will default
+to after_destroy. 
+`paper_trail_after_destroy` and `paper_trail_before_destroy` are alias methods for 
+`paper_trail_destroy(:before/:after)`.
+
 ## Choosing When To Save New Versions
 
 You can choose the conditions when to add new versions with the `if` and
