@@ -134,9 +134,12 @@ end
 When you declare `has_paper_trail` in your model, you get these methods:
 
 ```ruby
+# has_paper-trail should be placed at the top of the class declaration (before any other code)
+# as it needs to register its callbacks first.
 class Widget < ActiveRecord::Base
   has_paper_trail   # you can pass various options here
 end
+
 
 # Returns this widget's versions.  You can customise the name of the association.
 widget.versions
