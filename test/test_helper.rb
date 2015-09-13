@@ -1,3 +1,9 @@
+begin
+  require 'pry-nav'
+rescue LoadError
+  # It's OK, we don't include pry in e.g. gemfiles/3.0.gemfile
+end
+
 ENV["RAILS_ENV"] = "test"
 ENV["DB"] ||= "sqlite"
 
