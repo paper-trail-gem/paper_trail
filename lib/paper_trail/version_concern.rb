@@ -416,15 +416,28 @@ module PaperTrail
     def reify_has_many_through(associations, model, options = {})
       associations.each do |assoc|
         next unless assoc.klass.paper_trail_enabled_for_model?
+
+        # Load the collection of through-models. For example, if `model` is a
+        # Chapter, having many Paragraphs through Sections, then
+        # `through_collection` will contain Sections.
         through_collection = model.send(assoc.options[:through])
 
-        # if the association is a has_many association again, then call reify_has_manys for each through_collection
+        # Examine the `source_reflection`, i.e. the "source" of `assoc` the
+        # `ThroughReflection`. The source can be a `BelongsToReflection`
+        # or a `HasManyReflection`.
+        #
+        # If the association is a has_many association again, then call
+        # reify_has_manys for each record in `through_collection`.
         if !assoc.source_reflection.belongs_to? && through_collection.present?
-          through_collection.each { |through_model| reify_has_manys(through_model,options) }
+          through_collection.each do |through_model|
+            reify_has_manys(through_model, options)
+          end
           next
         end
 
-        collection_keys = through_collection.map { |through_model| through_model.send(assoc.association_foreign_key)}
+        collection_keys = through_collection.map { |through_model|
+          through_model.send(assoc.association_foreign_key)
+        }
 
         version_id_subquery = assoc.klass.paper_trail_version_class.
           select("MIN(id)").
