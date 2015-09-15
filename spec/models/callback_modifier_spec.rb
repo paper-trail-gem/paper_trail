@@ -69,7 +69,7 @@ describe CallbackModifier, :type => :model do
           modifier = CreateModifier.create!(:some_content => Faker::Lorem.sentence)
           modifier.update_attributes!(:some_content => 'modified')
           modifier.test_destroy
-          expect(modifier.versions.last.event).to eq 'create'
+          expect(modifier.versions.collect(&:event)).to eq ['create']
         end
       end
     end
