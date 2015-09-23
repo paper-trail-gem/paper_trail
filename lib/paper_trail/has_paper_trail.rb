@@ -1,5 +1,4 @@
 require 'active_support/core_ext/object' # provides the `try` method
-require 'paper_trail/callbacks'
 
 module PaperTrail
   module Model
@@ -9,7 +8,6 @@ module PaperTrail
     end
 
     module ClassMethods
-      include Callbacks
       # Declare this in your model to track every create, update, and destroy.
       # Each version of the model is available in the `versions` association.
       #
@@ -48,26 +46,15 @@ module PaperTrail
       #   column if it exists. Default is true
       #
       def has_paper_trail(options = {})
-        # Initializing paper_trail_options with an empty hash before setting
-        # up the callback-methods is important to make them compatible with the
-        # traditional has_paper_trail method.
-        # This can move to setup_model_for_paper_trail, as soon as the
-        # cleanup_callback and setup_callbacks_from_options method is no longer
-        # needed.
-        class_attribute :paper_trail_options
-        self.paper_trail_options = {}
-
-        # TODO: Add a deprecation warning / info to use callback methods instead
-        # of the :on option?
         options[:on] ||= [:create, :update, :destroy]
 
         # Wrap the :on option in an array if necessary. This allows a single
         # symbol to be passed in.
         options_on = Array(options[:on])
 
-        setup_callbacks_from_options options_on
-
         setup_model_for_paper_trail(options)
+
+        setup_callbacks_from_options options_on
       end
 
       def setup_model_for_paper_trail(options = {})
@@ -83,6 +70,8 @@ module PaperTrail
 
         class_attribute :version_class_name
         self.version_class_name = options[:class_name] || 'PaperTrail::Version'
+
+        class_attribute :paper_trail_options
 
         self.paper_trail_options = options.dup
 
@@ -115,6 +104,40 @@ module PaperTrail
         after_commit :reset_transaction_id
         after_rollback :reset_transaction_id
         after_rollback :clear_rolled_back_versions
+      end
+
+      def setup_callbacks_from_options(options_on = [])
+        options_on.each do |option|
+          send "paper_trail_on_#{option}"
+        end
+
+        paper_trail_options[:on] = options_on
+      end
+
+      # Record version before or after "destroy" event
+      def paper_trail_on_destroy(recording_order = 'after')
+        unless %(after before).include?(recording_order.to_s)
+          fail ArgumentError, 'recording order can only be "after" or "before"'
+        end
+
+        send "#{recording_order}_destroy",
+             :record_destroy,
+             :if => :save_version?
+      end
+
+      # Record version after "update" event
+      def paper_trail_on_update
+        before_save  :reset_timestamp_attrs_for_update_if_needed!,
+                     :on => :update
+        after_update :record_update,
+                     :if => :save_version?
+        after_update :clear_version_instance!
+      end
+
+      # Record version after "create" event
+      def paper_trail_on_create
+        after_create :record_create,
+                     :if => :save_version?
       end
 
       # Switches PaperTrail off for this class.

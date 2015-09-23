@@ -336,7 +336,7 @@ track the according events - so `paper_trail_on_create` is basically the same as
 
 ```ruby
 class Article < ActiveRecord::Base
-  has_paper_trail
+  has_paper_trail :on => []
   paper_trail_on_destroy
   paper_trail_on_update
   paper_trail_on_create
