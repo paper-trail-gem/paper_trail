@@ -283,5 +283,6 @@ class SetUpTestTables < ActiveRecord::Migration
     remove_index :version_associations, :name => 'index_version_associations_on_foreign_key'
     drop_table :version_associations
     drop_table :filter_modifier
+    drop_table :callback_modifiers
   end
 end
