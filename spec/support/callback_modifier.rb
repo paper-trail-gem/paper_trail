@@ -1,15 +1,15 @@
 class BeforeDestroyModifier < CallbackModifier
-  has_paper_trail
+  has_paper_trail :on => []
   paper_trail_on_destroy :before
 end
 
 class AfterDestroyModifier < CallbackModifier
-  has_paper_trail
+  has_paper_trail :on => []
   paper_trail_on_destroy :after
 end
 
 class NoArgDestroyModifier < CallbackModifier
-  has_paper_trail
+  has_paper_trail :on => []
   paper_trail_on_destroy
 end
 
