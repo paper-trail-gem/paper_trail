@@ -1343,7 +1343,7 @@ Paper Trail has facilities to test against Postgres, Mysql and SQLite. To switch
 between DB engines you will need to export the DB variable for the engine you
 wish to test aganist.
 
-Though be aware we do not have the abilty to create the db's (except sqlite) for
+Though be aware we do not have the ability to create the db's (except sqlite) for
 you. You can look at .travis.yml before_script for an example of how to create
 the db's needed.
 
