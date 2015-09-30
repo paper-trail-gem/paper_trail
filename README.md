@@ -879,10 +879,7 @@ end
 
 ## Associations
 
-**Experimental Feature: Known Issues:**
-[#542](https://github.com/airblade/paper_trail/issues/542),
-[#590](https://github.com/airblade/paper_trail/issues/590).
-See also: Caveats below.
+**Experimental feature**, see caveats below.
 
 PaperTrail can restore three types of associations: Has-One, Has-Many, and
 Has-Many-Through. In order to do this, you will need to create a
@@ -974,14 +971,17 @@ widget.reload.wotsit                             # nil
 
 **Caveats:**
 
+1. Not compatible with [transactional tests][34], aka. transactional fixtures.
+   This is a known issue [#542](https://github.com/airblade/paper_trail/issues/542)
+   that we'd like to solve.
 1. PaperTrail can't restore an association properly if the association record
    can be updated to replace its parent model (by replacing the foreign key)
-2. Currently PaperTrail only support single `version_associations` table. The
+1. Currently PaperTrail only support single `version_associations` table. The
    implication is that you can only use a single table to store the versions for
    all related models. Sorry for those who use multiple version tables.
-3. PaperTrail only reifies the first level of associations, i.e., it does not
+1. PaperTrail only reifies the first level of associations, i.e., it does not
    reify any associations of its associations, and so on.
-4. PaperTrail relies on the callbacks on the association model (and the :through
+1. PaperTrail relies on the callbacks on the association model (and the :through
    association model for Has-Many-Through associations) to record the versions
    and the relationship between the versions. If the association is changed
    without invoking the callbacks, Reification won't work. Below are some
@@ -1484,3 +1484,4 @@ Released under the MIT licence.
 [31]: https://github.com/rails/spring
 [32]: http://api.rubyonrails.org/classes/ActiveRecord/AutosaveAssociation.html#method-i-mark_for_destruction
 [33]: https://github.com/airblade/paper_trail/wiki/Setting-whodunnit-in-the-rails-console
+[34]: https://github.com/rails/rails/blob/591a0bb87fff7583e01156696fbbf929d48d3e54/activerecord/lib/active_record/fixtures.rb#L142
