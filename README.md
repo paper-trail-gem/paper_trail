@@ -1067,6 +1067,7 @@ end
 
 PaperTrail will call your proc with the current article and store the result in
 the `author_id` column of the `versions` table.
+Don't forget to add any such columns to your `versions` table.
 
 ### Advantages of Metadata
 
