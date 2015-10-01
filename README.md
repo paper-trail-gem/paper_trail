@@ -1057,6 +1057,15 @@ end
 PaperTrail will call your proc with the current article and store the result in
 the `author_id` column of the `versions` table.
 
+### Columns
+Remember to add the columns to the versions table, for instance using migrations:
+```
+$ rails g migration add_extra_fields_to_versions author_id:integer word_count:integer answer:integer
+$ rake db:migrate
+```
+
+PaperTrail will not store anything in those columns, by default, so we need to help it using 'meta' and specifying the colum/values
+
 ### Advantages of Metadata
 
 Why would you do this?  In this example, `author_id` is an attribute of
