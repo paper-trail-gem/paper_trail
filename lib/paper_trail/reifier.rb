@@ -91,6 +91,45 @@ module PaperTrail
 
       private
 
+      # Replaces each record in `array` with its reified version, if present
+      # in `versions`.
+      #
+      # @api private
+      # @param array - The collection to be modified.
+      # @param options
+      # @param versions - A `Hash` mapping IDs to `Version`s
+      # @return nil - Always returns `nil`
+      #
+      # Once modified by this method, `array` will be assigned to the
+      # AR association currently being reified.
+      #
+      def prepare_array_for_has_many(array, options, versions)
+        # Iterate each child to replace it with the previous value if there is
+        # a version after the timestamp.
+        array.map! do |record|
+          if (version = versions.delete(record.id)).nil?
+            record
+          elsif version.event == 'create'
+            options[:mark_for_destruction] ? record.tap { |r| r.mark_for_destruction } : nil
+          else
+            version.reify(options.merge(:has_many => false, :has_one => false))
+          end
+        end
+
+        # Reify the rest of the versions and add them to the collection, these
+        # versions are for those that have been removed from the live
+        # associations.
+        array.concat(
+          versions.values.map { |v|
+            v.reify(options.merge(:has_many => false, :has_one => false))
+          }
+        )
+
+        array.compact!
+
+        nil
+      end
+
       # Restore the `model`'s has_one associations as they were when this
       # version was superseded by the next (because that's what the user was
       # looking at when they made the change).
@@ -159,25 +198,8 @@ module PaperTrail
 
           # Pass true to force the model to load.
           collection = Array.new model.send(assoc.name, true)
-
-          # Iterate each child to replace it with the previous value if there is
-          # a version after the timestamp.
-          collection.map! do |c|
-            if (version = versions.delete(c.id)).nil?
-              c
-            elsif version.event == 'create'
-              options[:mark_for_destruction] ? c.tap { |r| r.mark_for_destruction } : nil
-            else
-              version.reify(options.merge(:has_many => false, :has_one => false))
-            end
-          end
-
-          # Reify the rest of the versions and add them to the collection, these
-          # versions are for those that have been removed from the live
-          # associations.
-          collection += versions.values.map { |v| v.reify(options.merge(:has_many => false, :has_one => false)) }
-
-          model.send(assoc.name).proxy_association.target = collection.compact
+          prepare_array_for_has_many(collection, options, versions)
+          model.send(assoc.name).proxy_association.target = collection
         end
       end
 
@@ -224,27 +246,8 @@ module PaperTrail
             inject({}) { |acc, v| acc.merge!(v.item_id => v) }
 
           collection = Array.new assoc.klass.where(assoc.klass.primary_key => collection_keys)
-
-          # Iterate each child to replace it with the previous value if there is
-          # a version after the timestamp.
-          collection.map! do |c|
-            if (version = versions.delete(c.id)).nil?
-              c
-            elsif version.event == 'create'
-              options[:mark_for_destruction] ? c.tap { |r| r.mark_for_destruction } : nil
-            else
-              version.reify(options.merge(:has_many => false, :has_one => false))
-            end
-          end
-
-          # Reify the rest of the versions and add them to the collection, these
-          # versions are for those that have been removed from the live
-          # associations.
-          collection += versions.values.map { |v|
-            v.reify(options.merge(:has_many => false, :has_one => false))
-          }
-
-          model.send(assoc.name).proxy_association.target = collection.compact
+          prepare_array_for_has_many(collection, options, versions)
+          model.send(assoc.name).proxy_association.target = collection
         end
       end
     end
