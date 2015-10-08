@@ -795,7 +795,7 @@ like it does, call `paper_trail_originator` on the object.
 widget = Widget.find 153                    # assume widget has 0 versions
 PaperTrail.whodunnit = 'Alice'
 widget.update_attributes :name => 'Yankee'
-widget..paper_trail_originator              # 'Alice'
+widget.paper_trail_originator               # 'Alice'
 PaperTrail.whodunnit = 'Bob'
 widget.update_attributes :name => 'Zulu'
 widget.paper_trail_originator               # 'Bob'
