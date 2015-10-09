@@ -330,6 +330,8 @@ a.versions.size                           # 3
 a.versions.last.event                     # 'update'
 ```
 
+### Controlling the Order of AR Callbacks
+
 You can also use the corresponding callback-methods seperately instead of using
 the :on option. If you choose to use the callback-methods, PaperTrail will only
 track the according events - so `paper_trail_on_create` is basically the same as
@@ -344,7 +346,7 @@ class Article < ActiveRecord::Base
 end
 ```
 
-The `paper_trail_destroy` method can be configured to be called `:before` or `:after` the
+The `paper_trail_on_destroy` method can be configured to be called `:before` or `:after` the
 destroy event. This can be usefull if you are using a third party tool that alters the
 destroy method (for example paranoia). If you do not pass an argument, it will default
 to after_destroy.
