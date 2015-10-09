@@ -14,15 +14,15 @@ class NoArgDestroyModifier < CallbackModifier
 end
 
 class UpdateModifier < CallbackModifier
+  has_paper_trail :on => []
   paper_trail_on_update
 end
 
 class CreateModifier < CallbackModifier
+  has_paper_trail :on => []
   paper_trail_on_create
 end
 
 class DefaultModifier < CallbackModifier
-  # Because of the way I set up the destroy method for testing
-  # has_paper_trail has to be initialized in this model seperately
   has_paper_trail
 end

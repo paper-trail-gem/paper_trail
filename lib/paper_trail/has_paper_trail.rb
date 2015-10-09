@@ -50,11 +50,11 @@ module PaperTrail
 
         # Wrap the :on option in an array if necessary. This allows a single
         # symbol to be passed in.
-        options_on = Array(options[:on])
+        options[:on] = Array(options[:on])
 
         setup_model_for_paper_trail(options)
 
-        setup_callbacks_from_options options_on
+        setup_callbacks_from_options options[:on]
       end
 
       def setup_model_for_paper_trail(options = {})
@@ -110,19 +110,20 @@ module PaperTrail
         options_on.each do |option|
           send "paper_trail_on_#{option}"
         end
-
-        paper_trail_options[:on] = options_on
       end
 
       # Record version before or after "destroy" event
       def paper_trail_on_destroy(recording_order = 'after')
-        unless %(after before).include?(recording_order.to_s)
+        unless %w[after before].include?(recording_order.to_s)
           fail ArgumentError, 'recording order can only be "after" or "before"'
         end
 
         send "#{recording_order}_destroy",
              :record_destroy,
              :if => :save_version?
+
+        return if paper_trail_options[:on].include?(:destroy)
+        paper_trail_options[:on] << :destroy
       end
 
       # Record version after "update" event
@@ -132,12 +133,18 @@ module PaperTrail
         after_update :record_update,
                      :if => :save_version?
         after_update :clear_version_instance!
+
+        return if paper_trail_options[:on].include?(:update)
+        paper_trail_options[:on] << :update
       end
 
       # Record version after "create" event
       def paper_trail_on_create
         after_create :record_create,
                      :if => :save_version?
+
+        return if paper_trail_options[:on].include?(:create)
+        paper_trail_options[:on] << :create
       end
 
       # Switches PaperTrail off for this class.
