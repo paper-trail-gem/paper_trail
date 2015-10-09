@@ -190,14 +190,8 @@ module PaperTrail
             where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
             group("item_id").
             to_sql
-          versions = model.
-            class.
-            paper_trail_version_class.
-            where("id IN (#{version_id_subquery})").
-            inject({}) { |acc, v| acc.merge!(v.item_id => v) }
-
-          # Pass true to force the model to load.
-          collection = Array.new model.send(assoc.name, true)
+          versions = versions_by_id(model.class, version_id_subquery)
+          collection = Array.new model.send(assoc.name, true) # pass true to avoid cache
           prepare_array_for_has_many(collection, options, versions)
           model.send(assoc.name).proxy_association.target = collection
         end
@@ -239,16 +233,27 @@ module PaperTrail
             where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
             group("item_id").
             to_sql
-          versions = assoc.
-            klass.
-            paper_trail_version_class.
-            where("id IN (#{version_id_subquery})").
-            inject({}) { |acc, v| acc.merge!(v.item_id => v) }
-
+          versions = versions_by_id(assoc.klass, version_id_subquery)
           collection = Array.new assoc.klass.where(assoc.klass.primary_key => collection_keys)
           prepare_array_for_has_many(collection, options, versions)
           model.send(assoc.name).proxy_association.target = collection
         end
+      end
+
+      # Given a SQL fragment that identifies the IDs of version records,
+      # returns a `Hash` mapping those IDs to `Version`s.
+      #
+      # @api private
+      # @param klass - An ActiveRecord class.
+      # @param version_id_subquery - String. A SQL subquery that selects
+      #   the IDs of version records.
+      # @return A `Hash` mapping IDs to `Version`s
+      #
+      def versions_by_id(klass, version_id_subquery)
+        klass.
+          paper_trail_version_class.
+          where("id IN (#{version_id_subquery})").
+          inject({}) { |acc, v| acc.merge!(v.item_id => v) }
       end
     end
   end
