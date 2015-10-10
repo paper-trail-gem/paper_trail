@@ -331,24 +331,20 @@ a.versions.last.event                     # 'update'
 
 ### Controlling the Order of AR Callbacks
 
-You can also use the corresponding callback-methods seperately instead of using
-the :on option. If you choose to use the callback-methods, PaperTrail will only
-track the according events - so `paper_trail_on_create` is basically the same as
-`has_paper_trail :on => :create`.
+The `has_paper_trail` method installs AR callbacks. If you need to control
+their order, use the `paper_trail_on_*` methods.
 
 ```ruby
 class Article < ActiveRecord::Base
-  has_paper_trail :on => []
-  paper_trail_on_destroy
-  paper_trail_on_update
+  has_paper_trail :on => [] # don't install callbacks yet
+  paper_trail_on_destroy    # install destroy
+  paper_trail_on_update     # etc.
   paper_trail_on_create
 end
 ```
 
-The `paper_trail_on_destroy` method can be configured to be called `:before` or `:after` the
-destroy event. This can be usefull if you are using a third party tool that alters the
-destroy method (for example paranoia). If you do not pass an argument, it will default
-to after_destroy.
+The `paper_trail_on_destroy` method can be further configured to happen
+`:before` or `:after` the destroy event. By default, it will happen after.
 
 ## Choosing When To Save New Versions
 

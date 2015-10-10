@@ -1,5 +1,4 @@
 require 'rails_helper'
-require 'support/callback_modifier'
 
 describe CallbackModifier, :type => :model do
   with_versioning do
