@@ -628,6 +628,7 @@ class AssociationsTest < ActiveSupport::TestCase
           setup do
             assert_equal 3, @chapter.versions.size
             @section = @chapter.sections.first
+            Timecop.travel 1.second.since
             @paragraph = @section.paragraphs.create :name => 'para1'
           end
 
@@ -648,7 +649,23 @@ class AssociationsTest < ActiveSupport::TestCase
             end
           end
 
-          context "destroy a section" do
+          context "the version before a section is destroyed" do
+            should "have the section and paragraph" do
+              Timecop.travel 1.second.since
+              @chapter.update_attributes(:name => CHAPTER_NAMES[3])
+              assert_equal 4, @chapter.versions.size
+              Timecop.travel 1.second.since
+              @section.destroy
+              assert_equal 4, @chapter.versions.size
+              chapter_v3 = @chapter.versions[3].reify(:has_many => true)
+              assert_equal CHAPTER_NAMES[2], chapter_v3.name
+              assert_equal [@section], chapter_v3.sections
+              assert_equal [@paragraph], chapter_v3.sections[0].paragraphs
+              assert_equal [@paragraph], chapter_v3.paragraphs
+            end
+          end
+
+          context "the version after a section is destroyed" do
             should "not have any sections or paragraphs" do
               @section.destroy
               Timecop.travel 1.second.since
