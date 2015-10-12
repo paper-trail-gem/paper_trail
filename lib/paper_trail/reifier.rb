@@ -219,6 +219,16 @@ module PaperTrail
             through_collection.each do |through_model|
               reify_has_manys(transaction_id, through_model, options)
             end
+
+            # At this point, the "through" part of the association chain has
+            # been reified, but not the final, "target" part. To continue our
+            # example, `model.sections` (including `model.sections.paragraphs`)
+            # has been loaded. However, the final "target" part of the
+            # association, that is, `model.paragraphs`, has not been loaded. So,
+            # we do that now.
+            collection = through_collection.flat_map { |through_model|
+              through_model.public_send(assoc.name.to_sym).to_a
+            }
           else
             collection_keys = through_collection.map { |through_model|
               through_model.send(assoc.association_foreign_key)
@@ -234,8 +244,11 @@ module PaperTrail
             versions = versions_by_id(assoc.klass, version_id_subquery)
             collection = Array.new assoc.klass.where(assoc.klass.primary_key => collection_keys)
             prepare_array_for_has_many(collection, options, versions)
-            model.send(assoc.name).proxy_association.target = collection
           end
+
+          # To continue our example above, assign to `model.paragraphs` the
+          # `collection` (an array of `Paragraph`s).
+          model.send(assoc.name).proxy_association.target = collection
         end
       end
 
