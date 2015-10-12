@@ -2,6 +2,21 @@ require 'test_helper'
 require 'time_travel_helper'
 
 class AssociationsTest < ActiveSupport::TestCase
+  CHAPTER_NAMES = [
+    "Down the Rabbit-Hole",
+    "The Pool of Tears",
+    "A Caucus-Race and a Long Tale",
+    "The Rabbit Sends in a Little Bill",
+    "Advice from a Caterpillar",
+    "Pig and Pepper",
+    "A Mad Tea-Party",
+    "The Queen's Croquet-Ground",
+    "The Mock Turtle's Story",
+    "The Lobster Quadrille",
+    "Who Stole the Tarts?",
+    "Alice's Evidence"
+  ]
+
   # These would have been done in test_helper.rb if using_mysql? is true
   unless using_mysql?
     self.use_transactional_fixtures = false
@@ -527,16 +542,16 @@ class AssociationsTest < ActiveSupport::TestCase
     end
 
     context "Chapters, Sections, Paragraphs, Quotations, and Citations" do
-      setup { @chapter = Chapter.create(:name => 'ch_1') }
+      setup { @chapter = Chapter.create(:name => CHAPTER_NAMES[0]) }
 
       context "before any associations are created" do
         setup do
-          @chapter.update_attributes(:name => "ch_2")
+          @chapter.update_attributes(:name => CHAPTER_NAMES[1])
         end
 
         should "not reify any associations" do
           chapter_v1 = @chapter.versions[1].reify(:has_many => true)
-          assert_equal "ch_1", chapter_v1.name
+          assert_equal CHAPTER_NAMES[0], chapter_v1.name
           assert_equal [], chapter_v1.sections
           assert_equal [], chapter_v1.paragraphs
         end
@@ -545,7 +560,7 @@ class AssociationsTest < ActiveSupport::TestCase
       context "after the first has_many through relationship is created" do
         setup do
           assert_equal 1, @chapter.versions.size
-          @chapter.update_attributes :name => "ch_2"
+          @chapter.update_attributes :name => CHAPTER_NAMES[1]
           assert_equal 2, @chapter.versions.size
 
           Timecop.travel 1.second.since
@@ -553,7 +568,7 @@ class AssociationsTest < ActiveSupport::TestCase
           Timecop.travel 1.second.since
           @chapter.sections.first.update_attributes :name => "section 2"
           Timecop.travel 1.second.since
-          @chapter.update_attributes :name => "ch_3"
+          @chapter.update_attributes :name => CHAPTER_NAMES[2]
           assert_equal 3, @chapter.versions.size
 
           Timecop.travel 1.second.since
@@ -577,13 +592,13 @@ class AssociationsTest < ActiveSupport::TestCase
             assert_equal ['section 2'], chapter_v2.sections.map(&:name)
 
             # Shows the value of the chapter as it was before
-            assert_equal "ch_2", chapter_v2.name
+            assert_equal CHAPTER_NAMES[1], chapter_v2.name
           end
         end
 
         context "version 2, before the section was destroyed" do
           setup do
-            @chapter.update_attributes :name => 'ch_3'
+            @chapter.update_attributes :name => CHAPTER_NAMES[2]
             Timecop.travel 1.second.since
             @chapter.sections.destroy_all
             Timecop.travel 1.second.since
@@ -599,7 +614,7 @@ class AssociationsTest < ActiveSupport::TestCase
           setup do
             @chapter.sections.destroy_all
             Timecop.travel 1.second.since
-            @chapter.update_attributes :name => 'ch_4'
+            @chapter.update_attributes :name => CHAPTER_NAMES[3]
             Timecop.travel 1.second.since
           end
 
@@ -621,7 +636,7 @@ class AssociationsTest < ActiveSupport::TestCase
               initial_section_name = @section.name
               initial_paragraph_name = @paragraph.name
               Timecop.travel 1.second.since
-              @chapter.update_attributes :name => 'ch_5'
+              @chapter.update_attributes :name => CHAPTER_NAMES[4]
               assert_equal 4, @chapter.versions.size
               Timecop.travel 1.second.since
               @paragraph.update_attributes :name => 'para3'
@@ -637,7 +652,7 @@ class AssociationsTest < ActiveSupport::TestCase
             should "not have any sections or paragraphs" do
               @section.destroy
               Timecop.travel 1.second.since
-              @chapter.update_attributes(:name => 'chapter 6')
+              @chapter.update_attributes(:name => CHAPTER_NAMES[5])
               assert_equal 4, @chapter.versions.size
               chapter_v3 = @chapter.versions[3].reify(:has_many => true)
               assert_equal 0, chapter_v3.sections.size
@@ -649,7 +664,7 @@ class AssociationsTest < ActiveSupport::TestCase
             should "have the one paragraph" do
               initial_paragraph_name = @section.paragraphs.first.name
               Timecop.travel 1.second.since
-              @chapter.update_attributes(:name => 'chapter 6')
+              @chapter.update_attributes(:name => CHAPTER_NAMES[5])
               Timecop.travel 1.second.since
               @paragraph.destroy
               chapter_v3 = @chapter.versions[3].reify(:has_many => true)
@@ -663,7 +678,7 @@ class AssociationsTest < ActiveSupport::TestCase
             should "have no paragraphs" do
               @paragraph.destroy
               Timecop.travel 1.second.since
-              @chapter.update_attributes(:name => 'chapter 6')
+              @chapter.update_attributes(:name => CHAPTER_NAMES[5])
               chapter_v3 = @chapter.versions[3].reify(:has_many => true)
               assert_equal 0, chapter_v3.paragraphs.size
               assert_equal [], chapter_v3.sections.first.paragraphs
@@ -674,13 +689,13 @@ class AssociationsTest < ActiveSupport::TestCase
 
       context "a chapter with one paragraph and one citation" do
         should "reify paragraphs and citations" do
-          chapter = Chapter.create(:name => 'Chapter One')
+          chapter = Chapter.create(:name => CHAPTER_NAMES[0])
           section = Section.create(:name => 'Section One', :chapter => chapter)
           paragraph = Paragraph.create(:name => 'Paragraph One', :section => section)
           quotation = Quotation.create(:chapter => chapter)
           citation = Citation.create(:quotation => quotation)
           Timecop.travel 1.second.since
-          chapter.update_attributes(:name => 'Chapter One, Vers. Two')
+          chapter.update_attributes(:name => CHAPTER_NAMES[1])
           assert_equal 2, chapter.versions.count
           paragraph.destroy
           citation.destroy
