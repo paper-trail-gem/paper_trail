@@ -21,11 +21,13 @@ has been destroyed.
   - [Navigating Versions](#navigating-versions)
   - [Diffing Versions](#diffing-versions)
   - [Deleting Old Versions](#deleting-old-versions)
-- [Finding Out Who Was Responsible For A Change](#finding-out-who-was-responsible-for-a-change)
-- [Custom Version Classes](#custom-version-classes)
-- [Associations](#associations)
-- [Storing metadata](#storing-metadata)
-- [Using a custom serializer](#using-a-custom-serializer)
+- Saving More Information About Versions
+  - [Finding Out Who Was Responsible For A Change](#finding-out-who-was-responsible-for-a-change)
+  - [Associations](#associations)
+  - [Storing metadata](#storing-metadata)
+- Extensibility
+  - [Custom Version Classes](#custom-version-classes)
+  - [Custom Serializer](#using-a-custom-serializer)
 - [SerializedAttributes support](#serializedattributes-support)
 - [Testing](#testing)
 
@@ -778,75 +780,6 @@ last_version.paper_trail_originator         # 'Alice'
 last_version.terminator                     # 'Bob'
 ```
 
-## Custom Version Classes
-
-You can specify custom version subclasses with the `:class_name` option:
-
-```ruby
-class PostVersion < PaperTrail::Version
-  # custom behaviour, e.g:
-  self.table_name = :post_versions
-end
-
-class Post < ActiveRecord::Base
-  has_paper_trail :class_name => 'PostVersion'
-end
-```
-
-Unlike ActiveRecord's `class_name`, you'll have to supply the complete module path to the class (e.g. `Foo::BarVersion` if your class is inside the module `Foo`).
-
-### Advantages
-
-1. For models which have a lot of versions, storing each model's versions in a
-   separate table can improve the performance of certain database queries.
-1. Store different version [metadata](#storing-metadata) for different models.
-
-### Configuration
-
-If you are using Postgres, you should also define the sequence that your custom
-version class will use:
-
-```ruby
-class PostVersion < PaperTrail::Version
-  self.table_name = :post_versions
-  self.sequence_name = :post_versions_id_seq
-end
-```
-
-If you only use custom version classes and don't have a `versions` table, you
-must let ActiveRecord know that the `PaperTrail::Version` class is an
-`abstract_class`.
-
-```ruby
-# app/models/paper_trail/version.rb
-module PaperTrail
-  class Version < ActiveRecord::Base
-    include PaperTrail::VersionConcern
-    self.abstract_class = true
-  end
-end
-```
-
-You can also specify custom names for the versions and version associations.
-This is useful if you already have `versions` or/and `version` methods on your
-model.  For example:
-
-```ruby
-class Post < ActiveRecord::Base
-  has_paper_trail :versions => :paper_trail_versions,
-                  :version  => :paper_trail_version
-
-  # Existing versions method.  We don't want to clash.
-  def versions
-    ...
-  end
-  # Existing version method.  We don't want to clash.
-  def version
-    ...
-  end
-end
-```
-
 ## Associations
 
 **Experimental feature**, see caveats below.
@@ -1085,7 +1018,76 @@ end
 If you're using [strong_parameters][18] instead of [protected_attributes][17]
 then there is no need to use `attr_accessible`.
 
-## Using a custom serializer
+## Custom Version Classes
+
+You can specify custom version subclasses with the `:class_name` option:
+
+```ruby
+class PostVersion < PaperTrail::Version
+  # custom behaviour, e.g:
+  self.table_name = :post_versions
+end
+
+class Post < ActiveRecord::Base
+  has_paper_trail :class_name => 'PostVersion'
+end
+```
+
+Unlike ActiveRecord's `class_name`, you'll have to supply the complete module path to the class (e.g. `Foo::BarVersion` if your class is inside the module `Foo`).
+
+### Advantages
+
+1. For models which have a lot of versions, storing each model's versions in a
+   separate table can improve the performance of certain database queries.
+1. Store different version [metadata](#storing-metadata) for different models.
+
+### Configuration
+
+If you are using Postgres, you should also define the sequence that your custom
+version class will use:
+
+```ruby
+class PostVersion < PaperTrail::Version
+  self.table_name = :post_versions
+  self.sequence_name = :post_versions_id_seq
+end
+```
+
+If you only use custom version classes and don't have a `versions` table, you
+must let ActiveRecord know that the `PaperTrail::Version` class is an
+`abstract_class`.
+
+```ruby
+# app/models/paper_trail/version.rb
+module PaperTrail
+  class Version < ActiveRecord::Base
+    include PaperTrail::VersionConcern
+    self.abstract_class = true
+  end
+end
+```
+
+You can also specify custom names for the versions and version associations.
+This is useful if you already have `versions` or/and `version` methods on your
+model.  For example:
+
+```ruby
+class Post < ActiveRecord::Base
+  has_paper_trail :versions => :paper_trail_versions,
+                  :version  => :paper_trail_version
+
+  # Existing versions method.  We don't want to clash.
+  def versions
+    ...
+  end
+  # Existing version method.  We don't want to clash.
+  def version
+    ...
+  end
+end
+```
+
+## Custom Serializer
 
 By default, PaperTrail stores your changes as a `YAML` dump. You can override
 this with the serializer config option:
