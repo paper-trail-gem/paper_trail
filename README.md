@@ -30,6 +30,7 @@ has been destroyed.
   - [Custom Serializer](#using-a-custom-serializer)
 - [SerializedAttributes support](#serializedattributes-support)
 - [Testing](#testing)
+- [Sinatra](#sinatra)
 
 ## Compatibility
 
@@ -47,61 +48,14 @@ has been destroyed.
 
     `gem 'paper_trail', '~> 4.0.0'`
 
-2. Generate a migration which will add a `versions` table to your database.
+1. Add a `versions` table to your database.
 
-    `bundle exec rails generate paper_trail:install`
+    ```
+    bundle exec rails generate paper_trail:install
+    bundle exec rake db:migrate
+    ```
 
-3. Run the migration.
-
-    `bundle exec rake db:migrate`
-
-4. Add `has_paper_trail` to the models you want to track.
-
-### Sinatra
-
-In order to configure PaperTrail for usage with [Sinatra][12], your `Sinatra`
-app must be using `ActiveRecord` 3 or 4. It is also recommended to use the
-[Sinatra ActiveRecord Extension][13] or something similar for managing your
-applications `ActiveRecord` connection in a manner similar to the way `Rails`
-does. If using the aforementioned `Sinatra ActiveRecord Extension`, steps for
-setting up your app with PaperTrail will look something like this:
-
-1. Add PaperTrail to your `Gemfile`.
-
-    `gem 'paper_trail', '~> 4.0.0'`
-
-2. Generate a migration to add a `versions` table to your database.
-
-    `bundle exec rake db:create_migration NAME=create_versions`
-
-3. Copy contents of [create_versions.rb][14]
-into the `create_versions` migration that was generated into your `db/migrate` directory.
-
-4. Run the migration.
-
-    `bundle exec rake db:migrate`
-
-5. Add `has_paper_trail` to the models you want to track.
-
-
-PaperTrail provides a helper extension that acts similar to the controller mixin
-it provides for `Rails` applications.
-
-It will set `PaperTrail.whodunnit` to whatever is returned by a method named
-`user_for_paper_trail` which you can define inside your Sinatra Application. (by
-default it attempts to invoke a method named `current_user`)
-
-If you're using the modular [`Sinatra::Base`][15] style of application, you will
-need to register the extension:
-
-```ruby
-# bleh_app.rb
-require 'sinatra/base'
-
-class BlehApp < Sinatra::Base
-  register PaperTrail::Sinatra
-end
-```
+1. Add `has_paper_trail` to the models you want to track.
 
 ## API Summary
 
@@ -1146,16 +1100,13 @@ PaperTrail attempts to utilize `ActiveRecord`'s `serialized_attributes` feature.
 Note: This is enabled by default when PaperTrail is used with `ActiveRecord`
 version < `4.2`, and disabled by default when used with ActiveRecord `4.2.x`.
 Since `serialized_attributes` will be removed in `ActiveRecord` version `5.0`,
-this configuration value has no functionality when PaperTrail is used with
+this configuration value does nothing when PaperTrail is used with
 version `5.0` or greater.
 
 ```ruby
-# Enable support
-PaperTrail.config.serialized_attributes = true
-# Disable support
-PaperTrail.config.serialized_attributes = false
-# Get current setting
-PaperTrail.serialized_attributes?
+PaperTrail.config.serialized_attributes = true # enable
+PaperTrail.config.serialized_attributes = false # disable
+PaperTrail.serialized_attributes? # get current setting
 ```
 
 ## Testing
@@ -1345,6 +1296,52 @@ export DB=mysql
 export DB=sqlite # this is default
 ```
 
+## Sinatra
+
+In order to configure PaperTrail for usage with [Sinatra][12], your `Sinatra`
+app must be using `ActiveRecord` 3 or 4. It is also recommended to use the
+[Sinatra ActiveRecord Extension][13] or something similar for managing your
+applications `ActiveRecord` connection in a manner similar to the way `Rails`
+does. If using the aforementioned `Sinatra ActiveRecord Extension`, steps for
+setting up your app with PaperTrail will look something like this:
+
+1. Add PaperTrail to your `Gemfile`.
+
+    `gem 'paper_trail', '~> 4.0.0'`
+
+2. Generate a migration to add a `versions` table to your database.
+
+    `bundle exec rake db:create_migration NAME=create_versions`
+
+3. Copy contents of [create_versions.rb][14]
+into the `create_versions` migration that was generated into your `db/migrate` directory.
+
+4. Run the migration.
+
+    `bundle exec rake db:migrate`
+
+5. Add `has_paper_trail` to the models you want to track.
+
+
+PaperTrail provides a helper extension that acts similar to the controller mixin
+it provides for `Rails` applications.
+
+It will set `PaperTrail.whodunnit` to whatever is returned by a method named
+`user_for_paper_trail` which you can define inside your Sinatra Application. (by
+default it attempts to invoke a method named `current_user`)
+
+If you're using the modular [`Sinatra::Base`][15] style of application, you will
+need to register the extension:
+
+```ruby
+# bleh_app.rb
+require 'sinatra/base'
+
+class BlehApp < Sinatra::Base
+  register PaperTrail::Sinatra
+end
+```
+
 ## Articles
 
 * [Jutsu #8 - Version your RoR models with PaperTrail](http://samurails.com/gems/papertrail/),
@@ -1362,7 +1359,6 @@ export DB=sqlite # this is default
 ## Problems
 
 Please use GitHub's [issue tracker](http://github.com/airblade/paper_trail/issues).
-
 
 ## Contributors
 
@@ -1426,7 +1422,6 @@ Many thanks to:
 
 * [Simply Versioned](http://github.com/github/simply_versioned)
 * [Acts As Audited](http://github.com/collectiveidea/acts_as_audited)
-
 
 ## Intellectual Property
 
