@@ -8,8 +8,8 @@ has been destroyed.
 
 - [Compatibility](#compatibility)
 - [Installation](#installation)
-- [API Summary](#api-summary)
 - [Basic Usage](#basic-usage)
+- [API Summary](#api-summary)
 - Limiting What is Versioned, and When
   - [Choosing Lifecycle Events To Monitor](#choosing-lifecycle-events-to-monitor)
   - [Choosing When To Save New Versions](#choosing-when-to-save-new-versions)
