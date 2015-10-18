@@ -56,6 +56,71 @@ has been destroyed.
 
 1. Add `has_paper_trail` to the models you want to track.
 
+## Basic Usage
+
+Add `has_paper_trail` to your model to record every `create`, `update`,
+and `destroy`.
+
+```ruby
+class Widget < ActiveRecord::Base
+  has_paper_trail
+end
+```
+
+This gives you a `versions` method which returns the "paper trail" of changes to
+your model.
+
+```ruby
+widget = Widget.find 42
+widget.versions
+# [<PaperTrail::Version>, <PaperTrail::Version>, ...]
+```
+
+Once you have a version, you can find out what happened:
+
+```ruby
+v = widget.versions.last
+v.event                     # 'update', 'create', or 'destroy'
+v.created_at                # When the `event` occurred
+v.whodunnit                 # If the update was via a controller and the
+                            # controller has a current_user method, returns the
+                            # id of the current user as a string.
+widget = v.reify            # The widget as it was before the update
+                            # (nil for a create event)
+```
+
+PaperTrail stores the pre-change version of the model, unlike some other
+auditing/versioning plugins, so you can retrieve the original version.  This is
+useful when you start keeping a paper trail for models that already have records
+in the database.
+
+```ruby
+widget = Widget.find 153
+widget.name                                 # 'Doobly'
+
+# Add has_paper_trail to Widget model.
+
+widget.versions                             # []
+widget.update_attributes :name => 'Wotsit'
+widget.versions.last.reify.name             # 'Doobly'
+widget.versions.last.event                  # 'update'
+```
+
+This also means that PaperTrail does not waste space storing a version of the
+object as it currently stands.  The `versions` method gives you previous
+versions; to get the current one just call a finder on your `Widget` model as
+usual.
+
+Here's a helpful table showing what PaperTrail stores:
+
+| *Event*        | *create* | *update* | *destroy* |
+| -------------- | -------- | -------- | --------- |
+| *Model Before* | nil      | widget   | widget    |
+| *Model After*  | widget   | widget   | nil       |
+
+PaperTrail stores the values in the Model Before column.  Most other
+auditing/versioning plugins store the After column.
+
 ## API Summary
 
 When you declare `has_paper_trail` in your model, you get these methods:
@@ -156,71 +221,6 @@ user_for_paper_trail
 # PaperTrail to store alongside any changes that occur.
 info_for_paper_trail
 ```
-
-## Basic Usage
-
-PaperTrail is simple to use.  Just add 15 characters to a model to get a paper
-trail of every `create`, `update`, and `destroy`.
-
-```ruby
-class Widget < ActiveRecord::Base
-  has_paper_trail
-end
-```
-
-This gives you a `versions` method which returns the paper trail of changes to
-your model.
-
-```ruby
-widget = Widget.find 42
-widget.versions
-# [<PaperTrail::Version>, <PaperTrail::Version>, ...]
-```
-
-Once you have a version, you can find out what happened:
-
-```ruby
-v = widget.versions.last
-v.event                     # 'update' (or 'create' or 'destroy')
-v.whodunnit                 # '153'  (if the update was via a controller and
-                            #         the controller has a current_user method,
-                            #         here returning the id of the current user)
-v.created_at                # when the update occurred
-widget = v.reify            # the widget as it was before the update;
-                            # would be nil for a create event
-```
-
-PaperTrail stores the pre-change version of the model, unlike some other
-auditing/versioning plugins, so you can retrieve the original version.  This is
-useful when you start keeping a paper trail for models that already have records
-in the database.
-
-```ruby
-widget = Widget.find 153
-widget.name                                 # 'Doobly'
-
-# Add has_paper_trail to Widget model.
-
-widget.versions                             # []
-widget.update_attributes :name => 'Wotsit'
-widget.versions.last.reify.name             # 'Doobly'
-widget.versions.last.event                  # 'update'
-```
-
-This also means that PaperTrail does not waste space storing a version of the
-object as it currently stands.  The `versions` method gives you previous
-versions; to get the current one just call a finder on your `Widget` model as
-usual.
-
-Here's a helpful table showing what PaperTrail stores:
-
-| *Event*        | *create* | *update* | *destroy* |
-| -------------- | -------- | -------- | --------- |
-| *Model Before* | nil      | widget   | widget    |
-| *Model After*  | widget   | widget   | nil       |
-
-PaperTrail stores the values in the Model Before column.  Most other
-auditing/versioning plugins store the After column.
 
 ## Choosing Lifecycle Events To Monitor
 
