@@ -6,7 +6,6 @@ Track changes to your models, for auditing or versioning. See how a model looked
 at any stage in its lifecycle, revert it to any version, or restore it after it
 has been destroyed.
 
-- [Features](#features)
 - [Compatibility](#compatibility)
 - [Installation](#installation)
 - [API Summary](#api-summary)
@@ -30,31 +29,6 @@ has been destroyed.
 - [SerializedAttributes support](#serializedattributes-support)
 - [Testing](#testing)
 
-## Features
-
-* Stores create, update and destroy events
-  * Does not store updates which don't change anything
-  * Support for versioning associated records
-* Can store metadata with each version record
-  * Who was responsible for a change
-  * Arbitrary model-level metadata (useful for filtering versions)
-  * Arbitrary controller-level information e.g. remote IP
-* Configurable
-  * No configuration necessary, but if you want to ..
-  * Configure which events (create, update and destroy) are versioned
-  * Configure which attributes must change for an update to be versioned
-  * Turn off/on by model, request, or globally
-  * Use separate tables for separate models
-* Extensible
-  * Write a custom version class for complete control
-  * Write custom version classes for each of your models
-* Work with versions
-  * Restore any version, including the original, even once destroyed
-  * Restore any version even if the schema has since changed
-  * Restore the version as of a particular time
-* Thoroughly tested
-* Threadsafe
-
 ## Compatibility
 
 | paper_trail | branch     | tags   | ruby     | activerecord |
@@ -65,8 +39,6 @@ has been destroyed.
 | 1           | rails2     | v1.x   | >= 1.8.7 | >= 2.3, < 3  |
 
 ## Installation
-
-### Rails 3 and 4
 
 1. Add PaperTrail to your `Gemfile`.
 
