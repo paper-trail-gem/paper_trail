@@ -219,24 +219,23 @@ module PaperTrail
             through_collection.each do |through_model|
               reify_has_manys(transaction_id, through_model, options)
             end
-            next
+          else
+            collection_keys = through_collection.map { |through_model|
+              through_model.send(assoc.association_foreign_key)
+            }
+
+            version_id_subquery = assoc.klass.paper_trail_version_class.
+              select("MIN(id)").
+              where("item_type = ?", assoc.class_name).
+              where("item_id IN (?)", collection_keys).
+              where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
+              group("item_id").
+              to_sql
+            versions = versions_by_id(assoc.klass, version_id_subquery)
+            collection = Array.new assoc.klass.where(assoc.klass.primary_key => collection_keys)
+            prepare_array_for_has_many(collection, options, versions)
+            model.send(assoc.name).proxy_association.target = collection
           end
-
-          collection_keys = through_collection.map { |through_model|
-            through_model.send(assoc.association_foreign_key)
-          }
-
-          version_id_subquery = assoc.klass.paper_trail_version_class.
-            select("MIN(id)").
-            where("item_type = ?", assoc.class_name).
-            where("item_id IN (?)", collection_keys).
-            where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
-            group("item_id").
-            to_sql
-          versions = versions_by_id(assoc.klass, version_id_subquery)
-          collection = Array.new assoc.klass.where(assoc.klass.primary_key => collection_keys)
-          prepare_array_for_has_many(collection, options, versions)
-          model.send(assoc.name).proxy_association.target = collection
         end
       end
 
