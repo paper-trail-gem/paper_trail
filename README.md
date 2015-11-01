@@ -839,6 +839,12 @@ widget.reload.wotsit                             # nil
 1. Not compatible with [transactional tests][34], aka. transactional fixtures.
    This is a known issue [#542](https://github.com/airblade/paper_trail/issues/542)
    that we'd like to solve.
+1. Requires database timestamp columns with fractional second precision.
+   - Sqlite and postgres timestamps have fractional second precision by default.
+   [MySQL timestamps do not][35]. Furthermore, MySQL 5.5 and earlier do not
+   support fractional second precision at all.
+   - Also, support for fractional seconds in MySQL was not added to
+   rails until ActiveRecord 4.2 (https://github.com/rails/rails/pull/14359).
 1. PaperTrail can't restore an association properly if the association record
    can be updated to replace its parent model (by replacing the foreign key)
 1. Currently PaperTrail only support single `version_associations` table. The
@@ -1461,3 +1467,4 @@ Released under the MIT licence.
 [32]: http://api.rubyonrails.org/classes/ActiveRecord/AutosaveAssociation.html#method-i-mark_for_destruction
 [33]: https://github.com/airblade/paper_trail/wiki/Setting-whodunnit-in-the-rails-console
 [34]: https://github.com/rails/rails/blob/591a0bb87fff7583e01156696fbbf929d48d3e54/activerecord/lib/active_record/fixtures.rb#L142
+[35]: https://dev.mysql.com/doc/refman/5.6/en/fractional-seconds.html
