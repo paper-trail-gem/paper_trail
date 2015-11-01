@@ -1,6 +1,6 @@
 ## 5.0.0 (Unreleased)
 
-### Changed
+### Breaking Changes
 
 - [#556](https://github.com/airblade/paper_trail/pull/556) /
   [#301](https://github.com/airblade/paper_trail/issues/301) -
@@ -19,12 +19,9 @@ None
 
 ## 4.1.0 (Unreleased)
 
-### Changed
+### Breaking Changes
 
-- [#589](https://github.com/airblade/paper_trail/pull/589) /
-  [#588](https://github.com/airblade/paper_trail/issues/588) -
-  `PaperTrail.timestamp_field` should be assigned to match the `updated_at`
-  value when a version is generated for new versions.
+- None
 
 ### Added
 
@@ -35,7 +32,9 @@ None
 
 ### Fixed
 
-None
+- [#589](https://github.com/airblade/paper_trail/pull/589) /
+  [#588](https://github.com/airblade/paper_trail/issues/588) -
+  Fixes timestamp for "create" versions
 
 ## 4.0.0
 
@@ -44,7 +43,7 @@ versioning associations, various new configuration options, and a year's worth
 of bug fixes. Thanks to everyone who helped test the two betas and two release
 candidates.
 
-### Changed
+### Breaking Changes
 
 - Using a Rails initializer to reopen PaperTrail::Version or otherwise extend
   PaperTrail is no longer recommended. An alternative is described in the
