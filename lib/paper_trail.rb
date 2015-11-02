@@ -126,9 +126,9 @@ module PaperTrail
 
   # Returns PaperTrail's configuration object.
   def self.config
-    @@config ||= PaperTrail::Config.instance
-    yield @@config if block_given?
-    @@config
+    @config ||= PaperTrail::Config.instance
+    yield @config if block_given?
+    @config
   end
 
   class << self
