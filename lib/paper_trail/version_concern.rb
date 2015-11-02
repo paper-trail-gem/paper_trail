@@ -231,15 +231,12 @@ module PaperTrail
       @previous ||= sibling_versions.preceding(self).first
     end
 
+    # Returns an integer representing the chronological position of the
+    # version among its siblings (see `sibling_versions`). The "create" event,
+    # for example, has an index of 0.
+    # @api public
     def index
-      table = self.class.arel_table unless @index
-      @index ||=
-        if self.class.primary_key_is_int?
-          sibling_versions.select(table[self.class.primary_key]).order(table[self.class.primary_key].asc).index(self)
-        else
-          sibling_versions.select([table[PaperTrail.timestamp_field], table[self.class.primary_key]]).
-            order(self.class.timestamp_sort_order).index(self)
-        end
+      @index ||= PaperTrail::RecordHistory.new(sibling_versions, self.class).index(self)
     end
 
     private
