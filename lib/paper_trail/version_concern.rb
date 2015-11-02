@@ -18,7 +18,16 @@ module PaperTrail
       validates_presence_of :event
 
       if PaperTrail.active_record_protected_attributes?
-        attr_accessible :item_type, :item_id, :event, :whodunnit, :object, :object_changes, :transaction_id, :created_at
+        attr_accessible(
+          :item_type,
+          :item_id,
+          :event,
+          :whodunnit,
+          :object,
+          :object_changes,
+          :transaction_id,
+          :created_at
+        )
       end
 
       after_create :enforce_version_limit!
