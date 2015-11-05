@@ -245,7 +245,7 @@ module PaperTrail
     # for example, has an index of 0.
     # @api public
     def index
-      @index ||= PaperTrail::RecordHistory.new(sibling_versions, self.class).index(self)
+      @index ||= RecordHistory.new(sibling_versions, self.class).index(self)
     end
 
     # TODO: The `private` method has no effect here. Remove it?
