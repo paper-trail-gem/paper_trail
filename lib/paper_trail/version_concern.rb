@@ -239,8 +239,10 @@ module PaperTrail
     alias_method :version_author, :terminator
 
     def sibling_versions(reload = false)
-      @sibling_versions = nil if reload == true
-      @sibling_versions ||= self.class.with_item_keys(item_type, item_id)
+      if reload || @sibling_versions.nil?
+        @sibling_versions = self.class.with_item_keys(item_type, item_id)
+      end
+      @sibling_versions
     end
 
     def next
