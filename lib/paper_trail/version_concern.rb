@@ -56,8 +56,13 @@ module PaperTrail
         where 'event <> ?', 'create'
       end
 
-      # Expects `obj` to be an instance of `PaperTrail::Version` by default,
-      # but can accept a timestamp if `timestamp_arg` receives `true`
+      # Returns versions after `obj`.
+      #
+      # @param obj - a `Version` or a timestamp
+      # @param timestamp_arg - boolean - When true, `obj` is a timestamp.
+      #   Default: false.
+      # @return `ActiveRecord::Relation`
+      # @api public
       def subsequent(obj, timestamp_arg = false)
         if timestamp_arg != true && self.primary_key_is_int?
           return where(arel_table[primary_key].gt(obj.id)).order(arel_table[primary_key].asc)
@@ -67,6 +72,13 @@ module PaperTrail
         where(arel_table[PaperTrail.timestamp_field].gt(obj)).order(self.timestamp_sort_order)
       end
 
+      # Returns versions before `obj`.
+      #
+      # @param obj - a `Version` or a timestamp
+      # @param timestamp_arg - boolean - When true, `obj` is a timestamp.
+      #   Default: false.
+      # @return `ActiveRecord::Relation`
+      # @api public
       def preceding(obj, timestamp_arg = false)
         if timestamp_arg != true && self.primary_key_is_int?
           return where(arel_table[primary_key].lt(obj.id)).order(arel_table[primary_key].desc)
@@ -75,7 +87,6 @@ module PaperTrail
         obj = obj.send(PaperTrail.timestamp_field) if obj.is_a?(self)
         where(arel_table[PaperTrail.timestamp_field].lt(obj)).order(self.timestamp_sort_order('desc'))
       end
-
 
       def between(start_time, end_time)
         where(
@@ -228,8 +239,10 @@ module PaperTrail
     alias_method :version_author, :terminator
 
     def sibling_versions(reload = false)
-      @sibling_versions = nil if reload == true
-      @sibling_versions ||= self.class.with_item_keys(item_type, item_id)
+      if reload || @sibling_versions.nil?
+        @sibling_versions = self.class.with_item_keys(item_type, item_id)
+      end
+      @sibling_versions
     end
 
     def next
@@ -245,7 +258,7 @@ module PaperTrail
     # for example, has an index of 0.
     # @api public
     def index
-      @index ||= PaperTrail::RecordHistory.new(sibling_versions, self.class).index(self)
+      @index ||= RecordHistory.new(sibling_versions, self.class).index(self)
     end
 
     # TODO: The `private` method has no effect here. Remove it?

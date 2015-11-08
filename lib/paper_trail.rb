@@ -1,6 +1,6 @@
 require 'request_store'
 
-# Require core library
+# Require files in lib/paper_trail, but not its subdirectories.
 Dir[File.join(File.dirname(__FILE__), 'paper_trail', '*.rb')].each do |file|
   require File.join('paper_trail', File.basename(file, '.rb'))
 end
