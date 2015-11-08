@@ -101,7 +101,8 @@ module PaperTrail
   end
 
   def self.active_record_protected_attributes?
-    @active_record_protected_attributes ||= ::ActiveRecord::VERSION::MAJOR < 4 || !!defined?(ProtectedAttributes)
+    @active_record_protected_attributes ||= ::ActiveRecord::VERSION::MAJOR < 4 ||
+      !!defined?(ProtectedAttributes)
   end
 
   def self.transaction?
@@ -121,7 +122,7 @@ module PaperTrail
   # Thread-safe hash to hold PaperTrail's data. Initializing with needed
   # default values.
   def self.paper_trail_store
-    RequestStore.store[:paper_trail] ||= { :request_enabled_for_controller => true }
+    RequestStore.store[:paper_trail] ||= { request_enabled_for_controller: true }
   end
 
   # Returns PaperTrail's configuration object.

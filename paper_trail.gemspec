@@ -35,6 +35,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'generator_spec'
   s.add_development_dependency 'database_cleaner', '~> 1.2'
   s.add_development_dependency 'pry-nav'
+  s.add_development_dependency 'rubocop'
 
   # Allow time travel in testing. timecop is only supported after 1.9.2 but does a better cleanup at 'return'
   if RUBY_VERSION < "1.9.2"

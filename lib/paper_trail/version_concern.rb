@@ -18,7 +18,16 @@ module PaperTrail
       validates_presence_of :event
 
       if PaperTrail.active_record_protected_attributes?
-        attr_accessible :item_type, :item_id, :event, :whodunnit, :object, :object_changes, :transaction_id, :created_at
+        attr_accessible(
+          :item_type,
+          :item_id,
+          :event,
+          :whodunnit,
+          :object,
+          :object_changes,
+          :transaction_id,
+          :created_at
+        )
       end
 
       after_create :enforce_version_limit!
@@ -239,10 +248,14 @@ module PaperTrail
       @index ||= PaperTrail::RecordHistory.new(sibling_versions, self.class).index(self)
     end
 
+    # TODO: The `private` method has no effect here. Remove it?
+    # AFAICT it is not possible to have private instance methods in a mixin,
+    # though private *class* methods are possible.
     private
 
     # In Rails 3.1+, calling reify on a previous version confuses the
     # IdentityMap, if enabled. This prevents insertion into the map.
+    # @api private
     def without_identity_map(&block)
       if defined?(::ActiveRecord::IdentityMap) && ::ActiveRecord::IdentityMap.respond_to?(:without)
         ::ActiveRecord::IdentityMap.without(&block)
@@ -253,12 +266,14 @@ module PaperTrail
 
     # Checks that a value has been set for the `version_limit` config
     # option, and if so enforces it.
+    # @api private
     def enforce_version_limit!
-      return unless PaperTrail.config.version_limit.is_a? Numeric
+      limit = PaperTrail.config.version_limit
+      return unless limit.is_a? Numeric
       previous_versions = sibling_versions.not_creates
-      return unless previous_versions.size > PaperTrail.config.version_limit
-      excess_previous_versions = previous_versions - previous_versions.last(PaperTrail.config.version_limit)
-      excess_previous_versions.map(&:destroy)
+      return unless previous_versions.size > limit
+      excess_versions = previous_versions - previous_versions.last(limit)
+      excess_versions.map(&:destroy)
     end
   end
 end
