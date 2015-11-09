@@ -17,6 +17,21 @@
 
 None
 
+## 4.0.1 (Unreleased)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- [#636](https://github.com/airblade/paper_trail/issues/636) -
+  Should compile assets without a db connection
+
 ## 4.0.0
 
 This major release adds JSON column support in PostgreSQL, limited support for
