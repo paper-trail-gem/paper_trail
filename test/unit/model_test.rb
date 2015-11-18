@@ -442,7 +442,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
 
     should 'handle decimals' do
-      assert_in_delta 2.71828, @previous.a_decimal, 0.00001
+      assert_in_delta 2.7183, @previous.a_decimal, 0.0001
     end
 
     should 'handle datetimes' do
@@ -484,7 +484,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         assert_equal    'The quick brown fox',       @last.reify.a_text
         assert_equal    42,                          @last.reify.an_integer
         assert_in_delta 153.01,                      @last.reify.a_float,   0.001
-        assert_in_delta 2.71828,                     @last.reify.a_decimal, 0.00001
+        assert_in_delta 2.7183,                      @last.reify.a_decimal, 0.0001
         assert_equal    @date_time.to_time.utc.to_i, @last.reify.a_datetime.to_time.utc.to_i
         assert_equal    @time.utc.to_i,              @last.reify.a_time.utc.to_i
         assert_equal    @date,                       @last.reify.a_date
