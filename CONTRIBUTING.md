@@ -12,6 +12,10 @@ suggestions, and especially pull requests.
 
 Thanks, and happy (paper) trails :)
 
+## Reporting Bugs
+
+Please use our [bug report template][1].
+
 ## Development
 
 Testing is a little awkward because the test suite:
@@ -54,3 +58,5 @@ cd ../..
 # Run tests
 DB=mysql bundle exec rake
 ```
+
+[1]: https://github.com/airblade/paper_trail/blob/master/doc/bug_report_template.rb
