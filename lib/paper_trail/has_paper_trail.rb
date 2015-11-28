@@ -369,7 +369,7 @@ module PaperTrail
           if respond_to?(:updated_at)
             data[PaperTrail.timestamp_field] = updated_at
           end
-          if paper_trail_options[:save_changes] && changed_notably? && self.class.paper_trail_version_class.column_names.include?('object_changes')
+          if pt_record_object_changes? && changed_notably?
             data[:object_changes] = pt_recordable_object_changes
           end
           if self.class.paper_trail_version_class.column_names.include?('transaction_id')
@@ -391,7 +391,7 @@ module PaperTrail
           if respond_to?(:updated_at)
             data[PaperTrail.timestamp_field] = updated_at
           end
-          if paper_trail_options[:save_changes] && self.class.paper_trail_version_class.column_names.include?('object_changes')
+          if pt_record_object_changes?
             data[:object_changes] = pt_recordable_object_changes
           end
           if self.class.paper_trail_version_class.column_names.include?('transaction_id')
@@ -401,6 +401,14 @@ module PaperTrail
           set_transaction_id(version)
           save_associations(version)
         end
+      end
+
+      # Returns a boolean indicating whether to store serialized version diffs
+      # in the `object_changes` column of the version record.
+      # @api private
+      def pt_record_object_changes?
+        paper_trail_options[:save_changes] &&
+          self.class.paper_trail_version_class.column_names.include?('object_changes')
       end
 
       # Returns an object which can be assigned to the `object` attribute of a
