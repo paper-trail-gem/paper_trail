@@ -210,9 +210,8 @@ module PaperTrail
     # not have an `object_changes` text column.
     def changeset
       return nil unless self.class.column_names.include? 'object_changes'
-
-      _changes = self.class.object_changes_col_is_json? ? object_changes : PaperTrail.serializer.load(object_changes)
-      @changeset ||= HashWithIndifferentAccess.new(_changes).tap do |changes|
+      _changes = HashWithIndifferentAccess.new(object_changes_deserialized)
+      @changeset ||= _changes.tap do |changes|
         if PaperTrail.serialized_attributes?
           item_type.constantize.unserialize_attribute_changes_for_paper_trail!(changes)
         end
@@ -265,6 +264,15 @@ module PaperTrail
     # AFAICT it is not possible to have private instance methods in a mixin,
     # though private *class* methods are possible.
     private
+
+    # @api private
+    def object_changes_deserialized
+      if self.class.object_changes_col_is_json?
+        object_changes
+      else
+        PaperTrail.serializer.load(object_changes)
+      end
+    end
 
     # In Rails 3.1+, calling reify on a previous version confuses the
     # IdentityMap, if enabled. This prevents insertion into the map.
