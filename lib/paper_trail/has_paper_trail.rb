@@ -370,8 +370,7 @@ module PaperTrail
             data[PaperTrail.timestamp_field] = updated_at
           end
           if paper_trail_options[:save_changes] && changed_notably? && self.class.paper_trail_version_class.column_names.include?('object_changes')
-            data[:object_changes] = self.class.paper_trail_version_class.object_changes_col_is_json? ? changes_for_paper_trail :
-              PaperTrail.serializer.dump(changes_for_paper_trail)
+            data[:object_changes] = pt_recordable_object_changes
           end
           if self.class.paper_trail_version_class.column_names.include?('transaction_id')
             data[:transaction_id] = PaperTrail.transaction_id
@@ -393,8 +392,7 @@ module PaperTrail
             data[PaperTrail.timestamp_field] = updated_at
           end
           if paper_trail_options[:save_changes] && self.class.paper_trail_version_class.column_names.include?('object_changes')
-            data[:object_changes] = self.class.paper_trail_version_class.object_changes_col_is_json? ? changes_for_paper_trail :
-              PaperTrail.serializer.dump(changes_for_paper_trail)
+            data[:object_changes] = pt_recordable_object_changes
           end
           if self.class.paper_trail_version_class.column_names.include?('transaction_id')
             data[:transaction_id] = PaperTrail.transaction_id
@@ -417,6 +415,20 @@ module PaperTrail
           object_attrs
         else
           PaperTrail.serializer.dump(object_attrs)
+        end
+      end
+
+      # Returns an object which can be assigned to the `object_changes`
+      # attribute of a nascent version record. If the `object_changes` column is
+      # a postgres `json` column, then a hash can be used in the assignment,
+      # otherwise the column is a `text` column, and we must perform the
+      # serialization here, using `PaperTrail.serializer`.
+      # @api private
+      def pt_recordable_object_changes
+        if self.class.paper_trail_version_class.object_changes_col_is_json?
+          changes_for_paper_trail
+        else
+          PaperTrail.serializer.dump(changes_for_paper_trail)
         end
       end
 
