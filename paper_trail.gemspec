@@ -34,8 +34,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec-rails', '~> 3.1.0'
   s.add_development_dependency 'generator_spec'
   s.add_development_dependency 'database_cleaner', '~> 1.2'
-  s.add_development_dependency 'pry-nav'
-  s.add_development_dependency 'rubocop'
+  s.add_development_dependency 'pry-nav', '~> 0.2.4'
+  s.add_development_dependency 'rubocop', '~> 0.35.1'
 
   # Allow time travel in testing. timecop is only supported after 1.9.2 but does a better cleanup at 'return'
   if RUBY_VERSION < "1.9.2"
