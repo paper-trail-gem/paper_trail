@@ -384,10 +384,9 @@ module PaperTrail
 
       def record_update(force = nil)
         if paper_trail_switched_on? && (force || changed_notably?)
-          object_attrs = object_attrs_for_paper_trail(attributes_before_change)
           data = {
             :event     => paper_trail_event || 'update',
-            :object    => self.class.paper_trail_version_class.object_col_is_json? ? object_attrs : PaperTrail.serializer.dump(object_attrs),
+            :object    => pt_recordable_object,
             :whodunnit => PaperTrail.whodunnit
           }
           if respond_to?(:updated_at)
@@ -403,6 +402,21 @@ module PaperTrail
           version = send(self.class.versions_association_name).create merge_metadata(data)
           set_transaction_id(version)
           save_associations(version)
+        end
+      end
+
+      # Returns an object which can be assigned to the `object` attribute of a
+      # nascent version record. If the `object` column is a postgres `json`
+      # column, then a hash can be used in the assignment, otherwise the column
+      # is a `text` column, and we must perform the serialization here, using
+      # `PaperTrail.serializer`.
+      # @api private
+      def pt_recordable_object
+        object_attrs = object_attrs_for_paper_trail(attributes_before_change)
+        if self.class.paper_trail_version_class.object_col_is_json?
+          object_attrs
+        else
+          PaperTrail.serializer.dump(object_attrs)
         end
       end
 
@@ -437,12 +451,11 @@ module PaperTrail
 
       def record_destroy
         if paper_trail_switched_on? and not new_record?
-          object_attrs = object_attrs_for_paper_trail(attributes_before_change)
           data = {
             :item_id   => self.id,
             :item_type => self.class.base_class.name,
             :event     => paper_trail_event || 'destroy',
-            :object    => self.class.paper_trail_version_class.object_col_is_json? ? object_attrs : PaperTrail.serializer.dump(object_attrs),
+            :object    => pt_recordable_object,
             :whodunnit => PaperTrail.whodunnit
           }
           if self.class.paper_trail_version_class.column_names.include?('transaction_id')
