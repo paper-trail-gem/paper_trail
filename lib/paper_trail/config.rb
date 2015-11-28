@@ -40,7 +40,8 @@ module PaperTrail
 
     # Indicates whether PaperTrail is on or off.
     def enabled
-      PaperTrail.paper_trail_store[:paper_trail_enabled].nil? || PaperTrail.paper_trail_store[:paper_trail_enabled]
+      PaperTrail.paper_trail_store[:paper_trail_enabled].nil? ||
+        PaperTrail.paper_trail_store[:paper_trail_enabled]
     end
 
     def enabled= enable

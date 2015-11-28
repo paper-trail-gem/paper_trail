@@ -76,8 +76,9 @@ module PaperTrail
         self.paper_trail_options = options.dup
 
         [:ignore, :skip, :only].each do |k|
-          paper_trail_options[k] =
-            [paper_trail_options[k]].flatten.compact.map { |attr| attr.is_a?(Hash) ? attr.stringify_keys : attr.to_s }
+          paper_trail_options[k] = [paper_trail_options[k]].flatten.compact.map { |attr|
+            attr.is_a?(Hash) ? attr.stringify_keys : attr.to_s
+          }
         end
 
         paper_trail_options[:meta] ||= {}
@@ -118,9 +119,7 @@ module PaperTrail
           fail ArgumentError, 'recording order can only be "after" or "before"'
         end
 
-        send "#{recording_order}_destroy",
-             :record_destroy,
-             :if => :save_version?
+        send "#{recording_order}_destroy", :record_destroy, :if => :save_version?
 
         return if paper_trail_options[:on].include?(:destroy)
         paper_trail_options[:on] << :destroy
@@ -128,10 +127,8 @@ module PaperTrail
 
       # Record version after "update" event
       def paper_trail_on_update
-        before_save  :reset_timestamp_attrs_for_update_if_needed!,
-                     :on => :update
-        after_update :record_update,
-                     :if => :save_version?
+        before_save :reset_timestamp_attrs_for_update_if_needed!, :on => :update
+        after_update :record_update, :if => :save_version?
         after_update :clear_version_instance!
 
         return if paper_trail_options[:on].include?(:update)
@@ -140,8 +137,7 @@ module PaperTrail
 
       # Record version after "create" event
       def paper_trail_on_create
-        after_create :record_create,
-                     :if => :save_version?
+        after_create :record_create, :if => :save_version?
 
         return if paper_trail_options[:on].include?(:create)
         paper_trail_options[:on] << :create
@@ -277,7 +273,9 @@ module PaperTrail
 
       # Returns the object (not a Version) as it was most recently.
       def previous_version
-        preceding_version = source_version ? source_version.previous : send(self.class.versions_association_name).last
+        preceding_version = source_version ?
+          source_version.previous :
+          send(self.class.versions_association_name).last
         preceding_version.reify if preceding_version
       end
 
@@ -507,7 +505,9 @@ module PaperTrail
             assoc_version_args.merge!(:foreign_key_id => send(assoc.foreign_key))
           end
 
-          PaperTrail::VersionAssociation.create(assoc_version_args) if assoc_version_args.has_key?(:foreign_key_id)
+          if assoc_version_args.has_key?(:foreign_key_id)
+            PaperTrail::VersionAssociation.create(assoc_version_args)
+          end
         end
       end
 
@@ -550,7 +550,8 @@ module PaperTrail
       def attributes_before_change
         attributes.tap do |prev|
           enums = self.respond_to?(:defined_enums) ? self.defined_enums : {}
-          changed_attributes.select { |k,v| self.class.column_names.include?(k) }.each do |attr, before|
+          attrs = changed_attributes.select { |k, v| self.class.column_names.include?(k) }
+          attrs.each do |attr, before|
             before = enums[attr][before] if enums[attr]
             prev[attr] = before
           end
@@ -592,7 +593,10 @@ module PaperTrail
         # Remove Hash arguments and then evaluate whether the attributes (the
         # keys of the hash) should also get pushed into the collection.
         only.delete_if do |obj|
-          obj.is_a?(Hash) && obj.each { |attr, condition| only << attr if condition.respond_to?(:call) && condition.call(self) }
+          obj.is_a?(Hash) &&
+            obj.each { |attr, condition|
+              only << attr if condition.respond_to?(:call) && condition.call(self)
+            }
         end
         only.empty? ? changed_and_not_ignored : (changed_and_not_ignored & only)
       end
@@ -602,14 +606,19 @@ module PaperTrail
         # Remove Hash arguments and then evaluate whether the attributes (the
         # keys of the hash) should also get pushed into the collection.
         ignore.delete_if do |obj|
-          obj.is_a?(Hash) && obj.each { |attr, condition| ignore << attr if condition.respond_to?(:call) && condition.call(self) }
+          obj.is_a?(Hash) &&
+            obj.each { |attr, condition|
+              ignore << attr if condition.respond_to?(:call) && condition.call(self)
+            }
         end
         skip = self.paper_trail_options[:skip]
         changed - ignore - skip
       end
 
       def paper_trail_switched_on?
-        PaperTrail.enabled? && PaperTrail.enabled_for_controller? && self.paper_trail_enabled_for_model?
+        PaperTrail.enabled? &&
+          PaperTrail.enabled_for_controller? &&
+          self.paper_trail_enabled_for_model?
       end
 
       def save_version?

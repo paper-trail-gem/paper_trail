@@ -32,7 +32,9 @@ module PaperTrail
     # set, versions will be narrowed to those pointing at items with those ids
     # that were created on specified date.
     def gather_versions(item_id = nil, date = :all)
-      raise ArgumentError.new("`date` argument must receive a Timestamp or `:all`") unless date == :all || date.respond_to?(:to_date)
+      unless date == :all || date.respond_to?(:to_date)
+        raise ArgumentError.new("`date` argument must receive a Timestamp or `:all`")
+      end
       versions = item_id ? PaperTrail::Version.where(:item_id => item_id) : PaperTrail::Version
       versions = versions.between(date.to_date, date.to_date + 1.day) unless date == :all
 

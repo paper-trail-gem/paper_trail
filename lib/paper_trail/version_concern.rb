@@ -85,7 +85,8 @@ module PaperTrail
         end
 
         obj = obj.send(PaperTrail.timestamp_field) if obj.is_a?(self)
-        where(arel_table[PaperTrail.timestamp_field].lt(obj)).order(self.timestamp_sort_order('desc'))
+        where(arel_table[PaperTrail.timestamp_field].lt(obj)).
+          order(self.timestamp_sort_order('desc'))
       end
 
       def between(start_time, end_time)
@@ -136,7 +137,8 @@ module PaperTrail
           where_conditions = "object_changes @> '#{args.to_json}'::jsonb"
         elsif columns_hash['object'].type == :json
           where_conditions = args.map do |field, value|
-            "((object_changes->>'#{field}' ILIKE '[#{value.to_json},%') OR (object_changes->>'#{field}' ILIKE '[%,#{value.to_json}]%'))"
+            "((object_changes->>'#{field}' ILIKE '[#{value.to_json},%') " +
+              "OR (object_changes->>'#{field}' ILIKE '[%,#{value.to_json}]%'))"
           end
           where_conditions = where_conditions.join(" AND ")
         else
