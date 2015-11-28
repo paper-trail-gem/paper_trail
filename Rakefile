@@ -26,5 +26,8 @@ require 'rspec/core/rake_task'
 desc 'Run tests on PaperTrail with RSpec'
 RSpec::Core::RakeTask.new(:spec)
 
+require 'rubocop/rake_task'
+RuboCop::RakeTask.new
+
 desc 'Default: run all available test suites'
-task :default => [:prepare, :test, :spec]
+task :default => [:rubocop, :prepare, :test, :spec]

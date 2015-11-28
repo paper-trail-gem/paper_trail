@@ -6,6 +6,7 @@ gem 'request_store', '~> 1.1.0'
 
 group :development, :test do
   gem 'rake', '~> 10.1.1'
+  gem 'rubocop', '~> 0.35.1'
   gem 'shoulda', '~> 3.5'
   gem 'ffaker',  '<= 1.31.0'
 
