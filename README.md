@@ -1102,16 +1102,15 @@ column type.
 
 #### Convert a column from text to json
 
-Postgres' `alter column` command will not automatically convert a `text`
-column to `json`, but it can still be done with a piece of plain SQL.
-
 ```ruby
-def up
-  change_column :versions, :object, 'jsonb USING object::jsonb'
-end
+class ConvertVersionsObjectToJson < ActiveRecord::Migration
+  def up
+    change_column :versions, :object, 'jsonb USING object::jsonb'
+  end
 
-def down
-  change_column :versions, :object, 'text USING object::text'
+  def down
+    change_column :versions, :object, 'text USING object::text'
+  end
 end
 ```
 
