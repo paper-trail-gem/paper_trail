@@ -1111,6 +1111,57 @@ alter column object type json
 using object::json;
 ```
 
+#### Convert existing YAML data to JSON
+
+If you've been using PaperTrail for a while with the default YAML serializer
+and you want to switch to JSON or JSONB, you're in a bit of a bind because
+there's no automatic way to migrate your data. The first (slow) option is to
+loop over every record and parse it in Ruby, then write to a temporary column:
+
+```ruby
+add_column :versions, :object, :new_object, :jsonb # or :json
+
+PaperTrail::Version.reset_column_information
+PaperTrail::Version.find_each do |version|
+  version.update_column :new_object, YAML.load(version.object)
+end
+
+remove_column :versions, :object
+rename_column :versions, :new_object, :object
+```
+
+There's a big downside with this: it can be very slow if you have a lot of data.
+Note that the table will be locked during the migration, so it effictively blocks
+any data modification on tables that use PaperTrail.
+
+If it's too slow for your needs, and you're okay with any admin UI missing
+PaperTrail data temporarily, you can create the new column without a data
+migration. At this point all of your historical data still exists on those old
+rows as YAML, but any new data will be stored as JSON.
+
+```ruby
+rename_column :versions, :object, :old_object
+add_column :versions, :object, :jsonb # or :json
+```
+
+Now after that migration has run, start this background script on your server:
+
+```ruby
+PaperTrail::Version.where.not(old_object: nil).find_each do |version|
+  version.update_columns old_object: nil, object: YAML.load(version.old_object)
+end
+```
+
+Once that has completed, all data has been successfully migrated from YAML to JSON.
+This is the last migration required:
+
+```ruby
+remove_column :versions, :old_object
+```
+
+**Note that both of these solutions would have to be performed twice if you're
+making use of the optional `object_changes` column.**
+
 ## SerializedAttributes support
 
 PaperTrail has a config option that can be used to enable/disable whether
