@@ -38,10 +38,10 @@ module PaperTrail
     end
     alias_method :track_associations?, :track_associations
 
-    # Indicates whether PaperTrail is on or off.
+    # Indicates whether PaperTrail is on or off. Default: true.
     def enabled
-      PaperTrail.paper_trail_store[:paper_trail_enabled].nil? ||
-        PaperTrail.paper_trail_store[:paper_trail_enabled]
+      value = PaperTrail.paper_trail_store.fetch(:paper_trail_enabled, true)
+      value.nil? ? true : value
     end
 
     def enabled= enable
