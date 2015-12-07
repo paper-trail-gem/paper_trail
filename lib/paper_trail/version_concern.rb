@@ -212,14 +212,7 @@ module PaperTrail
     # not have an `object_changes` text column.
     def changeset
       return nil unless self.class.column_names.include? 'object_changes'
-      _changes = HashWithIndifferentAccess.new(object_changes_deserialized)
-      @changeset ||= _changes.tap do |changes|
-        if PaperTrail.serialized_attributes?
-          item_type.constantize.unserialize_attribute_changes_for_paper_trail!(changes)
-        end
-      end
-    rescue
-      {}
+      @changeset ||= load_changeset
     end
 
     # Returns who put the item into the state stored in this version.
@@ -266,6 +259,17 @@ module PaperTrail
     # AFAICT it is not possible to have private instance methods in a mixin,
     # though private *class* methods are possible.
     private
+
+    # @api private
+    def load_changeset
+      changes = HashWithIndifferentAccess.new(object_changes_deserialized)
+      if PaperTrail.serialized_attributes?
+        item_type.constantize.unserialize_attribute_changes_for_paper_trail!(changes)
+      end
+      changes
+    rescue # TODO: Rescue something specific
+      {}
+    end
 
     # @api private
     def object_changes_deserialized
