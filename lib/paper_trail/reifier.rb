@@ -59,9 +59,7 @@ module PaperTrail
           end
         end
 
-        if PaperTrail.serialized_attributes?
-          model.class.unserialize_attributes_for_paper_trail! attrs
-        end
+        model.class.unserialize_attributes_for_paper_trail! attrs
 
         # Set all the attributes in this version on the model.
         attrs.each do |k, v|
