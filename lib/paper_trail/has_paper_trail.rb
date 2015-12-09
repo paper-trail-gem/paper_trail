@@ -1,4 +1,5 @@
 require 'active_support/core_ext/object' # provides the `try` method
+require 'paper_trail/attributes_serialization'
 
 module PaperTrail
   module Model
@@ -61,6 +62,7 @@ module PaperTrail
         # Lazily include the instance methods so we don't clutter up
         # any more ActiveRecord models than we have to.
         send :include, InstanceMethods
+        send :extend, AttributesSerialization
 
         class_attribute :version_association_name
         self.version_association_name = options[:version] || :version
@@ -164,74 +166,6 @@ module PaperTrail
 
       def paper_trail_version_class
         @paper_trail_version_class ||= version_class_name.constantize
-      end
-
-      # Used for `Version#object` attribute.
-      def serialize_attributes_for_paper_trail!(attributes)
-        # Don't serialize before values before inserting into columns of type
-        # `JSON` on `PostgreSQL` databases.
-        return attributes if self.paper_trail_version_class.object_col_is_json?
-
-        serialized_attributes.each do |key, coder|
-          if attributes.key?(key)
-            # Fall back to current serializer if `coder` has no `dump` method.
-            coder = PaperTrail.serializer unless coder.respond_to?(:dump)
-            attributes[key] = coder.dump(attributes[key])
-          end
-        end
-      end
-
-      # TODO: There is a lot of duplication between this and
-      # `serialize_attributes_for_paper_trail!`.
-      def unserialize_attributes_for_paper_trail!(attributes)
-        # Don't serialize before values before inserting into columns of type
-        # `JSON` on `PostgreSQL` databases.
-        return attributes if self.paper_trail_version_class.object_col_is_json?
-
-        serialized_attributes.each do |key, coder|
-          if attributes.key?(key)
-            # Fall back to current serializer if `coder` has no `dump` method.
-            # TODO: Shouldn't this be `:load`?
-            coder = PaperTrail.serializer unless coder.respond_to?(:dump)
-            attributes[key] = coder.load(attributes[key])
-          end
-        end
-      end
-
-      # Used for Version#object_changes attribute.
-      def serialize_attribute_changes_for_paper_trail!(changes)
-        # Don't serialize before values before inserting into columns of type `JSON`
-# on `PostgreSQL` databases.
-        return changes if self.paper_trail_version_class.object_changes_col_is_json?
-
-        serialized_attributes.each do |key, coder|
-          if changes.key?(key)
-            # Fall back to current serializer if `coder` has no `dump` method.
-            coder = PaperTrail.serializer unless coder.respond_to?(:dump)
-            old_value, new_value = changes[key]
-            changes[key] = [coder.dump(old_value),
-                            coder.dump(new_value)]
-          end
-        end
-      end
-
-      # TODO: There is a lot of duplication between this and
-      # `serialize_attribute_changes_for_paper_trail!`.
-      def unserialize_attribute_changes_for_paper_trail!(changes)
-        # Don't serialize before values before inserting into columns of type
-        # `JSON` on `PostgreSQL` databases.
-        return changes if self.paper_trail_version_class.object_changes_col_is_json?
-
-        serialized_attributes.each do |key, coder|
-          if changes.key?(key)
-            # Fall back to current serializer if `coder` has no `dump` method.
-            # TODO: Shouldn't this be `:load`?
-            coder = PaperTrail.serializer unless coder.respond_to?(:dump)
-            old_value, new_value = changes[key]
-            changes[key] = [coder.load(old_value),
-                            coder.load(new_value)]
-          end
-        end
       end
     end
 
@@ -442,9 +376,7 @@ module PaperTrail
 
       def changes_for_paper_trail
         _changes = changes.delete_if { |k,v| !notably_changed.include?(k) }
-        if PaperTrail.serialized_attributes?
-          self.class.serialize_attribute_changes_for_paper_trail!(_changes)
-        end
+        self.class.serialize_attribute_changes_for_paper_trail!(_changes)
         _changes.to_hash
       end
 
@@ -561,9 +493,7 @@ module PaperTrail
       # ommitting attributes to be skipped.
       def object_attrs_for_paper_trail(attributes_hash)
         attrs = attributes_hash.except(*self.paper_trail_options[:skip])
-        if PaperTrail.serialized_attributes?
-          self.class.serialize_attributes_for_paper_trail!(attrs)
-        end
+        self.class.serialize_attributes_for_paper_trail!(attrs)
         attrs
       end
 
