@@ -1130,21 +1130,23 @@ remove_column :versions, :object
 rename_column :versions, :new_object, :object
 ```
 
-There's a big downside with this: it can be very slow if you have a lot of data.
-Note that the table will be locked during the migration, so it effictively blocks
-any data modification on tables that use PaperTrail.
+This technique can be very slow if you have a lot of data. Though slow, it is
+safe in databases where transactions are protected against DDL, such as
+Postgres. In databases without such protection, such as MySQL, a table lock may
+be necessary.
 
-If it's too slow for your needs, and you're okay with any admin UI missing
-PaperTrail data temporarily, you can create the new column without a data
-migration. At this point all of your historical data still exists on those old
-rows as YAML, but any new data will be stored as JSON.
+If the above technique is too slow for your needs, and you're okay doing without
+PaperTrail data temporarily, you can create the new column without a converting
+the data.
 
 ```ruby
 rename_column :versions, :object, :old_object
 add_column :versions, :object, :jsonb # or :json
 ```
 
-Now after that migration has run, start this background script on your server:
+After that migration, your historical data still exists as YAML, and new data
+will be stored as JSON. Next, convert records from YAML to JSON using a
+background script.
 
 ```ruby
 PaperTrail::Version.where.not(old_object: nil).find_each do |version|
@@ -1152,15 +1154,14 @@ PaperTrail::Version.where.not(old_object: nil).find_each do |version|
 end
 ```
 
-Once that has completed, all data has been successfully migrated from YAML to JSON.
-This is the last migration required:
+Finally, in another migration, remove the old column.
 
 ```ruby
 remove_column :versions, :old_object
 ```
 
-**Note that both of these solutions would have to be performed twice if you're
-making use of the optional `object_changes` column.**
+If you use the optional `object_changes` column, don't forget to convert it
+also, using the same technique.
 
 ## SerializedAttributes support
 
