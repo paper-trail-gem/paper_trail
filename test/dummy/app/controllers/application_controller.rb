@@ -27,10 +27,6 @@ class ApplicationController < ActionController::Base
   private
 
   def modify_current_user
-    @current_user = OpenStruct.new(:id => 153).tap do |obj|
-      # Support ruby 1.8, in which `id` returns the `object_id`
-      # unless specifically overwritten.
-      def obj.id; 153; end if RUBY_VERSION < '1.9'
-    end
+    @current_user = OpenStruct.new(id: 153)
   end
 end

@@ -25,12 +25,7 @@ describe Gadget, :type => :model do
         describe '#changed_notably?' do
           subject { Gadget.new(:created_at => Time.now) }
 
-          # apparently the private methods list in Ruby18 is different than in Ruby19+
-          if RUBY_VERSION >= '1.9'
-            it { expect(subject.private_methods).to include(:changed_notably?) }
-          else
-            it { expect(subject.private_methods).to include('changed_notably?') }
-          end
+          it { expect(subject.private_methods).to include(:changed_notably?) }
 
           context "create events" do
             it { expect(subject.send(:changed_notably?)).to be true }

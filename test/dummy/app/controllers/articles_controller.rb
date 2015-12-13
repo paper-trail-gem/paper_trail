@@ -9,9 +9,6 @@ class ArticlesController < ApplicationController
   end
 
   def current_user
-    'foobar'.tap do |string|
-      # Support ruby 1.8, in which `String` responds to `id`.
-      string.class_eval { undef_method(:id) } if RUBY_VERSION < '1.9'
-    end
+    'foobar'
   end
 end
