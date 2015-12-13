@@ -46,20 +46,13 @@ Metrics/BlockNesting:
 Metrics/CyclomaticComplexity:
   Max: 14
 
-# Offense count: 98
-# Configuration parameters: AllowURI, URISchemes.
-Metrics/LineLength:
-  Max: 147
-
 # Offense count: 15
 # Configuration parameters: CountComments.
 Metrics/MethodLength:
   Max: 51
 
-# Offense count: 3
-# Configuration parameters: CountComments.
 Metrics/ModuleLength:
-  Max: 257
+  Enabled: false
 
 # Offense count: 7
 Metrics/PerceivedComplexity:
@@ -82,14 +75,6 @@ Style/Alias:
 Style/AlignHash:
   Exclude:
     - 'lib/generators/paper_trail/install_generator.rb'
-
-# Offense count: 4
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/AlignParameters:
-  Exclude:
-    - 'doc/bug_report_template.rb'
-    - 'lib/paper_trail/has_paper_trail.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.
@@ -129,12 +114,6 @@ Style/DeprecatedHashMethods:
 # Offense count: 30
 # Configuration parameters: Exclude.
 Style/Documentation:
-  Enabled: false
-
-# Offense count: 31
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/DotPosition:
   Enabled: false
 
 # Offense count: 5
@@ -231,13 +210,6 @@ Style/Lambda:
   Exclude:
     - 'lib/paper_trail/has_paper_trail.rb'
     - 'lib/paper_trail/version_concern.rb'
-
-# Offense count: 3
-# Cop supports --auto-correct.
-Style/LineEndConcatenation:
-  Exclude:
-    - 'lib/generators/paper_trail/install_generator.rb'
-    - 'lib/paper_trail/config.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.

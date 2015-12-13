@@ -37,7 +37,9 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'pry-nav', '~> 0.2.4'
   s.add_development_dependency 'rubocop', '~> 0.35.1'
 
-  # Allow time travel in testing. timecop is only supported after 1.9.2 but does a better cleanup at 'return'
+  # Allow time travel in testing. timecop is only supported after 1.9.2 but
+  # does a better cleanup at 'return'.
+  # TODO: We can remove delorean, as we no longer support ruby < 1.9.3
   if RUBY_VERSION < "1.9.2"
     s.add_development_dependency 'delorean'
   else

@@ -13,3 +13,21 @@ AllCops:
   DisplayCopNames: true
   DisplayStyleGuide: true
   StyleGuideCopsOnly: false
+
+Style/AlignParameters:
+  EnforcedStyle: with_fixed_indentation
+
+Style/DotPosition:
+  EnforcedStyle: trailing
+
+# The Ruby Style Guide says:
+#
+# > Use \ instead of + or << to concatenate two string literals at line end.
+#
+# but in my experience the `\` style is rarely used and less readable. Please
+# concatenate multiline strings with `+` or use a HEREDOC.
+Style/LineEndConcatenation:
+  Enabled: false
+
+Metrics/LineLength:
+  Max: 100
