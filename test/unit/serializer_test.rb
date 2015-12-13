@@ -22,11 +22,7 @@ class SerializerTest < ActiveSupport::TestCase
 
       # Check values are stored as `YAML`.
       assert_equal @original_fluxor_attributes, YAML.load(@fluxor.versions[1].object)
-      # This test can't consistently pass in Ruby1.8 because hashes do no preserve order, which means the order of the
-      # attributes in the `YAML` can't be ensured.
-      if RUBY_VERSION >= '1.9'
-        assert_equal YAML.dump(@original_fluxor_attributes), @fluxor.versions[1].object
-      end
+      assert_equal YAML.dump(@original_fluxor_attributes), @fluxor.versions[1].object
     end
   end
 
@@ -57,11 +53,7 @@ class SerializerTest < ActiveSupport::TestCase
 
       # Check values are stored as JSON.
       assert_equal @original_fluxor_attributes, ActiveSupport::JSON.decode(@fluxor.versions[1].object)
-      # This test can't consistently pass in Ruby1.8 because hashes do no preserve order, which means the order of the
-      # attributes in the JSON can't be ensured.
-      if RUBY_VERSION >= '1.9'
-        assert_equal ActiveSupport::JSON.encode(@original_fluxor_attributes), @fluxor.versions[1].object
-      end
+      assert_equal ActiveSupport::JSON.encode(@original_fluxor_attributes), @fluxor.versions[1].object
     end
 
     should 'store object_changes' do
@@ -99,11 +91,7 @@ class SerializerTest < ActiveSupport::TestCase
 
       # Check values are stored as JSON.
       assert_equal @original_fluxor_attributes, ActiveSupport::JSON.decode(@fluxor.versions[1].object)
-      # This test can't consistently pass in Ruby1.8 because hashes do no preserve order, which means the order of the
-      # attributes in the JSON can't be ensured.
-      if RUBY_VERSION >= '1.9'
-        assert_equal ActiveSupport::JSON.encode(@original_fluxor_attributes), @fluxor.versions[1].object
-      end
+      assert_equal ActiveSupport::JSON.encode(@original_fluxor_attributes), @fluxor.versions[1].object
     end
 
     should 'store object_changes' do
@@ -113,5 +101,4 @@ class SerializerTest < ActiveSupport::TestCase
       assert_equal second_changeset,  @fluxor.versions[1].changeset
     end
   end
-
 end

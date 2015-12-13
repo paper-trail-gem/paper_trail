@@ -9,6 +9,7 @@ group :development, :test do
   gem 'rubocop', '~> 0.35.1'
   gem 'shoulda', '~> 3.5'
   gem 'ffaker',  '<= 1.31.0'
+  gem 'timecop'
 
   # Testing of Rails
   gem 'railties', '~> 3.0'
@@ -23,13 +24,6 @@ group :development, :test do
 
   # To do proper transactional testing with ActiveSupport::TestCase on MySQL
   gem 'database_cleaner', '~> 1.2.0'
-
-  # Allow time travel in testing. timecop is only supported after 1.9.2 but does a better cleanup at 'return'
-  if RUBY_VERSION < "1.9.2"
-    gem 'delorean'
-  else
-    gem 'timecop'
-  end
 
   platforms :ruby do
     gem 'sqlite3', '~> 1.2'

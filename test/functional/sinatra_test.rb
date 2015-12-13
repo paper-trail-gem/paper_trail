@@ -14,10 +14,7 @@ class Sinatra::Application
   end
 
   def current_user
-    @current_user ||= OpenStruct.new(:id => 'raboof').tap do |obj|
-      # Invoking `id` returns the `object_id` value in Ruby18 unless specifically overwritten
-      def obj.id; 'raboof'; end if RUBY_VERSION < '1.9'
-    end
+    @current_user ||= OpenStruct.new(id: 'raboof')
   end
 
 end

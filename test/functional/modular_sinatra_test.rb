@@ -14,10 +14,7 @@ class BaseApp < Sinatra::Base
   end
 
   def current_user
-    @current_user ||= OpenStruct.new(:id => 'foobar').tap do |obj|
-      # Invoking `id` returns the `object_id` value in Ruby18 unless specifically overwritten
-      def obj.id; 'foobar'; end if RUBY_VERSION < '1.9'
-    end
+    @current_user ||= OpenStruct.new(id: 'foobar')
   end
 end
 
@@ -33,7 +30,7 @@ class ModularSinatraTest < ActionDispatch::IntegrationTest
   end
 
   context "`PaperTrail::Sinatra` in a `Sinatra::Base` application" do
-  
+
     should "sets the `user_for_paper_trail` from the `current_user` method" do
       get '/test'
       assert_equal 'Hello', last_response.body
