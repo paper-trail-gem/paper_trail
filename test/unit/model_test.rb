@@ -200,7 +200,6 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       end
 
       should 'be nil in its previous version' do
-        assert_nil @widget.versions.first.object
         assert_nil @widget.versions.first.reify
       end
 

@@ -296,6 +296,7 @@ module PaperTrail
         if paper_trail_switched_on?
           data = {
             :event     => paper_trail_event || 'create',
+            :object    => pt_recordable_object_for_create,
             :whodunnit => PaperTrail.whodunnit
           }
           if respond_to?(:updated_at)
@@ -351,6 +352,21 @@ module PaperTrail
       # @api private
       def pt_recordable_object
         object_attrs = object_attrs_for_paper_trail(attributes_before_change)
+        if self.class.paper_trail_version_class.object_col_is_json?
+          object_attrs
+        else
+          PaperTrail.serializer.dump(object_attrs)
+        end
+      end
+
+      # Returns an object which can be assigned to the `object` attribute of a
+      # nascent version record. If the `object` column is a postgres `json`
+      # column, then a hash can be used in the assignment, otherwise the column
+      # is a `text` column, and we must perform the serialization here, using
+      # `PaperTrail.serializer`.
+      # @api private
+      def pt_recordable_object_for_create
+        object_attrs = object_attrs_for_paper_trail(attributes)
         if self.class.paper_trail_version_class.object_col_is_json?
           object_attrs
         else

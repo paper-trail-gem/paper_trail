@@ -201,7 +201,7 @@ module PaperTrail
     #   - `:preserve` - Attributes undefined in version record are not modified.
     #
     def reify(options = {})
-      return nil if object.nil?
+      return nil if event == 'create'
       without_identity_map do
         ::PaperTrail::Reifier.reify(self, options)
       end
