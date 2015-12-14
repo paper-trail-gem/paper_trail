@@ -1,4 +1,4 @@
-## 3.0.9 (Unreleased)
+## 3.0.9
 
   - [#479](https://github.com/airblade/paper_trail/issues/479) - Deprecated `originator` method in favor of
     `paper_trail_originator` Deprecation warning informs users that the `originator` of the methods will be
