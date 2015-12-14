@@ -5,7 +5,10 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
   def populate_db!
     @animals = [@animal = Animal.new, @dog = Dog.new, @cat = Cat.new]
     @animals.each do |animal|
-      3.times { animal.update_attribute(:name, Faker::Name.name) }
+      3.times do
+        sleep(0.01)
+        animal.update_attribute(:name, Faker::Name.name)
+      end
     end
   end
 
