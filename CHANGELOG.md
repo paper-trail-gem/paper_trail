@@ -1,22 +1,3 @@
-## 4.1.0 (Unreleased)
-
-### Changed
-
-- [#589](https://github.com/airblade/paper_trail/pull/589) /
-  [#588](https://github.com/airblade/paper_trail/issues/588) -
-  `PaperTrail.timestamp_field` should be assigned to match the `updated_at`
-  value when a version is generated for new versions.
-  
-
-### Added
-
-- Added `unversioned_attributes` option to `reify`.
-  [#579](https://github.com/airblade/paper_trail/pull/579)
-
-### Fixed
-
-None
-
 ## 4.0.1 (Unreleased)
 
 ### Breaking Changes
