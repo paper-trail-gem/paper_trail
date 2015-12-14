@@ -70,7 +70,7 @@ has been destroyed.
 
 1. Add PaperTrail to your `Gemfile`.
 
-    `gem 'paper_trail', '~> 4.0.0'`
+    `gem 'paper_trail', '~> 4.0.1'`
 
 2. Generate a migration which will add a `versions` table to your database.
 
@@ -93,7 +93,7 @@ setting up your app with PaperTrail will look something like this:
 
 1. Add PaperTrail to your `Gemfile`.
 
-    `gem 'paper_trail', '~> 4.0.0'`
+    `gem 'paper_trail', '~> 4.0.1'`
 
 2. Generate a migration to add a `versions` table to your database.
 
