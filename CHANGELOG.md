@@ -34,7 +34,7 @@ None
 
 - None
 
-## 4.0.1 (Unreleased)
+## 4.0.1
 
 ### Breaking Changes
 
@@ -171,6 +171,16 @@ candidates.
 
 - [#479](https://github.com/airblade/paper_trail/issues/479) - Deprecated
   `originator` method, use `paper_trail_originator`.
+
+## 3.0.9
+
+  - [#479](https://github.com/airblade/paper_trail/issues/479) - Deprecated
+    `originator` method in favor of `paper_trail_originator` Deprecation warning
+    informs users that the `originator` of the methods will be removed in
+    version `4.0`. (Backported from v4)
+  - Updated deprecation warnings for `Model.paper_trail_on` and
+    `Model.paper_trail_off` to have display correct version number the methods
+    will be removed (`4.0`)
 
 ## 3.0.8
 
