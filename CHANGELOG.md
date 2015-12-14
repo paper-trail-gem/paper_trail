@@ -13,9 +13,7 @@
 
 ### Fixed
 
-- [#589](https://github.com/airblade/paper_trail/pull/589) /
-  [#588](https://github.com/airblade/paper_trail/issues/588) -
-  Fixes timestamp for "create" versions
+- None
 
 ## 4.0.1 (Unreleased)
 
@@ -31,6 +29,9 @@
 
 - [#636](https://github.com/airblade/paper_trail/issues/636) -
   Should compile assets without a db connection
+- [#589](https://github.com/airblade/paper_trail/pull/589) /
+  [#588](https://github.com/airblade/paper_trail/issues/588) -
+  Fixes timestamp for "create" versions
 
 ## 4.0.0
 
