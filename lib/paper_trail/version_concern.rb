@@ -253,9 +253,6 @@ module PaperTrail
       @index ||= RecordHistory.new(sibling_versions, self.class).index(self)
     end
 
-    # TODO: The `private` method has no effect here. Remove it?
-    # AFAICT it is not possible to have private instance methods in a mixin,
-    # though private *class* methods are possible.
     private
 
     # @api private
