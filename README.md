@@ -1077,7 +1077,7 @@ method.  These serializers are included in the gem for your convenience:
 ### PostgreSQL JSON column type support
 
 If you use PostgreSQL, and would like to store your `object` (and/or
-`object_changes`) data in a column of [type `JSON` or type `JSONB`][26], specify
+`object_changes`) data in a column of [type `json` or type `jsonb`][26], specify
 `json` instead of `text` for these columns in your migration:
 
 ```ruby
@@ -1089,19 +1089,8 @@ create_table :versions do |t|
 end
 ```
 
-Note: You don't need to use a particular serializer for the PostgreSQL `JSON`
-column type.
-
-#### Convert a column from text to json
-
-Postgres' `alter column` command will not automatically convert a `text`
-column to `json`, but it can still be done with plain SQL.
-
-```sql
-alter table versions
-alter column object type json
-using object::json;
-```
+If you use the PostgreSQL `json` or `jsonb` column type, you do not need
+to specify a `PaperTrail.serializer`.
 
 #### Convert existing YAML data to JSON
 
@@ -1154,6 +1143,35 @@ remove_column :versions, :old_object
 
 If you use the optional `object_changes` column, don't forget to convert it
 also, using the same technique.
+
+#### Convert a Column from Text to JSON
+
+If your `object` column already contains JSON data, and you want to change its
+data type to `json` or `jsonb`, you can use the following [DDL][36]. Of course,
+if your `object` column contains YAML, you must first convert the data to JSON
+(see above) before you can change the column type.
+
+Using SQL:
+
+```sql
+alter table versions
+alter column object type jsonb
+using object::jsonb;
+```
+
+Using ActiveRecord:
+
+```ruby
+class ConvertVersionsObjectToJson < ActiveRecord::Migration
+  def up
+    change_column :versions, :object, 'jsonb USING object::jsonb'
+  end
+
+  def down
+    change_column :versions, :object, 'text USING object::text'
+  end
+end
+```
 
 ## SerializedAttributes support
 
@@ -1524,3 +1542,4 @@ Released under the MIT licence.
 [33]: https://github.com/airblade/paper_trail/wiki/Setting-whodunnit-in-the-rails-console
 [34]: https://github.com/rails/rails/blob/591a0bb87fff7583e01156696fbbf929d48d3e54/activerecord/lib/active_record/fixtures.rb#L142
 [35]: https://dev.mysql.com/doc/refman/5.6/en/fractional-seconds.html
+[36]: http://www.postgresql.org/docs/9.4/interactive/ddl.html
