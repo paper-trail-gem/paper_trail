@@ -43,12 +43,9 @@ Gem::Specification.new do |s|
     s.add_development_dependency 'activerecord-jdbcmysql-adapter', '~> 1.3'
   else
     s.add_development_dependency 'sqlite3', '~> 1.2'
-
-    # We would prefer to only constrain mysql2 to '~> 0.3',
-    # but a rails bug (https://github.com/rails/rails/issues/21544)
-    # requires us to constrain to '~> 0.3.20' for now.
-    s.add_development_dependency 'mysql2', '~> 0.3.20'
-
     s.add_development_dependency 'pg', '~> 0.17'
+
+    # activerecord >= 4.2.5 may use mysql2 >= 0.4
+    s.add_development_dependency 'mysql2', '~> 0.4.2'
   end
 end

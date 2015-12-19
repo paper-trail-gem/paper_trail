@@ -27,12 +27,7 @@ group :development, :test do
 
   platforms :ruby do
     gem 'sqlite3', '~> 1.2'
-
-    # We would prefer to only constrain mysql2 to '~> 0.3',
-    # but a rails bug (https://github.com/rails/rails/issues/21544)
-    # requires us to constrain to '~> 0.3.20' for now.
-    gem 'mysql2', '~> 0.3.20'
-
+    gem 'mysql2', '~> 0.3.20' # activerecord < 4.2.5 must use mysql2 < 0.4
     gem 'pg', '~> 0.17.1'
   end
 
