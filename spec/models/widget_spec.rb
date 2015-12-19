@@ -239,7 +239,9 @@ describe Widget, :type => :model do
 
           context "error within block" do
             it "should ensure that the whodunnit value still reverts to it's previous value" do
-              expect { widget.whodunnit(new_name) { raise } }.to raise_error
+              expect {
+                widget.whodunnit(new_name) { raise }
+              }.to raise_error(RuntimeError)
               expect(PaperTrail.whodunnit).to eq(orig_name)
             end
           end
