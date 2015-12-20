@@ -1366,7 +1366,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     setup do
       PaperTrail.config.version_limit = 2
       @widget = Widget.create! :name => 'Henry'
-      6.times { @widget.update_attribute(:name, Faker::Lorem.word) }
+      6.times { @widget.update_attribute(:name, FFaker::Lorem.word) }
     end
 
     teardown { PaperTrail.config.version_limit = nil }

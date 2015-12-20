@@ -26,12 +26,12 @@ if JsonVersion.table_exists?
             let(:fruit_names) { %w(apple orange lemon banana lime coconut strawberry blueberry) }
             let(:fruit) { Fruit.new }
             let(:name) { 'pomegranate' }
-            let(:color) { Faker::Color.name }
+            let(:color) { FFaker::Color.name }
 
             before do
               fruit.update_attributes!(:name => name)
               fruit.update_attributes!(:name => fruit_names.sample, :color => color)
-              fruit.update_attributes!(:name => fruit_names.sample, :color => Faker::Color.name)
+              fruit.update_attributes!(:name => fruit_names.sample, :color => FFaker::Color.name)
             end
 
             it "should be able to locate versions according to their `object` contents" do
@@ -56,12 +56,12 @@ if JsonVersion.table_exists?
             let(:tropical_fruit_names) { %w(coconut pineapple kiwi mango melon) }
             let(:fruit) { Fruit.new }
             let(:name) { 'pomegranate' }
-            let(:color) { Faker::Color.name }
+            let(:color) { FFaker::Color.name }
 
             before do
               fruit.update_attributes!(:name => name)
               fruit.update_attributes!(:name => tropical_fruit_names.sample, :color => color)
-              fruit.update_attributes!(:name => fruit_names.sample, :color => Faker::Color.name)
+              fruit.update_attributes!(:name => fruit_names.sample, :color => FFaker::Color.name)
             end
 
             it "should be able to locate versions according to their `object_changes` contents" do

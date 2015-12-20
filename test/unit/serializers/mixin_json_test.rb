@@ -7,7 +7,7 @@ class MixinJsonTest < ActiveSupport::TestCase
     # Setup a hash with random values, ensuring some values are nil
     @hash = {}
     (1..4).each do |i|
-      @hash["key#{i}"] = [Faker::Lorem.word, nil].sample
+      @hash["key#{i}"] = [FFaker::Lorem.word, nil].sample
     end
     @hash['tkey'] = nil
     @hash[''] = 'foo'

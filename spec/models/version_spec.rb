@@ -57,11 +57,11 @@ describe PaperTrail::Version, :type => :model do
         end
 
         context "Has previous version", :versioning => true do
-          let(:name) { Faker::Name.name }
-          let(:widget) { Widget.create!(:name => Faker::Name.name) }
+          let(:name) { FFaker::Name.name }
+          let(:widget) { Widget.create!(:name => FFaker::Name.name) }
           before do
             widget.versions.first.update_attributes!(:whodunnit => name)
-            widget.update_attributes!(:name => Faker::Name.first_name)
+            widget.update_attributes!(:name => FFaker::Name.first_name)
           end
           subject { widget.versions.last }
 
@@ -92,7 +92,7 @@ describe PaperTrail::Version, :type => :model do
       describe '#terminator' do
         it { is_expected.to respond_to(:terminator) }
 
-        let(:attributes) { {:whodunnit => Faker::Name.first_name} }
+        let(:attributes) { {:whodunnit => FFaker::Name.first_name} }
 
         it "is an alias for the `whodunnit` attribute" do
           expect(subject.terminator).to eq(attributes[:whodunnit])
@@ -147,13 +147,13 @@ describe PaperTrail::Version, :type => :model do
 
             context "valid arguments", :versioning => true do
               let(:widget) { Widget.new }
-              let(:name) { Faker::Name.first_name }
+              let(:name) { FFaker::Name.first_name }
               let(:int) { rand(10) + 1 }
 
               before do
                 widget.update_attributes!(:name => name, :an_integer => int)
                 widget.update_attributes!(:name => 'foobar', :an_integer => 100)
-                widget.update_attributes!(:name => Faker::Name.last_name, :an_integer => 15)
+                widget.update_attributes!(:name => FFaker::Name.last_name, :an_integer => 15)
               end
 
               context "`serializer == YAML`" do
@@ -191,13 +191,13 @@ describe PaperTrail::Version, :type => :model do
 
             context "valid arguments", :versioning => true do
               let(:widget) { Widget.new }
-              let(:name) { Faker::Name.first_name }
+              let(:name) { FFaker::Name.first_name }
               let(:int) { rand(5) + 2 }
 
               before do
                 widget.update_attributes!(:name => name, :an_integer => 0)
                 widget.update_attributes!(:name => 'foobar', :an_integer => 77)
-                widget.update_attributes!(:name => Faker::Name.last_name, :an_integer => int)
+                widget.update_attributes!(:name => FFaker::Name.last_name, :an_integer => int)
               end
 
               context "`serializer == YAML`" do

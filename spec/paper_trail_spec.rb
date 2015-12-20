@@ -1,10 +1,11 @@
 require 'rails_helper'
 
-describe "PaperTrail RSpec Helper" do
+describe PaperTrail do
   context 'default' do
     it 'should have versioning off by default' do
       expect(PaperTrail).not_to be_enabled
     end
+
     it 'should turn versioning on in a `with_versioning` block' do
       expect(PaperTrail).not_to be_enabled
       with_versioning do
@@ -16,7 +17,7 @@ describe "PaperTrail RSpec Helper" do
     context "error within `with_versioning` block" do
       it "should revert the value of `PaperTrail.enabled?` to it's previous state" do
         expect(PaperTrail).not_to be_enabled
-        expect { with_versioning { raise } }.to raise_error
+        expect { with_versioning { raise } }.to raise_error(RuntimeError)
         expect(PaperTrail).not_to be_enabled
       end
     end
@@ -26,6 +27,7 @@ describe "PaperTrail RSpec Helper" do
     it 'should have versioning on by default' do
       expect(PaperTrail).to be_enabled
     end
+
     it 'should keep versioning on after a with_versioning block' do
       expect(PaperTrail).to be_enabled
       with_versioning do

@@ -6,12 +6,12 @@ class JSONTest < ActiveSupport::TestCase
     # Setup a hash with random values
     @hash = {}
     (1..4).each do |i|
-      @hash["key#{i}"] = Faker::Lorem.word
+      @hash["key#{i}"] = FFaker::Lorem.word
     end
     @hash_as_json = @hash.to_json
     # Setup an array of random words
     @array = []
-    (rand(5) + 4).times { @array << Faker::Lorem.word }
+    (rand(5) + 4).times { @array << FFaker::Lorem.word }
     @array_as_json = @array.to_json
   end
 
@@ -73,7 +73,7 @@ class JSONTest < ActiveSupport::TestCase
 
         assert grouping.instance_of?(Arel::Nodes::Grouping)
         matches = grouping.select { |v| v.instance_of?(Arel::Nodes::Matches) }
-        # Numeric arguments need to ensure that they match for only the number, not the beginning 
+        # Numeric arguments need to ensure that they match for only the number, not the beginning
         # of a #, so it uses an Grouping matcher (See notes on `PaperTrail::Serializers::JSON`)
         if Arel::VERSION >= '6'
           assert_equal matches.first.right.val, "%\"arg1\":-3.5,%"

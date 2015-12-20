@@ -24,33 +24,28 @@ Gem::Specification.new do |s|
   s.add_dependency 'activesupport', ['>= 3.0', '< 6.0']
   s.add_dependency 'request_store', '~> 1.1'
 
-  s.add_development_dependency 'rake', '~> 10.1.1'
+  s.add_development_dependency 'rake', '~> 10.4.2'
   s.add_development_dependency 'shoulda', '~> 3.5'
-  # s.add_development_dependency 'shoulda-matchers', '~> 1.5' # needed for ActiveRecord < 4
-  s.add_development_dependency 'ffaker', '<= 1.31.0'
+  s.add_development_dependency 'ffaker', '~> 2.1.0'
   s.add_development_dependency 'railties', ['>= 3.0', '< 5.0']
   s.add_development_dependency 'sinatra', '~> 1.0'
   s.add_development_dependency 'rack-test', '>= 0.6'
-  s.add_development_dependency 'rspec-rails', '~> 3.1.0'
+  s.add_development_dependency 'rspec-rails', '~> 3.4.0'
   s.add_development_dependency 'generator_spec'
   s.add_development_dependency 'database_cleaner', '~> 1.2'
   s.add_development_dependency 'pry-nav', '~> 0.2.4'
   s.add_development_dependency 'rubocop', '~> 0.35.1'
   s.add_development_dependency 'timecop'
 
-  # JRuby support for the test ENV
-  unless defined?(JRUBY_VERSION)
-    s.add_development_dependency 'sqlite3', '~> 1.2'
-
-    # We would prefer to only constrain mysql2 to '~> 0.3',
-    # but a rails bug (https://github.com/rails/rails/issues/21544)
-    # requires us to constrain to '~> 0.3.20' for now.
-    s.add_development_dependency 'mysql2', '~> 0.3.20'
-
-    s.add_development_dependency 'pg', '~> 0.17'
-  else
+  if defined?(JRUBY_VERSION)
     s.add_development_dependency 'activerecord-jdbcsqlite3-adapter', '~> 1.3'
     s.add_development_dependency 'activerecord-jdbcpostgresql-adapter', '~> 1.3'
     s.add_development_dependency 'activerecord-jdbcmysql-adapter', '~> 1.3'
+  else
+    s.add_development_dependency 'sqlite3', '~> 1.2'
+    s.add_development_dependency 'pg', '~> 0.17'
+
+    # activerecord >= 4.2.5 may use mysql2 >= 0.4
+    s.add_development_dependency 'mysql2', '~> 0.4.2'
   end
 end
