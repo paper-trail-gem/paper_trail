@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'activesupport', ['>= 3.0', '< 6.0']
   s.add_dependency 'request_store', '~> 1.1'
 
-  s.add_development_dependency 'rake', '~> 10.1.1'
+  s.add_development_dependency 'rake', '~> 10.4.2'
   s.add_development_dependency 'shoulda', '~> 3.5'
   s.add_development_dependency 'ffaker', '~> 2.1.0'
   s.add_development_dependency 'railties', ['>= 3.0', '< 5.0']
