@@ -56,27 +56,31 @@ if JsonVersion.table_exists?
             let(:tropical_fruit_names) { %w(coconut pineapple kiwi mango melon) }
             let(:fruit) { Fruit.new }
             let(:name) { 'pomegranate' }
-            let(:color) { FFaker::Color.name }
+            let(:color) { %w[red green] }
 
             before do
               fruit.update_attributes!(:name => name)
-              fruit.update_attributes!(:name => tropical_fruit_names.sample, :color => color)
-              fruit.update_attributes!(:name => fruit_names.sample, :color => FFaker::Color.name)
+              fruit.update_attributes!(:name => tropical_fruit_names.sample, :color => color[0])
+              fruit.update_attributes!(:name => fruit_names.sample, :color => color[1])
             end
 
-            it "should be able to locate versions according to their `object_changes` contents" do
-              expect(fruit.versions.where_object_changes(:name => name)).to eq(fruit.versions[0..1])
-              expect(fruit.versions.where_object_changes(:color => color)).to eq(fruit.versions[1..2])
+            it "finds versions according to their `object_changes` contents" do
+              expect(
+                fruit.versions.where_object_changes(name: name)
+              ).to match_array(fruit.versions[0..1])
+              expect(
+                fruit.versions.where_object_changes(color: color[0])
+              ).to match_array(fruit.versions[1..2])
             end
 
-            it "should be able to handle queries for multiple attributes" do
-              expect(fruit.versions.where_object_changes(:color => color, :name => name)).to eq([fruit.versions[1]])
+            it "finds versions with multiple attributes changed" do
+              expect(
+                fruit.versions.where_object_changes(color: color[0], name: name)
+              ).to match_array([fruit.versions[1]])
             end
           end
         end
       end
-
     end
   end
-
 end
