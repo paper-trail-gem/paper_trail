@@ -10,7 +10,7 @@ describe Boolit, :type => :model do
 
   describe "Versioning", :versioning => true do
     subject { Boolit.create! }
-    before { subject.update_attributes!(:name => Faker::Name.name) }
+    before { subject.update_attributes!(:name => FFaker::Name.name) }
 
     it "should have versions" do
       expect(subject.versions.size).to eq(2)
@@ -35,7 +35,7 @@ describe Boolit, :type => :model do
         before do
           PaperTrail.serializer = CustomJsonSerializer
           subject.update_attributes!(:name => nil)
-          subject.update_attributes!(:name => Faker::Name.name)
+          subject.update_attributes!(:name => FFaker::Name.name)
         end
         after { PaperTrail.serializer = PaperTrail::Serializers::YAML }
 

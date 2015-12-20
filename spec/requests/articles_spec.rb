@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe "Articles management", :type => :request, :order => :defined do
-  let(:valid_params) { { :article => { :title => 'Doh', :content => Faker::Lorem.sentence } } }
+  let(:valid_params) { { :article => { :title => 'Doh', :content => FFaker::Lorem.sentence } } }
 
   context "versioning disabled" do
     specify { expect(PaperTrail).not_to be_enabled }

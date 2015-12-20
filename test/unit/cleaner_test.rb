@@ -5,7 +5,7 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
   def populate_db!
     @animals = [@animal = Animal.new, @dog = Dog.new, @cat = Cat.new]
     @animals.each do |animal|
-      3.times { animal.update_attribute(:name, Faker::Name.name) }
+      3.times { animal.update_attribute(:name, FFaker::Name.name) }
     end
   end
 
@@ -47,7 +47,7 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
       setup do
         @animal.versions.each { |ver| ver.update_attribute(:created_at, ver.created_at - 1.day) }
         @date = @animal.versions.first.created_at.to_date
-        @animal.update_attribute(:name, Faker::Name.name)
+        @animal.update_attribute(:name, FFaker::Name.name)
       end
 
       should 'restrict the versions destroyed to those that were created on the date provided' do
@@ -86,7 +86,7 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
         setup do
           [@animal, @dog].each do |animal|
             animal.versions.each { |ver| ver.update_attribute(:created_at, ver.created_at - 1.day) }
-            animal.update_attribute(:name, Faker::Name.name)
+            animal.update_attribute(:name, FFaker::Name.name)
           end
           @date = @animal.versions.first.created_at.to_date
         end

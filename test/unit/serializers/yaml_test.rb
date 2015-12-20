@@ -6,12 +6,12 @@ class YamlTest < ActiveSupport::TestCase
     # Setup a hash with random values
     @hash = {}
     (1..4).each do |i|
-      @hash["key#{i}".to_sym] = Faker::Lorem.word
+      @hash["key#{i}".to_sym] = FFaker::Lorem.word
     end
     @hash_as_yaml = @hash.to_yaml
     # Setup an array of random words
     @array = []
-    (rand(5) + 4).times { @array << Faker::Lorem.word }
+    (rand(5) + 4).times { @array << FFaker::Lorem.word }
     @array_as_yaml = @array.to_yaml
   end
 

@@ -65,7 +65,7 @@ module PaperTrail
     context ".subsequent" do
       setup do
         2.times do
-          @animal.update_attributes(name: Faker::Lorem.word)
+          @animal.update_attributes(name: FFaker::Lorem.word)
         end
       end
 
@@ -92,7 +92,7 @@ module PaperTrail
     context ".preceding" do
       setup do
         2.times do
-          @animal.update_attributes(name: Faker::Lorem.word)
+          @animal.update_attributes(name: FFaker::Lorem.word)
         end
       end
 

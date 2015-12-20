@@ -3,7 +3,7 @@ require 'rails_helper'
 describe JoinedVersion, :type => :model, :versioning => true do
   it { expect(JoinedVersion.superclass).to be PaperTrail::Version }
 
-  let(:widget) { Widget.create!(:name => Faker::Name.name) }
+  let(:widget) { Widget.create!(:name => FFaker::Name.name) }
   let(:version) { JoinedVersion.first }
 
   describe "Scopes" do

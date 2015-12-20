@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'rake', '~> 10.1.1'
   s.add_development_dependency 'shoulda', '~> 3.5'
-  s.add_development_dependency 'ffaker', '<= 1.31.0'
+  s.add_development_dependency 'ffaker', '~> 2.1.0'
   s.add_development_dependency 'railties', ['>= 3.0', '< 5.0']
   s.add_development_dependency 'sinatra', '~> 1.0'
   s.add_development_dependency 'rack-test', '>= 0.6'

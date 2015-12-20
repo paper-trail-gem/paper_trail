@@ -125,8 +125,8 @@ describe Widget, :type => :model do
         it { is_expected.to respond_to(:paper_trail_originator) }
 
         describe "return value" do
-          let(:orig_name) { Faker::Name.name }
-          let(:new_name) { Faker::Name.name }
+          let(:orig_name) { FFaker::Name.name }
+          let(:new_name) { FFaker::Name.name }
           before { PaperTrail.whodunnit = orig_name }
 
           context "accessed from live model instance" do
@@ -216,8 +216,8 @@ describe Widget, :type => :model do
         end
 
         context "block given" do
-          let(:orig_name) { Faker::Name.name }
-          let(:new_name) { Faker::Name.name }
+          let(:orig_name) { FFaker::Name.name }
+          let(:new_name) { FFaker::Name.name }
 
           before do
             PaperTrail.whodunnit = orig_name
