@@ -229,7 +229,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         }
 
         assert_kind_of Time, @widget.versions.last.changeset['updated_at'][1]
-        assert_equal changes, @widget.versions.last.changeset
+        assert_changes_equal changes, @widget.versions.last.changeset
       end
 
       context 'and then updated without any changes' do
@@ -375,7 +375,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
           should 'be available in its previous version' do
             assert_equal @widget.id, @reified_widget.id
-            assert_equal @widget.attributes, @reified_widget.attributes
+            assert_attributes_equal @widget.attributes, @reified_widget.attributes
           end
 
           should 'be re-creatable from its previous version' do
