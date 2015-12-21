@@ -1181,22 +1181,6 @@ class ConvertVersionsObjectToJson < ActiveRecord::Migration
 end
 ```
 
-## SerializedAttributes support
-
-PaperTrail has a config option that can be used to enable/disable whether
-PaperTrail attempts to utilize `ActiveRecord`'s `serialized_attributes` feature.
-Note: This is enabled by default when PaperTrail is used with `ActiveRecord`
-version < `4.2`, and disabled by default when used with ActiveRecord `4.2.x`.
-Since `serialized_attributes` will be removed in `ActiveRecord` version `5.0`,
-this configuration value does nothing when PaperTrail is used with
-version `5.0` or greater.
-
-```ruby
-PaperTrail.config.serialized_attributes = true # enable
-PaperTrail.config.serialized_attributes = false # disable
-PaperTrail.serialized_attributes? # get current setting
-```
-
 ## Testing
 
 You may want to turn PaperTrail off to speed up your tests.  See the [Turning

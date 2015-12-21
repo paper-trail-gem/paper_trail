@@ -260,9 +260,7 @@ module PaperTrail
     # @api private
     def load_changeset
       changes = HashWithIndifferentAccess.new(object_changes_deserialized)
-      if PaperTrail.serialized_attributes?
-        item_type.constantize.unserialize_attribute_changes_for_paper_trail!(changes)
-      end
+      item_type.constantize.unserialize_attribute_changes_for_paper_trail!(changes)
       changes
     rescue # TODO: Rescue something specific
       {}
