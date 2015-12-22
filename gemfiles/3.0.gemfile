@@ -4,6 +4,12 @@ gem 'activerecord', '~> 3.0'
 gem 'i18n', '~> 0.6.11'
 gem 'request_store', '~> 1.1.0'
 
+# actionpack 3 depends on rack-cache ~> 1.2, but bundler seems to ignore that.
+# Also rack-cache 1.3 dropped support for ruby 1.8.7. The simplest thing for now
+# was to specify rack-cache ~> 1.2 here, though it should be unnecessary given
+# the actionpack 3 dependency.
+gem 'rack-cache', '~> 1.2.0'
+
 group :development, :test do
   gem 'rake', '~> 10.1.1'
   gem 'shoulda', '~> 3.5'
