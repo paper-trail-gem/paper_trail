@@ -52,8 +52,8 @@ class ActiveSupport::TestCase
 
       # Adjust timestamps for missing fractional seconds precision.
       %w(created_at updated_at).each do |timestamp|
-        expected[timestamp] = expected[timestamp].change(usec: 0)
-        actual[timestamp]   = actual[timestamp].change(usec: 0)
+        expected[timestamp] = expected[timestamp].change(:usec => 0)
+        actual[timestamp]   = actual[timestamp].change(:usec => 0)
       end
     end
 
@@ -66,8 +66,8 @@ class ActiveSupport::TestCase
 
       # Adjust timestamps for missing fractional seconds precision.
       %w(created_at updated_at).each do |timestamp|
-        expected[timestamp][1] = expected[timestamp][1].change(usec: 0)
-        actual[timestamp][1]   = actual[timestamp][1].change(usec: 0)
+        expected[timestamp][1] = expected[timestamp][1].change(:usec => 0)
+        actual[timestamp][1]   = actual[timestamp][1].change(:usec => 0)
       end
     end
 

@@ -53,12 +53,12 @@ if JsonVersion.table_exists?
 
           context "valid arguments", :versioning => true do
             let(:color) { %w[red green] }
-            let(:fruit) { Fruit.create!(name: name[0]) }
+            let(:fruit) { Fruit.create!(:name => name[0]) }
             let(:name) { %w[banana kiwi mango] }
 
             before do
-              fruit.update_attributes!(name: name[1], color: color[0])
-              fruit.update_attributes!(name: name[2], color: color[1])
+              fruit.update_attributes!(:name => name[1], :color => color[0])
+              fruit.update_attributes!(:name => name[2], :color => color[1])
             end
 
             it "finds versions according to their `object_changes` contents" do
