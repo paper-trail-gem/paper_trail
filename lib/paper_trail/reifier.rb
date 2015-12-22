@@ -225,7 +225,7 @@ module PaperTrail
             # association, that is, `model.paragraphs`, has not been loaded. So,
             # we do that now.
             collection = through_collection.map { |through_model|
-              through_model.public_send(assoc.name.to_sym).to_a
+              through_model.send(assoc.name.to_sym).to_a
             }.flatten
           else
             collection_keys = through_collection.map { |through_model|
