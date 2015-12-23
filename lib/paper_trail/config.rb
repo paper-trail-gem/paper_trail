@@ -14,15 +14,16 @@ module PaperTrail
 
     def serialized_attributes
       ActiveSupport::Deprecation.warn(
-        "PaperTrail.config.serialized_attributes is deprecated without " \
-        "replacement and no longer has any effect."
+        "PaperTrail.config.serialized_attributes is deprecated without " +
+          "replacement and always returns false."
       )
+      false
     end
 
     def serialized_attributes=(_)
       ActiveSupport::Deprecation.warn(
-        "PaperTrail.config.serialized_attributes= is deprecated without " \
-        "replacement and no longer has any effect."
+        "PaperTrail.config.serialized_attributes= is deprecated without " +
+          "replacement and no longer has any effect."
       )
     end
 
