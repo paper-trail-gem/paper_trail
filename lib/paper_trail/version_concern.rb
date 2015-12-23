@@ -5,6 +5,8 @@ module PaperTrail
     extend ::ActiveSupport::Concern
 
     included do
+      default_scope { order(timestamp_sort_order) }
+
       belongs_to :item, :polymorphic => true
 
       # Since the test suite has test coverage for this, we want to declare
@@ -36,6 +38,18 @@ module PaperTrail
     end
 
     module ClassMethods
+      def table_name=(value = nil, &block)
+        result = super
+        default_scope { reorder(timestamp_sort_order) }
+        result
+      end
+
+      def set_table_name(value = nil, &block)
+        result = super
+        default_scope { reorder(timestamp_sort_order) }
+        result
+      end
+
       def with_item_keys(item_type, item_id)
         where :item_type => item_type, :item_id => item_id
       end
@@ -65,11 +79,11 @@ module PaperTrail
       # @api public
       def subsequent(obj, timestamp_arg = false)
         if timestamp_arg != true && self.primary_key_is_int?
-          return where(arel_table[primary_key].gt(obj.id)).order(arel_table[primary_key].asc)
+          return where(arel_table[primary_key].gt(obj.id)).reorder(arel_table[primary_key].asc)
         end
 
         obj = obj.send(PaperTrail.timestamp_field) if obj.is_a?(self)
-        where(arel_table[PaperTrail.timestamp_field].gt(obj)).order(self.timestamp_sort_order)
+        where(arel_table[PaperTrail.timestamp_field].gt(obj)).reorder(self.timestamp_sort_order)
       end
 
       # Returns versions before `obj`.
@@ -81,19 +95,19 @@ module PaperTrail
       # @api public
       def preceding(obj, timestamp_arg = false)
         if timestamp_arg != true && self.primary_key_is_int?
-          return where(arel_table[primary_key].lt(obj.id)).order(arel_table[primary_key].desc)
+          return where(arel_table[primary_key].lt(obj.id)).reorder(arel_table[primary_key].desc)
         end
 
         obj = obj.send(PaperTrail.timestamp_field) if obj.is_a?(self)
         where(arel_table[PaperTrail.timestamp_field].lt(obj)).
-          order(self.timestamp_sort_order('desc'))
+          reorder(self.timestamp_sort_order('desc'))
       end
 
       def between(start_time, end_time)
         where(
           arel_table[PaperTrail.timestamp_field].gt(start_time).
           and(arel_table[PaperTrail.timestamp_field].lt(end_time))
-        ).order(self.timestamp_sort_order)
+        ).reorder(self.timestamp_sort_order)
       end
 
       # Defaults to using the primary key as the secondary sort order if
@@ -155,7 +169,7 @@ module PaperTrail
       end
 
       def primary_key_is_int?
-        @primary_key_is_int ||= columns_hash[primary_key].type == :integer
+        @primary_key_is_int ||= primary_key && columns_hash[primary_key].type == :integer
       rescue
         true
       end
@@ -240,11 +254,11 @@ module PaperTrail
     end
 
     def next
-      @next ||= sibling_versions.subsequent(self).first
+      @next ||= sibling_versions.reorder('').subsequent(self).first
     end
 
     def previous
-      @previous ||= sibling_versions.preceding(self).first
+      @previous ||= sibling_versions.reorder('').preceding(self).first
     end
 
     # Returns an integer representing the chronological position of the

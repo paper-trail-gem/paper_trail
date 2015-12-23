@@ -186,6 +186,7 @@ module PaperTrail
             where("foreign_key_id = ?", model.id).
             where("#{version_table_name}.item_type = ?", assoc.class_name).
             where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
+            reorder("").
             group("item_id").
             to_sql
           versions = versions_by_id(model.class, version_id_subquery)
@@ -237,6 +238,7 @@ module PaperTrail
               where("item_type = ?", assoc.class_name).
               where("item_id IN (?)", collection_keys).
               where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
+              reorder("").
               group("item_id").
               to_sql
             versions = versions_by_id(assoc.klass, version_id_subquery)
