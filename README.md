@@ -285,7 +285,7 @@ end
 ```
 
 The `paper_trail_on_destroy` method can be further configured to happen
-`:before` or `:after` the destroy event. By default, it will happen after.
+`:before` or `:after` the destroy event. By default, it will happen before.
 
 ## Choosing When To Save New Versions
 

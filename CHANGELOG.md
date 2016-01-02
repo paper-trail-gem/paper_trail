@@ -8,6 +8,10 @@
   that PaperTrail no longer adds the `set_paper_trail_whodunnit` before_filter
   for you. Please add this before_filter to your ApplicationController to
   continue recording whodunnit. See the readme for an example.
+- [#683](https://github.com/airblade/paper_trail/pull/683) /
+  [#682](https://github.com/airblade/paper_trail/issues/682) -
+  Destroy callback default changed to :before to accommodate ActiveRecord 5
+  option `belongs_to_required_by_default` and new Rails 5 default.
 
 ### Added
 

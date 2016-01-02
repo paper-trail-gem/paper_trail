@@ -26,10 +26,10 @@ describe CallbackModifier, :type => :model do
         end
 
         context 'when no argument' do
-          it 'should default to after destroy' do
+          it 'should default to before destroy' do
             modifier = NoArgDestroyModifier.create!(:some_content => FFaker::Lorem.sentence)
             modifier.test_destroy
-            expect(modifier.versions.last.reify).to be_flagged_deleted
+            expect(modifier.versions.last.reify).not_to be_flagged_deleted
           end
         end
       end

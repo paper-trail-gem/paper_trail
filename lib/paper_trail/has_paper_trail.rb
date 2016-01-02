@@ -116,9 +116,20 @@ module PaperTrail
       end
 
       # Record version before or after "destroy" event
-      def paper_trail_on_destroy(recording_order = 'after')
+      def paper_trail_on_destroy(recording_order = 'before')
         unless %w[after before].include?(recording_order.to_s)
           fail ArgumentError, 'recording order can only be "after" or "before"'
+        end
+
+        if recording_order == 'after' and
+          Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new("5")
+          if ::ActiveRecord::Base.belongs_to_required_by_default
+            ::ActiveSupport::Deprecation.warn(
+              "paper_trail_on_destroy(:after) is incompatible with ActiveRecord " +
+                "belongs_to_required_by_default and has no effect. Please use :before " +
+                "or disable belongs_to_required_by_default."
+            )
+          end
         end
 
         send "#{recording_order}_destroy", :record_destroy, :if => :save_version?
