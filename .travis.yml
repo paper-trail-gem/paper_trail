@@ -1,6 +1,6 @@
 language: ruby
 rvm:
-  - 2.0.0
+  - 2.2.4
   - 1.9.3
   - jruby-19mode
 env:
@@ -30,8 +30,13 @@ gemfile:
 
 matrix:
   fast_finish: true
+  allow_failures:
+    - gemfile: gemfiles/ar5.gemfile
   exclude:
     - gemfile: gemfiles/ar5.gemfile
+      rvm: 1.9.3
+    - gemfile: gemfiles/ar5.gemfile
+      rvm: jruby-19mode
 
 addons:
   postgresql: "9.4"

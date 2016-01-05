@@ -20,8 +20,15 @@ Please use our [bug report template][1].
 
 Testing is a little awkward because the test suite:
 
-1. contains a rails app with three databases (test, foo, and bar)
-1. supports three different RDBMS': sqlite, mysql, and postgres
+1. Supports three major versions of rails: 3, 4, 5
+1. Sontains a rails app with three databases (test, foo, and bar)
+1. Supports three different RDBMS': sqlite, mysql, and postgres
+
+Test against rails 3:
+
+```
+bundle exec appraisal ar3 rake
+```
 
 Run tests with sqlite:
 

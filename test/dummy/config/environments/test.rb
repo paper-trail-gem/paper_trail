@@ -10,13 +10,21 @@ Dummy::Application.configure do
   # Eager loads all registered namespaces
   config.eager_load = true
 
-  # Configure static asset server for tests with Cache-Control for performance
-  if config.respond_to?(:serve_static_files=)
+  if config.respond_to?(:public_file_server)
+    config.public_file_server.enabled = true
+  elsif config.respond_to?(:serve_static_files=)
     config.serve_static_files = true
   else
     config.serve_static_assets = true
   end
-  config.static_cache_control = "public, max-age=3600"
+
+  if config.respond_to?(:public_file_server)
+    config.public_file_server.headers = {
+      'Cache-Control' => 'public, max-age=3600'
+    }
+  else
+    config.static_cache_control = "public, max-age=3600"
+  end
 
   # Show full error reports and disable caching
   config.consider_all_requests_local       = true
