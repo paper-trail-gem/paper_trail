@@ -24,11 +24,14 @@ before_script:
   - sh -c "if [ \"$DB\" = 'postgres' ]; then psql -c 'create database paper_trail_foo;'  -U postgres; fi"
 
 gemfile:
-  - Gemfile
-  - gemfiles/3.0.gemfile
+  - gemfiles/ar3.gemfile
+  - gemfiles/ar4.gemfile
+  - gemfiles/ar5.gemfile
 
 matrix:
   fast_finish: true
+  exclude:
+    - gemfile: gemfiles/ar5.gemfile
 
 addons:
   postgresql: "9.4"
