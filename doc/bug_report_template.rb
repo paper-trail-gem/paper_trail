@@ -22,7 +22,6 @@ require 'minitest/autorun'
 require 'logger'
 ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: ':memory:')
 ActiveRecord::Base.logger = Logger.new(STDOUT)
-require 'paper_trail'
 
 ActiveRecord::Schema.define do
   create_table :users, force: true do |t|
@@ -51,6 +50,10 @@ ActiveRecord::Schema.define do
   add_index :version_associations, [:foreign_key_name, :foreign_key_id],
     name: 'index_version_associations_on_foreign_key'
 end
+
+# We must wait to require `paper_trail.rb` until after the
+# `version_associations` table exists or else PT won't track associations.
+require 'paper_trail'
 
 class User < ActiveRecord::Base
   has_paper_trail
