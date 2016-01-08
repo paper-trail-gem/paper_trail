@@ -51,8 +51,10 @@ module Dummy
     # parameters by using an attr_accessible or attr_protected declaration.
     config.active_record.whitelist_attributes = false if ::PaperTrail.active_record_protected_attributes?
 
-    # Enable the asset pipeline
-    config.assets.enabled = false
+    # `config.assets` is a `NoMethodError` in rails 5.
+    if config.respond_to?(:assets)
+      config.assets.enabled = false
+    end
 
     # Version of your assets, change this if you want to expire all your assets
     # config.assets.version = '1.0'
@@ -60,8 +62,14 @@ module Dummy
     # Rails 4 key for generating secret key
     config.secret_key_base = 'A fox regularly kicked the screaming pile of biscuits.'
 
-    # supress warnings about raises in transactional callbacks on AR 4.2+
-    config.active_record.raise_in_transactional_callbacks = true if ActiveRecord::VERSION::STRING >= '4.2'
+    # `raise_in_transactional_callbacks` was added in rails 4, then deprecated
+    # in rails 5. Oh, how fickle are the gods.
+    if ActiveRecord.respond_to?(:gem_version)
+      v = ActiveRecord.gem_version
+      if v >= Gem::Version.new("4.2") && v < Gem::Version.new("5.0.0.beta1")
+        config.active_record.raise_in_transactional_callbacks = true
+      end
+    end
 
     # Set test order for Test::Unit if possible
     config.active_support.test_order = :sorted if config.active_support.respond_to?(:test_order=)
