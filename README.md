@@ -1125,7 +1125,7 @@ Postgres. In databases without such protection, such as MySQL, a table lock may
 be necessary.
 
 If the above technique is too slow for your needs, and you're okay doing without
-PaperTrail data temporarily, you can create the new column without a converting
+PaperTrail data temporarily, you can create the new column without converting
 the data.
 
 ```ruby
