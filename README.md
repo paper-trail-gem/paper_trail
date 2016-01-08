@@ -40,7 +40,6 @@ has been destroyed.
 - Extensibility
   - [Custom Version Classes](#custom-version-classes)
   - [Custom Serializer](#using-a-custom-serializer)
-- [SerializedAttributes support](#serializedattributes-support)
 - [Testing](#testing)
 - [Sinatra](#sinatra)
 
