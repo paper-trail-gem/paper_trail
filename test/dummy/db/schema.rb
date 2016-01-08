@@ -55,6 +55,19 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.boolean "scoped", default: true
   end
 
+  create_table "callback_modifiers", force: :cascade do |t|
+    t.string  "some_content"
+    t.boolean "deleted",      default: false
+  end
+
+  create_table "chapters", force: :cascade do |t|
+    t.string "name"
+  end
+
+  create_table "citations", force: :cascade do |t|
+    t.integer "quotation_id"
+  end
+
   create_table "customers", force: :cascade do |t|
     t.string "name"
   end
@@ -109,6 +122,11 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.string  "order_date"
   end
 
+  create_table "paragraphs", force: :cascade do |t|
+    t.integer "section_id"
+    t.string  "name"
+  end
+
   create_table "people", force: :cascade do |t|
     t.string "name"
     t.string "time_zone"
@@ -134,6 +152,15 @@ ActiveRecord::Schema.define(version: 20110208155312) do
   create_table "posts", force: :cascade do |t|
     t.string "title"
     t.string "content"
+  end
+
+  create_table "quotations", force: :cascade do |t|
+    t.integer "chapter_id"
+  end
+
+  create_table "sections", force: :cascade do |t|
+    t.integer "chapter_id"
+    t.string  "name"
   end
 
   create_table "skippers", force: :cascade do |t|

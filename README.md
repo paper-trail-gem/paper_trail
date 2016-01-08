@@ -6,11 +6,22 @@ Track changes to your models, for auditing or versioning. See how a model looked
 at any stage in its lifecycle, revert it to any version, or restore it after it
 has been destroyed.
 
-- [Features](#features)
+## Documentation
+
+| Version        | Documentation |
+| -------------- | ------------- |
+| 4.1            | https://github.com/airblade/paper_trail/blob/4.1-stable/README.md |
+| 4.0            | https://github.com/airblade/paper_trail/blob/4.0-stable/README.md |
+| 3              | https://github.com/airblade/paper_trail/blob/3.0-stable/README.md |
+| 2              | https://github.com/airblade/paper_trail/blob/2.7-stable/README.md |
+| 1              | https://github.com/airblade/paper_trail/blob/rails2/README.md |
+
+## Table of Contents
+
 - [Compatibility](#compatibility)
 - [Installation](#installation)
-- [API Summary](#api-summary)
 - [Basic Usage](#basic-usage)
+- [API Summary](#api-summary)
 - Limiting What is Versioned, and When
   - [Choosing Lifecycle Events To Monitor](#choosing-lifecycle-events-to-monitor)
   - [Choosing When To Save New Versions](#choosing-when-to-save-new-versions)
@@ -22,38 +33,16 @@ has been destroyed.
   - [Navigating Versions](#navigating-versions)
   - [Diffing Versions](#diffing-versions)
   - [Deleting Old Versions](#deleting-old-versions)
-- [Finding Out Who Was Responsible For A Change](#finding-out-who-was-responsible-for-a-change)
-- [Custom Version Classes](#custom-version-classes)
-- [Associations](#associations)
-- [Storing metadata](#storing-metadata)
-- [Using a custom serializer](#using-a-custom-serializer)
+- Saving More Information About Versions
+  - [Finding Out Who Was Responsible For A Change](#finding-out-who-was-responsible-for-a-change)
+  - [Associations](#associations)
+  - [Storing metadata](#storing-metadata)
+- Extensibility
+  - [Custom Version Classes](#custom-version-classes)
+  - [Custom Serializer](#using-a-custom-serializer)
 - [SerializedAttributes support](#serializedattributes-support)
 - [Testing](#testing)
-
-## Features
-
-* Stores create, update and destroy events
-  * Does not store updates which don't change anything
-  * Support for versioning associated records
-* Can store metadata with each version record
-  * Who was responsible for a change
-  * Arbitrary model-level metadata (useful for filtering versions)
-  * Arbitrary controller-level information e.g. remote IP
-* Configurable
-  * No configuration necessary, but if you want to ..
-  * Configure which events (create, update and destroy) are versioned
-  * Configure which attributes must change for an update to be versioned
-  * Turn off/on by model, request, or globally
-  * Use separate tables for separate models
-* Extensible
-  * Write a custom version class for complete control
-  * Write custom version classes for each of your models
-* Work with versions
-  * Restore any version, including the original, even once destroyed
-  * Restore any version even if the schema has since changed
-  * Restore the version as of a particular time
-* Thoroughly tested
-* Threadsafe
+- [Sinatra](#sinatra)
 
 ## Compatibility
 
@@ -66,67 +55,83 @@ has been destroyed.
 
 ## Installation
 
-### Rails 3 and 4
-
 1. Add PaperTrail to your `Gemfile`.
 
     `gem 'paper_trail', '~> 4.0.0'`
 
-2. Generate a migration which will add a `versions` table to your database.
+1. Add a `versions` table to your database.
 
-    `bundle exec rails generate paper_trail:install`
+    ```
+    bundle exec rails generate paper_trail:install
+    bundle exec rake db:migrate
+    ```
 
-3. Run the migration.
+1. Add `has_paper_trail` to the models you want to track.
 
-    `bundle exec rake db:migrate`
+## Basic Usage
 
-4. Add `has_paper_trail` to the models you want to track.
-
-### Sinatra
-
-In order to configure PaperTrail for usage with [Sinatra][12], your `Sinatra`
-app must be using `ActiveRecord` 3 or 4. It is also recommended to use the
-[Sinatra ActiveRecord Extension][13] or something similar for managing your
-applications `ActiveRecord` connection in a manner similar to the way `Rails`
-does. If using the aforementioned `Sinatra ActiveRecord Extension`, steps for
-setting up your app with PaperTrail will look something like this:
-
-1. Add PaperTrail to your `Gemfile`.
-
-    `gem 'paper_trail', '~> 4.0.0'`
-
-2. Generate a migration to add a `versions` table to your database.
-
-    `bundle exec rake db:create_migration NAME=create_versions`
-
-3. Copy contents of [create_versions.rb][14]
-into the `create_versions` migration that was generated into your `db/migrate` directory.
-
-4. Run the migration.
-
-    `bundle exec rake db:migrate`
-
-5. Add `has_paper_trail` to the models you want to track.
-
-
-PaperTrail provides a helper extension that acts similar to the controller mixin
-it provides for `Rails` applications.
-
-It will set `PaperTrail.whodunnit` to whatever is returned by a method named
-`user_for_paper_trail` which you can define inside your Sinatra Application. (by
-default it attempts to invoke a method named `current_user`)
-
-If you're using the modular [`Sinatra::Base`][15] style of application, you will
-need to register the extension:
+Add `has_paper_trail` to your model to record every `create`, `update`,
+and `destroy`.
 
 ```ruby
-# bleh_app.rb
-require 'sinatra/base'
-
-class BlehApp < Sinatra::Base
-  register PaperTrail::Sinatra
+class Widget < ActiveRecord::Base
+  has_paper_trail
 end
 ```
+
+This gives you a `versions` method which returns the "paper trail" of changes to
+your model.
+
+```ruby
+widget = Widget.find 42
+widget.versions
+# [<PaperTrail::Version>, <PaperTrail::Version>, ...]
+```
+
+Once you have a version, you can find out what happened:
+
+```ruby
+v = widget.versions.last
+v.event                     # 'update', 'create', or 'destroy'
+v.created_at                # When the `event` occurred
+v.whodunnit                 # If the update was via a controller and the
+                            # controller has a current_user method, returns the
+                            # id of the current user as a string.
+widget = v.reify            # The widget as it was before the update
+                            # (nil for a create event)
+```
+
+PaperTrail stores the pre-change version of the model, unlike some other
+auditing/versioning plugins, so you can retrieve the original version.  This is
+useful when you start keeping a paper trail for models that already have records
+in the database.
+
+```ruby
+widget = Widget.find 153
+widget.name                                 # 'Doobly'
+
+# Add has_paper_trail to Widget model.
+
+widget.versions                             # []
+widget.update_attributes :name => 'Wotsit'
+widget.versions.last.reify.name             # 'Doobly'
+widget.versions.last.event                  # 'update'
+```
+
+This also means that PaperTrail does not waste space storing a version of the
+object as it currently stands.  The `versions` method gives you previous
+versions; to get the current one just call a finder on your `Widget` model as
+usual.
+
+Here's a helpful table showing what PaperTrail stores:
+
+| *Event*        | *create* | *update* | *destroy* |
+| -------------- | -------- | -------- | --------- |
+| *Model Before* | nil      | widget   | widget    |
+| *Model After*  | widget   | widget   | nil       |
+
+PaperTrail stores the values in the Model Before column.  Most other
+auditing/versioning plugins store the After column.
 
 ## API Summary
 
@@ -134,17 +139,19 @@ When you declare `has_paper_trail` in your model, you get these methods:
 
 ```ruby
 class Widget < ActiveRecord::Base
-  has_paper_trail   # you can pass various options here
+  has_paper_trail
 end
 
-# Returns this widget's versions.  You can customise the name of the association.
+# Returns this widget's versions.  You can customise the name of the
+# association.
 widget.versions
 
 # Return the version this widget was reified from, or nil if it is live.
 # You can customise the name of the method.
 widget.version
 
-# Returns true if this widget is the current, live one; or false if it is from a previous version.
+# Returns true if this widget is the current, live one; or false if it is from
+# a previous version.
 widget.live?
 
 # Returns who put the widget into its current state.
@@ -159,7 +166,8 @@ widget.previous_version
 # Returns the widget (not a version) as it became next.
 widget.next_version
 
-# Generates a version for a `touch` event (`widget.touch` does NOT generate a version)
+# Generates a version for a `touch` event (`widget.touch` does NOT generate a
+# version)
 widget.touch_with_version
 
 # Turn PaperTrail off for all widgets.
@@ -168,9 +176,11 @@ Widget.paper_trail_off!
 # Turn PaperTrail on for all widgets.
 Widget.paper_trail_on!
 
-# Check whether PaperTrail is enabled for all widgets.
+# Is PaperTrail enabled for Widget, the class?
 Widget.paper_trail_enabled_for_model?
-widget.paper_trail_enabled_for_model? # only available on instances of versioned models
+
+# Is PaperTrail enabled for widget, the instance?
+widget.paper_trail_enabled_for_model?
 ```
 
 And a `PaperTrail::Version` instance has these methods:
@@ -224,89 +234,6 @@ user_for_paper_trail
 info_for_paper_trail
 ```
 
-## Basic Usage
-
-PaperTrail is simple to use.  Just add 15 characters to a model to get a paper
-trail of every `create`, `update`, and `destroy`.
-
-```ruby
-class Widget < ActiveRecord::Base
-  has_paper_trail
-end
-```
-
-This gives you a `versions` method which returns the paper trail of changes to
-your model.
-
-```ruby
-widget = Widget.find 42
-widget.versions
-# [<PaperTrail::Version>, <PaperTrail::Version>, ...]
-```
-
-Once you have a version, you can find out what happened:
-
-```ruby
-v = widget.versions.last
-v.event                     # 'update' (or 'create' or 'destroy')
-v.whodunnit                 # '153'  (if the update was via a controller and
-                            #         the controller has a current_user method,
-                            #         here returning the id of the current user)
-v.created_at                # when the update occurred
-widget = v.reify            # the widget as it was before the update;
-                            # would be nil for a create event
-```
-
-PaperTrail stores the pre-change version of the model, unlike some other
-auditing/versioning plugins, so you can retrieve the original version.  This is
-useful when you start keeping a paper trail for models that already have records
-in the database.
-
-```ruby
-widget = Widget.find 153
-widget.name                                 # 'Doobly'
-
-# Add has_paper_trail to Widget model.
-
-widget.versions                             # []
-widget.update_attributes :name => 'Wotsit'
-widget.versions.last.reify.name             # 'Doobly'
-widget.versions.last.event                  # 'update'
-```
-
-This also means that PaperTrail does not waste space storing a version of the
-object as it currently stands.  The `versions` method gives you previous
-versions; to get the current one just call a finder on your `Widget` model as
-usual.
-
-Here's a helpful table showing what PaperTrail stores:
-
-<table>
-  <tr>
-    <th>Event</th>
-    <th>Model Before</th>
-    <th>Model After</th>
-  </tr>
-  <tr>
-    <td>create</td>
-    <td>nil</td>
-    <td>widget</td>
-  </tr>
-  <tr>
-    <td>update</td>
-    <td>widget</td>
-    <td>widget</td>
-  <tr>
-    <td>destroy</td>
-    <td>widget</td>
-    <td>nil</td>
-  </tr>
-</table>
-
-PaperTrail stores the values in the Model Before column.  Most other
-auditing/versioning plugins store the After column.
-
-
 ## Choosing Lifecycle Events To Monitor
 
 You can choose which events to track with the `on` option.  For example, to
@@ -317,6 +244,10 @@ class Article < ActiveRecord::Base
   has_paper_trail :on => [:update, :destroy]
 end
 ```
+
+`has_paper_trail` installs callbacks for these lifecycle events. If there are
+other callbacks in your model, their order relative to those installed by
+PaperTrail may matter, so be aware of any potential interactions.
 
 You may also have the `PaperTrail::Version` model save a custom string in it's
 `event` field instead of the typical `create`, `update`, `destroy`. PaperTrail
@@ -337,6 +268,23 @@ a.update_attributes :title => "Alternate"
 a.versions.size                           # 3
 a.versions.last.event                     # 'update'
 ```
+
+### Controlling the Order of AR Callbacks
+
+The `has_paper_trail` method installs AR callbacks. If you need to control
+their order, use the `paper_trail_on_*` methods.
+
+```ruby
+class Article < ActiveRecord::Base
+  has_paper_trail :on => [] # don't install callbacks yet
+  paper_trail_on_destroy    # install destroy
+  paper_trail_on_update     # etc.
+  paper_trail_on_create
+end
+```
+
+The `paper_trail_on_destroy` method can be further configured to happen
+`:before` or `:after` the destroy event. By default, it will happen after.
 
 ## Choosing When To Save New Versions
 
@@ -785,7 +733,7 @@ like it does, call `paper_trail_originator` on the object.
 widget = Widget.find 153                    # assume widget has 0 versions
 PaperTrail.whodunnit = 'Alice'
 widget.update_attributes :name => 'Yankee'
-widget..paper_trail_originator              # 'Alice'
+widget.paper_trail_originator               # 'Alice'
 PaperTrail.whodunnit = 'Bob'
 widget.update_attributes :name => 'Zulu'
 widget.paper_trail_originator               # 'Bob'
@@ -798,81 +746,9 @@ last_version.paper_trail_originator         # 'Alice'
 last_version.terminator                     # 'Bob'
 ```
 
-## Custom Version Classes
-
-You can specify custom version subclasses with the `:class_name` option:
-
-```ruby
-class PostVersion < PaperTrail::Version
-  # custom behaviour, e.g:
-  self.table_name = :post_versions
-end
-
-class Post < ActiveRecord::Base
-  has_paper_trail :class_name => 'PostVersion'
-end
-```
-
-Unlike ActiveRecord's `class_name`, you'll have to supply the complete module path to the class (e.g. `Foo::BarVersion` if your class is inside the module `Foo`).
-
-### Advantages
-
-1. For models which have a lot of versions, storing each model's versions in a
-   separate table can improve the performance of certain database queries.
-1. Store different version [metadata](#storing-metadata) for different models.
-
-### Configuration
-
-If you are using Postgres, you should also define the sequence that your custom
-version class will use:
-
-```ruby
-class PostVersion < PaperTrail::Version
-  self.table_name = :post_versions
-  self.sequence_name = :post_versions_id_seq
-end
-```
-
-If you only use custom version classes and don't have a `versions` table, you
-must let ActiveRecord know that the `PaperTrail::Version` class is an
-`abstract_class`.
-
-```ruby
-# app/models/paper_trail/version.rb
-module PaperTrail
-  class Version < ActiveRecord::Base
-    include PaperTrail::VersionConcern
-    self.abstract_class = true
-  end
-end
-```
-
-You can also specify custom names for the versions and version associations.
-This is useful if you already have `versions` or/and `version` methods on your
-model.  For example:
-
-```ruby
-class Post < ActiveRecord::Base
-  has_paper_trail :versions => :paper_trail_versions,
-                  :version  => :paper_trail_version
-
-  # Existing versions method.  We don't want to clash.
-  def versions
-    ...
-  end
-  # Existing version method.  We don't want to clash.
-  def version
-    ...
-  end
-end
-```
-
 ## Associations
 
-**Experimental Feature: Known Issues:**
-[#542](https://github.com/airblade/paper_trail/issues/542),
-[#590](https://github.com/airblade/paper_trail/issues/590).
-See also: Caveats below.
+**Experimental feature**, see caveats below.
 
 PaperTrail can restore three types of associations: Has-One, Has-Many, and
 Has-Many-Through. In order to do this, you will need to create a
@@ -964,14 +840,23 @@ widget.reload.wotsit                             # nil
 
 **Caveats:**
 
+1. Not compatible with [transactional tests][34], aka. transactional fixtures.
+   This is a known issue [#542](https://github.com/airblade/paper_trail/issues/542)
+   that we'd like to solve.
+1. Requires database timestamp columns with fractional second precision.
+   - Sqlite and postgres timestamps have fractional second precision by default.
+   [MySQL timestamps do not][35]. Furthermore, MySQL 5.5 and earlier do not
+   support fractional second precision at all.
+   - Also, support for fractional seconds in MySQL was not added to
+   rails until ActiveRecord 4.2 (https://github.com/rails/rails/pull/14359).
 1. PaperTrail can't restore an association properly if the association record
    can be updated to replace its parent model (by replacing the foreign key)
-2. Currently PaperTrail only support single `version_associations` table. The
+1. Currently PaperTrail only support single `version_associations` table. The
    implication is that you can only use a single table to store the versions for
    all related models. Sorry for those who use multiple version tables.
-3. PaperTrail only reifies the first level of associations, i.e., it does not
+1. PaperTrail only reifies the first level of associations, i.e., it does not
    reify any associations of its associations, and so on.
-4. PaperTrail relies on the callbacks on the association model (and the :through
+1. PaperTrail relies on the callbacks on the association model (and the :through
    association model for Has-Many-Through associations) to record the versions
    and the relationship between the versions. If the association is changed
    without invoking the callbacks, Reification won't work. Below are some
@@ -1057,6 +942,7 @@ end
 
 PaperTrail will call your proc with the current article and store the result in
 the `author_id` column of the `versions` table.
+Don't forget to add any such columns to your `versions` table.
 
 ### Advantages of Metadata
 
@@ -1104,7 +990,76 @@ end
 If you're using [strong_parameters][18] instead of [protected_attributes][17]
 then there is no need to use `attr_accessible`.
 
-## Using a custom serializer
+## Custom Version Classes
+
+You can specify custom version subclasses with the `:class_name` option:
+
+```ruby
+class PostVersion < PaperTrail::Version
+  # custom behaviour, e.g:
+  self.table_name = :post_versions
+end
+
+class Post < ActiveRecord::Base
+  has_paper_trail :class_name => 'PostVersion'
+end
+```
+
+Unlike ActiveRecord's `class_name`, you'll have to supply the complete module path to the class (e.g. `Foo::BarVersion` if your class is inside the module `Foo`).
+
+### Advantages
+
+1. For models which have a lot of versions, storing each model's versions in a
+   separate table can improve the performance of certain database queries.
+1. Store different version [metadata](#storing-metadata) for different models.
+
+### Configuration
+
+If you are using Postgres, you should also define the sequence that your custom
+version class will use:
+
+```ruby
+class PostVersion < PaperTrail::Version
+  self.table_name = :post_versions
+  self.sequence_name = :post_versions_id_seq
+end
+```
+
+If you only use custom version classes and don't have a `versions` table, you
+must let ActiveRecord know that the `PaperTrail::Version` class is an
+`abstract_class`.
+
+```ruby
+# app/models/paper_trail/version.rb
+module PaperTrail
+  class Version < ActiveRecord::Base
+    include PaperTrail::VersionConcern
+    self.abstract_class = true
+  end
+end
+```
+
+You can also specify custom names for the versions and version associations.
+This is useful if you already have `versions` or/and `version` methods on your
+model.  For example:
+
+```ruby
+class Post < ActiveRecord::Base
+  has_paper_trail :versions => :paper_trail_versions,
+                  :version  => :paper_trail_version
+
+  # Existing versions method.  We don't want to clash.
+  def versions
+    ...
+  end
+  # Existing version method.  We don't want to clash.
+  def version
+    ...
+  end
+end
+```
+
+## Custom Serializer
 
 By default, PaperTrail stores your changes as a `YAML` dump. You can override
 this with the serializer config option:
@@ -1122,7 +1077,7 @@ method.  These serializers are included in the gem for your convenience:
 ### PostgreSQL JSON column type support
 
 If you use PostgreSQL, and would like to store your `object` (and/or
-`object_changes`) data in a column of [type `JSON` or type `JSONB`][26], specify
+`object_changes`) data in a column of [type `json` or type `jsonb`][26], specify
 `json` instead of `text` for these columns in your migration:
 
 ```ruby
@@ -1134,37 +1089,88 @@ create_table :versions do |t|
 end
 ```
 
-Note: You don't need to use a particular serializer for the PostgreSQL `JSON`
-column type.
+If you use the PostgreSQL `json` or `jsonb` column type, you do not need
+to specify a `PaperTrail.serializer`.
 
-#### Convert a column from text to json
+#### Convert existing YAML data to JSON
 
-Postgres' `alter column` command will not automatically convert a `text`
-column to `json`, but it can still be done with plain SQL.
+If you've been using PaperTrail for a while with the default YAML serializer
+and you want to switch to JSON or JSONB, you're in a bit of a bind because
+there's no automatic way to migrate your data. The first (slow) option is to
+loop over every record and parse it in Ruby, then write to a temporary column:
+
+```ruby
+add_column :versions, :object, :new_object, :jsonb # or :json
+
+PaperTrail::Version.reset_column_information
+PaperTrail::Version.find_each do |version|
+  version.update_column :new_object, YAML.load(version.object)
+end
+
+remove_column :versions, :object
+rename_column :versions, :new_object, :object
+```
+
+This technique can be very slow if you have a lot of data. Though slow, it is
+safe in databases where transactions are protected against DDL, such as
+Postgres. In databases without such protection, such as MySQL, a table lock may
+be necessary.
+
+If the above technique is too slow for your needs, and you're okay doing without
+PaperTrail data temporarily, you can create the new column without a converting
+the data.
+
+```ruby
+rename_column :versions, :object, :old_object
+add_column :versions, :object, :jsonb # or :json
+```
+
+After that migration, your historical data still exists as YAML, and new data
+will be stored as JSON. Next, convert records from YAML to JSON using a
+background script.
+
+```ruby
+PaperTrail::Version.where.not(old_object: nil).find_each do |version|
+  version.update_columns old_object: nil, object: YAML.load(version.old_object)
+end
+```
+
+Finally, in another migration, remove the old column.
+
+```ruby
+remove_column :versions, :old_object
+```
+
+If you use the optional `object_changes` column, don't forget to convert it
+also, using the same technique.
+
+#### Convert a Column from Text to JSON
+
+If your `object` column already contains JSON data, and you want to change its
+data type to `json` or `jsonb`, you can use the following [DDL][36]. Of course,
+if your `object` column contains YAML, you must first convert the data to JSON
+(see above) before you can change the column type.
+
+Using SQL:
 
 ```sql
 alter table versions
-alter column object type json
-using object::json;
+alter column object type jsonb
+using object::jsonb;
 ```
 
-## SerializedAttributes support
-
-PaperTrail has a config option that can be used to enable/disable whether
-PaperTrail attempts to utilize `ActiveRecord`'s `serialized_attributes` feature.
-Note: This is enabled by default when PaperTrail is used with `ActiveRecord`
-version < `4.2`, and disabled by default when used with ActiveRecord `4.2.x`.
-Since `serialized_attributes` will be removed in `ActiveRecord` version `5.0`,
-this configuration value has no functionality when PaperTrail is used with
-version `5.0` or greater.
+Using ActiveRecord:
 
 ```ruby
-# Enable support
-PaperTrail.config.serialized_attributes = true
-# Disable support
-PaperTrail.config.serialized_attributes = false
-# Get current setting
-PaperTrail.serialized_attributes?
+class ConvertVersionsObjectToJson < ActiveRecord::Migration
+  def up
+    change_column :versions, :object, 'jsonb USING object::jsonb'
+  end
+
+  def down
+    change_column :versions, :object, 'text USING object::text'
+  end
+end
 ```
 
 ## Testing
@@ -1342,9 +1348,9 @@ require 'paper_trail/frameworks/rspec'
 
 Paper Trail has facilities to test against Postgres, Mysql and SQLite. To switch
 between DB engines you will need to export the DB variable for the engine you
-wish to test aganist.
+wish to test against.
 
-Though be aware we do not have the abilty to create the db's (except sqlite) for
+Though be aware we do not have the ability to create the db's (except sqlite) for
 you. You can look at .travis.yml before_script for an example of how to create
 the db's needed.
 
@@ -1352,6 +1358,52 @@ the db's needed.
 export DB=postgres
 export DB=mysql
 export DB=sqlite # this is default
+```
+
+## Sinatra
+
+In order to configure PaperTrail for usage with [Sinatra][12], your `Sinatra`
+app must be using `ActiveRecord` 3 or 4. It is also recommended to use the
+[Sinatra ActiveRecord Extension][13] or something similar for managing your
+applications `ActiveRecord` connection in a manner similar to the way `Rails`
+does. If using the aforementioned `Sinatra ActiveRecord Extension`, steps for
+setting up your app with PaperTrail will look something like this:
+
+1. Add PaperTrail to your `Gemfile`.
+
+    `gem 'paper_trail', '~> 4.0.0'`
+
+2. Generate a migration to add a `versions` table to your database.
+
+    `bundle exec rake db:create_migration NAME=create_versions`
+
+3. Copy contents of [create_versions.rb][14]
+into the `create_versions` migration that was generated into your `db/migrate` directory.
+
+4. Run the migration.
+
+    `bundle exec rake db:migrate`
+
+5. Add `has_paper_trail` to the models you want to track.
+
+
+PaperTrail provides a helper extension that acts similar to the controller mixin
+it provides for `Rails` applications.
+
+It will set `PaperTrail.whodunnit` to whatever is returned by a method named
+`user_for_paper_trail` which you can define inside your Sinatra Application. (by
+default it attempts to invoke a method named `current_user`)
+
+If you're using the modular [`Sinatra::Base`][15] style of application, you will
+need to register the extension:
+
+```ruby
+# bleh_app.rb
+require 'sinatra/base'
+
+class BlehApp < Sinatra::Base
+  register PaperTrail::Sinatra
+end
 ```
 
 ## Articles
@@ -1371,7 +1423,6 @@ export DB=sqlite # this is default
 ## Problems
 
 Please use GitHub's [issue tracker](http://github.com/airblade/paper_trail/issues).
-
 
 ## Contributors
 
@@ -1436,7 +1487,6 @@ Many thanks to:
 * [Simply Versioned](http://github.com/github/simply_versioned)
 * [Acts As Audited](http://github.com/collectiveidea/acts_as_audited)
 
-
 ## Intellectual Property
 
 Copyright (c) 2011 Andy Stewart (boss@airbladesoftware.com).
@@ -1445,7 +1495,7 @@ Released under the MIT licence.
 [1]: http://api.rubyonrails.org/classes/ActiveRecord/Locking/Optimistic.html
 [2]: https://github.com/airblade/paper_trail/issues/163
 [3]: http://railscasts.com/episodes/255-undo-with-paper-trail
-[4]: https://img.shields.io/travis/airblade/paper_trail/master.svg
+[4]: https://api.travis-ci.org/airblade/paper_trail.svg?branch=master
 [5]: https://travis-ci.org/airblade/paper_trail
 [6]: https://img.shields.io/gemnasium/airblade/paper_trail.svg
 [7]: https://gemnasium.com/airblade/paper_trail
@@ -1474,3 +1524,6 @@ Released under the MIT licence.
 [31]: https://github.com/rails/spring
 [32]: http://api.rubyonrails.org/classes/ActiveRecord/AutosaveAssociation.html#method-i-mark_for_destruction
 [33]: https://github.com/airblade/paper_trail/wiki/Setting-whodunnit-in-the-rails-console
+[34]: https://github.com/rails/rails/blob/591a0bb87fff7583e01156696fbbf929d48d3e54/activerecord/lib/active_record/fixtures.rb#L142
+[35]: https://dev.mysql.com/doc/refman/5.6/en/fractional-seconds.html
+[36]: http://www.postgresql.org/docs/9.4/interactive/ddl.html

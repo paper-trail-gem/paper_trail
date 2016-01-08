@@ -1,100 +1,118 @@
 require 'test_helper'
 
-class PaperTrail::VersionTest < ActiveSupport::TestCase
-  setup do
-    change_schema
-    @animal = Animal.create
-    assert PaperTrail::Version.creates.present?
-  end
-
-  teardown do
-    restore_schema
-    Animal.connection.schema_cache.clear!
-    Animal.reset_column_information
-  end
-
-  context "PaperTrail::Version.creates" do
-    should "return only create events" do
-      PaperTrail::Version.creates.each do |version|
-        assert_equal "create", version.event
-      end
+module PaperTrail
+  class VersionTest < ActiveSupport::TestCase
+    setup do
+      change_schema
+      @animal = Animal.create
+      assert Version.creates.present?
     end
-  end
 
-  context "PaperTrail::Version.updates" do
-    setup {
-      @animal.update_attributes(:name => 'Animal')
-      assert PaperTrail::Version.updates.present?
-    }
-
-    should "return only update events" do
-      PaperTrail::Version.updates.each do |version|
-        assert_equal "update", version.event
-      end
+    teardown do
+      restore_schema
+      Animal.connection.schema_cache.clear!
+      Animal.reset_column_information
     end
-  end
 
-  context "PaperTrail::Version.destroys" do
-    setup {
-      @animal.destroy
-      assert PaperTrail::Version.destroys.present?
-    }
-
-    should "return only destroy events" do
-      PaperTrail::Version.destroys.each do |version|
-        assert_equal "destroy", version.event
-      end
-    end
-  end
-
-  context "PaperTrail::Version.not_creates" do
-    setup {
-      @animal.update_attributes(:name => 'Animal')
-      @animal.destroy
-      assert PaperTrail::Version.not_creates.present?
-    }
-
-    should "return all versions except create events" do
-      PaperTrail::Version.not_creates.each do |version|
-        assert_not_equal "create", version.event
-      end
-    end
-  end
-
-  context "PaperTrail::Version.subsequent" do
-    setup { 2.times { @animal.update_attributes(:name => Faker::Lorem.word) } }
-
-    context "receiving a TimeStamp" do
-      should "return all versions that were created before the Timestamp" do
-        value = PaperTrail::Version.subsequent(1.hour.ago, true)
-        assert_equal value, @animal.versions.to_a
-        assert_not_nil value.to_sql.match(/ORDER BY #{PaperTrail::Version.arel_table[:created_at].asc.to_sql}/)
+    context ".creates" do
+      should "return only create events" do
+        Version.creates.each do |version|
+          assert_equal "create", version.event
+        end
       end
     end
 
-    context "receiving a `PaperTrail::Version`" do
-      should "grab the Timestamp from the version and use that as the value" do
-        value = PaperTrail::Version.subsequent(@animal.versions.first)
-        assert_equal value, @animal.versions.to_a.tap { |assoc| assoc.shift }
-      end
-    end
-  end
+    context ".updates" do
+      setup {
+        @animal.update_attributes(:name => 'Animal')
+        assert Version.updates.present?
+      }
 
-  context "PaperTrail::Version.preceding" do
-    setup { 2.times { @animal.update_attributes(:name => Faker::Lorem.word) } }
-
-    context "receiving a TimeStamp" do
-      should "return all versions that were created before the Timestamp" do
-        value = PaperTrail::Version.preceding(5.seconds.from_now, true)
-        assert_equal value, @animal.versions.reverse
-        assert_not_nil value.to_sql.match(/ORDER BY #{PaperTrail::Version.arel_table[:created_at].desc.to_sql}/)
+      should "return only update events" do
+        Version.updates.each do |version|
+          assert_equal "update", version.event
+        end
       end
     end
 
-    context "receiving a `PaperTrail::Version`" do
-      should "grab the Timestamp from the version and use that as the value" do
-        value = PaperTrail::Version.preceding(@animal.versions.last)
-        assert_equal value, @animal.versions.to_a.tap { |assoc| assoc.pop }.reverse
+    context ".destroys" do
+      setup {
+        @animal.destroy
+        assert Version.destroys.present?
+      }
+
+      should "return only destroy events" do
+        Version.destroys.each do |version|
+          assert_equal "destroy", version.event
+        end
+      end
+    end
+
+    context ".not_creates" do
+      setup {
+        @animal.update_attributes(:name => 'Animal')
+        @animal.destroy
+        assert Version.not_creates.present?
+      }
+
+      should "return all versions except create events" do
+        Version.not_creates.each do |version|
+          assert_not_equal "create", version.event
+        end
+      end
+    end
+
+    context ".subsequent" do
+      setup do
+        2.times do
+          @animal.update_attributes(:name => Faker::Lorem.word)
+        end
+      end
+
+      context "given a timestamp" do
+        should "return all versions that were created after the timestamp" do
+          value = Version.subsequent(1.hour.ago, true)
+          assert_equal @animal.versions.to_a, value
+          assert_match(
+            /ORDER BY #{Version.arel_table[:created_at].asc.to_sql}/,
+            value.to_sql
+          )
+        end
+      end
+
+      context "given a Version" do
+        should "grab the timestamp from the version and use that as the value" do
+          expected = @animal.versions.to_a.tap { |assoc| assoc.shift }
+          actual = Version.subsequent(@animal.versions.first)
+          assert_equal expected, actual
+        end
+      end
+    end
+
+    context ".preceding" do
+      setup do
+        2.times do
+          @animal.update_attributes(:name => Faker::Lorem.word)
+        end
+      end
+
+      context "given a timestamp" do
+        should "return all versions that were created before the timestamp" do
+          value = Version.preceding(5.seconds.from_now, true)
+          assert_equal @animal.versions.reverse, value
+          assert_match(
+            /ORDER BY #{Version.arel_table[:created_at].desc.to_sql}/,
+            value.to_sql
+          )
+        end
+      end
+
+      context "given a Version" do
+        should "grab the timestamp from the version and use that as the value" do
+          expected = @animal.versions.to_a.tap { |assoc| assoc.pop }.reverse
+          actual = Version.preceding(@animal.versions.last)
+          assert_equal expected, actual
+        end
       end
     end
   end

@@ -3,8 +3,22 @@ module PaperTrail
     module Controller
 
       def self.included(base)
-        base.before_filter :set_paper_trail_enabled_for_controller
-        base.before_filter :set_paper_trail_whodunnit, :set_paper_trail_controller_info
+        before = [
+          :set_paper_trail_enabled_for_controller,
+          :set_paper_trail_whodunnit,
+          :set_paper_trail_controller_info
+        ]
+        after = []
+
+        if base.respond_to? :before_action
+          # Rails 4+
+          before.map {|sym| base.before_action sym }
+          after.map  {|sym| base.after_action  sym }
+        else
+          # Rails 3.
+          before.map {|sym| base.before_filter sym }
+          after.map  {|sym| base.after_filter  sym }
+        end
       end
 
       protected

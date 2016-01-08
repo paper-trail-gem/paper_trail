@@ -1,6 +1,6 @@
 require 'request_store'
 
-# Require core library
+# Require files in lib/paper_trail, but not its subdirectories.
 Dir[File.join(File.dirname(__FILE__), 'paper_trail', '*.rb')].each do |file|
   require File.join('paper_trail', File.basename(file, '.rb'))
 end
@@ -24,11 +24,12 @@ module PaperTrail
     !!PaperTrail.config.enabled
   end
 
-  # ActiveRecord 5 drops support for serialized attributes; for previous
-  # versions of ActiveRecord it is supported, we have a config option
-  # to enable it within PaperTrail.
   def self.serialized_attributes?
-    !!PaperTrail.config.serialized_attributes && ::ActiveRecord::VERSION::MAJOR < 5
+    ActiveSupport::Deprecation.warn(
+      "PaperTrail.serialized_attributes? is deprecated without replacement " +
+        "and always returns false."
+    )
+    false
   end
 
   # Sets whether PaperTrail is enabled or disabled for the current request.
@@ -101,7 +102,8 @@ module PaperTrail
   end
 
   def self.active_record_protected_attributes?
-    @active_record_protected_attributes ||= ::ActiveRecord::VERSION::MAJOR < 4 || !!defined?(ProtectedAttributes)
+    @active_record_protected_attributes ||= ::ActiveRecord::VERSION::MAJOR < 4 ||
+      !!defined?(ProtectedAttributes)
   end
 
   def self.transaction?
@@ -126,9 +128,9 @@ module PaperTrail
 
   # Returns PaperTrail's configuration object.
   def self.config
-    @@config ||= PaperTrail::Config.instance
-    yield @@config if block_given?
-    @@config
+    @config ||= PaperTrail::Config.instance
+    yield @config if block_given?
+    @config
   end
 
   class << self

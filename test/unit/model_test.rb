@@ -228,8 +228,8 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           'id'         => [nil, @widget.id]
         }
 
-        assert_equal Time, @widget.versions.last.changeset['updated_at'][1].class
-        assert_equal changes, @widget.versions.last.changeset
+        assert_kind_of Time, @widget.versions.last.changeset['updated_at'][1]
+        assert_changes_equal changes, @widget.versions.last.changeset
       end
 
       context 'and then updated without any changes' do
@@ -375,7 +375,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
           should 'be available in its previous version' do
             assert_equal @widget.id, @reified_widget.id
-            assert_equal @widget.attributes, @reified_widget.attributes
+            assert_attributes_equal @widget.attributes, @reified_widget.attributes
           end
 
           should 'be re-creatable from its previous version' do
@@ -442,7 +442,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
 
     should 'handle decimals' do
-      assert_in_delta 2.71828, @previous.a_decimal, 0.00001
+      assert_in_delta 2.7183, @previous.a_decimal, 0.0001
     end
 
     should 'handle datetimes' do
@@ -484,7 +484,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         assert_equal    'The quick brown fox',       @last.reify.a_text
         assert_equal    42,                          @last.reify.an_integer
         assert_in_delta 153.01,                      @last.reify.a_float,   0.001
-        assert_in_delta 2.71828,                     @last.reify.a_decimal, 0.00001
+        assert_in_delta 2.7183,                      @last.reify.a_decimal, 0.0001
         assert_equal    @date_time.to_time.utc.to_i, @last.reify.a_datetime.to_time.utc.to_i
         assert_equal    @time.utc.to_i,              @last.reify.a_time.utc.to_i
         assert_equal    @date,                       @last.reify.a_date
@@ -978,100 +978,94 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
   end
 
-  # `serialized_attributes` is deprecated in ActiveRecord 5.0
-  if ::ActiveRecord::VERSION::MAJOR < 5
-    context 'When an attribute has a custom serializer' do
+  context 'When an attribute has a custom serializer' do
+    setup do
+      @person = Person.new(:time_zone => "Samoa")
+    end
+
+    should "be an instance of ActiveSupport::TimeZone" do
+      assert_equal ActiveSupport::TimeZone, @person.time_zone.class
+    end
+
+    context 'when the model is saved' do
       setup do
-        PaperTrail.config.serialized_attributes = true
-        @person = Person.new(:time_zone => "Samoa")
+        @changes_before_save = @person.changes.dup
+        @person.save!
       end
 
-      teardown { PaperTrail.config.serialized_attributes = false }
-
-      should "be an instance of ActiveSupport::TimeZone" do
-        assert_equal ActiveSupport::TimeZone, @person.time_zone.class
+      # Test for serialization:
+      should 'version.object_changes should not have stored the default, ridiculously long (to_yaml) serialization of the TimeZone object' do
+        assert @person.versions.last.object_changes.length < 105, "object_changes length was #{@person.versions.last.object_changes.length}"
+      end
+      # It should store the serialized value.
+      should 'version.object_changes attribute should have stored the value returned by the attribute serializer' do
+        as_stored_in_version = HashWithIndifferentAccess[YAML::load(@person.versions.last.object_changes)]
+        assert_equal [nil, 'Samoa'], as_stored_in_version[:time_zone]
+        serialized_value = Person::TimeZoneSerializer.dump(@person.time_zone)
+        assert_equal serialized_value, as_stored_in_version[:time_zone].last
       end
 
-      context 'when the model is saved' do
+      # Tests for unserialization:
+      should 'version.changeset should convert the attribute value back to its original, unserialized value' do
+        unserialized_value = Person::TimeZoneSerializer.load(@person.time_zone)
+        assert_equal unserialized_value, @person.versions.last.changeset[:time_zone].last
+      end
+      should "record.changes (before save) returns the original, unserialized values" do
+        assert_equal [NilClass, ActiveSupport::TimeZone], @changes_before_save[:time_zone].map(&:class)
+      end
+      should 'version.changeset should be the same as record.changes was before the save' do
+        assert_equal @changes_before_save, @person.versions.last.changeset.delete_if { |key, val| key.to_sym == :id }
+        assert_equal [NilClass, ActiveSupport::TimeZone], @person.versions.last.changeset[:time_zone].map(&:class)
+      end
+
+      context 'when that attribute is updated' do
         setup do
+          @attribute_value_before_change = @person.time_zone
+          @person.assign_attributes({ :time_zone => 'Pacific Time (US & Canada)' })
           @changes_before_save = @person.changes.dup
           @person.save!
         end
 
-        # Test for serialization:
-        should 'version.object_changes should not have stored the default, ridiculously long (to_yaml) serialization of the TimeZone object' do
-          assert @person.versions.last.object_changes.length < 105, "object_changes length was #{@person.versions.last.object_changes.length}"
+        # Tests for serialization:
+        # Before the serialized attributes fix, the object/object_changes value that was stored was ridiculously long (58723).
+        should 'version.object should not have stored the default, ridiculously long (to_yaml) serialization of the TimeZone object' do
+          assert @person.versions.last.object.length < 105, "object length was #{@person.versions.last.object.length}"
         end
-        # It should store the serialized value.
+        # Need an additional clause to detect what version of ActiveRecord is being used for this test because AR4 injects the `updated_at` column into the changeset for updates to models
+        should 'version.object_changes should not have stored the default, ridiculously long (to_yaml) serialization of the TimeZone object' do
+          assert @person.versions.last.object_changes.length < (ActiveRecord::VERSION::MAJOR < 4 ? 105 : 118), "object_changes length was #{@person.versions.last.object_changes.length}"
+        end
+        # But now it stores the short, serialized value.
+        should 'version.object attribute should have stored the value returned by the attribute serializer' do
+          as_stored_in_version = HashWithIndifferentAccess[YAML::load(@person.versions.last.object)]
+          assert_equal 'Samoa', as_stored_in_version[:time_zone]
+          serialized_value = Person::TimeZoneSerializer.dump(@attribute_value_before_change)
+          assert_equal serialized_value, as_stored_in_version[:time_zone]
+        end
         should 'version.object_changes attribute should have stored the value returned by the attribute serializer' do
           as_stored_in_version = HashWithIndifferentAccess[YAML::load(@person.versions.last.object_changes)]
-          assert_equal [nil, 'Samoa'], as_stored_in_version[:time_zone]
+          assert_equal ['Samoa', 'Pacific Time (US & Canada)'], as_stored_in_version[:time_zone]
           serialized_value = Person::TimeZoneSerializer.dump(@person.time_zone)
           assert_equal serialized_value, as_stored_in_version[:time_zone].last
         end
 
         # Tests for unserialization:
+        should 'version.reify should convert the attribute value back to its original, unserialized value' do
+          unserialized_value = Person::TimeZoneSerializer.load(@attribute_value_before_change)
+          assert_equal unserialized_value, @person.versions.last.reify.time_zone
+        end
         should 'version.changeset should convert the attribute value back to its original, unserialized value' do
           unserialized_value = Person::TimeZoneSerializer.load(@person.time_zone)
           assert_equal unserialized_value, @person.versions.last.changeset[:time_zone].last
         end
         should "record.changes (before save) returns the original, unserialized values" do
-          assert_equal [NilClass, ActiveSupport::TimeZone], @changes_before_save[:time_zone].map(&:class)
+          assert_equal [ActiveSupport::TimeZone, ActiveSupport::TimeZone], @changes_before_save[:time_zone].map(&:class)
         end
         should 'version.changeset should be the same as record.changes was before the save' do
-          assert_equal @changes_before_save, @person.versions.last.changeset.delete_if { |key, val| key.to_sym == :id }
-          assert_equal [NilClass, ActiveSupport::TimeZone], @person.versions.last.changeset[:time_zone].map(&:class)
+          assert_equal @changes_before_save, @person.versions.last.changeset
+          assert_equal [ActiveSupport::TimeZone, ActiveSupport::TimeZone], @person.versions.last.changeset[:time_zone].map(&:class)
         end
 
-        context 'when that attribute is updated' do
-          setup do
-            @attribute_value_before_change = @person.time_zone
-            @person.assign_attributes({ :time_zone => 'Pacific Time (US & Canada)' })
-            @changes_before_save = @person.changes.dup
-            @person.save!
-          end
-
-          # Tests for serialization:
-          # Before the serialized attributes fix, the object/object_changes value that was stored was ridiculously long (58723).
-          should 'version.object should not have stored the default, ridiculously long (to_yaml) serialization of the TimeZone object' do
-            assert @person.versions.last.object.length < 105, "object length was #{@person.versions.last.object.length}"
-          end
-          # Need an additional clause to detect what version of ActiveRecord is being used for this test because AR4 injects the `updated_at` column into the changeset for updates to models
-          should 'version.object_changes should not have stored the default, ridiculously long (to_yaml) serialization of the TimeZone object' do
-            assert @person.versions.last.object_changes.length < (ActiveRecord::VERSION::MAJOR < 4 ? 105 : 118), "object_changes length was #{@person.versions.last.object_changes.length}"
-          end
-          # But now it stores the short, serialized value.
-          should 'version.object attribute should have stored the value returned by the attribute serializer' do
-            as_stored_in_version = HashWithIndifferentAccess[YAML::load(@person.versions.last.object)]
-            assert_equal 'Samoa', as_stored_in_version[:time_zone]
-            serialized_value = Person::TimeZoneSerializer.dump(@attribute_value_before_change)
-            assert_equal serialized_value, as_stored_in_version[:time_zone]
-          end
-          should 'version.object_changes attribute should have stored the value returned by the attribute serializer' do
-            as_stored_in_version = HashWithIndifferentAccess[YAML::load(@person.versions.last.object_changes)]
-            assert_equal ['Samoa', 'Pacific Time (US & Canada)'], as_stored_in_version[:time_zone]
-            serialized_value = Person::TimeZoneSerializer.dump(@person.time_zone)
-            assert_equal serialized_value, as_stored_in_version[:time_zone].last
-          end
-
-          # Tests for unserialization:
-          should 'version.reify should convert the attribute value back to its original, unserialized value' do
-            unserialized_value = Person::TimeZoneSerializer.load(@attribute_value_before_change)
-            assert_equal unserialized_value, @person.versions.last.reify.time_zone
-          end
-          should 'version.changeset should convert the attribute value back to its original, unserialized value' do
-            unserialized_value = Person::TimeZoneSerializer.load(@person.time_zone)
-            assert_equal unserialized_value, @person.versions.last.changeset[:time_zone].last
-          end
-          should "record.changes (before save) returns the original, unserialized values" do
-            assert_equal [ActiveSupport::TimeZone, ActiveSupport::TimeZone], @changes_before_save[:time_zone].map(&:class)
-          end
-          should 'version.changeset should be the same as record.changes was before the save' do
-            assert_equal @changes_before_save, @person.versions.last.changeset
-            assert_equal [ActiveSupport::TimeZone, ActiveSupport::TimeZone], @person.versions.last.changeset[:time_zone].map(&:class)
-          end
-
-        end
       end
     end
   end
@@ -1374,532 +1368,6 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     should "limit the number of versions to 3 (2 plus the created at event)" do
       assert_equal 'create', @widget.versions.first.event
       assert_equal 3, @widget.versions.size
-    end
-  end
-end
-
-
-class HasPaperTrailModelTransactionalTest < ActiveSupport::TestCase
-  # These would have been done in test_helper.rb if using_mysql? is true
-  unless using_mysql?
-    self.use_transactional_fixtures = false
-    setup { DatabaseCleaner.start }
-  end
-
-  teardown do
-    Timecop.return
-    # This would have been done in test_helper.rb if using_mysql? is true
-    DatabaseCleaner.clean unless using_mysql?
-  end
-
-  context 'A model with a has_one association' do
-    setup { @widget = Widget.create :name => 'widget_0' }
-
-    context 'before the associated was created' do
-      setup do
-        @widget.update_attributes :name => 'widget_1'
-        @wotsit = @widget.create_wotsit :name => 'wotsit_0'
-      end
-
-      context 'when reified' do
-        setup { @widget_0 = @widget.versions.last.reify(:has_one => true) }
-
-        should 'see the associated as it was at the time' do
-          assert_nil @widget_0.wotsit
-        end
-
-        should 'not persist changes to the live association' do
-          assert_equal @wotsit, @widget.wotsit(true)
-        end
-      end
-    end
-
-    context 'where the association is created between model versions' do
-      setup do
-        @wotsit = @widget.create_wotsit :name => 'wotsit_0'
-        Timecop.travel 1.second.since
-        @widget.update_attributes :name => 'widget_1'
-      end
-
-      context 'when reified' do
-        setup { @widget_0 = @widget.versions.last.reify(:has_one => true) }
-
-        should 'see the associated as it was at the time' do
-          assert_equal 'wotsit_0', @widget_0.wotsit.name
-        end
-
-        should 'not persist changes to the live association' do
-          assert_equal @wotsit, @widget.wotsit(true)
-        end
-      end
-
-      context 'and then the associated is updated between model versions' do
-        setup do
-          @wotsit.update_attributes :name => 'wotsit_1'
-          @wotsit.update_attributes :name => 'wotsit_2'
-          Timecop.travel 1.second.since
-          @widget.update_attributes :name => 'widget_2'
-          @wotsit.update_attributes :name => 'wotsit_3'
-        end
-
-        context 'when reified' do
-          setup { @widget_1 = @widget.versions.last.reify(:has_one => true) }
-
-          should 'see the associated as it was at the time' do
-            assert_equal 'wotsit_2', @widget_1.wotsit.name
-          end
-
-          should 'not persist changes to the live association' do
-            assert_equal 'wotsit_3', @widget.wotsit(true).name
-          end
-        end
-
-        context 'when reified opting out of has_one reification' do
-          setup { @widget_1 = @widget.versions.last.reify(:has_one => false) }
-
-          should 'see the associated as it is live' do
-            assert_equal 'wotsit_3', @widget_1.wotsit.name
-          end
-        end
-      end
-
-      context 'and then the associated is destroyed' do
-        setup do
-          @wotsit.destroy
-        end
-
-        context 'when reify' do
-          setup { @widget_1 = @widget.versions.last.reify(:has_one => true) }
-
-          should 'see the associated as it was at the time' do
-            assert_equal @wotsit, @widget_1.wotsit
-          end
-
-          should 'not persist changes to the live association' do
-            assert_nil @widget.wotsit(true)
-          end
-        end
-
-        context 'and then the model is updated' do
-          setup do
-            Timecop.travel 1.second.since
-            @widget.update_attributes :name => 'widget_3'
-          end
-
-          context 'when reified' do
-            setup { @widget_2 = @widget.versions.last.reify(:has_one => true) }
-
-            should 'see the associated as it was at the time' do
-              assert_nil @widget_2.wotsit
-            end
-          end
-        end
-      end
-    end
-  end
-
-  context 'A model with a has_many association' do
-    setup { @customer = Customer.create :name => 'customer_0' }
-
-    context 'updated before the associated was created' do
-      setup do
-        @customer.update_attributes! :name => 'customer_1'
-        @customer.orders.create! :order_date => Date.today
-      end
-
-      context 'when reified' do
-        setup { @customer_0 = @customer.versions.last.reify(:has_many => true) }
-
-        should 'see the associated as it was at the time' do
-          assert_equal [], @customer_0.orders
-        end
-
-        should 'not persist changes to the live association' do
-          assert_not_equal [], @customer.orders(true)
-        end
-      end
-
-      context 'when reified with option mark_for_destruction' do
-        setup { @customer_0 = @customer.versions.last.reify(:has_many => true, :mark_for_destruction => true) }
-
-        should 'mark the associated for destruction' do
-          assert_equal [true], @customer_0.orders.map(&:marked_for_destruction?)
-        end
-      end
-    end
-
-    context 'where the association is created between model versions' do
-      setup do
-        @order = @customer.orders.create! :order_date => 'order_date_0'
-        Timecop.travel 1.second.since
-        @customer.update_attributes :name => 'customer_1'
-      end
-
-      context 'when reified' do
-        setup { @customer_0 = @customer.versions.last.reify(:has_many => true) }
-
-        should 'see the associated as it was at the time' do
-          assert_equal ['order_date_0'], @customer_0.orders.map(&:order_date)
-        end
-      end
-
-      context 'and then a nested has_many association is created' do
-        setup do
-          @order.line_items.create! :product => 'product_0'
-        end
-
-        context 'when reified' do
-          setup { @customer_0 = @customer.versions.last.reify(:has_many => true) }
-
-          should 'see the live version of the nested association' do
-            assert_equal ['product_0'], @customer_0.orders.first.line_items.map(&:product)
-          end
-        end
-      end
-
-      context 'and then the associated is updated between model versions' do
-        setup do
-          @order.update_attributes :order_date => 'order_date_1'
-          @order.update_attributes :order_date => 'order_date_2'
-          Timecop.travel 1.second.since
-          @customer.update_attributes :name => 'customer_2'
-          @order.update_attributes :order_date => 'order_date_3'
-        end
-
-        context 'when reified' do
-          setup { @customer_1 = @customer.versions.last.reify(:has_many => true) }
-
-          should 'see the associated as it was at the time' do
-            assert_equal ['order_date_2'], @customer_1.orders.map(&:order_date)
-          end
-
-          should 'not persist changes to the live association' do
-            assert_equal ['order_date_3'], @customer.orders(true).map(&:order_date)
-          end
-        end
-
-        context 'when reified opting out of has_many reification' do
-          setup { @customer_1 = @customer.versions.last.reify(:has_many => false) }
-
-          should 'see the associated as it is live' do
-            assert_equal ['order_date_3'], @customer_1.orders.map(&:order_date)
-          end
-        end
-
-        context 'and then the associated is destroyed' do
-          setup do
-            @order.destroy
-          end
-
-          context 'when reified' do
-            setup { @customer_1 = @customer.versions.last.reify(:has_many => true) }
-
-            should 'see the associated as it was at the time' do
-              assert_equal ['order_date_2'], @customer_1.orders.map(&:order_date)
-            end
-
-            should 'not persist changes to the live association' do
-              assert_equal [], @customer.orders(true)
-            end
-          end
-        end
-      end
-
-      context 'and then the associated is destroyed' do
-        setup do
-          @order.destroy
-        end
-
-        context 'when reified' do
-          setup { @customer_1 = @customer.versions.last.reify(:has_many => true) }
-
-          should 'see the associated as it was at the time' do
-            assert_equal [@order.order_date], @customer_1.orders.map(&:order_date)
-          end
-
-          should 'not persist changes to the live association' do
-            assert_equal [], @customer.orders(true)
-          end
-        end
-      end
-
-      context 'and then the associated is destroyed between model versions' do
-        setup do
-          @order.destroy
-          Timecop.travel 1.second.since
-          @customer.update_attributes :name => 'customer_2'
-        end
-
-        context 'when reified' do
-          setup { @customer_1 = @customer.versions.last.reify(:has_many => true) }
-
-          should 'see the associated as it was at the time' do
-            assert_equal [], @customer_1.orders
-          end
-        end
-      end
-
-      context 'and then another association is added' do
-        setup do
-          @customer.orders.create! :order_date => 'order_date_1'
-        end
-
-        context 'when reified' do
-          setup { @customer_0 = @customer.versions.last.reify(:has_many => true) }
-
-          should 'see the associated as it was at the time' do
-            assert_equal ['order_date_0'], @customer_0.orders.map(&:order_date)
-          end
-
-          should 'not persist changes to the live association' do
-            assert_equal ['order_date_0', 'order_date_1'], @customer.orders(true).map(&:order_date).sort
-          end
-        end
-
-        context 'when reified with option mark_for_destruction' do
-          setup { @customer_0 = @customer.versions.last.reify(:has_many => true, :mark_for_destruction => true) }
-
-          should 'mark the newly associated for destruction' do
-            assert @customer_0.orders.detect { |o| o.order_date == 'order_date_1'}.marked_for_destruction?
-          end
-        end
-      end
-    end
-  end
-
-  context 'A model with a has_many through association' do
-    setup { @book = Book.create :title => 'book_0' }
-
-    context 'updated before the associated was created' do
-      setup do
-        @book.update_attributes! :title => 'book_1'
-        @book.authors.create! :name => 'author_0'
-      end
-
-      context 'when reified' do
-        setup { @book_0 = @book.versions.last.reify(:has_many => true) }
-
-        should 'see the associated as it was at the time' do
-          assert_equal [], @book_0.authors
-        end
-
-        should 'not persist changes to the live association' do
-          assert_equal ['author_0'], @book.authors(true).map(&:name)
-        end
-      end
-
-      context 'when reified with option mark_for_destruction' do
-        setup { @book_0 = @book.versions.last.reify(:has_many => true, :mark_for_destruction => true) }
-
-        should 'mark the associated for destruction' do
-          assert_equal [true], @book_0.authors.map(&:marked_for_destruction?)
-        end
-
-        should 'mark the associated-through for destruction' do
-          assert_equal [true], @book_0.authorships.map(&:marked_for_destruction?)
-        end
-      end
-    end
-
-    context 'updated before it is associated with an existing one' do
-      setup do
-        person_existing = Person.create(:name => 'person_existing')
-        Timecop.travel 1.second.since
-        @book.update_attributes! :title => 'book_1'
-        @book.authors << person_existing
-      end
-
-      context 'when reified' do
-        setup { @book_0 = @book.versions.last.reify(:has_many => true) }
-
-        should 'see the associated as it was at the time' do
-          assert_equal [], @book_0.authors
-        end
-      end
-
-      context 'when reified with option mark_for_destruction' do
-        setup { @book_0 = @book.versions.last.reify(:has_many => true, :mark_for_destruction => true) }
-
-        should 'not mark the associated for destruction' do
-          assert_equal [false], @book_0.authors.map(&:marked_for_destruction?)
-        end
-
-        should 'mark the associated-through for destruction' do
-          assert_equal [true], @book_0.authorships.map(&:marked_for_destruction?)
-        end
-      end
-    end
-
-    context 'where the association is created between model versions' do
-      setup do
-        @author = @book.authors.create! :name => 'author_0'
-        @person_existing = Person.create(:name => 'person_existing')
-        Timecop.travel 1.second.since
-        @book.update_attributes! :title => 'book_1'
-      end
-
-      context 'when reified' do
-        setup { @book_0 = @book.versions.last.reify(:has_many => true) }
-
-        should 'see the associated as it was at the time' do
-          assert_equal ['author_0'], @book_0.authors.map(&:name)
-        end
-      end
-
-      context 'and then the associated is updated between model versions' do
-        setup do
-          @author.update_attributes :name => 'author_1'
-          @author.update_attributes :name => 'author_2'
-          Timecop.travel 1.second.since
-          @book.update_attributes :title => 'book_2'
-          @author.update_attributes :name => 'author_3'
-        end
-
-        context 'when reified' do
-          setup { @book_1 = @book.versions.last.reify(:has_many => true) }
-
-          should 'see the associated as it was at the time' do
-            assert_equal ['author_2'], @book_1.authors.map(&:name)
-          end
-
-          should 'not persist changes to the live association' do
-            assert_equal ['author_3'], @book.authors(true).map(&:name)
-          end
-        end
-
-        context 'when reified opting out of has_many reification' do
-          setup { @book_1 = @book.versions.last.reify(:has_many => false) }
-
-          should 'see the associated as it is live' do
-            assert_equal ['author_3'], @book_1.authors.map(&:name)
-          end
-        end
-      end
-
-      context 'and then the associated is destroyed' do
-        setup do
-          @author.destroy
-        end
-
-        context 'when reified' do
-          setup { @book_1 = @book.versions.last.reify(:has_many => true) }
-
-          should 'see the associated as it was at the time' do
-            assert_equal [@author.name], @book_1.authors.map(&:name)
-          end
-
-          should 'not persist changes to the live association' do
-            assert_equal [], @book.authors(true)
-          end
-        end
-      end
-
-      context 'and then the associated is destroyed between model versions' do
-        setup do
-          @author.destroy
-          Timecop.travel 1.second.since
-          @book.update_attributes :title => 'book_2'
-        end
-
-        context 'when reified' do
-          setup { @book_1 = @book.versions.last.reify(:has_many => true) }
-
-          should 'see the associated as it was at the time' do
-            assert_equal [], @book_1.authors
-          end
-        end
-      end
-
-      context 'and then the associated is dissociated between model versions' do
-        setup do
-          @book.authors = []
-          Timecop.travel 1.second.since
-          @book.update_attributes :title => 'book_2'
-        end
-
-        context 'when reified' do
-          setup { @book_1 = @book.versions.last.reify(:has_many => true) }
-
-          should 'see the associated as it was at the time' do
-            assert_equal [], @book_1.authors
-          end
-        end
-      end
-
-      context 'and then another associated is created' do
-        setup do
-          @book.authors.create! :name => 'author_1'
-        end
-
-        context 'when reified' do
-          setup { @book_0 = @book.versions.last.reify(:has_many => true) }
-
-          should 'only see the first associated' do
-            assert_equal ['author_0'], @book_0.authors.map(&:name)
-          end
-
-          should 'not persist changes to the live association' do
-            assert_equal ['author_0', 'author_1'], @book.authors(true).map(&:name)
-          end
-        end
-
-        context 'when reified with option mark_for_destruction' do
-          setup { @book_0 = @book.versions.last.reify(:has_many => true, :mark_for_destruction => true) }
-
-          should 'mark the newly associated for destruction' do
-            assert @book_0.authors.detect { |a| a.name == 'author_1' }.marked_for_destruction?
-          end
-
-          should 'mark the newly associated-through for destruction' do
-            assert @book_0.authorships.detect { |as| as.person.name == 'author_1' }.marked_for_destruction?
-          end
-        end
-      end
-
-      context 'and then an existing one is associated' do
-        setup do
-          @book.authors << @person_existing
-        end
-
-        context 'when reified' do
-          setup { @book_0 = @book.versions.last.reify(:has_many => true) }
-
-          should 'only see the first associated' do
-            assert_equal ['author_0'], @book_0.authors.map(&:name)
-          end
-
-          should 'not persist changes to the live association' do
-            assert_equal ['author_0', 'person_existing'], @book.authors(true).map(&:name).sort
-          end
-        end
-
-        context 'when reified with option mark_for_destruction' do
-          setup { @book_0 = @book.versions.last.reify(:has_many => true, :mark_for_destruction => true) }
-
-          should 'not mark the newly associated for destruction' do
-            assert !@book_0.authors.detect { |a| a.name == 'person_existing' }.marked_for_destruction?
-          end
-
-          should 'mark the newly associated-through for destruction' do
-            assert @book_0.authorships.detect { |as| as.person.name == 'person_existing' }.marked_for_destruction?
-          end
-        end
-      end
-    end
-
-    context 'updated before the associated without paper_trail was created' do
-      setup do
-        @book.update_attributes! :title => 'book_1'
-        @book.editors.create! :name => 'editor_0'
-      end
-
-      context 'when reified' do
-        setup { @book_0 = @book.versions.last.reify(:has_many => true) }
-
-        should 'see the live association' do
-          assert_equal ['editor_0'], @book_0.editors.map(&:name)
-        end
-      end
     end
   end
 end

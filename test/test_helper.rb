@@ -1,3 +1,9 @@
+begin
+  require 'pry-nav'
+rescue LoadError
+  # It's OK, we don't include pry in e.g. gemfiles/3.0.gemfile
+end
+
 ENV["RAILS_ENV"] = "test"
 ENV["DB"] ||= "sqlite"
 
@@ -36,6 +42,36 @@ class ActiveSupport::TestCase
   teardown do
     DatabaseCleaner.clean if using_mysql?
     Thread.current[:paper_trail] = nil
+  end
+
+  private
+
+  def assert_attributes_equal(expected, actual)
+    if using_mysql?
+      expected, actual = expected.dup, actual.dup
+
+      # Adjust timestamps for missing fractional seconds precision.
+      %w(created_at updated_at).each do |timestamp|
+        expected[timestamp] = expected[timestamp].change(:usec => 0)
+        actual[timestamp]   = actual[timestamp].change(:usec => 0)
+      end
+    end
+
+    assert_equal expected, actual
+  end
+
+  def assert_changes_equal(expected, actual)
+    if using_mysql?
+      expected, actual = expected.dup, actual.dup
+
+      # Adjust timestamps for missing fractional seconds precision.
+      %w(created_at updated_at).each do |timestamp|
+        expected[timestamp][1] = expected[timestamp][1].change(:usec => 0)
+        actual[timestamp][1]   = actual[timestamp][1].change(:usec => 0)
+      end
+    end
+
+    assert_equal expected, actual
   end
 end
 

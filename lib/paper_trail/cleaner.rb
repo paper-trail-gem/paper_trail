@@ -16,7 +16,7 @@ module PaperTrail
     def clean_versions!(options = {})
       options = {:keeping => 1, :date => :all}.merge(options)
       gather_versions(options[:item_id], options[:date]).each do |item_id, versions|
-        versions.group_by { |v| v.send(PaperTrail.timestamp_field).to_date }.each do |date, _versions|
+        group_versions_by_date(versions).each do |date, _versions|
           # Remove the number of versions we wish to keep from the collection
           # of versions prior to destruction.
           _versions.pop(options[:keeping])
@@ -40,6 +40,13 @@ module PaperTrail
       # do so now.
       versions = PaperTrail::Version.all if versions == PaperTrail::Version
       versions.group_by(&:item_id)
+    end
+
+    # Given an array of versions, returns a hash mapping dates to arrays of
+    # versions.
+    # @api private
+    def group_versions_by_date(versions)
+      versions.group_by { |v| v.send(PaperTrail.timestamp_field).to_date }
     end
   end
 end
