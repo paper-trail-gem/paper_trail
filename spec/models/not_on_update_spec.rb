@@ -12,7 +12,10 @@ describe NotOnUpdate, :type => :model do
 
     it "increments the `:updated_at` timestamp" do
       before = record.updated_at
-      record.touch_with_version
+      # Travel 1 second because MySQL lacks sub-second resolution
+      Timecop.travel(1) do
+        record.touch_with_version
+      end
       expect(record.updated_at).to be > before
     end
   end

@@ -15,7 +15,8 @@
 
 ### Added
 
-None
+- [#689](https://github.com/airblade/paper_trail/pull/689) -
+  Rails 5 compatibility
 
 ### Fixed
 

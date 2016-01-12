@@ -154,7 +154,9 @@ module PaperTrail
               else
                 child = version.reify(options.merge(:has_many => false, :has_one => false))
                 model.appear_as_new_record do
-                  model.send "#{assoc.name}=", child
+                  without_persisting(child) do
+                    model.send "#{assoc.name}=", child
+                  end
                 end
               end
             end
@@ -264,6 +266,18 @@ module PaperTrail
           paper_trail_version_class.
           where("id IN (#{version_id_subquery})").
           inject({}) { |acc, v| acc.merge!(v.item_id => v) }
+      end
+
+      # Temporarily suppress #save so we can reassociate with the reified
+      # master of a has_one relationship. Since ActiveRecord 5 the related
+      # object is saved when it is assigned to the association. ActiveRecord
+      # 5 also happens to be the first version that provides #suppress.
+      def without_persisting(record)
+        if record.class.respond_to? :suppress
+          record.class.suppress { yield }
+        else
+          yield
+        end
       end
     end
   end

@@ -43,7 +43,10 @@ describe Widget, :type => :model do
         subject { widget.versions.last.reify }
 
         it "should reset the value for the timestamp attrs for update so that value gets updated properly" do
-          expect { subject.save! }.to change(subject, :updated_at)
+          # Travel 1 second because MySQL lacks sub-second resolution
+          Timecop.travel(1) do
+            expect { subject.save! }.to change(subject, :updated_at)
+          end
         end
       end
     end
@@ -253,13 +256,19 @@ describe Widget, :type => :model do
 
         it "creates a version" do
           count = widget.versions.size
-          widget.touch_with_version
+          # Travel 1 second because MySQL lacks sub-second resolution
+          Timecop.travel(1) do
+            widget.touch_with_version
+          end
           expect(widget.versions.size).to eq(count + 1)
         end
 
         it "increments the `:updated_at` timestamp" do
           time_was = widget.updated_at
-          widget.touch_with_version
+          # Travel 1 second because MySQL lacks sub-second resolution
+          Timecop.travel(1) do
+            widget.touch_with_version
+          end
           expect(widget.updated_at).to be > time_was
         end
       end

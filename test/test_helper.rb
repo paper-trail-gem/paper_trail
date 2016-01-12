@@ -21,6 +21,11 @@ require 'shoulda'
 require 'ffaker'
 require 'database_cleaner'
 
+if Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new('5.0.0.beta1')
+  # See https://github.com/rails/rails-controller-testing/issues/5
+  ActionController::TestCase.send(:include, Rails::Controller::Testing::TestProcess)
+end
+
 Rails.backtrace_cleaner.remove_silencers!
 
 # Run any available migration
@@ -35,7 +40,11 @@ DatabaseCleaner.strategy = :truncation
 # global setup block resetting Thread.current
 class ActiveSupport::TestCase
   if using_mysql?
-    self.use_transactional_fixtures = false
+    if respond_to? :use_transactional_tests=
+      self.use_transactional_tests = false
+    else
+      self.use_transactional_fixtures = false
+    end
     setup { DatabaseCleaner.start }
   end
 
@@ -89,6 +98,22 @@ def change_schema
   reset_version_class_column_info!
 end
 
+# Wrap args in a hash to support the ActionController::TestCase and
+# ActionDispatch::Integration HTTP request method switch to keyword args
+# (see https://github.com/rails/rails/blob/master/actionpack/CHANGELOG.md)
+def params_wrapper(args)
+  if defined?(::Rails) && Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new('5.0.0.beta1')
+    { params: args }
+  else
+    args
+  end
+end
+
+def reset_version_class_column_info!
+  PaperTrail::Version.connection.schema_cache.clear!
+  PaperTrail::Version.reset_column_information
+end
+
 def restore_schema
   ActiveRecord::Migration.verbose = false
   ActiveRecord::Schema.define do
@@ -97,9 +122,4 @@ def restore_schema
   end
   ActiveRecord::Migration.verbose = true
   reset_version_class_column_info!
-end
-
-def reset_version_class_column_info!
-  PaperTrail::Version.connection.schema_cache.clear!
-  PaperTrail::Version.reset_column_information
 end

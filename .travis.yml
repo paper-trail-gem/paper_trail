@@ -30,8 +30,6 @@ gemfile:
 
 matrix:
   fast_finish: true
-  allow_failures:
-    - gemfile: gemfiles/ar5.gemfile
   exclude:
     - gemfile: gemfiles/ar5.gemfile
       rvm: 1.9.3
