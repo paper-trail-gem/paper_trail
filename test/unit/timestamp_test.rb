@@ -34,7 +34,7 @@ class TimestampTest < ActiveSupport::TestCase
     end
 
     # Test we are ordering by custom timestamps.
-    @fluxor.versions true  # reload association
+    @fluxor.versions.reload # reload association
     assert_nil @fluxor.versions[2].reify
     assert_equal 'Some text.', @fluxor.versions[1].reify.name
     assert_equal 'Some more text.', @fluxor.versions[0].reify.name
