@@ -648,11 +648,20 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     should 'not generate warning' do
       # Tests that it doesn't try to write created_on as an attribute just because a created_on
       # method exists.
-      warnings = capture(:stderr) {  # Deprecation warning in Rails 3.2
-        assert_nothing_raised {  # ActiveModel::MissingAttributeError in Rails 4
-          @wotsit.update_attributes! :name => 'changed'
-        }
-      }
+      warnings =
+        if respond_to?(:capture_io)
+          capture_io {
+            assert_nothing_raised {
+              @wotsit.update_attributes! :name => 'changed'
+            }
+          }.last
+        else
+          capture(:stderr) {  # Deprecation warning in Rails 3.2
+            assert_nothing_raised {  # ActiveModel::MissingAttributeError in Rails 4
+              @wotsit.update_attributes! :name => 'changed'
+            }
+          }
+        end
       assert_equal '', warnings
     end
 
