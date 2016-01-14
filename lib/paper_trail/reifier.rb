@@ -189,7 +189,7 @@ module PaperTrail
             group("item_id").
             to_sql
           versions = versions_by_id(model.class, version_id_subquery)
-          collection = Array.new model.send(assoc.name, true) # pass true to avoid cache
+          collection = Array.new model.send(assoc.name).reload # to avoid cache
           prepare_array_for_has_many(collection, options, versions)
           model.send(assoc.name).proxy_association.target = collection
         end
