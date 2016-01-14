@@ -1,6 +1,6 @@
 language: ruby
 rvm:
-  - 2.2.4
+  - 2.3.0
   - 1.9.3
   - jruby-19mode
 env:
