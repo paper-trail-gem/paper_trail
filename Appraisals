@@ -8,22 +8,15 @@
 # > https://github.com/thoughtbot/appraisal
 
 appraise "ar3" do
-  gem "activerecord", "~> 3.2"
+  gem "activerecord", "~> 3.2.22"
   gem "i18n", "~> 0.6.11"
   gem "request_store", "~> 1.1.0"
 
   group :development, :test do
-    gem 'railties', '~> 3.0'
-    gem 'test-unit', '~> 3.0'
+    gem 'railties', '~> 3.2.22'
+    gem 'test-unit', '~> 3.1.5'
     platforms :ruby do
       gem 'mysql2', '~> 0.3.20'
-      gem 'pg', '~> 0.17.1'
-    end
-    platforms :jruby do
-      gem 'activerecord-jdbcsqlite3-adapter', '~> 1.3'
-      gem 'activerecord-jdbcpostgresql-adapter', '~> 1.3'
-      gem 'activerecord-jdbcmysql-adapter', '~> 1.3'
-      gem 'activerecord-jdbc-adapter', '1.3.15'
     end
   end
 end
