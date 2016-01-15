@@ -26,22 +26,22 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'appraisal', '~> 2.1'
   s.add_development_dependency 'rake', '~> 10.4.2'
-  s.add_development_dependency 'shoulda', '~> 3.5'
+  s.add_development_dependency 'shoulda', '~> 3.5.0'
   s.add_development_dependency 'ffaker', '~> 2.1.0'
   s.add_development_dependency 'railties', ['>= 3.0', '< 5.0']
-  s.add_development_dependency 'sinatra', '~> 1.0'
-  s.add_development_dependency 'rack-test', '>= 0.6'
+  s.add_development_dependency 'sinatra', '~> 1.4.6'
+  s.add_development_dependency 'rack-test', '~> 0.6.3'
   s.add_development_dependency 'rspec-rails', '~> 3.4.0'
-  s.add_development_dependency 'generator_spec'
+  s.add_development_dependency 'generator_spec', '~> 0.9.3'
   s.add_development_dependency 'database_cleaner', '~> 1.2'
   s.add_development_dependency 'pry-nav', '~> 0.2.4'
   s.add_development_dependency 'rubocop', '~> 0.35.1'
-  s.add_development_dependency 'timecop'
+  s.add_development_dependency 'timecop', '~> 0.8.0'
 
   if defined?(JRUBY_VERSION)
-    s.add_development_dependency 'activerecord-jdbcsqlite3-adapter', '~> 1.3'
-    s.add_development_dependency 'activerecord-jdbcpostgresql-adapter', '~> 1.3'
-    s.add_development_dependency 'activerecord-jdbcmysql-adapter', '~> 1.3'
+    s.add_development_dependency 'activerecord-jdbcsqlite3-adapter', '~> 1.3.15'
+    s.add_development_dependency 'activerecord-jdbcpostgresql-adapter', '~> 1.3.15'
+    s.add_development_dependency 'activerecord-jdbcmysql-adapter', '~> 1.3.15'
   else
     s.add_development_dependency 'sqlite3', '~> 1.2'
     s.add_development_dependency 'pg', '~> 0.17'
