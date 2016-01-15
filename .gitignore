@@ -20,3 +20,4 @@ vendor/*
 .tags_sorted_by_file
 .ruby-version
 .ruby-gemset
+.rbenv-gemsets
