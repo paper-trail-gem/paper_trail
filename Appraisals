@@ -17,13 +17,6 @@ appraise "ar3" do
     gem 'test-unit', '~> 3.0'
     platforms :ruby do
       gem 'mysql2', '~> 0.3.20'
-      gem 'pg', '~> 0.17.1'
-    end
-    platforms :jruby do
-      gem 'activerecord-jdbcsqlite3-adapter', '~> 1.3'
-      gem 'activerecord-jdbcpostgresql-adapter', '~> 1.3'
-      gem 'activerecord-jdbcmysql-adapter', '~> 1.3'
-      gem 'activerecord-jdbc-adapter', '1.3.15'
     end
   end
 end
