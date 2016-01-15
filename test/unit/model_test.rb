@@ -645,26 +645,28 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       assert_not_nil @wotsit.versions.last.reify.updated_at
     end
 
+    # Tests that it doesn't try to write created_on as an attribute just because
+    # a created_on method exists.
+    #
+    # - Deprecation warning in Rails 3.2
+    # - ActiveModel::MissingAttributeError in Rails 4
+    #
+    # In rails 5, `capture` is deprecated in favor of `capture_io`.
+    #
     should 'not generate warning' do
-      # Tests that it doesn't try to write created_on as an attribute just because a created_on
-      # method exists.
+      assert_update_raises_nothing = -> {
+        assert_nothing_raised {
+          @wotsit.update_attributes! :name => 'changed'
+        }
+      }
       warnings =
         if respond_to?(:capture_io)
-          capture_io {
-            assert_nothing_raised {
-              @wotsit.update_attributes! :name => 'changed'
-            }
-          }.last
+          capture_io { assert_update_raises_nothing.call }.last
         else
-          capture(:stderr) {  # Deprecation warning in Rails 3.2
-            assert_nothing_raised {  # ActiveModel::MissingAttributeError in Rails 4
-              @wotsit.update_attributes! :name => 'changed'
-            }
-          }
+          capture(:stderr) { assert_update_raises_nothing.call }
         end
       assert_equal '', warnings
     end
-
   end
 
 
