@@ -24,7 +24,7 @@ module PaperTrail
     # PaperTrail is enabled by default.
     # @api public
     def enabled?
-      !!PaperTrail.config.enabled
+      PaperTrail.config.enabled?
     end
 
     def serialized_attributes?
@@ -168,10 +168,6 @@ unless PaperTrail.active_record_protected_attributes?
   rescue LoadError # rubocop:disable Lint/HandleExceptions
     # In case `protected_attributes` gem is not available.
   end
-end
-
-ActiveSupport.on_load(:active_record) do
-  include PaperTrail::Model
 end
 
 # Require frameworks
