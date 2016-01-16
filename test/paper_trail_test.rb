@@ -8,12 +8,30 @@ class PaperTrailTest < ActiveSupport::TestCase
   test 'Version Number' do
     assert PaperTrail.const_defined?(:VERSION)
   end
-  
-  test 'enabled is thread-safe' do
+
+  test 'enabled_in_current_thread= is thread-safe' do
     Thread.new do
-      PaperTrail.enabled = false
+      PaperTrail.enabled_in_current_thread = false
     end.join
-    assert PaperTrail.enabled?
+    assert_equal true, PaperTrail.enabled?
+  end
+
+  context 'enabled_in_all_threads= is not thread-safe' do
+    setup do
+      PaperTrail.enabled_in_all_threads = false
+    end
+
+    should 'be disabled' do
+      Thread.new do
+        assert_equal false, PaperTrail.enabled?
+        PaperTrail.enabled_in_all_threads = true
+        assert_equal true, PaperTrail.enabled?
+      end.join
+    end
+
+    teardown do
+      PaperTrail.config.instance_variable_set(:@enabled_in_all_threads, true)
+    end
   end
 
   test 'create with plain model class' do

@@ -16,15 +16,31 @@ module PaperTrail
   class << self
     # Switches PaperTrail on or off.
     # @api public
+    # @deprecated in 5.0
     def enabled=(value)
-      PaperTrail.config.enabled = value
+      ::ActiveSupport::Deprecation.warn "Use enabled_in_current_thread=", caller(1)
+      PaperTrail.config.enabled_in_current_thread = value
+    end
+
+    # Not thread-safe. See also `enabled_in_current_thread=`, which is.
+    # @api public
+    def enabled_in_all_threads= value
+      PaperTrail.config.enabled_in_all_threads = value
+    end
+
+    # Enable or disable PaperTrail in the current thread. Ignored if
+    # PaperTrail is disabled globally. See also `enabled_in_all_threads=`,
+    # which is not thread-safe.
+    # @api public
+    def enabled_in_current_thread= value
+      PaperTrail.config.enabled_in_current_thread = value
     end
 
     # Returns `true` if PaperTrail is on, `false` otherwise.
     # PaperTrail is enabled by default.
     # @api public
     def enabled?
-      !!PaperTrail.config.enabled
+      PaperTrail.config.enabled?
     end
 
     def serialized_attributes?
@@ -168,10 +184,6 @@ unless PaperTrail.active_record_protected_attributes?
   rescue LoadError # rubocop:disable Lint/HandleExceptions
     # In case `protected_attributes` gem is not available.
   end
-end
-
-ActiveSupport.on_load(:active_record) do
-  include PaperTrail::Model
 end
 
 # Require frameworks
