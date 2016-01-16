@@ -170,10 +170,6 @@ unless PaperTrail.active_record_protected_attributes?
   end
 end
 
-ActiveSupport.on_load(:active_record) do
-  include PaperTrail::Model
-end
-
 # Require frameworks
 require "paper_trail/frameworks/sinatra"
 if defined?(::Rails) && ActiveRecord::VERSION::STRING >= "3.2"
