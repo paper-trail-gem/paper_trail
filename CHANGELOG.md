@@ -33,10 +33,13 @@ None
   [#614](https://github.com/airblade/paper_trail/pull/614)
 - Added `unversioned_attributes` option to `reify`.
   [#579](https://github.com/airblade/paper_trail/pull/579)
+- Added a `config.paper_trail.enabled` option for controlling PaperTrail from the environment config.
+  [#695](https://github.com/airblade/paper_trail/pull/695)
 
 ### Fixed
 
-- None
+- Fixed deprecation warning for Active Record after_callback / after_commit
+  [#695](https://github.com/airblade/paper_trail/pull/695)
 
 ## 4.0.1
 

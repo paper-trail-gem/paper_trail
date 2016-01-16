@@ -8,12 +8,25 @@ class PaperTrailTest < ActiveSupport::TestCase
   test 'Version Number' do
     assert PaperTrail.const_defined?(:VERSION)
   end
-  
+
   test 'enabled is thread-safe' do
     Thread.new do
       PaperTrail.enabled = false
     end.join
     assert PaperTrail.enabled?
+  end
+
+  context 'can be disabled' do
+    setup {PaperTrail.config.disable!}
+
+    should 'be disabled' do
+      Thread.new do
+        assert !PaperTrail.enabled?
+        PaperTrail.enabled = true
+        assert PaperTrail.enabled?
+      end.join
+    end
+    teardown {PaperTrail.config.instance_variable_set(:@disabled, false)}
   end
 
   test 'create with plain model class' do
