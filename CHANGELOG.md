@@ -1,3 +1,19 @@
+## 4.0.2
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- [#696](https://github.com/airblade/paper_trail/issues/696) /
+  [#697](https://github.com/airblade/paper_trail/pull/697)
+  Bind JSON query parameters in `where_object` and `where_object_changes`.
+
 ## 4.0.1
 
 ### Breaking Changes

@@ -13,6 +13,16 @@ if JsonVersion.table_exists?
         describe '#where_object' do
           it { expect(JsonVersion).to respond_to(:where_object) }
 
+          it "escapes values" do
+            f = Fruit.create(:name => 'Bobby')
+            expect(
+              f.
+                versions.
+                where_object(:name => "Robert'; DROP TABLE Students;--").
+                count
+            ).to eq(0)
+          end
+
           context "invalid arguments" do
             it "should raise an error" do
               expect { JsonVersion.where_object(:foo) }.to raise_error(ArgumentError)
@@ -41,6 +51,16 @@ if JsonVersion.table_exists?
 
         describe '#where_object_changes' do
           it { expect(JsonVersion).to respond_to(:where_object_changes) }
+
+          it "escapes values" do
+            f = Fruit.create(:name => 'Bobby')
+            expect(
+              f.
+                versions.
+                where_object_changes(:name => "Robert'; DROP TABLE Students;--").
+                count
+            ).to eq(0)
+          end
 
           context "invalid arguments" do
             it "should raise an error" do
