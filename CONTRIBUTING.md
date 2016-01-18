@@ -76,12 +76,12 @@ DB=postgres bundle exec rake prepare
 # If this is the first test run ever, create databases.
 # Unlike mysql, use create/migrate instead of setup.
 cd test/dummy
-RAILS_ENV=test bundle exec rake db:create
-RAILS_ENV=test bundle exec rake db:migrate
-RAILS_ENV=foo bundle exec rake db:create
-RAILS_ENV=foo bundle exec rake db:migrate
-RAILS_ENV=bar bundle exec rake db:create
-RAILS_ENV=bar bundle exec rake db:migrate
+DB=postgres RAILS_ENV=test bundle exec rake db:create
+DB=postgres RAILS_ENV=test bundle exec rake db:migrate
+DB=postgres RAILS_ENV=foo bundle exec rake db:create
+DB=postgres RAILS_ENV=foo bundle exec rake db:migrate
+DB=postgres RAILS_ENV=bar bundle exec rake db:create
+DB=postgres RAILS_ENV=bar bundle exec rake db:migrate
 cd ../..
 
 # Run tests
