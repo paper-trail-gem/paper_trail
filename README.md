@@ -276,15 +276,22 @@ their order, use the `paper_trail_on_*` methods.
 
 ```ruby
 class Article < ActiveRecord::Base
-  has_paper_trail :on => [] # don't install callbacks yet
-  paper_trail_on_destroy    # install destroy
+
+  # Include PaperTrail, but do not add any callbacks yet. Passing the
+  # empty array to `:on` omits callbacks.
+  has_paper_trail :on => []
+
+  # Add callbacks in the order you need.
+  paper_trail_on_destroy    # add destroy callback
   paper_trail_on_update     # etc.
   paper_trail_on_create
 end
 ```
 
 The `paper_trail_on_destroy` method can be further configured to happen
-`:before` or `:after` the destroy event. By default, it will happen after.
+`:before` or `:after` the destroy event. In PaperTrail 4, the default is
+`:after`. In PaperTrail 5, the default will be `:before`, to support
+ActiveRecord 5. (see https://github.com/airblade/paper_trail/pull/683)
 
 ## Choosing When To Save New Versions
 
