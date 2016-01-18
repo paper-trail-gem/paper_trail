@@ -89,23 +89,23 @@ module PaperTrail
         raise ArgumentError, 'expected to receive a Hash' unless args.is_a?(Hash)
 
         if columns_hash['object'].type == :jsonb
-          where_conditions = "object @> '#{args.to_json}'::jsonb"
+          where("object @> ?", args.to_json)
         elsif columns_hash['object'].type == :json
-          where_conditions = args.map do |field, value|
-            "object->>'#{field}' = '#{value}'"
+          predicates = []
+          values = []
+          args.each do |field, value|
+            predicates.push "object->>? = ?"
+            values.concat([field, value.to_s])
           end
-          where_conditions = where_conditions.join(" AND ")
+          sql = predicates.join(" and ")
+          where(sql, *values)
         else
           arel_field = arel_table[:object]
-
-          where_conditions = args.map do |field, value|
+          where_conditions = args.map { |field, value|
             PaperTrail.serializer.where_object_condition(arel_field, field, value)
-          end.reduce do |condition1, condition2|
-            condition1.and(condition2)
-          end
+          }.reduce { |a, e| a.and(e) }
+          where(where_conditions)
         end
-
-        where(where_conditions)
       end
 
       def where_object_changes(args = {})
@@ -113,23 +113,25 @@ module PaperTrail
 
         if columns_hash['object_changes'].type == :jsonb
           args.each { |field, value| args[field] = [value] }
-          where_conditions = "object_changes @> '#{args.to_json}'::jsonb"
+          where("object_changes @> ?", args.to_json)
         elsif columns_hash['object'].type == :json
-          where_conditions = args.map do |field, value|
-            "((object_changes->>'#{field}' ILIKE '[#{value.to_json},%') OR (object_changes->>'#{field}' ILIKE '[%,#{value.to_json}]%'))"
+          predicates = []
+          values = []
+          args.each do |field, value|
+            predicates.push(
+              "((object_changes->>? ILIKE ?) OR (object_changes->>? ILIKE ?))"
+            )
+            values.concat([field, "[#{value.to_json},%", field, "[%,#{value.to_json}]%"])
           end
-          where_conditions = where_conditions.join(" AND ")
+          sql = predicates.join(" and ")
+          where(sql, *values)
         else
           arel_field = arel_table[:object_changes]
-
-          where_conditions = args.map do |field, value|
+          where_conditions = args.map { |field, value|
             PaperTrail.serializer.where_object_changes_condition(arel_field, field, value)
-          end.reduce do |condition1, condition2|
-            condition1.and(condition2)
-          end
+          }.reduce { |a, e| a.and(e) }
+          where(where_conditions)
         end
-
-        where(where_conditions)
       end
 
       def primary_key_is_int?

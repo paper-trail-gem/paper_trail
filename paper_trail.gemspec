@@ -34,17 +34,25 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'generator_spec'
   s.add_development_dependency 'database_cleaner', '~> 1.2'
 
-  # Allow time travel in testing. timecop is only supported after 1.9.2 but does a better cleanup at 'return'
   if RUBY_VERSION < "1.9.2"
     s.add_development_dependency 'delorean'
+
+    # rack-cache 1.3 drops ruby 1.8.7 support
+    s.add_development_dependency 'rack-cache', '1.2'
   else
+    # timecop is only supported after 1.9.2 but does a better cleanup at 'return'
     s.add_development_dependency 'timecop'
   end
 
   # JRuby support for the test ENV
   unless defined?(JRUBY_VERSION)
     s.add_development_dependency 'sqlite3', '~> 1.2'
-    s.add_development_dependency 'mysql2', '~> 0.3'
+
+    # We would prefer to only constrain mysql2 to '~> 0.3',
+    # but a rails bug (https://github.com/rails/rails/issues/21544)
+    # requires us to constrain to '~> 0.3.20' for now.
+    s.add_development_dependency 'mysql2', '~> 0.3.20'
+
     s.add_development_dependency 'pg', '~> 0.17'
   else
     s.add_development_dependency 'activerecord-jdbcsqlite3-adapter', '~> 1.3'
