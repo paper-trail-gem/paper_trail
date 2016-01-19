@@ -1,9 +1,9 @@
 module PaperTrail
   module VERSION
-    MAJOR = 4
+    MAJOR = 5
     MINOR = 0
     TINY  = 0
-    PRE   = nil
+    PRE   = 'pre'
 
     STRING = [MAJOR, MINOR, TINY, PRE].compact.join('.')
 
