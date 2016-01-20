@@ -38,7 +38,7 @@ module PaperTrail
         raise ArgumentError.new("`date` argument must receive a Timestamp or `:all`")
       end
       versions = item_id ? PaperTrail::Version.where(:item_id => item_id) : PaperTrail::Version
-      versions = versions.order(PaperTrail.timestamp_field, :id)
+      versions = versions.order(PaperTrail::Version.timestamp_sort_order)
       versions = versions.between(date.to_date, date.to_date + 1.day) unless date == :all
 
       # If `versions` has not been converted to an ActiveRecord::Relation yet,
