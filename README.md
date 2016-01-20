@@ -39,7 +39,7 @@ has been destroyed.
   - [Storing metadata](#storing-metadata)
 - Extensibility
   - [Custom Version Classes](#custom-version-classes)
-  - [Custom Serializer](#using-a-custom-serializer)
+  - [Custom Serializer](#custom-serializer)
 - [Testing](#testing)
 - [Sinatra](#sinatra)
 
