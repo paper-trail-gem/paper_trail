@@ -6,7 +6,8 @@ module PaperTrail
     # Options:
     #
     # - :keeping - An `integer` indicating the number of versions to be kept for
-    #   each item per date. Defaults to `1`.
+    #   each item per date. Defaults to `1`. The most recent matching versions
+    #   are kept.
     # - :date - Should either be a `Date` object specifying which date to
     #   destroy versions for or `:all`, which will specify that all dates
     #   should be cleaned. Defaults to `:all`.
@@ -30,12 +31,14 @@ module PaperTrail
     # Returns a hash of versions grouped by the `item_id` attribute formatted
     # like this: {:item_id => PaperTrail::Version}. If `item_id` or `date` is
     # set, versions will be narrowed to those pointing at items with those ids
-    # that were created on specified date.
+    # that were created on specified date. Versions are returned in
+    # chronological order.
     def gather_versions(item_id = nil, date = :all)
       unless date == :all || date.respond_to?(:to_date)
         raise ArgumentError.new("`date` argument must receive a Timestamp or `:all`")
       end
       versions = item_id ? PaperTrail::Version.where(:item_id => item_id) : PaperTrail::Version
+      versions = versions.order(PaperTrail.timestamp_field, :id)
       versions = versions.between(date.to_date, date.to_date + 1.day) unless date == :all
 
       # If `versions` has not been converted to an ActiveRecord::Relation yet,

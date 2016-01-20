@@ -19,7 +19,10 @@ None
 
 ### Fixed
 
-None
+- [#701](https://github.com/airblade/paper_trail/pull/701) /
+  [#699](https://github.com/airblade/paper_trail/issues/699) -
+  Cleaning old versions explicitly preserves the most recent
+  versions instead of relying on database result ordering.
 
 ## 4.1.0 (Unreleased)
 
