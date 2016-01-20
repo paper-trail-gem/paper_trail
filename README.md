@@ -57,7 +57,7 @@ has been destroyed.
 
 1. Add PaperTrail to your `Gemfile`.
 
-    `gem 'paper_trail', '~> 4.0.0'`
+    `gem 'paper_trail'`
 
 1. Add a `versions` table to your database.
 
@@ -68,19 +68,26 @@ has been destroyed.
 
 1. Add `has_paper_trail` to the models you want to track.
 
+    ```ruby
+    class Widget < ActiveRecord::Base
+      has_paper_trail
+    end
+    ```
+
+1. If your controllers have a `current_user` method, you can easily [track who
+is responsible for changes](#finding-out-who-was-responsible-for-a-change)
+by adding a controller callback.
+
+    ```ruby
+    class ApplicationController
+      before_filter :set_paper_trail_whodunnit
+    end
+    ```
+
 ## Basic Usage
 
-Add `has_paper_trail` to your model to record every `create`, `update`,
-and `destroy`.
-
-```ruby
-class Widget < ActiveRecord::Base
-  has_paper_trail
-end
-```
-
-This gives you a `versions` method which returns the "paper trail" of changes to
-your model.
+Your models now have a `versions` method which returns the "paper trail" of
+changes to your model.
 
 ```ruby
 widget = Widget.find 42
