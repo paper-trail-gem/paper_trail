@@ -149,16 +149,10 @@ unless PaperTrail.active_record_protected_attributes?
   end
 end
 
-require 'paper_trail/railtie' if defined?(::Rails)
-
 # Require frameworks
 require 'paper_trail/frameworks/sinatra'
 if defined?(::Rails) && ActiveRecord::VERSION::STRING >= '3.2'
   require 'paper_trail/frameworks/rails'
 else
-  ActiveSupport.on_load(:active_record) do
-    include PaperTrail::Model
-  end
-
   require 'paper_trail/frameworks/active_record'
 end
