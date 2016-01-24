@@ -1435,7 +1435,6 @@ end
   [Ilya Bodrov](http://www.sitepoint.com/author/ibodrov), 10th April 2014
 * [Using PaperTrail to track stack traces](http://rubyrailsexpert.com/?p=36),
   T James Corcoran's blog, 1st October 2013.
-* [RailsCast #255 - Undo with Paper Trail][3], Feb 28, 2011
 * [RailsCast #255 - Undo with PaperTrail](http://railscasts.com/episodes/255-undo-with-paper-trail),
   28th February 2011.
 * [Keep a Paper Trail with PaperTrail](http://www.linux-mag.com/id/7528),
@@ -1515,7 +1514,6 @@ Released under the MIT licence.
 
 [1]: http://api.rubyonrails.org/classes/ActiveRecord/Locking/Optimistic.html
 [2]: https://github.com/airblade/paper_trail/issues/163
-[3]: http://railscasts.com/episodes/255-undo-with-paper-trail
 [4]: https://api.travis-ci.org/airblade/paper_trail.svg?branch=master
 [5]: https://travis-ci.org/airblade/paper_trail
 [6]: https://img.shields.io/gemnasium/airblade/paper_trail.svg
