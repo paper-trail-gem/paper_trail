@@ -147,20 +147,20 @@ describe PaperTrail::Version, :type => :model do
 
             context "valid arguments", :versioning => true do
               let(:widget) { Widget.new }
-              let(:name) { FFaker::Name.first_name }
+              let(:name) { 'test1' }
               let(:int) { rand(10) + 1 }
 
               before do
                 widget.update_attributes!(:name => name, :an_integer => int)
-                widget.update_attributes!(:name => 'foobar', :an_integer => 100)
-                widget.update_attributes!(:name => FFaker::Name.last_name, :an_integer => 15)
+                widget.update_attributes!(:name => 'test2', :an_integer => 100)
+                widget.update_attributes!(:name => 'test3', :an_integer => 15)
               end
 
               context "`serializer == YAML`" do
                 specify { expect(PaperTrail.serializer).to be PaperTrail::Serializers::YAML }
 
                 it "should be able to locate versions according to their `object` contents" do
-                  expect(PaperTrail::Version.where_object(:name => name)).to eq([widget.versions[1]])
+                  expect(PaperTrail::Version.where_object(:name => name)).to eq(widget.versions[0..1])
                   expect(PaperTrail::Version.where_object(:an_integer => 100)).to eq([widget.versions[2]])
                 end
               end
@@ -170,7 +170,7 @@ describe PaperTrail::Version, :type => :model do
                 specify { expect(PaperTrail.serializer).to be PaperTrail::Serializers::JSON }
 
                 it "should be able to locate versions according to their `object` contents" do
-                  expect(PaperTrail::Version.where_object(:name => name)).to eq([widget.versions[1]])
+                  expect(PaperTrail::Version.where_object(:name => name)).to eq(widget.versions[0..1])
                   expect(PaperTrail::Version.where_object(:an_integer => 100)).to eq([widget.versions[2]])
                 end
 

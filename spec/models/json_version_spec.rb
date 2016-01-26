@@ -45,7 +45,7 @@ if JsonVersion.table_exists?
             end
 
             it "should be able to locate versions according to their `object` contents" do
-              expect(JsonVersion.where_object(:name => name)).to eq([fruit.versions[1]])
+              expect(JsonVersion.where_object(:name => name)).to eq(fruit.versions[0..1])
               expect(JsonVersion.where_object(:color => color)).to eq([fruit.versions[2]])
             end
           end
