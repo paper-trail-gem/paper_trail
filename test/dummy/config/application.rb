@@ -69,6 +69,9 @@ module Dummy
       if v >= Gem::Version.new("4.2") && v < Gem::Version.new("5.0.0.beta1")
         config.active_record.raise_in_transactional_callbacks = true
       end
+      if v >= Gem::Version.new("5.0.0.beta1")
+        config.active_record.time_zone_aware_types = [:datetime]
+      end
     end
 
     # Set test order for Test::Unit if possible

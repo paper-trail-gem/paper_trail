@@ -35,4 +35,7 @@ appraise "ar5" do
   gem "rspec-expectations", github: "rspec/rspec-expectations"
   gem "rspec-mocks", github: "rspec/rspec-mocks"
   gem "rspec-support", github: "rspec/rspec-support"
+  gem 'rails-controller-testing'
+  # Sinatra stable conflicts with AR5's rack dependency
+  gem 'sinatra', github: 'sinatra/sinatra'
 end

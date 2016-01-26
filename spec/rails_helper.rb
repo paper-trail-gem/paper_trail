@@ -12,6 +12,7 @@ require 'rspec/rails'
 require 'paper_trail/frameworks/rspec'
 require 'shoulda/matchers'
 require 'ffaker'
+require 'timecop'
 
 # prevent Test::Unit's AutoRunner from executing during RSpec's rake task
 Test::Unit.run = true if defined?(Test::Unit) && Test::Unit.respond_to?(:run=)

@@ -19,7 +19,11 @@ class AssociationsTest < ActiveSupport::TestCase
 
   # These would have been done in test_helper.rb if using_mysql? is true
   unless using_mysql?
-    self.use_transactional_fixtures = false
+    if self.respond_to? :use_transactional_tests=
+      self.use_transactional_tests = false
+    else
+      self.use_transactional_fixtures = false
+    end
     setup { DatabaseCleaner.start }
   end
 

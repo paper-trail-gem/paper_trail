@@ -16,7 +16,7 @@ module PaperTrail
     # Returns ordinal position of `version` in `sequence`.
     # @api private
     def index(version)
-      sequence.index(version)
+      sequence.to_a.index(version)
     end
 
     private
