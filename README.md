@@ -700,6 +700,19 @@ widget.update_attributes :name => 'Wibble'
 widget.versions.last.whodunnit              # Andy Stewart
 ```
 
+You can also store object to `PaperTrail.whodunnit=`, and if object will be instance of `ActiveRecord::Base` it will store the global id in the version's `whodunnit` column.
+
+You can also retrieve the actually object later just by using method `actor`.
+
+```ruby
+customer = Customer.find(1)                 #<Customer:0x007fa2df9a5590>
+PaperTrail.whodunnit = customer
+widget.update_attributes :name => 'Wibble'
+widget.versions.last.whodunnit              # "gid://app/Customer/1"
+widget.versions.last.actor                  #<Customer:0x007fa2df9a5590>
+```
+
+
 If your controller has a `current_user` method, PaperTrail provides a
 `before_filter` that will assign `current_user.id` to `PaperTrail.whodunnit`.
 You can add this `before_filter` to your `ApplicationController`.
