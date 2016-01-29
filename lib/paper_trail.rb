@@ -70,12 +70,20 @@ module PaperTrail
   # this in a migration or on the console, when working with models directly.
   # In a controller it is set automatically to the `current_user`.
   def self.whodunnit=(value)
-    paper_trail_store[:whodunnit] = value
+    if value.is_a? ActiveRecord::Base
+      paper_trail_store[:whodunnit] = value.to_gid
+    else
+      paper_trail_store[:whodunnit] = value
+    end
   end
 
   # Returns who is reponsible for any changes that occur.
   def self.whodunnit
     paper_trail_store[:whodunnit]
+  end
+
+  def self.actor
+    GlobalID::Locator.locate(paper_trail_store[:whodunnit])
   end
 
   # Sets any information from the controller that you want PaperTrail to

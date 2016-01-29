@@ -256,8 +256,15 @@ module PaperTrail
       @index ||= RecordHistory.new(sibling_versions, self.class).index(self)
     end
 
-    private
+    # Returns an object which was responsible for a change
+    # you need to store global_id to whodunnit field to make this method return the object(who was responsible)
+    # for example, whodunnit => "gid://app/Order/1" then
+    # whodunnit_user will return Order.find_by(id: 1) in application scope
+    def actor
+      GlobalID::Locator.locate(whodunnit)
+    end
 
+    private
     # @api private
     def load_changeset
       changes = HashWithIndifferentAccess.new(object_changes_deserialized)
