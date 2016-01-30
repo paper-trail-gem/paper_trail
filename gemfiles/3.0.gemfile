@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'activerecord', '~> 3.0'
+gem 'activerecord', '~> 3.2'
 gem 'i18n', '~> 0.6.11'
 gem 'request_store', '~> 1.1.0'
 
