@@ -767,6 +767,10 @@ last_version.paper_trail_originator         # 'Alice'
 last_version.terminator                     # 'Bob'
 ```
 
+**Storing Actual object using globalid:**
+
+Sometimes you might want to retrieve actual ActiveRecord object in whoddunit. You can achieve this using an extention. [PaperTrailGlobalid][37]
+
 ## Associations
 
 **Experimental feature**, see caveats below.
@@ -1546,3 +1550,4 @@ Released under the MIT licence.
 [34]: https://github.com/rails/rails/blob/591a0bb87fff7583e01156696fbbf929d48d3e54/activerecord/lib/active_record/fixtures.rb#L142
 [35]: https://dev.mysql.com/doc/refman/5.6/en/fractional-seconds.html
 [36]: http://www.postgresql.org/docs/9.4/interactive/ddl.html
+[37]: https://github.com/ankit1910/paper_trail-globalid
