@@ -25,7 +25,7 @@
   Cleaning old versions explicitly preserves the most recent
   versions instead of relying on database result ordering.
 
-## 4.1.0 (Unreleased)
+## 4.1.0 (2016-01-30)
 
 ### Breaking Changes
 
@@ -42,7 +42,7 @@
 
 - None
 
-## 4.0.2
+## 4.0.2 (2016-01-19)
 
 ### Breaking Changes
 
@@ -58,7 +58,7 @@
   [#697](https://github.com/airblade/paper_trail/pull/697)
   Bind JSON query parameters in `where_object` and `where_object_changes`.
 
-## 4.0.1
+## 4.0.1 (2015-12-14)
 
 ### Breaking Changes
 
@@ -76,7 +76,7 @@
   [#588](https://github.com/airblade/paper_trail/issues/588) -
   Fixes timestamp for "create" versions
 
-## 4.0.0
+## 4.0.0 (2015-07-30)
 
 This major release adds JSON column support in PostgreSQL, limited support for
 versioning associations, various new configuration options, and a year's worth
