@@ -19,7 +19,10 @@ end
 
 require 'rspec/core/rake_task'
 desc 'Run tests on PaperTrail with RSpec'
-RSpec::Core::RakeTask.new(:spec)
+task(:spec).clear
+RSpec::Core::RakeTask.new(:spec) do |t|
+  t.verbose = false # hide list of specs bit.ly/1nVq3Jn
+end
 
 require 'rubocop/rake_task'
 RuboCop::RakeTask.new
