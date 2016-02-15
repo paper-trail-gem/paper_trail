@@ -1,18 +1,9 @@
 inherit_from: .rubocop_todo.yml
 
 AllCops:
-  Include:
-    - 'lib/**/*.rb'
-    - 'paper_trail.gemspec'
-    - 'Gemfile'
-    - 'Rakefile'
   Exclude:
     - 'spec/**/*'
     - 'test/**/*'
-  RunRailsCops: false
-  DisplayCopNames: true
-  DisplayStyleGuide: true
-  StyleGuideCopsOnly: false
 
 Style/AlignParameters:
   EnforcedStyle: with_fixed_indentation
