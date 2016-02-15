@@ -103,11 +103,15 @@ RSpec.configure do |config|
 =end
 end
 
+def active_record_gem_version
+  Gem::Version.new(ActiveRecord::VERSION::STRING)
+end
+
 # Wrap args in a hash to support the ActionController::TestCase and
 # ActionDispatch::Integration HTTP request method switch to keyword args
 # (see https://github.com/rails/rails/blob/master/actionpack/CHANGELOG.md)
 def params_wrapper(args)
-  if defined?(::Rails) && Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new('5.0.0.beta1')
+  if defined?(::Rails) && active_record_gem_version >= Gem::Version.new('5.0.0.beta1')
     { params: args }
   else
     args

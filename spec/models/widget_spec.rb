@@ -21,15 +21,15 @@ describe Widget, :type => :model do
     end
   end
 
-  describe "`versioning` option" do
-    context :enabled, :versioning => true do
-      it 'should enable versioning for models wrapped within a block' do
+  describe "versioning option" do
+    context "enabled", :versioning => true do
+      it "should enable versioning" do
         expect(widget.versions.size).to eq(1)
       end
     end
 
-    context '`disabled` (default)' do
-      it 'should not enable versioning for models wrapped within a block not marked to used versioning' do
+    context "disabled (default)" do
+      it "should not enable versioning" do
         expect(widget.versions.size).to eq(0)
       end
     end
@@ -42,7 +42,7 @@ describe Widget, :type => :model do
 
         subject { widget.versions.last.reify }
 
-        it "should reset the value for the timestamp attrs for update so that value gets updated properly" do
+        it "resets value for timestamp attrs for update so that value gets updated properly" do
           # Travel 1 second because MySQL lacks sub-second resolution
           Timecop.travel(1) do
             expect { subject.save! }.to change(subject, :updated_at)
@@ -214,7 +214,9 @@ describe Widget, :type => :model do
 
         context "no block given" do
           it "should raise an error" do
-            expect { widget.whodunnit('Ben') }.to raise_error(ArgumentError, 'expected to receive a block')
+            expect {
+              widget.whodunnit('Ben')
+            }.to raise_error(ArgumentError, 'expected to receive a block')
           end
         end
 
@@ -235,13 +237,15 @@ describe Widget, :type => :model do
             expect(widget.versions.last.whodunnit).to eq(new_name)
           end
 
-          it "should revert the value of `PaperTrail.whodunnit` to it's previous value after executing the block" do
-            widget.whodunnit(new_name) { |w| w.update_attributes(:name => 'Elizabeth') }
-            expect(PaperTrail.whodunnit).to eq(orig_name)
+          context "after executing the block" do
+            it "reverts value of whodunnit to previous value" do
+              widget.whodunnit(new_name) { |w| w.update_attributes(:name => 'Elizabeth') }
+              expect(PaperTrail.whodunnit).to eq(orig_name)
+            end
           end
 
           context "error within block" do
-            it "should ensure that the whodunnit value still reverts to it's previous value" do
+            it "still reverts the whodunnit value to previous value" do
               expect {
                 widget.whodunnit(new_name) { raise }
               }.to raise_error(RuntimeError)
