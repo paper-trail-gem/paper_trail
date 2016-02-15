@@ -161,9 +161,11 @@ class AssociationsTest < ActiveSupport::TestCase
       end
 
       context 'when reified with option mark_for_destruction' do
-        setup { @customer_0 = @customer.versions.last.reify(:has_many => true, :mark_for_destruction => true) }
-
         should 'mark the associated for destruction' do
+          @customer_0 = @customer.versions.last.reify(
+            :has_many => true,
+            :mark_for_destruction => true
+          )
           assert_equal [true], @customer_0.orders.map(&:marked_for_destruction?)
         end
       end
@@ -293,15 +295,21 @@ class AssociationsTest < ActiveSupport::TestCase
           end
 
           should 'not persist changes to the live association' do
-            assert_equal ['order_date_0', 'order_date_1'], @customer.orders.reload.map(&:order_date).sort
+            assert_equal ['order_date_0', 'order_date_1'],
+              @customer.orders.reload.map(&:order_date).sort
           end
         end
 
         context 'when reified with option mark_for_destruction' do
-          setup { @customer_0 = @customer.versions.last.reify(:has_many => true, :mark_for_destruction => true) }
-
           should 'mark the newly associated for destruction' do
-            assert @customer_0.orders.detect { |o| o.order_date == 'order_date_1'}.marked_for_destruction?
+            @customer_0 = @customer.versions.last.reify(
+              :has_many => true,
+              :mark_for_destruction => true
+            )
+            assert @customer_0.
+              orders.
+              detect { |o| o.order_date == 'order_date_1'}.
+              marked_for_destruction?
           end
         end
       end
@@ -331,7 +339,12 @@ class AssociationsTest < ActiveSupport::TestCase
         end
 
         context 'when reified with option mark_for_destruction' do
-          setup { @book_0 = @book.versions.last.reify(:has_many => true, :mark_for_destruction => true) }
+          setup do
+            @book_0 = @book.versions.last.reify(
+              :has_many => true,
+              :mark_for_destruction => true
+            )
+          end
 
           should 'mark the associated for destruction' do
             assert_equal [true], @book_0.authors.map(&:marked_for_destruction?)
@@ -352,7 +365,9 @@ class AssociationsTest < ActiveSupport::TestCase
         end
 
         context 'when reified' do
-          setup { @book_0 = @book.versions.last.reify(:has_many => true) }
+          setup do
+            @book_0 = @book.versions.last.reify(:has_many => true)
+          end
 
           should 'see the associated as it was at the time' do
             assert_equal [], @book_0.authors
@@ -360,7 +375,12 @@ class AssociationsTest < ActiveSupport::TestCase
         end
 
         context 'when reified with option mark_for_destruction' do
-          setup { @book_0 = @book.versions.last.reify(:has_many => true, :mark_for_destruction => true) }
+          setup do
+            @book_0 = @book.versions.last.reify(
+              :has_many => true,
+              :mark_for_destruction => true
+            )
+          end
 
           should 'not mark the associated for destruction' do
             assert_equal [false], @book_0.authors.map(&:marked_for_destruction?)
@@ -486,14 +506,25 @@ class AssociationsTest < ActiveSupport::TestCase
           end
 
           context 'when reified with option mark_for_destruction' do
-            setup { @book_0 = @book.versions.last.reify(:has_many => true, :mark_for_destruction => true) }
+            setup do
+              @book_0 = @book.versions.last.reify(
+                :has_many => true,
+                :mark_for_destruction => true
+              )
+            end
 
             should 'mark the newly associated for destruction' do
-              assert @book_0.authors.detect { |a| a.name == 'author_1' }.marked_for_destruction?
+              assert @book_0.
+                authors.
+                detect { |a| a.name == 'author_1' }.
+                marked_for_destruction?
             end
 
             should 'mark the newly associated-through for destruction' do
-              assert @book_0.authorships.detect { |as| as.person.name == 'author_1' }.marked_for_destruction?
+              assert @book_0.
+                authorships.
+                detect { |as| as.person.name == 'author_1' }.
+                marked_for_destruction?
             end
           end
         end
@@ -516,14 +547,25 @@ class AssociationsTest < ActiveSupport::TestCase
           end
 
           context 'when reified with option mark_for_destruction' do
-            setup { @book_0 = @book.versions.last.reify(:has_many => true, :mark_for_destruction => true) }
+            setup do
+              @book_0 = @book.versions.last.reify(
+                :has_many => true,
+                :mark_for_destruction => true
+              )
+            end
 
             should 'not mark the newly associated for destruction' do
-              assert !@book_0.authors.detect { |a| a.name == 'person_existing' }.marked_for_destruction?
+              assert !@book_0.
+                authors.
+                detect { |a| a.name == 'person_existing' }.
+                marked_for_destruction?
             end
 
             should 'mark the newly associated-through for destruction' do
-              assert @book_0.authorships.detect { |as| as.person.name == 'person_existing' }.marked_for_destruction?
+              assert @book_0.
+                authorships.
+                detect { |as| as.person.name == 'person_existing' }.
+                marked_for_destruction?
             end
           end
         end

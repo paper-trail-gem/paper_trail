@@ -3,12 +3,17 @@ require 'test_helper'
 class ProtectedAttrsTest < ActiveSupport::TestCase
   subject { ProtectedWidget.new }
 
-  if ActiveRecord::VERSION::MAJOR < 4 # these ActiveModel matchers (provided by shoulda-matchers) only work for Rails 3
+  # These ActiveModel matchers (provided by shoulda-matchers) only work for
+  # Rails 3.
+  if ActiveRecord::VERSION::MAJOR < 4
     accessible_attrs = ProtectedWidget.accessible_attributes.to_a
     accessible_attrs.each do |attr_name|
       should allow_mass_assignment_of(attr_name.to_sym)
     end
-    ProtectedWidget.column_names.reject { |column_name| accessible_attrs.include?(column_name) }.each do |attr_name|
+    inaccessible = ProtectedWidget.
+      column_names.
+      reject { |column_name| accessible_attrs.include?(column_name) }
+    inaccessible.each do |attr_name|
       should_not allow_mass_assignment_of(attr_name.to_sym)
     end
   end

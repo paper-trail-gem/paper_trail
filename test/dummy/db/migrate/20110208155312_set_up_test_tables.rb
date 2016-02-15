@@ -50,7 +50,9 @@ class SetUpTestTables < ActiveRecord::Migration
       t.integer  :foreign_key_id
     end
     add_index :version_associations, [:version_id]
-    add_index :version_associations, [:foreign_key_name, :foreign_key_id], :name => 'index_version_associations_on_foreign_key'
+    add_index :version_associations,
+      [:foreign_key_name, :foreign_key_id],
+      :name => 'index_version_associations_on_foreign_key'
 
     create_table :post_versions, :force => true do |t|
       t.string   :item_type, :null => false

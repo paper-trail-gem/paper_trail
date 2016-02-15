@@ -70,7 +70,7 @@ class ControllerTest < ActionController::TestCase
     assert_equal 153,             widget.versions.last.whodunnit.to_i
   end
 
-  test "controller metadata methods should get evaluated if paper trail is enabled for controller" do
+  test "controller metadata methods should get evaluated if PT enabled for controller" do
     @request.env['HTTP_USER_AGENT'] = 'User-Agent'
     post :create, params_wrapper({ widget: { name: 'Flugel' } })
     assert PaperTrail.enabled_for_controller?
@@ -80,7 +80,7 @@ class ControllerTest < ActionController::TestCase
     assert PaperTrail.controller_info.keys.include?(:user_agent)
   end
 
-  test "controller metadata methods should not get evaluated if paper trail is disabled for controller" do
+  test "controller metadata methods should not get evaluated if PT disabled for controller" do
     @request.env['HTTP_USER_AGENT'] = 'Disable User-Agent'
     post :create, params_wrapper({ widget: { name: 'Flugel' } })
     assert_equal 0, assigns(:widget).versions.length
