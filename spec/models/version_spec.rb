@@ -180,8 +180,6 @@ describe PaperTrail::Version, :type => :model do
           end
 
           describe '#where_object_changes' do
-            it { expect(PaperTrail::Version).to respond_to(:where_object_changes) }
-
             context "invalid arguments" do
               it "should raise an error" do
                 expect { PaperTrail::Version.where_object_changes(:foo) }.to raise_error(ArgumentError)
