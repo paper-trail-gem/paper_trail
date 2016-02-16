@@ -1,11 +1,6 @@
 # Remove these configuration records
 # one by one as the offenses are removed from the code base.
 
-# Offense count: 3
-Lint/AmbiguousRegexpLiteral:
-  Exclude:
-    - 'test/unit/model_test.rb'
-
 # Offense count: 2
 # Cop supports --auto-correct.
 Lint/DeprecatedClassMethods:

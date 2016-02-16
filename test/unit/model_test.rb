@@ -255,7 +255,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       end
 
       should 'record the correct event' do
-        assert_match /create/i, @widget.versions.first.event
+        assert_match(/create/i, @widget.versions.first.event)
       end
 
       should 'be live' do
@@ -311,7 +311,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         end
 
         should 'record the correct event' do
-          assert_match /update/i, @widget.versions.last.event
+          assert_match(/update/i, @widget.versions.last.event)
         end
 
         should 'have versions that are not live' do
@@ -428,7 +428,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           end
 
           should 'record the correct event' do
-            assert_match /destroy/i, PaperTrail::Version.last.event
+            assert_match(/destroy/i, PaperTrail::Version.last.event)
           end
 
           should 'have three previous versions' do
