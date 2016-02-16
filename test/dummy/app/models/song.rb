@@ -7,6 +7,7 @@ class Song < ActiveRecord::Base
   def length=(minutes)
     write_attribute(:length, minutes.to_i * 60)
   end
+
   def length
     read_attribute(:length) / 60
   end

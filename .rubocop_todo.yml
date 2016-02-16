@@ -67,13 +67,6 @@ Style/DoubleNegation:
   Exclude:
     - 'lib/paper_trail.rb'
 
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: AllowAdjacentOneLineDefs.
-Style/EmptyLineBetweenDefs:
-  Exclude:
-    - 'test/dummy/app/models/song.rb'
-
 # Offense count: 17
 # Cop supports --auto-correct.
 Style/EmptyLines:
