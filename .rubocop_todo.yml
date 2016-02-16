@@ -62,13 +62,6 @@ Style/ClassAndModuleChildren:
 Style/Documentation:
   Enabled: false
 
-# Offense count: 48
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: leading, trailing
-Style/DotPosition:
-  Enabled: false
-
 # Offense count: 4
 Style/DoubleNegation:
   Exclude:
