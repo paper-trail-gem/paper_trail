@@ -3,7 +3,6 @@ require 'paper_trail/attributes_serialization'
 
 module PaperTrail
   module Model
-
     def self.included(base)
       base.send :extend, ClassMethods
     end

@@ -67,18 +67,6 @@ Style/DoubleNegation:
   Exclude:
     - 'lib/paper_trail.rb'
 
-# Offense count: 6
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: empty_lines, no_empty_lines
-Style/EmptyLinesAroundModuleBody:
-  Exclude:
-    - 'lib/paper_trail/frameworks/rails/controller.rb'
-    - 'lib/paper_trail/frameworks/sinatra.rb'
-    - 'lib/paper_trail/has_paper_trail.rb'
-    - 'lib/paper_trail/record_history.rb'
-    - 'lib/paper_trail/reifier.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 Style/EmptyLiteral:

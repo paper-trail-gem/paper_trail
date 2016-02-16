@@ -1,5 +1,4 @@
 module PaperTrail
-
   # Represents the history of a single record.
   # @api private
   class RecordHistory

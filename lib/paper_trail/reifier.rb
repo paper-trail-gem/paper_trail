@@ -1,5 +1,4 @@
 module PaperTrail
-
   # Given a version record and some options, builds a new model object.
   # @api private
   module Reifier
