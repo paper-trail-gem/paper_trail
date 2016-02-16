@@ -1,11 +1,6 @@
 # Remove these configuration records
 # one by one as the offenses are removed from the code base.
 
-# Offense count: 1
-Lint/Loop:
-  Exclude:
-    - 'test/functional/thread_safety_test.rb'
-
 # Offense count: 3
 Lint/UnderscorePrefixedVariableName:
   Exclude:
