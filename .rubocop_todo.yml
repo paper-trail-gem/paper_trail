@@ -69,12 +69,6 @@ Style/ClassCheck:
   Exclude:
     - 'lib/paper_trail/frameworks/rspec.rb'
 
-# Offense count: 3
-# Cop supports --auto-correct.
-Style/ColonMethodCall:
-  Exclude:
-    - 'test/unit/model_test.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: Keywords.

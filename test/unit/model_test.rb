@@ -1093,7 +1093,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       # It should store the serialized value.
       should 'version.object_changes attribute should have stored the value from serializer' do
         as_stored_in_version = HashWithIndifferentAccess[
-          YAML::load(@person.versions.last.object_changes)
+          YAML.load(@person.versions.last.object_changes)
         ]
         assert_equal [nil, 'Samoa'], as_stored_in_version[:time_zone]
         serialized_value = Person::TimeZoneSerializer.dump(@person.time_zone)
@@ -1155,7 +1155,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         # But now it stores the short, serialized value.
         should 'version.object attribute should have stored value from serializer' do
           as_stored_in_version = HashWithIndifferentAccess[
-            YAML::load(@person.versions.last.object)
+            YAML.load(@person.versions.last.object)
           ]
           assert_equal 'Samoa', as_stored_in_version[:time_zone]
           serialized_value = Person::TimeZoneSerializer.dump(@attribute_value_before_change)
@@ -1164,7 +1164,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
         should 'version.object_changes attribute should have stored value from serializer' do
           as_stored_in_version = HashWithIndifferentAccess[
-            YAML::load(@person.versions.last.object_changes)
+            YAML.load(@person.versions.last.object_changes)
           ]
           assert_equal ['Samoa', 'Pacific Time (US & Canada)'], as_stored_in_version[:time_zone]
           serialized_value = Person::TimeZoneSerializer.dump(@person.time_zone)
