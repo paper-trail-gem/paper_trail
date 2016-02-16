@@ -1,13 +1,6 @@
 # Remove these configuration records
 # one by one as the offenses are removed from the code base.
 
-# Offense count: 2
-# Cop supports --auto-correct.
-Lint/DeprecatedClassMethods:
-  Exclude:
-    - 'spec/rails_helper.rb'
-    - 'test/test_helper.rb'
-
 # Offense count: 3
 Lint/HandleExceptions:
   Exclude:
