@@ -60,13 +60,6 @@ Style/ClassAndModuleChildren:
 
 # Offense count: 2
 # Cop supports --auto-correct.
-Style/CommentIndentation:
-  Exclude:
-    - 'spec/spec_helper.rb'
-    - 'test/functional/modular_sinatra_test.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
 # Configuration parameters: SingleLineConditionsOnly.
 Style/ConditionalAssignment:
   Exclude:

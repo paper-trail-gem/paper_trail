@@ -10,7 +10,7 @@ if Gem::Version.new(Rack.release) < Gem::Version.new("2.0.0.alpha")
   require 'test_helper'
   require 'sinatra/base'
 
-# --- Tests for modular `Sinatra::Base` style ----
+  # --- Tests for modular `Sinatra::Base` style ----
   class BaseApp < Sinatra::Base
     configs = YAML.load_file(File.expand_path('../../dummy/config/database.yml', __FILE__))
     ActiveRecord::Base.configurations = configs
