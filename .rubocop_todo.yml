@@ -52,14 +52,6 @@ Style/Alias:
     - 'test/dummy/app/models/song.rb'
     - 'test/unit/model_test.rb'
 
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: always, conditionals
-Style/AndOr:
-  Exclude:
-    - 'lib/paper_trail/has_paper_trail.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 Style/BlockComments:

@@ -121,7 +121,7 @@ module PaperTrail
           fail ArgumentError, 'recording order can only be "after" or "before"'
         end
 
-        if recording_order == 'after' and
+        if recording_order == 'after' &&
           Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new("5")
           if ::ActiveRecord::Base.belongs_to_required_by_default
             ::ActiveSupport::Deprecation.warn(
@@ -413,7 +413,7 @@ module PaperTrail
       end
 
       def record_destroy
-        if paper_trail_switched_on? and not new_record?
+        if paper_trail_switched_on? && !new_record?
           data = {
             :item_id   => self.id,
             :item_type => self.class.base_class.name,
