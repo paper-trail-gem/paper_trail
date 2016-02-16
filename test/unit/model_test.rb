@@ -434,7 +434,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           end
 
           should 'not have changes' do
-            assert_equal Hash.new, @widget.versions.last.changeset
+            assert_equal({}, @widget.versions.last.changeset)
           end
         end
       end
