@@ -2,7 +2,6 @@ require 'test_helper'
 require 'time_travel_helper'
 
 class HasPaperTrailModelTest < ActiveSupport::TestCase
-
   context "A record with defined 'only' and 'ignore' attributes" do
     setup { @article = Article.create }
 

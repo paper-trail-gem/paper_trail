@@ -2,7 +2,6 @@ require 'test_helper'
 require 'custom_json_serializer'
 
 class SerializerTest < ActiveSupport::TestCase
-
   context 'YAML Serializer' do
     setup do
       Fluxor.instance_eval <<-END

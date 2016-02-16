@@ -1,7 +1,6 @@
 require 'test_helper'
 
 class YamlTest < ActiveSupport::TestCase
-
   setup do
     # Setup a hash with random values
     @hash = {}

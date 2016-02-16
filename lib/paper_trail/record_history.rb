@@ -3,7 +3,6 @@ module PaperTrail
   # Represents the history of a single record.
   # @api private
   class RecordHistory
-
     # @param versions - ActiveRecord::Relation - All versions of the record.
     # @param version_class - Class - Usually PaperTrail::Version,
     #   but it could also be a custom version class.

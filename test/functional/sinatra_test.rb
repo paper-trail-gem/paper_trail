@@ -29,7 +29,6 @@ if Gem::Version.new(Rack.release) < Gem::Version.new("2.0.0.alpha")
       def current_user
         @current_user ||= OpenStruct.new(id: 'raboof')
       end
-
     end
   end
 

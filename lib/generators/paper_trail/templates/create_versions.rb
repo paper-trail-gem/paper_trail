@@ -1,5 +1,4 @@
 class CreateVersions < ActiveRecord::Migration
-
   # Class names of MySQL adapters.
   # - `MysqlAdapter` - Used by gems: `mysql`, `activerecord-jdbcmysql-adapter`.
   # - `Mysql2Adapter` - Used by `mysql2` gem.

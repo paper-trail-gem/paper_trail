@@ -2,7 +2,6 @@ require 'test_helper'
 require 'custom_json_serializer'
 
 class MixinJsonTest < ActiveSupport::TestCase
-
   setup do
     # Setup a hash with random values, ensuring some values are nil
     @hash = {}

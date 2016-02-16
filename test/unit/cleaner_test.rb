@@ -1,7 +1,6 @@
 require 'test_helper'
 
 class PaperTrailCleanerTest < ActiveSupport::TestCase
-
   def populate_db!
     @animals = [@animal = Animal.new, @dog = Dog.new, @cat = Cat.new]
     @animals.each do |animal|

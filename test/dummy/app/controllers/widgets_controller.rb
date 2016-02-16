@@ -1,5 +1,4 @@
 class WidgetsController < ApplicationController
-
   def paper_trail_enabled_for_controller
     request.user_agent != 'Disable User-Agent'
   end

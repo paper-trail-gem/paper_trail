@@ -4,7 +4,6 @@ module PaperTrail
   # @api private
   module Reifier
     class << self
-
       # See `VersionConcern#reify` for documentation.
       # @api private
       def reify(version, options)

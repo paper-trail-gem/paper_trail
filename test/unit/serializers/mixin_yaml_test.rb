@@ -18,7 +18,6 @@ module CustomYamlSerializer
 end
 
 class MixinYamlTest < ActiveSupport::TestCase
-
   setup do
     # Setup a hash with random values, ensuring some values are nil
     @hash = {}
