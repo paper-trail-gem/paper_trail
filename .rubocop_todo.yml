@@ -2,13 +2,6 @@
 # one by one as the offenses are removed from the code base.
 
 # Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: AllowUnusedKeywordArguments, IgnoreEmptyMethods.
-Lint/UnusedMethodArgument:
-  Exclude:
-    - 'lib/paper_trail/has_paper_trail.rb'
-
-# Offense count: 1
 Lint/UselessAccessModifier:
   Exclude:
     - 'lib/paper_trail.rb'
