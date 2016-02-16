@@ -52,16 +52,6 @@ Style/Alias:
     - 'test/dummy/app/models/song.rb'
     - 'test/unit/model_test.rb'
 
-# Offense count: 7
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: with_first_parameter, with_fixed_indentation
-Style/AlignParameters:
-  Exclude:
-    - 'doc/bug_report_template.rb'
-    - 'lib/generators/paper_trail/templates/create_version_associations.rb'
-    - 'lib/paper_trail/has_paper_trail.rb'
-
 # Offense count: 2
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
