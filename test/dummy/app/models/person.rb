@@ -8,7 +8,7 @@ class Person < ActiveRecord::Base
     if value.is_a? ActiveSupport::TimeZone
       super
     else
-      zone = ::Time.find_zone(value)  # nil if can't find time zone
+      zone = ::Time.find_zone(value) # nil if can't find time zone
       super zone
     end
   end

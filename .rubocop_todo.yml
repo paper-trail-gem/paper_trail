@@ -67,20 +67,6 @@ Style/DoubleNegation:
   Exclude:
     - 'lib/paper_trail.rb'
 
-# Offense count: 14
-# Cop supports --auto-correct.
-# Configuration parameters: AllowForAlignment, ForceEqualSignAlignment.
-Style/ExtraSpacing:
-  Exclude:
-    - 'lib/generators/paper_trail/templates/create_versions.rb'
-    - 'test/dummy/app/models/person.rb'
-    - 'test/dummy/config.ru'
-    - 'test/dummy/db/migrate/20110208155312_set_up_test_tables.rb'
-    - 'test/dummy/db/schema.rb'
-    - 'test/dummy/script/rails'
-    - 'test/test_helper.rb'
-    - 'test/unit/model_test.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles, IndentationWidth.

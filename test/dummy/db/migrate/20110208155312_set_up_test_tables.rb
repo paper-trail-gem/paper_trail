@@ -161,7 +161,7 @@ class SetUpTestTables < ActiveRecord::Migration
 
     create_table :animals, :force => true do |t|
       t.string :name
-      t.string :species   # single table inheritance column
+      t.string :species # single table inheritance column
     end
 
     create_table :documents, :force => true do |t|
@@ -191,7 +191,7 @@ class SetUpTestTables < ActiveRecord::Migration
     end
 
     create_table :customers, :force => true do |t|
-      t.string    :name
+      t.string :name
     end
 
     create_table :orders, :force => true do |t|

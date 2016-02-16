@@ -636,7 +636,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       setup do
         PaperTrail.whodunnit = 'Alice'
         @widget.save
-        @version = @widget.versions.last  # only 1 version
+        @version = @widget.versions.last # only 1 version
       end
 
       should 'track who made the change' do
@@ -979,7 +979,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     setup do
       @widget = Widget.create :name => 'Bob'
       %w(Tom Dick Jane).each { |name| @widget.update_attributes :name => name }
-      @second_widget = @widget.versions[1].reify  # first widget is `nil`
+      @second_widget = @widget.versions[1].reify # first widget is `nil`
       @last_widget   = @widget.versions.last.reify
     end
 

@@ -11,7 +11,7 @@ def using_mysql?
   @using_mysql ||= ActiveRecord::Base.connection_config[:adapter].to_sym == :mysql2
 end
 
-require File.expand_path("../dummy/config/environment.rb",  __FILE__)
+require File.expand_path("../dummy/config/environment.rb", __FILE__)
 require "rails/test_help"
 require 'shoulda'
 require 'ffaker'
