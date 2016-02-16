@@ -11,24 +11,26 @@ if Gem::Version.new(Rack.release) < Gem::Version.new("2.0.0.alpha")
   # require 'sinatra/main'
 
   # --- Tests for non-modular `Sinatra::Application` style ----
-  class Sinatra::Application
-    configs = YAML.load_file(File.expand_path('../../dummy/config/database.yml', __FILE__))
-    ActiveRecord::Base.configurations = configs
-    ActiveRecord::Base.establish_connection(:test)
+  module Sinatra
+    class Application
+      configs = YAML.load_file(File.expand_path('../../dummy/config/database.yml', __FILE__))
+      ActiveRecord::Base.configurations = configs
+      ActiveRecord::Base.establish_connection(:test)
 
-    # We shouldn't actually need this line if I'm not mistaken but the tests
-    # seem to fail without it ATM
-    register PaperTrail::Sinatra
+      # We shouldn't actually need this line if I'm not mistaken but the tests
+      # seem to fail without it ATM
+      register PaperTrail::Sinatra
 
-    get '/test' do
-      Widget.create!(:name => 'bar')
-      'Hai'
+      get '/test' do
+        Widget.create!(:name => 'bar')
+        'Hai'
+      end
+
+      def current_user
+        @current_user ||= OpenStruct.new(id: 'raboof')
+      end
+
     end
-
-    def current_user
-      @current_user ||= OpenStruct.new(id: 'raboof')
-    end
-
   end
 
   class SinatraTest < ActionDispatch::IntegrationTest

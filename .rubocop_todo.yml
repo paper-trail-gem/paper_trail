@@ -52,13 +52,10 @@ Style/Alias:
     - 'test/dummy/app/models/song.rb'
     - 'test/unit/model_test.rb'
 
-# Offense count: 3
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 # SupportedStyles: nested, compact
 Style/ClassAndModuleChildren:
   Exclude:
-    - 'test/functional/sinatra_test.rb'
-    - 'test/test_helper.rb'
     - 'test/unit/ar_id_map_test.rb'
 
 # Offense count: 1
