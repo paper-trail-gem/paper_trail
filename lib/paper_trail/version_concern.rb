@@ -283,7 +283,7 @@ module PaperTrail
       if defined?(::ActiveRecord::IdentityMap) && ::ActiveRecord::IdentityMap.respond_to?(:without)
         ::ActiveRecord::IdentityMap.without(&block)
       else
-        block.call
+        yield
       end
     end
 

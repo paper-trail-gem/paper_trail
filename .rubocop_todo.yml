@@ -34,12 +34,6 @@ Metrics/ModuleLength:
 Metrics/PerceivedComplexity:
   Max: 16
 
-# Offense count: 1
-# Cop supports --auto-correct.
-Performance/RedundantBlockCall:
-  Exclude:
-    - 'lib/paper_trail/version_concern.rb'
-
 # Offense count: 2
 # Cop supports --auto-correct.
 # Configuration parameters: MaxKeyValuePairs.
