@@ -1,7 +1,6 @@
 module PaperTrail
   module Rails
     module Controller
-
       def self.included(base)
         before = [
           :set_paper_trail_enabled_for_controller,

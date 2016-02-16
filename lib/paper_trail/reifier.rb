@@ -1,21 +1,19 @@
 module PaperTrail
-
   # Given a version record and some options, builds a new model object.
   # @api private
   module Reifier
     class << self
-
       # See `VersionConcern#reify` for documentation.
       # @api private
       def reify(version, options)
         options = options.dup
 
         options.reverse_merge!(
-          :version_at => version.created_at,
-          :mark_for_destruction => false,
-          :has_one    => false,
-          :has_many   => false,
-          :unversioned_attributes => :nil
+          version_at: version.created_at,
+          mark_for_destruction: false,
+          has_one: false,
+          has_many: false,
+          unversioned_attributes: :nil
         )
 
         attrs = version.class.object_col_is_json? ?
@@ -110,7 +108,7 @@ module PaperTrail
           elsif version.event == 'create'
             options[:mark_for_destruction] ? record.tap { |r| r.mark_for_destruction } : nil
           else
-            version.reify(options.merge(:has_many => false, :has_one => false))
+            version.reify(options.merge(has_many: false, has_one: false))
           end
         end
 
@@ -119,7 +117,7 @@ module PaperTrail
         # associations.
         array.concat(
           versions.values.map { |v|
-            v.reify(options.merge(:has_many => false, :has_one => false))
+            v.reify(options.merge(has_many: false, has_one: false))
           }
         )
 
@@ -152,7 +150,7 @@ module PaperTrail
                   end
                 end
               else
-                child = version.reify(options.merge(:has_many => false, :has_one => false))
+                child = version.reify(options.merge(has_many: false, has_one: false))
                 model.appear_as_new_record do
                   without_persisting(child) do
                     model.send "#{assoc.name}=", child

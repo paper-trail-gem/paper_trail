@@ -1,20 +1,20 @@
 class Article < ActiveRecord::Base
   has_paper_trail(
-    :ignore => [
+    ignore: [
       :title, {
-        :abstract => Proc.new { |obj|
+        abstract: Proc.new { |obj|
           ['ignore abstract', 'Other abstract'].include? obj.abstract
         }
       }
     ],
-    :only => [:content, { :abstract => Proc.new { |obj| obj.abstract.present? } } ],
-    :skip => [:file_upload],
-    :meta => {
-      :answer => 42,
-      :action => :action_data_provider_method,
-      :question => Proc.new { "31 + 11 = #{31 + 11}" },
-      :article_id => Proc.new { |article| article.id },
-      :title => :title
+    only: [:content, { abstract: Proc.new { |obj| obj.abstract.present? } } ],
+    skip: [:file_upload],
+    meta: {
+      answer: 42,
+      action: :action_data_provider_method,
+      question: Proc.new { "31 + 11 = #{31 + 11}" },
+      article_id: Proc.new { |article| article.id },
+      title: :title
     }
   )
 

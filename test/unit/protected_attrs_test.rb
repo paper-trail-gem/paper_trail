@@ -20,7 +20,7 @@ class ProtectedAttrsTest < ActiveSupport::TestCase
 
   context 'A model with `attr_accessible` created' do
     setup do
-      @widget = ProtectedWidget.create! :name => 'Henry'
+      @widget = ProtectedWidget.create! name: 'Henry'
       @initial_attributes = @widget.attributes
     end
 
@@ -30,7 +30,7 @@ class ProtectedAttrsTest < ActiveSupport::TestCase
 
     context 'which is then updated' do
       setup do
-        @widget.assign_attributes(:name => 'Jeff', :a_text => 'Short statement')
+        @widget.assign_attributes(name: 'Jeff', a_text: 'Short statement')
         @widget.an_integer = 42
         @widget.save!
       end
@@ -47,6 +47,5 @@ class ProtectedAttrsTest < ActiveSupport::TestCase
         end
       end
     end
-
   end
 end

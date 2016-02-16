@@ -10,7 +10,7 @@ if Gem::Version.new(Rack.release) < Gem::Version.new("2.0.0.alpha")
   require 'test_helper'
   require 'sinatra/base'
 
-# --- Tests for modular `Sinatra::Base` style ----
+  # --- Tests for modular `Sinatra::Base` style ----
   class BaseApp < Sinatra::Base
     configs = YAML.load_file(File.expand_path('../../dummy/config/database.yml', __FILE__))
     ActiveRecord::Base.configurations = configs
@@ -18,7 +18,7 @@ if Gem::Version.new(Rack.release) < Gem::Version.new("2.0.0.alpha")
     register PaperTrail::Sinatra
 
     get '/test' do
-      Widget.create!(:name => 'foo')
+      Widget.create!(name: 'foo')
       'Hello'
     end
 
@@ -39,7 +39,6 @@ if Gem::Version.new(Rack.release) < Gem::Version.new("2.0.0.alpha")
     end
 
     context "`PaperTrail::Sinatra` in a `Sinatra::Base` application" do
-
       should "sets the `user_for_paper_trail` from the `current_user` method" do
         get '/test'
         assert_equal 'Hello', last_response.body
@@ -49,7 +48,6 @@ if Gem::Version.new(Rack.release) < Gem::Version.new("2.0.0.alpha")
         assert_equal 1, widget.versions.size
         assert_equal 'foobar', widget.versions.first.whodunnit
       end
-
     end
   end
 end

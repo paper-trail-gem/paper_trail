@@ -13,14 +13,14 @@ RSpec.configure do |config|
     ::PaperTrail.controller_info = {} if defined?(::Rails) && defined?(::RSpec::Rails)
   end
 
-  config.before(:each, :versioning => true) do
+  config.before(:each, versioning: true) do
     ::PaperTrail.enabled = true
   end
 end
 
 RSpec::Matchers.define :be_versioned do
   # check to see if the model has `has_paper_trail` declared on it
-  match { |actual| actual.kind_of?(::PaperTrail::Model::InstanceMethods) }
+  match { |actual| actual.is_a?(::PaperTrail::Model::InstanceMethods) }
 end
 
 RSpec::Matchers.define :have_a_version_with do |attributes|

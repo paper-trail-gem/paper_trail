@@ -1,7 +1,6 @@
 require 'test_helper'
 
 class TimestampTest < ActiveSupport::TestCase
-
   setup do
     PaperTrail.timestamp_field = :custom_created_at
     change_schema
@@ -10,9 +9,9 @@ class TimestampTest < ActiveSupport::TestCase
       has_paper_trail
     END
 
-    @fluxor = Fluxor.create :name => 'Some text.'
-    @fluxor.update_attributes :name => 'Some more text.'
-    @fluxor.update_attributes :name => 'Even more text.'
+    @fluxor = Fluxor.create name: 'Some text.'
+    @fluxor.update_attributes name: 'Some more text.'
+    @fluxor.update_attributes name: 'Even more text.'
   end
 
   teardown do
@@ -39,5 +38,4 @@ class TimestampTest < ActiveSupport::TestCase
     assert_equal 'Some text.', @fluxor.versions[1].reify.name
     assert_equal 'Some more text.', @fluxor.versions[0].reify.name
   end
-
 end

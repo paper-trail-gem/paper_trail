@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 describe PaperTrail::VersionConcern do
-
   before(:all) { require 'support/alt_db_init' }
 
   it 'allows included class to have different connections' do
@@ -18,10 +17,10 @@ describe PaperTrail::VersionConcern do
     expect(Bar::Document.version_class_name).to eq('Bar::Version')
   end
 
-  describe 'persistence', :versioning => true do
+  describe 'persistence', versioning: true do
     before do
-      @foo_doc = Foo::Document.create!(:name => 'foobar')
-      @bar_doc = Bar::Document.create!(:name => 'raboof')
+      @foo_doc = Foo::Document.create!(name: 'foobar')
+      @bar_doc = Bar::Document.create!(name: 'raboof')
     end
 
     it 'should store versions in the correct corresponding db location' do

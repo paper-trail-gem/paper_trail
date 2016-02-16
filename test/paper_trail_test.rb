@@ -24,7 +24,7 @@ class PaperTrailTest < ActiveSupport::TestCase
   test 'update with plain model class' do
     widget = Widget.create
     assert_equal 1, widget.versions.length
-    widget.update_attributes(:name => 'Bugle')
+    widget.update_attributes(name: 'Bugle')
     assert_equal 2, widget.versions.length
   end
 

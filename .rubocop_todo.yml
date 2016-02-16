@@ -35,19 +35,6 @@ Metrics/PerceivedComplexity:
   Max: 16
 
 # Offense count: 1
-# Cop supports --auto-correct.
-Performance/RedundantBlockCall:
-  Exclude:
-    - 'lib/paper_trail/version_concern.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: MaxKeyValuePairs.
-Performance/RedundantMerge:
-  Exclude:
-    - 'lib/paper_trail/has_paper_trail.rb'
-
-# Offense count: 1
 Style/AccessorMethodName:
   Exclude:
     - 'lib/paper_trail/has_paper_trail.rb'
@@ -65,128 +52,14 @@ Style/Alias:
     - 'test/dummy/app/models/song.rb'
     - 'test/unit/model_test.rb'
 
-# Offense count: 10
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedHashRocketStyle, EnforcedColonStyle, EnforcedLastArgumentHashStyle, SupportedLastArgumentHashStyles.
-# SupportedLastArgumentHashStyles: always_inspect, always_ignore, ignore_implicit, ignore_explicit
-Style/AlignHash:
-  Exclude:
-    - 'lib/generators/paper_trail/install_generator.rb'
-    - 'test/unit/model_test.rb'
-
-# Offense count: 7
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: with_first_parameter, with_fixed_indentation
-Style/AlignParameters:
-  Exclude:
-    - 'doc/bug_report_template.rb'
-    - 'lib/generators/paper_trail/templates/create_version_associations.rb'
-    - 'lib/paper_trail/has_paper_trail.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: always, conditionals
-Style/AndOr:
-  Exclude:
-    - 'lib/paper_trail/has_paper_trail.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/BlockComments:
-  Exclude:
-    - 'spec/spec_helper.rb'
-
-# Offense count: 44
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, ProceduralMethods, FunctionalMethods, IgnoredMethods.
-# SupportedStyles: line_count_based, semantic, braces_for_chaining
-# ProceduralMethods: benchmark, bm, bmbm, create, each_with_object, measure, new, realtime, tap, with_object
-# FunctionalMethods: let, let!, subject, watch
-# IgnoredMethods: lambda, proc, it
-Style/BlockDelimiters:
-  Exclude:
-    - 'doc/bug_report_template.rb'
-    - 'lib/paper_trail/has_paper_trail.rb'
-    - 'lib/paper_trail/reifier.rb'
-    - 'lib/paper_trail/version_concern.rb'
-    - 'spec/models/skipper_spec.rb'
-    - 'spec/models/widget_spec.rb'
-    - 'test/unit/model_test.rb'
-    - 'test/unit/version_test.rb'
-
-# Offense count: 14
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: braces, no_braces, context_dependent
-Style/BracesAroundHashParameters:
-  Exclude:
-    - 'test/functional/controller_test.rb'
-    - 'test/functional/enabled_for_controller_test.rb'
-    - 'test/unit/model_test.rb'
-
-# Offense count: 3
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 # SupportedStyles: nested, compact
 Style/ClassAndModuleChildren:
   Exclude:
-    - 'test/functional/sinatra_test.rb'
-    - 'test/test_helper.rb'
-    - 'test/unit/model_test.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: is_a?, kind_of?
-Style/ClassCheck:
-  Exclude:
-    - 'lib/paper_trail/frameworks/rspec.rb'
-
-# Offense count: 3
-# Cop supports --auto-correct.
-Style/ColonMethodCall:
-  Exclude:
-    - 'test/unit/model_test.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: Keywords.
-# Keywords: TODO, FIXME, OPTIMIZE, HACK, REVIEW
-Style/CommentAnnotation:
-  Exclude:
-    - 'test/unit/model_test.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-Style/CommentIndentation:
-  Exclude:
-    - 'spec/spec_helper.rb'
-    - 'test/functional/modular_sinatra_test.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: SingleLineConditionsOnly.
-Style/ConditionalAssignment:
-  Exclude:
-    - 'test/dummy/app/controllers/articles_controller.rb'
-    - 'test/dummy/app/controllers/widgets_controller.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/DeprecatedHashMethods:
-  Exclude:
-    - 'lib/paper_trail/has_paper_trail.rb'
+    - 'test/unit/ar_id_map_test.rb'
 
 # Offense count: 33
 Style/Documentation:
-  Enabled: false
-
-# Offense count: 48
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: leading, trailing
-Style/DotPosition:
   Enabled: false
 
 # Offense count: 4
@@ -196,108 +69,11 @@ Style/DoubleNegation:
 
 # Offense count: 1
 # Cop supports --auto-correct.
-# Configuration parameters: AllowAdjacentOneLineDefs.
-Style/EmptyLineBetweenDefs:
-  Exclude:
-    - 'test/dummy/app/models/song.rb'
-
-# Offense count: 17
-# Cop supports --auto-correct.
-Style/EmptyLines:
-  Exclude:
-    - 'Rakefile'
-    - 'test/unit/model_test.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/EmptyLinesAroundAccessModifier:
-  Exclude:
-    - 'lib/generators/paper_trail/install_generator.rb'
-
-# Offense count: 14
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: empty_lines, no_empty_lines
-Style/EmptyLinesAroundBlockBody:
-  Exclude:
-    - 'spec/models/json_version_spec.rb'
-    - 'spec/modules/version_concern_spec.rb'
-    - 'spec/modules/version_number_spec.rb'
-    - 'test/dummy/db/schema.rb'
-    - 'test/functional/modular_sinatra_test.rb'
-    - 'test/functional/sinatra_test.rb'
-    - 'test/unit/cleaner_test.rb'
-    - 'test/unit/model_test.rb'
-    - 'test/unit/protected_attrs_test.rb'
-
-# Offense count: 17
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: empty_lines, no_empty_lines
-Style/EmptyLinesAroundClassBody:
-  Exclude:
-    - 'lib/generators/paper_trail/templates/add_object_changes_to_versions.rb'
-    - 'lib/generators/paper_trail/templates/create_versions.rb'
-    - 'lib/paper_trail/record_history.rb'
-    - 'lib/paper_trail/reifier.rb'
-    - 'test/dummy/app/controllers/widgets_controller.rb'
-    - 'test/functional/enabled_for_controller_test.rb'
-    - 'test/functional/sinatra_test.rb'
-    - 'test/unit/cleaner_test.rb'
-    - 'test/unit/model_test.rb'
-    - 'test/unit/serializer_test.rb'
-    - 'test/unit/serializers/json_test.rb'
-    - 'test/unit/serializers/mixin_json_test.rb'
-    - 'test/unit/serializers/mixin_yaml_test.rb'
-    - 'test/unit/serializers/yaml_test.rb'
-    - 'test/unit/timestamp_test.rb'
-
-# Offense count: 6
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: empty_lines, no_empty_lines
-Style/EmptyLinesAroundModuleBody:
-  Exclude:
-    - 'lib/paper_trail/frameworks/rails/controller.rb'
-    - 'lib/paper_trail/frameworks/sinatra.rb'
-    - 'lib/paper_trail/has_paper_trail.rb'
-    - 'lib/paper_trail/record_history.rb'
-    - 'lib/paper_trail/reifier.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/EmptyLiteral:
-  Exclude:
-    - 'test/unit/model_test.rb'
-
-# Offense count: 14
-# Cop supports --auto-correct.
-# Configuration parameters: AllowForAlignment, ForceEqualSignAlignment.
-Style/ExtraSpacing:
-  Exclude:
-    - 'lib/generators/paper_trail/templates/create_versions.rb'
-    - 'test/dummy/app/models/person.rb'
-    - 'test/dummy/config.ru'
-    - 'test/dummy/db/migrate/20110208155312_set_up_test_tables.rb'
-    - 'test/dummy/db/schema.rb'
-    - 'test/dummy/script/rails'
-    - 'test/test_helper.rb'
-    - 'test/unit/model_test.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles, IndentationWidth.
 # SupportedStyles: consistent, special_for_inner_method_call, special_for_inner_method_call_in_parentheses
 Style/FirstParameterIndentation:
   Exclude:
     - 'lib/paper_trail/serializers/json.rb'
-
-# Offense count: 606
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, UseHashRocketsWithSymbolValues.
-# SupportedStyles: ruby19, ruby19_no_mixed_keys, hash_rockets
-Style/HashSyntax:
-  Enabled: false
 
 # Offense count: 1
 # Cop supports --auto-correct.

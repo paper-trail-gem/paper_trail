@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe PaperTrail::VERSION do
-
   describe "Constants" do
     subject { PaperTrail::VERSION }
 
@@ -33,7 +32,6 @@ describe PaperTrail::VERSION do
       end
     end
   end
-
 end
 
 describe PaperTrail do

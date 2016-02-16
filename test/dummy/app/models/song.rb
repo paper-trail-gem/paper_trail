@@ -7,6 +7,7 @@ class Song < ActiveRecord::Base
   def length=(minutes)
     write_attribute(:length, minutes.to_i * 60)
   end
+
   def length
     read_attribute(:length) / 60
   end
@@ -14,7 +15,7 @@ class Song < ActiveRecord::Base
   # override attributes hashes like some libraries do
   def attributes_with_name
     if name
-      attributes_without_name.merge(:name => name)
+      attributes_without_name.merge(name: name)
     else
       attributes_without_name
     end
@@ -27,7 +28,7 @@ class Song < ActiveRecord::Base
 
   def changed_attributes_with_name
     if name
-      changed_attributes_without_name.merge(:name => name)
+      changed_attributes_without_name.merge(name: name)
     else
       changed_attributes_without_name
     end
