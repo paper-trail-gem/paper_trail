@@ -1,11 +1,11 @@
 require 'rails_helper'
 
-describe Gadget, :type => :model do
+describe Gadget, type: :model do
   it { is_expected.to be_versioned }
 
-  let(:gadget) { Gadget.create!(:name => 'Wrench', :brand => 'Acme') }
+  let(:gadget) { Gadget.create!(name: 'Wrench', brand: 'Acme') }
 
-  describe "updates", :versioning => true do
+  describe "updates", versioning: true do
     it "should generate a version for updates to `name` attribute" do
       expect { gadget.update_attribute(:name, 'Hammer').to change{gadget.versions.size}.by(1) }
     end
@@ -23,10 +23,10 @@ describe Gadget, :type => :model do
   end
 
   describe "Methods" do
-    describe "Instance", :versioning => true do
+    describe "Instance", versioning: true do
       describe "private" do
         describe '#changed_notably?' do
-          subject { Gadget.new(:created_at => Time.now) }
+          subject { Gadget.new(created_at: Time.now) }
 
           it { expect(subject.private_methods).to include(:changed_notably?) }
 

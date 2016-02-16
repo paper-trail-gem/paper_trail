@@ -13,7 +13,7 @@ RSpec.configure do |config|
     ::PaperTrail.controller_info = {} if defined?(::Rails) && defined?(::RSpec::Rails)
   end
 
-  config.before(:each, :versioning => true) do
+  config.before(:each, versioning: true) do
     ::PaperTrail.enabled = true
   end
 end

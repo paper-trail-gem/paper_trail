@@ -24,7 +24,7 @@ module PaperTrail
 
     context ".updates" do
       setup {
-        @animal.update_attributes(:name => 'Animal')
+        @animal.update_attributes(name: 'Animal')
         assert Version.updates.present?
       }
 
@@ -50,7 +50,7 @@ module PaperTrail
 
     context ".not_creates" do
       setup {
-        @animal.update_attributes(:name => 'Animal')
+        @animal.update_attributes(name: 'Animal')
         @animal.destroy
         assert Version.not_creates.present?
       }

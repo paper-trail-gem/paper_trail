@@ -9,9 +9,9 @@ class TimestampTest < ActiveSupport::TestCase
       has_paper_trail
     END
 
-    @fluxor = Fluxor.create :name => 'Some text.'
-    @fluxor.update_attributes :name => 'Some more text.'
-    @fluxor.update_attributes :name => 'Even more text.'
+    @fluxor = Fluxor.create name: 'Some text.'
+    @fluxor.update_attributes name: 'Some more text.'
+    @fluxor.update_attributes name: 'Even more text.'
   end
 
   teardown do

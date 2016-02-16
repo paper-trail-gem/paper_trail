@@ -48,7 +48,7 @@ class ControllerTest < ActionController::TestCase
   end
 
   test 'update' do
-    w = Widget.create :name => 'Duvel'
+    w = Widget.create name: 'Duvel'
     assert_equal 1, w.versions.length
     put :update, params_wrapper(id: w.id, widget: { name: 'Bugle' })
     widget = assigns(:widget)
@@ -59,7 +59,7 @@ class ControllerTest < ActionController::TestCase
   end
 
   test 'destroy' do
-    w = Widget.create :name => 'Roundel'
+    w = Widget.create name: 'Roundel'
     assert_equal 1, w.versions.length
     delete :destroy, params_wrapper(id: w.id)
     widget = assigns(:widget)

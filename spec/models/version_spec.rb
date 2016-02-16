@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe PaperTrail::Version, :type => :model do
+describe PaperTrail::Version, type: :model do
   it "should include the `VersionConcern` module to get base functionality" do
     expect(PaperTrail::Version).to include(PaperTrail::VersionConcern)
   end
@@ -13,8 +13,8 @@ describe PaperTrail::Version, :type => :model do
     it { is_expected.to have_db_column(:object).of_type(:text) }
     it { is_expected.to have_db_column(:created_at).of_type(:datetime) }
 
-    describe "object_changes column", :versioning => true do
-      let(:widget) { Widget.create!(:name => 'Dashboard') }
+    describe "object_changes column", versioning: true do
+      let(:widget) { Widget.create!(name: 'Dashboard') }
       let(:value) { widget.versions.last.object_changes }
 
       context "serializer is YAML" do
@@ -56,12 +56,12 @@ describe PaperTrail::Version, :type => :model do
           end
         end
 
-        context "Has previous version", :versioning => true do
+        context "Has previous version", versioning: true do
           let(:name) { FFaker::Name.name }
-          let(:widget) { Widget.create!(:name => FFaker::Name.name) }
+          let(:widget) { Widget.create!(name: FFaker::Name.name) }
           before do
-            widget.versions.first.update_attributes!(:whodunnit => name)
-            widget.update_attributes!(:name => FFaker::Name.first_name)
+            widget.versions.first.update_attributes!(whodunnit: name)
+            widget.update_attributes!(name: FFaker::Name.first_name)
           end
           subject { widget.versions.last }
 
@@ -92,7 +92,7 @@ describe PaperTrail::Version, :type => :model do
       describe '#terminator' do
         it { is_expected.to respond_to(:terminator) }
 
-        let(:attributes) { {:whodunnit => FFaker::Name.first_name} }
+        let(:attributes) { {whodunnit: FFaker::Name.first_name} }
 
         it "is an alias for the `whodunnit` attribute" do
           expect(subject.terminator).to eq(attributes[:whodunnit])
@@ -153,15 +153,15 @@ describe PaperTrail::Version, :type => :model do
               end
             end
 
-            context "valid arguments", :versioning => true do
+            context "valid arguments", versioning: true do
               let(:widget) { Widget.new }
               let(:name) { FFaker::Name.first_name }
               let(:int) { rand(10) + 1 }
 
               before do
-                widget.update_attributes!(:name => name, :an_integer => int)
-                widget.update_attributes!(:name => 'foobar', :an_integer => 100)
-                widget.update_attributes!(:name => FFaker::Name.last_name, :an_integer => 15)
+                widget.update_attributes!(name: name, an_integer: int)
+                widget.update_attributes!(name: 'foobar', an_integer: 100)
+                widget.update_attributes!(name: FFaker::Name.last_name, an_integer: 15)
               end
 
               context "`serializer == YAML`" do
@@ -171,10 +171,10 @@ describe PaperTrail::Version, :type => :model do
 
                 it "should be able to locate versions according to their `object` contents" do
                   expect(
-                    PaperTrail::Version.where_object(:name => name)
+                    PaperTrail::Version.where_object(name: name)
                   ).to eq([widget.versions[1]])
                   expect(
-                    PaperTrail::Version.where_object(:an_integer => 100)
+                    PaperTrail::Version.where_object(an_integer: 100)
                   ).to eq([widget.versions[2]])
                 end
               end
@@ -190,10 +190,10 @@ describe PaperTrail::Version, :type => :model do
 
                 it "should be able to locate versions according to their `object` contents" do
                   expect(
-                    PaperTrail::Version.where_object(:name => name)
+                    PaperTrail::Version.where_object(name: name)
                   ).to eq([widget.versions[1]])
                   expect(
-                    PaperTrail::Version.where_object(:an_integer => 100)
+                    PaperTrail::Version.where_object(an_integer: 100)
                   ).to eq([widget.versions[2]])
                 end
 
@@ -216,15 +216,15 @@ describe PaperTrail::Version, :type => :model do
               end
             end
 
-            context "valid arguments", :versioning => true do
+            context "valid arguments", versioning: true do
               let(:widget) { Widget.new }
               let(:name) { FFaker::Name.first_name }
               let(:int) { rand(5) + 2 }
 
               before do
-                widget.update_attributes!(:name => name, :an_integer => 0)
-                widget.update_attributes!(:name => 'foobar', :an_integer => 77)
-                widget.update_attributes!(:name => FFaker::Name.last_name, :an_integer => int)
+                widget.update_attributes!(name: name, an_integer: 0)
+                widget.update_attributes!(name: 'foobar', an_integer: 77)
+                widget.update_attributes!(name: FFaker::Name.last_name, an_integer: int)
               end
 
               context "YAML serializer" do
@@ -232,19 +232,19 @@ describe PaperTrail::Version, :type => :model do
 
                 it "locates versions according to their `object_changes` contents" do
                   expect(
-                    widget.versions.where_object_changes(:name => name)
+                    widget.versions.where_object_changes(name: name)
                   ).to eq(widget.versions[0..1])
                   expect(
-                    widget.versions.where_object_changes(:an_integer => 77)
+                    widget.versions.where_object_changes(an_integer: 77)
                   ).to eq(widget.versions[1..2])
                   expect(
-                    widget.versions.where_object_changes(:an_integer => int)
+                    widget.versions.where_object_changes(an_integer: int)
                   ).to eq([widget.versions.last])
                 end
 
                 it "handles queries for multiple attributes" do
                   expect(
-                    widget.versions.where_object_changes(:an_integer => 77, :name => 'foobar')
+                    widget.versions.where_object_changes(an_integer: 77, name: 'foobar')
                   ).to eq(widget.versions[1..2])
                 end
               end
@@ -255,19 +255,19 @@ describe PaperTrail::Version, :type => :model do
 
                 it "locates versions according to their `object_changes` contents" do
                   expect(
-                    widget.versions.where_object_changes(:name => name)
+                    widget.versions.where_object_changes(name: name)
                   ).to eq(widget.versions[0..1])
                   expect(
-                    widget.versions.where_object_changes(:an_integer => 77)
+                    widget.versions.where_object_changes(an_integer: 77)
                   ).to eq(widget.versions[1..2])
                   expect(
-                    widget.versions.where_object_changes(:an_integer => int)
+                    widget.versions.where_object_changes(an_integer: int)
                   ).to eq([widget.versions.last])
                 end
 
                 it "handles queries for multiple attributes" do
                   expect(
-                    widget.versions.where_object_changes(:an_integer => 77, :name => 'foobar')
+                    widget.versions.where_object_changes(an_integer: 77, name: 'foobar')
                   ).to eq(widget.versions[1..2])
                 end
 

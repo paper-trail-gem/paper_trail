@@ -18,7 +18,7 @@ if Gem::Version.new(Rack.release) < Gem::Version.new("2.0.0.alpha")
     register PaperTrail::Sinatra
 
     get '/test' do
-      Widget.create!(:name => 'foo')
+      Widget.create!(name: 'foo')
       'Hello'
     end
 

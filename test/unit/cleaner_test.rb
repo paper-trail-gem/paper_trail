@@ -37,7 +37,7 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
 
     context '`:keeping` option' do
       should 'modifies the number of versions ommitted from destruction' do
-        PaperTrail.clean_versions!(:keeping => 2)
+        PaperTrail.clean_versions!(keeping: 2)
         assert_equal 6, PaperTrail::Version.all.count
         @animals.each { |animal| assert_equal 2, animal.versions.size }
       end
@@ -54,7 +54,7 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
         assert_equal 10, PaperTrail::Version.count
         assert_equal 4, @animal.versions.size
         assert_equal 3, @animal.versions_between(@date, @date + 1.day).size
-        PaperTrail.clean_versions!(:date => @date)
+        PaperTrail.clean_versions!(date: @date)
         assert_equal 8, PaperTrail::Version.count
         assert_equal 2, @animal.versions.reload.size
         assert_equal @date, @animal.versions.first.created_at.to_date
@@ -65,7 +65,7 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
     context '`:item_id` option' do
       context 'single ID received' do
         should 'restrict the versions destroyed to the versions for the Item with that ID' do
-          PaperTrail.clean_versions!(:item_id => @animal.id)
+          PaperTrail.clean_versions!(item_id: @animal.id)
           assert_equal 1, @animal.versions.size
           assert_equal 7, PaperTrail::Version.count
         end
@@ -73,7 +73,7 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
 
       context "collection of ID's received" do
         should "restrict the versions destroyed to the versions for the Item with those ID's" do
-          PaperTrail.clean_versions!(:item_id => [@animal.id, @dog.id])
+          PaperTrail.clean_versions!(item_id: [@animal.id, @dog.id])
           assert_equal 1, @animal.versions.size
           assert_equal 1, @dog.versions.size
           assert_equal 5, PaperTrail::Version.count
@@ -101,7 +101,7 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
 
         context 'and `:keeping`' do
           should 'restrict cleaning properly' do
-            PaperTrail.clean_versions!(:date => @date, :keeping => 2)
+            PaperTrail.clean_versions!(date: @date, keeping: 2)
             [@animal, @dog].each do |animal|
               # reload the association to pick up the destructions made by the `Cleaner`
               animal.versions.reload
@@ -115,7 +115,7 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
 
         context 'and `:item_id`' do
           should 'restrict cleaning properly' do
-            PaperTrail.clean_versions!(:date => @date, :item_id => @dog.id)
+            PaperTrail.clean_versions!(date: @date, item_id: @dog.id)
             # reload the association to pick up the destructions made by the `Cleaner`
             @dog.versions.reload
             assert_equal 2, @dog.versions.size
@@ -127,7 +127,7 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
 
         context ', `:item_id`, and `:keeping`' do
           should 'restrict cleaning properly' do
-            PaperTrail.clean_versions!(:date => @date, :item_id => @dog.id, :keeping => 2)
+            PaperTrail.clean_versions!(date: @date, item_id: @dog.id, keeping: 2)
             # reload the association to pick up the destructions made by the `Cleaner`
             @dog.versions.reload
             assert_equal 3, @dog.versions.size
@@ -140,7 +140,7 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
 
       context '`:keeping` and `:item_id`' do
         should 'restrict cleaning properly' do
-          PaperTrail.clean_versions!(:keeping => 2, :item_id => @animal.id)
+          PaperTrail.clean_versions!(keeping: 2, item_id: @animal.id)
           assert_equal 2, @animal.versions.size
           # ensure the versions for other animals besides `@animal` weren't touched
           assert_equal 8, PaperTrail::Version.count

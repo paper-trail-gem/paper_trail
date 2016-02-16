@@ -4,7 +4,7 @@ require 'rails_helper'
 # table is only created when testing against postgres and ActiveRecord >= 4.
 if JsonVersion.table_exists?
 
-  describe JsonVersion, :type => :model do
+  describe JsonVersion, type: :model do
     it "should include the `VersionConcern` module to get base functionality" do
       expect(JsonVersion).to include(PaperTrail::VersionConcern)
     end
@@ -15,11 +15,11 @@ if JsonVersion.table_exists?
           it { expect(JsonVersion).to respond_to(:where_object) }
 
           it "escapes values" do
-            f = Fruit.create(:name => 'Bobby')
+            f = Fruit.create(name: 'Bobby')
             expect(
               f.
                 versions.
-                where_object(:name => "Robert'; DROP TABLE Students;--").
+                where_object(name: "Robert'; DROP TABLE Students;--").
                 count
             ).to eq(0)
           end
@@ -31,21 +31,21 @@ if JsonVersion.table_exists?
             end
           end
 
-          context "valid arguments", :versioning => true do
+          context "valid arguments", versioning: true do
             let(:fruit_names) { %w(apple orange lemon banana lime coconut strawberry blueberry) }
             let(:fruit) { Fruit.new }
             let(:name) { 'pomegranate' }
             let(:color) { FFaker::Color.name }
 
             before do
-              fruit.update_attributes!(:name => name)
-              fruit.update_attributes!(:name => fruit_names.sample, :color => color)
-              fruit.update_attributes!(:name => fruit_names.sample, :color => FFaker::Color.name)
+              fruit.update_attributes!(name: name)
+              fruit.update_attributes!(name: fruit_names.sample, color: color)
+              fruit.update_attributes!(name: fruit_names.sample, color: FFaker::Color.name)
             end
 
             it "should be able to locate versions according to their `object` contents" do
-              expect(JsonVersion.where_object(:name => name)).to eq([fruit.versions[1]])
-              expect(JsonVersion.where_object(:color => color)).to eq([fruit.versions[2]])
+              expect(JsonVersion.where_object(name: name)).to eq([fruit.versions[1]])
+              expect(JsonVersion.where_object(color: color)).to eq([fruit.versions[2]])
             end
           end
         end
@@ -54,11 +54,11 @@ if JsonVersion.table_exists?
           it { expect(JsonVersion).to respond_to(:where_object_changes) }
 
           it "escapes values" do
-            f = Fruit.create(:name => 'Bobby')
+            f = Fruit.create(name: 'Bobby')
             expect(
               f.
                 versions.
-                where_object_changes(:name => "Robert'; DROP TABLE Students;--").
+                where_object_changes(name: "Robert'; DROP TABLE Students;--").
                 count
             ).to eq(0)
           end
@@ -70,7 +70,7 @@ if JsonVersion.table_exists?
             end
           end
 
-          context "valid arguments", :versioning => true do
+          context "valid arguments", versioning: true do
             let(:color) { %w[red green] }
             let(:fruit) { Fruit.create!(name: name[0]) }
             let(:name) { %w[banana kiwi mango] }

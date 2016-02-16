@@ -8,12 +8,12 @@ class SerializerTest < ActiveSupport::TestCase
         has_paper_trail
       END
 
-      @fluxor = Fluxor.create :name => 'Some text.'
+      @fluxor = Fluxor.create name: 'Some text.'
 
       # this is exactly what PaperTrail serializes
       @original_fluxor_attributes = @fluxor.send(:attributes_before_change)
 
-      @fluxor.update_attributes :name => 'Some more text.'
+      @fluxor.update_attributes name: 'Some more text.'
     end
 
     should 'work with the default `YAML` serializer' do
@@ -38,12 +38,12 @@ class SerializerTest < ActiveSupport::TestCase
         has_paper_trail
       END
 
-      @fluxor = Fluxor.create :name => 'Some text.'
+      @fluxor = Fluxor.create name: 'Some text.'
 
       # this is exactly what PaperTrail serializes
       @original_fluxor_attributes = @fluxor.send(:attributes_before_change)
 
-      @fluxor.update_attributes :name => 'Some more text.'
+      @fluxor.update_attributes name: 'Some more text.'
     end
 
     teardown do
@@ -88,7 +88,7 @@ class SerializerTest < ActiveSupport::TestCase
         send(:attributes_before_change).
         reject { |_k, v| v.nil? }
 
-      @fluxor.update_attributes :name => 'Some more text.'
+      @fluxor.update_attributes name: 'Some more text.'
     end
 
     teardown do

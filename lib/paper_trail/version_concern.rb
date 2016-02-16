@@ -5,14 +5,14 @@ module PaperTrail
     extend ::ActiveSupport::Concern
 
     included do
-      belongs_to :item, :polymorphic => true
+      belongs_to :item, polymorphic: true
 
       # Since the test suite has test coverage for this, we want to declare
       # the association when the test suite is running. This makes it pass when
       # DB is not initialized prior to test runs such as when we run on Travis
       # CI (there won't be a db in `test/dummy/db/`).
       if PaperTrail.config.track_associations?
-        has_many :version_associations, :dependent => :destroy
+        has_many :version_associations, dependent: :destroy
       end
 
       validates_presence_of :event
@@ -32,24 +32,24 @@ module PaperTrail
 
       after_create :enforce_version_limit!
 
-      scope :within_transaction, lambda { |id| where :transaction_id => id }
+      scope :within_transaction, lambda { |id| where transaction_id: id }
     end
 
     module ClassMethods
       def with_item_keys(item_type, item_id)
-        where :item_type => item_type, :item_id => item_id
+        where item_type: item_type, item_id: item_id
       end
 
       def creates
-        where :event => 'create'
+        where event: 'create'
       end
 
       def updates
-        where :event => 'update'
+        where event: 'update'
       end
 
       def destroys
-        where :event => 'destroy'
+        where event: 'destroy'
       end
 
       def not_creates

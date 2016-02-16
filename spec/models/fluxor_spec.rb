@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Fluxor, :type => :model do
+describe Fluxor, type: :model do
   describe '`be_versioned` matcher' do
     it { is_expected.to_not be_versioned }
   end

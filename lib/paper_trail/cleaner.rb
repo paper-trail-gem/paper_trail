@@ -15,7 +15,7 @@ module PaperTrail
     #   causes all items to be cleaned. Defaults to `nil`.
     #
     def clean_versions!(options = {})
-      options = {:keeping => 1, :date => :all}.merge(options)
+      options = {keeping: 1, date: :all}.merge(options)
       gather_versions(options[:item_id], options[:date]).each do |_item_id, item_versions|
         group_versions_by_date(item_versions).each do |_date, date_versions|
           # Remove the number of versions we wish to keep from the collection
@@ -37,7 +37,7 @@ module PaperTrail
       unless date == :all || date.respond_to?(:to_date)
         raise ArgumentError.new("`date` argument must receive a Timestamp or `:all`")
       end
-      versions = item_id ? PaperTrail::Version.where(:item_id => item_id) : PaperTrail::Version
+      versions = item_id ? PaperTrail::Version.where(item_id: item_id) : PaperTrail::Version
       versions = versions.order(PaperTrail::Version.timestamp_sort_order)
       versions = versions.between(date.to_date, date.to_date + 1.day) unless date == :all
 

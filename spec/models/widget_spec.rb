@@ -1,28 +1,28 @@
 require 'rails_helper'
 
-describe Widget, :type => :model do
+describe Widget, type: :model do
   describe '`be_versioned` matcher' do
     it { is_expected.to be_versioned }
   end
 
-  let(:widget) { Widget.create! :name => 'Bob', :an_integer => 1 }
+  let(:widget) { Widget.create! name: 'Bob', an_integer: 1 }
 
-  describe '`have_a_version_with` matcher', :versioning => true do
+  describe '`have_a_version_with` matcher', versioning: true do
     before do
-      widget.update_attributes!(:name => 'Leonard', :an_integer => 1 )
-      widget.update_attributes!(:name => 'Tom')
-      widget.update_attributes!(:name => 'Bob')
+      widget.update_attributes!(name: 'Leonard', an_integer: 1 )
+      widget.update_attributes!(name: 'Tom')
+      widget.update_attributes!(name: 'Bob')
     end
 
     it "is possible to do assertions on versions" do
-       expect(widget).to have_a_version_with :name => 'Leonard', :an_integer => 1
-       expect(widget).to have_a_version_with :an_integer => 1
-       expect(widget).to have_a_version_with :name => 'Tom'
+       expect(widget).to have_a_version_with name: 'Leonard', an_integer: 1
+       expect(widget).to have_a_version_with an_integer: 1
+       expect(widget).to have_a_version_with name: 'Tom'
     end
   end
 
   describe "versioning option" do
-    context "enabled", :versioning => true do
+    context "enabled", versioning: true do
       it "should enable versioning" do
         expect(widget.versions.size).to eq(1)
       end
@@ -35,10 +35,10 @@ describe Widget, :type => :model do
     end
   end
 
-  describe "Callbacks", :versioning => true do
+  describe "Callbacks", versioning: true do
     describe :before_save do
       context ':on => :update' do
-        before { widget.update_attributes!(:name => 'Foobar') }
+        before { widget.update_attributes!(name: 'Foobar') }
 
         subject { widget.versions.last.reify }
 
@@ -52,7 +52,7 @@ describe Widget, :type => :model do
     end
 
     describe :after_create do
-      let(:widget) { Widget.create!(:name => 'Foobar', :created_at => Time.now - 1.week) }
+      let(:widget) { Widget.create!(name: 'Foobar', created_at: Time.now - 1.week) }
 
       it "corresponding version should use the widget's `updated_at`" do
         expect(widget.versions.last.created_at.to_i).to eq(widget.updated_at.to_i)
@@ -60,7 +60,7 @@ describe Widget, :type => :model do
     end
 
     describe :after_update do
-      before { widget.update_attributes!(:name => 'Foobar', :updated_at => Time.now + 1.week) }
+      before { widget.update_attributes!(name: 'Foobar', updated_at: Time.now + 1.week) }
 
       subject { widget.versions.last.reify }
 
@@ -95,8 +95,8 @@ describe Widget, :type => :model do
       before do
         begin
           widget.transaction do
-            widget.update_attributes!(:name => rolled_back_name)
-            widget.update_attributes!(:name => Widget::EXCLUDED_NAME)
+            widget.update_attributes!(name: rolled_back_name)
+            widget.update_attributes!(name: Widget::EXCLUDED_NAME)
           end
         rescue ActiveRecord::RecordInvalid
           widget.reload
@@ -113,7 +113,7 @@ describe Widget, :type => :model do
     end
   end
 
-  describe "Association", :versioning => true do
+  describe "Association", versioning: true do
     describe "sort order" do
       it "should sort by the timestamp order from the `VersionConcern`" do
         expect(widget.versions.to_sql).to eq(
@@ -123,7 +123,7 @@ describe Widget, :type => :model do
   end
 
   describe "Methods" do
-    describe "Instance", :versioning => true do
+    describe "Instance", versioning: true do
       describe '#paper_trail_originator' do
         it { is_expected.to respond_to(:paper_trail_originator) }
 
@@ -137,16 +137,16 @@ describe Widget, :type => :model do
 
             it "should return the originator for the model at a given state" do
               expect(widget.paper_trail_originator).to eq(orig_name)
-              widget.whodunnit(new_name) { |w| w.update_attributes(:name => 'Elizabeth') }
+              widget.whodunnit(new_name) { |w| w.update_attributes(name: 'Elizabeth') }
               expect(widget.paper_trail_originator).to eq(new_name)
             end
           end
 
           context "accessed from a reified model instance" do
             before do
-              widget.update_attributes(:name => 'Andy')
+              widget.update_attributes(name: 'Andy')
               PaperTrail.whodunnit = new_name
-              widget.update_attributes(:name => 'Elizabeth')
+              widget.update_attributes(name: 'Elizabeth')
             end
 
             context "default behavior (no `options[:dup]` option passed in)" do
@@ -162,7 +162,7 @@ describe Widget, :type => :model do
             end
 
             context "creating a new instance (`options[:dup] == true`)" do
-              let(:reified_widget) { widget.versions[1].reify(:dup => true) }
+              let(:reified_widget) { widget.versions[1].reify(dup: true) }
 
               it "should return the appropriate originator" do
                 expect(reified_widget.paper_trail_originator).to eq(orig_name)
@@ -232,14 +232,14 @@ describe Widget, :type => :model do
           it "should modify value of `PaperTrail.whodunnit` while executing the block" do
             widget.whodunnit(new_name) do
               expect(PaperTrail.whodunnit).to eq(new_name)
-              widget.update_attributes(:name => 'Elizabeth')
+              widget.update_attributes(name: 'Elizabeth')
             end
             expect(widget.versions.last.whodunnit).to eq(new_name)
           end
 
           context "after executing the block" do
             it "reverts value of whodunnit to previous value" do
-              widget.whodunnit(new_name) { |w| w.update_attributes(:name => 'Elizabeth') }
+              widget.whodunnit(new_name) { |w| w.update_attributes(name: 'Elizabeth') }
               expect(PaperTrail.whodunnit).to eq(orig_name)
             end
           end

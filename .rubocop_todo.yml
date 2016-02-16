@@ -75,13 +75,6 @@ Style/FirstParameterIndentation:
   Exclude:
     - 'lib/paper_trail/serializers/json.rb'
 
-# Offense count: 606
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, UseHashRocketsWithSymbolValues.
-# SupportedStyles: ruby19, ruby19_no_mixed_keys, hash_rockets
-Style/HashSyntax:
-  Enabled: false
-
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: MaxLineLength.

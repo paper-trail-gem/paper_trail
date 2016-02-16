@@ -23,7 +23,7 @@ describe PaperTrail do
     end
   end
 
-  context '`versioning: true`', :versioning => true do
+  context '`versioning: true`', versioning: true do
     it 'should have versioning on by default' do
       expect(PaperTrail).to be_enabled
     end
@@ -59,7 +59,7 @@ describe PaperTrail do
   end
 
   describe :controller_info do
-    before(:all) { ::PaperTrail.controller_info = {:foo => 'bar'} }
+    before(:all) { ::PaperTrail.controller_info = {foo: 'bar'} }
 
     it "should get set to an empty hash before each test" do
       expect(PaperTrail.controller_info).to eq({})
