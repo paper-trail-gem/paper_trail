@@ -33,9 +33,11 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
     context 'which updates an ignored column, ignored with truly Proc and a selected column' do
       setup do
-        @article.update_attributes :title => 'My first title',
-          :content => 'Some text here.',
-          :abstract => 'ignore abstract'
+        @article.update_attributes(
+          title: 'My first title',
+          content: 'Some text here.',
+          abstract: 'ignore abstract'
+        )
       end
 
       should 'change the number of versions' do
@@ -54,9 +56,11 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
     context 'which updates an ignored column, ignored with falsy Proc and a selected column' do
       setup do
-        @article.update_attributes :title => 'My first title',
-          :content => 'Some text here.',
-          :abstract => 'do not ignore abstract'
+        @article.update_attributes(
+          title: 'My first title',
+          content: 'Some text here.',
+          abstract: 'do not ignore abstract'
+        )
       end
 
       should 'change the number of versions' do
@@ -465,25 +469,28 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       @date_time = DateTime.now.utc
       @time = Time.now
       @date = Date.new 2009, 5, 29
-      @widget = Widget.create :name        => 'Warble',
-                              :a_text      => 'The quick brown fox',
-                              :an_integer  => 42,
-                              :a_float     => 153.01,
-                              :a_decimal   => 2.71828,
-                              :a_datetime  => @date_time,
-                              :a_time      => @time,
-                              :a_date      => @date,
-                              :a_boolean   => true
-
-      @widget.update_attributes :name      => nil,
-                              :a_text      => nil,
-                              :an_integer  => nil,
-                              :a_float     => nil,
-                              :a_decimal   => nil,
-                              :a_datetime  => nil,
-                              :a_time      => nil,
-                              :a_date      => nil,
-                              :a_boolean   => false
+      @widget = Widget.create(
+        name: 'Warble',
+        a_text: 'The quick brown fox',
+        an_integer: 42,
+        a_float: 153.01,
+        a_decimal: 2.71828,
+        a_datetime: @date_time,
+        a_time: @time,
+        a_date: @date,
+        a_boolean: true
+      )
+      @widget.update_attributes(
+        name: nil,
+        a_text: nil,
+        an_integer: nil,
+        a_float: nil,
+        a_decimal: nil,
+        a_datetime: nil,
+        a_time: nil,
+        a_date: nil,
+        a_boolean: false
+      )
       @previous = @widget.versions.last.reify
     end
 

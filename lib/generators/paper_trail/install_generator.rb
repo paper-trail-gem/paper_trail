@@ -6,10 +6,18 @@ module PaperTrail
     include ::Rails::Generators::Migration
 
     source_root File.expand_path('../templates', __FILE__)
-    class_option :with_changes, :type => :boolean, :default => false,
-      :desc => "Store changeset (diff) with each version"
-    class_option :with_associations, :type => :boolean, :default => false,
-      :desc => "Store transactional IDs to support association restoration"
+    class_option(
+      :with_changes,
+      type: :boolean,
+      default: false,
+      desc: "Store changeset (diff) with each version"
+    )
+    class_option(
+      :with_associations,
+      type: :boolean,
+      default: false,
+      desc: "Store transactional IDs to support association restoration"
+    )
 
     desc 'Generates (but does not run) a migration to add a versions table.'
 
