@@ -7,7 +7,6 @@ task :prepare do
   FileUtils.cp "test/dummy/config/database.#{ENV["DB"]}.yml", "test/dummy/config/database.yml"
 end
 
-
 require 'rake/testtask'
 desc 'Run tests on PaperTrail with Test::Unit.'
 Rake::TestTask.new(:test) do |t|

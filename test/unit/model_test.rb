@@ -295,7 +295,6 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         end
       end
 
-
       context 'and then updated with changes' do
         setup { @widget.update_attributes :name => 'Harry' }
 
@@ -444,7 +443,6 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
   end
 
-
   # Test the serialisation and deserialisation.
   # TODO: binary
   context "A record's papertrail" do
@@ -513,7 +511,6 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       assert @previous.a_boolean
     end
 
-
     context "after a column is removed from the record's schema" do
       setup do
         change_schema
@@ -544,7 +541,6 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       end
     end
   end
-
 
   context 'A record' do
     setup { @widget = Widget.create :name => 'Zaphod' }
@@ -633,7 +629,6 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
   end
 
-
   context 'A papertrail with somebody making changes' do
     setup do
       @widget = Widget.new :name => 'Fidget'
@@ -685,7 +680,6 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
   end
 
-
   context 'Timestamps' do
     setup do
       @wotsit = Wotsit.create! :name => 'wotsit'
@@ -721,7 +715,6 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
   end
 
-
   context 'A subclass' do
     setup do
       @foo = FooWidget.create
@@ -753,7 +746,6 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       end
     end
   end
-
 
   context 'An item with versions' do
     setup do
@@ -868,7 +860,6 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
   end
 
-
   context 'An item' do
     setup do
       @initial_title = 'Foobar'
@@ -898,7 +889,6 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         assert_equal @initial_title, @article.versions.last.title
       end
 
-
       context 'and updated' do
         setup do
           @article.update_attributes! :content => 'Better text.', :title => 'Rhubarb'
@@ -920,7 +910,6 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           assert_equal @initial_title, @article.versions.last.title
         end
       end
-
 
       context 'and destroyed' do
         setup { @article.destroy }
@@ -960,7 +949,6 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       assert_equal @widget.versions[-2].reify, @widget.previous_version
     end
   end
-
 
   context 'A non-reified item' do
     setup { @widget = Widget.new }
@@ -1181,7 +1169,6 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
   end
 
-
   context 'A new model instance which uses a custom PaperTrail::Version class' do
     setup { @post = Post.new }
 
@@ -1227,7 +1214,6 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
   end
 
-
   context 'An overwritten default accessor' do
     setup do
       @song = Song.create :length => 4
@@ -1256,7 +1242,6 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       end
     end
   end
-
 
   context 'An unsaved record' do
     setup do
