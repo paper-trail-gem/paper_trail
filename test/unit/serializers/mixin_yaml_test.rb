@@ -13,7 +13,7 @@ module CustomYamlSerializer
   end
 
   def self.dump(object)
-    object.is_a?(Hash) ? super(object.reject { |k,v| v.nil? }) : super
+    object.is_a?(Hash) ? super(object.reject { |_k, v| v.nil? }) : super
   end
 end
 
@@ -36,7 +36,7 @@ class MixinYamlTest < ActiveSupport::TestCase
     end
 
     should '`deserialize` YAML to Ruby, removing pairs with `blank` keys or values' do
-      assert_equal @hash.reject { |k,v| k.blank? || v.blank? },
+      assert_equal @hash.reject { |k, v| k.blank? || v.blank? },
         CustomYamlSerializer.load(@hash_as_yaml)
     end
   end
@@ -47,9 +47,8 @@ class MixinYamlTest < ActiveSupport::TestCase
     end
 
     should '`serialize` Ruby to YAML, removing pairs with `nil` values' do
-      assert_equal @hash.reject { |k,v| v.nil? }.to_yaml,
+      assert_equal @hash.reject { |_k, v| v.nil? }.to_yaml,
         CustomYamlSerializer.dump(@hash)
     end
   end
-
 end

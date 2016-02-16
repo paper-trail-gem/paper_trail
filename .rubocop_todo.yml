@@ -1,19 +1,6 @@
 # Remove these configuration records
 # one by one as the offenses are removed from the code base.
 
-# Offense count: 12
-# Cop supports --auto-correct.
-# Configuration parameters: IgnoreEmptyBlocks.
-Lint/UnusedBlockArgument:
-  Exclude:
-    - 'lib/paper_trail/cleaner.rb'
-    - 'lib/paper_trail/has_paper_trail.rb'
-    - 'test/custom_json_serializer.rb'
-    - 'test/unit/model_test.rb'
-    - 'test/unit/serializer_test.rb'
-    - 'test/unit/serializers/mixin_json_test.rb'
-    - 'test/unit/serializers/mixin_yaml_test.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: AllowUnusedKeywordArguments, IgnoreEmptyMethods.
