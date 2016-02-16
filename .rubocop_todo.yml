@@ -67,12 +67,6 @@ Style/DoubleNegation:
   Exclude:
     - 'lib/paper_trail.rb'
 
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/EmptyLinesAroundAccessModifier:
-  Exclude:
-    - 'lib/generators/paper_trail/install_generator.rb'
-
 # Offense count: 14
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.

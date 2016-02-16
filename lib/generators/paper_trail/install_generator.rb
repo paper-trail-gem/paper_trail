@@ -35,6 +35,7 @@ module PaperTrail
     end
 
     protected
+
     def add_paper_trail_migration(template)
       migration_dir = File.expand_path('db/migrate')
 
