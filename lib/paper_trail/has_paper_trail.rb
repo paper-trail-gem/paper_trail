@@ -211,7 +211,9 @@ module PaperTrail
       end
 
       # Returns the objects (not Versions) as they were between the given times.
-      def versions_between(start_time, end_time, reify_options={})
+      # TODO: Either add support for the third argument, `_reify_options`, or
+      # add a deprecation warning if someone tries to use it.
+      def versions_between(start_time, end_time, _reify_options={})
         versions = send(self.class.versions_association_name).between(start_time, end_time)
         versions.collect { |version| version_at(version.send PaperTrail.timestamp_field) }
       end
@@ -384,9 +386,9 @@ module PaperTrail
       end
 
       def changes_for_paper_trail
-        _changes = changes.delete_if { |k,v| !notably_changed.include?(k) }
-        self.class.serialize_attribute_changes_for_paper_trail!(_changes)
-        _changes.to_hash
+        notable_changes = changes.delete_if { |k, _v| !notably_changed.include?(k) }
+        self.class.serialize_attribute_changes_for_paper_trail!(notable_changes)
+        notable_changes.to_hash
       end
 
       # Invoked via`after_update` callback for when a previous version is
@@ -469,7 +471,7 @@ module PaperTrail
 
       def merge_metadata(data)
         # First we merge the model-level metadata in `meta`.
-        paper_trail_options[:meta].each do |k,v|
+        paper_trail_options[:meta].each do |k, v|
           data[k] =
             if v.respond_to?(:call)
               v.call(self)
@@ -493,7 +495,7 @@ module PaperTrail
       def attributes_before_change
         attributes.tap do |prev|
           enums = self.respond_to?(:defined_enums) ? self.defined_enums : {}
-          attrs = changed_attributes.select { |k, v| self.class.column_names.include?(k) }
+          attrs = changed_attributes.select { |k, _v| self.class.column_names.include?(k) }
           attrs.each do |attr, before|
             before = enums[attr][before] if enums[attr]
             prev[attr] = before

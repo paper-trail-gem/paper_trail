@@ -1,13 +1,9 @@
-begin
-  require 'pry-nav'
-rescue LoadError
-  # It's OK, we don't include pry in e.g. gemfiles/3.0.gemfile
-end
+require 'pry-nav'
 
 ENV["RAILS_ENV"] = "test"
 ENV["DB"] ||= "sqlite"
 
-unless File.exists?(File.expand_path('../../test/dummy/config/database.yml', __FILE__))
+unless File.exist?(File.expand_path('../../test/dummy/config/database.yml', __FILE__))
   warn "WARNING: No database.yml detected for the dummy app, please run `rake prepare` first"
 end
 

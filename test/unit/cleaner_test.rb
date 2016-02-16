@@ -174,9 +174,9 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
       assert_equal 9, PaperTrail::Version.count
       @animals.each do |animal|
         assert_equal 3, animal.versions.size
-        animal.versions.each_cons(2) do |a,b|
-          a.created_at.to_date == b.created_at.to_date
-          a.custom_created_at.to_date != b.custom_created_at.to_date
+        animal.versions.each_cons(2) do |a, b|
+          assert_equal a.created_at.to_date, b.created_at.to_date
+          assert_not_equal a.custom_created_at.to_date, b.custom_created_at.to_date
         end
       end
     end

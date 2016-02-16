@@ -2,7 +2,7 @@
 ENV["RAILS_ENV"] ||= 'test'
 ENV["DB"] ||= 'sqlite'
 
-unless File.exists?(File.expand_path('../../test/dummy/config/database.yml', __FILE__))
+unless File.exist?(File.expand_path('../../test/dummy/config/database.yml', __FILE__))
   warn "WARNING: No database.yml detected for the dummy app, please run `rake prepare` first"
 end
 

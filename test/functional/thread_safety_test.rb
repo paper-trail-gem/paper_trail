@@ -1,15 +1,13 @@
 require 'test_helper'
 
 class ThreadSafetyTest < ActionController::TestCase
-  test "be thread safe when using #set_paper_trail_whodunnit" do
+  test "thread-safe when using #set_paper_trail_whodunnit" do
     blocked = true
 
     slow_thread = Thread.new do
       controller = TestController.new
       controller.send :set_paper_trail_whodunnit
-      begin
-        sleep 0.001
-      end while blocked
+      sleep 0.001 while blocked
       PaperTrail.whodunnit
     end
 
@@ -24,7 +22,7 @@ class ThreadSafetyTest < ActionController::TestCase
     assert_not_equal slow_thread.value, fast_thread.value
   end
 
-  test "be thread safe when using #without_versioning" do
+  test "thread-safe when using #without_versioning" do
     enabled = nil
 
     slow_thread = Thread.new do

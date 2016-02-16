@@ -255,7 +255,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       end
 
       should 'record the correct event' do
-        assert_match /create/i, @widget.versions.first.event
+        assert_match(/create/i, @widget.versions.first.event)
       end
 
       should 'be live' do
@@ -311,7 +311,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         end
 
         should 'record the correct event' do
-          assert_match /update/i, @widget.versions.last.event
+          assert_match(/update/i, @widget.versions.last.event)
         end
 
         should 'have versions that are not live' do
@@ -323,11 +323,11 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           # AR4 includes the `updated_at` column in changes for updates, which
           # is why we reject it from the right side of this assertion.
           last_obj_changes = @widget.versions.last.object_changes
-          actual = PaperTrail.serializer.load(last_obj_changes).reject { |k, v|
+          actual = PaperTrail.serializer.load(last_obj_changes).reject { |k, _v|
             k.to_sym == :updated_at
           }
           assert_equal ({'name' => ['Henry', 'Harry']}), actual
-          actual = @widget.versions.last.changeset.reject { |k, v|
+          actual = @widget.versions.last.changeset.reject { |k, _v|
             k.to_sym == :updated_at
           }
           assert_equal ({'name' => ['Henry', 'Harry']}), actual
@@ -428,7 +428,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           end
 
           should 'record the correct event' do
-            assert_match /destroy/i, PaperTrail::Version.last.event
+            assert_match(/destroy/i, PaperTrail::Version.last.event)
           end
 
           should 'have three previous versions' do
@@ -1106,7 +1106,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       end
 
       should 'version.changeset should be the same as record.changes was before the save' do
-        actual = @person.versions.last.changeset.delete_if { |key, val| key.to_sym == :id }
+        actual = @person.versions.last.changeset.delete_if { |k, _v| k.to_sym == :id }
         assert_equal @changes_before_save, actual
         actual = @person.versions.last.changeset[:time_zone].map(&:class)
         assert_equal [NilClass, ActiveSupport::TimeZone], actual
