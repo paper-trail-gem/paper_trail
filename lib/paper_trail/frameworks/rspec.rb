@@ -20,7 +20,7 @@ end
 
 RSpec::Matchers.define :be_versioned do
   # check to see if the model has `has_paper_trail` declared on it
-  match { |actual| actual.kind_of?(::PaperTrail::Model::InstanceMethods) }
+  match { |actual| actual.is_a?(::PaperTrail::Model::InstanceMethods) }
 end
 
 RSpec::Matchers.define :have_a_version_with do |attributes|

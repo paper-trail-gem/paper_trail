@@ -63,14 +63,6 @@ Style/ClassAndModuleChildren:
 
 # Offense count: 1
 # Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: is_a?, kind_of?
-Style/ClassCheck:
-  Exclude:
-    - 'lib/paper_trail/frameworks/rspec.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
 # Configuration parameters: Keywords.
 # Keywords: TODO, FIXME, OPTIMIZE, HACK, REVIEW
 Style/CommentAnnotation:
