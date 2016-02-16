@@ -1122,7 +1122,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       context 'when that attribute is updated' do
         setup do
           @attribute_value_before_change = @person.time_zone
-          @person.assign_attributes({ :time_zone => 'Pacific Time (US & Canada)' })
+          @person.assign_attributes(time_zone: 'Pacific Time (US & Canada)')
           @changes_before_save = @person.changes.dup
           @person.save!
         end
@@ -1226,9 +1226,18 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
 
     context 'which is modified' do
-      setup { @post.update_attributes({ :content => "Some new content" }) }
-      should 'change the number of post versions' do assert_equal(2, PostVersion.count) end
-      should 'not change the number of versions' do assert_equal(0, PaperTrail::Version.count) end
+      setup do
+        @post.update_attributes(content: "Some new content")
+      end
+
+      should 'change the number of post versions' do
+        assert_equal(2, PostVersion.count)
+      end
+
+      should 'not change the number of versions' do
+        assert_equal(0, PaperTrail::Version.count)
+      end
+
       should "not have stored changes when object_changes column doesn't exist" do
         assert_nil @post.versions.last.changeset
       end
