@@ -34,13 +34,6 @@ Metrics/ModuleLength:
 Metrics/PerceivedComplexity:
   Max: 16
 
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: MaxKeyValuePairs.
-Performance/RedundantMerge:
-  Exclude:
-    - 'lib/paper_trail/has_paper_trail.rb'
-
 # Offense count: 1
 Style/AccessorMethodName:
   Exclude:
