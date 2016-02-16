@@ -342,23 +342,6 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           assert_equal ['Henry', 'Harry'], @widget.versions.last.changeset['name']
         end
 
-        if defined?(ActiveRecord::IdentityMap) && ActiveRecord::IdentityMap.respond_to?(:without)
-          should 'not clobber the IdentityMap when reifying' do
-            module ActiveRecord::IdentityMap
-              class << self
-                alias :__without :without
-                def without(&block)
-                  @unclobbered = true
-                  __without(&block)
-                end
-              end
-            end
-
-            @widget.versions.last.reify
-            assert ActiveRecord::IdentityMap.instance_variable_get("@unclobbered")
-          end
-        end
-
         context 'and has one associated object' do
           setup do
             @wotsit = @widget.create_wotsit :name => 'John'
@@ -380,7 +363,6 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
             assert_equal @wotsit, @widget.reload.wotsit
           end
         end
-
 
         context 'and has many associated objects' do
           setup do

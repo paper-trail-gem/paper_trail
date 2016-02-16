@@ -59,7 +59,7 @@ Style/ClassAndModuleChildren:
   Exclude:
     - 'test/functional/sinatra_test.rb'
     - 'test/test_helper.rb'
-    - 'test/unit/model_test.rb'
+    - 'test/unit/ar_id_map_test.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.
