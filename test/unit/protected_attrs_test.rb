@@ -47,6 +47,5 @@ class ProtectedAttrsTest < ActiveSupport::TestCase
         end
       end
     end
-
   end
 end

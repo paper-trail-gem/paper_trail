@@ -45,7 +45,6 @@ if Gem::Version.new(Rack.release) < Gem::Version.new("2.0.0.alpha")
     end
 
     context "`PaperTrail::Sinatra` in a `Sinatra::Application` application" do
-
       should "sets the `user_for_paper_trail` from the `current_user` method" do
         get '/test'
         assert_equal 'Hai', last_response.body
@@ -55,7 +54,6 @@ if Gem::Version.new(Rack.release) < Gem::Version.new("2.0.0.alpha")
         assert_equal 1, widget.versions.size
         assert_equal 'raboof', widget.versions.first.whodunnit
       end
-
     end
   end
 end

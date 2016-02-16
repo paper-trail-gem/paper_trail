@@ -271,7 +271,6 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       end
 
       should 'have changes' do
-
         # TODO: Postgres does not appear to pass back
         # ActiveSupport::TimeWithZone, so choosing the lowest common denominator
         # to test.

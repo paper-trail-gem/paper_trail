@@ -11,7 +11,6 @@ if JsonVersion.table_exists?
 
     describe "Methods" do
       describe "Class" do
-
         describe '#where_object' do
           it { expect(JsonVersion).to respond_to(:where_object) }
 

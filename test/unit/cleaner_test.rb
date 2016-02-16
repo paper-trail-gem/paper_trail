@@ -148,7 +148,6 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
         end
       end
     end
-
   end # clean_versions! method
 
   context "Custom timestamp field" do

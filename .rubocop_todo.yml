@@ -67,22 +67,6 @@ Style/DoubleNegation:
   Exclude:
     - 'lib/paper_trail.rb'
 
-# Offense count: 14
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: empty_lines, no_empty_lines
-Style/EmptyLinesAroundBlockBody:
-  Exclude:
-    - 'spec/models/json_version_spec.rb'
-    - 'spec/modules/version_concern_spec.rb'
-    - 'spec/modules/version_number_spec.rb'
-    - 'test/dummy/db/schema.rb'
-    - 'test/functional/modular_sinatra_test.rb'
-    - 'test/functional/sinatra_test.rb'
-    - 'test/unit/cleaner_test.rb'
-    - 'test/unit/model_test.rb'
-    - 'test/unit/protected_attrs_test.rb'
-
 # Offense count: 17
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
