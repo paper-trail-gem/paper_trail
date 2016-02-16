@@ -1,11 +1,6 @@
 # Remove these configuration records
 # one by one as the offenses are removed from the code base.
 
-# Offense count: 2
-Lint/IneffectiveAccessModifier:
-  Exclude:
-    - 'lib/paper_trail.rb'
-
 # Offense count: 1
 Lint/Loop:
   Exclude:
