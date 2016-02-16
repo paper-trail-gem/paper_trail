@@ -272,8 +272,9 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
       should 'have changes' do
 
-        #TODO Postgres does not appear to pass back ActiveSupport::TimeWithZone,
-        # so chosing the lowest common denominator to test.
+        # TODO: Postgres does not appear to pass back
+        # ActiveSupport::TimeWithZone, so choosing the lowest common denominator
+        # to test.
 
         changes = {
           'name'       => [nil, 'Henry'],
