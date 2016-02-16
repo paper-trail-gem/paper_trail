@@ -450,7 +450,7 @@ module PaperTrail
             assoc_version_args[:foreign_key_id] = send(assoc.foreign_key)
           end
 
-          if assoc_version_args.has_key?(:foreign_key_id)
+          if assoc_version_args.key?(:foreign_key_id)
             PaperTrail::VersionAssociation.create(assoc_version_args)
           end
         end

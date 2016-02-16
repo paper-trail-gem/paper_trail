@@ -58,12 +58,6 @@ Style/ClassAndModuleChildren:
   Exclude:
     - 'test/unit/ar_id_map_test.rb'
 
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/DeprecatedHashMethods:
-  Exclude:
-    - 'lib/paper_trail/has_paper_trail.rb'
-
 # Offense count: 33
 Style/Documentation:
   Enabled: false
