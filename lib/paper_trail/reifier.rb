@@ -49,10 +49,10 @@ module PaperTrail
           klass = class_name.constantize
           # The `dup` option always returns a new object, otherwise we should
           # attempt to look for the item outside of default scope(s).
-          if options[:dup] || (_item = klass.unscoped.find_by_id(version.item_id)).nil?
+          if options[:dup] || (item_found = klass.unscoped.find_by_id(version.item_id)).nil?
             model = klass.new
           elsif options[:unversioned_attributes] == :nil
-            model = _item
+            model = item_found
             # Look for attributes that exist in the model and not in this
             # version. These attributes should be set to nil.
             (model.attribute_names - attrs.keys).each { |k| attrs[k] = nil }

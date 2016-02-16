@@ -384,9 +384,9 @@ module PaperTrail
       end
 
       def changes_for_paper_trail
-        _changes = changes.delete_if { |k,v| !notably_changed.include?(k) }
-        self.class.serialize_attribute_changes_for_paper_trail!(_changes)
-        _changes.to_hash
+        notable_changes = changes.delete_if { |k,v| !notably_changed.include?(k) }
+        self.class.serialize_attribute_changes_for_paper_trail!(notable_changes)
+        notable_changes.to_hash
       end
 
       # Invoked via`after_update` callback for when a previous version is

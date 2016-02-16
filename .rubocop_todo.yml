@@ -1,13 +1,6 @@
 # Remove these configuration records
 # one by one as the offenses are removed from the code base.
 
-# Offense count: 3
-Lint/UnderscorePrefixedVariableName:
-  Exclude:
-    - 'lib/paper_trail/cleaner.rb'
-    - 'lib/paper_trail/has_paper_trail.rb'
-    - 'lib/paper_trail/reifier.rb'
-
 # Offense count: 12
 # Cop supports --auto-correct.
 # Configuration parameters: IgnoreEmptyBlocks.
