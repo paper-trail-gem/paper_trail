@@ -7,7 +7,8 @@ class Widget < ActiveRecord::Base
 
   validates :name, :exclusion => { :in => [EXCLUDED_NAME] }
 
-  if ::ActiveRecord::VERSION::MAJOR >= 4 # `has_many` syntax for specifying order uses a lambda in Rails 4
+  # `has_many` syntax for specifying order uses a lambda in Rails 4
+  if ::ActiveRecord::VERSION::MAJOR >= 4
     has_many :fluxors, lambda { order(:name) }
   else
     has_many :fluxors, :order => :name

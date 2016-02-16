@@ -35,7 +35,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'generator_spec', '~> 0.9.3'
   s.add_development_dependency 'database_cleaner', '~> 1.2'
   s.add_development_dependency 'pry-nav', '~> 0.2.4'
-  s.add_development_dependency 'rubocop', '~> 0.35.1'
+  s.add_development_dependency 'rubocop', '~> 0.37.2'
   s.add_development_dependency 'timecop', '~> 0.8.0'
 
   if defined?(JRUBY_VERSION)

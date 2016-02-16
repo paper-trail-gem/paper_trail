@@ -1,18 +1,27 @@
 inherit_from: .rubocop_todo.yml
 
+# Please:
+#
+# - Comment any deviations from the Ruby Style Guide
+# - Alphabetize cops
+# - Only include permanent config; temporary goes in .rubocop_todo.yml
+
+# We do not control `schema.rb`. Exclude it from all cops.
 AllCops:
-  Include:
-    - 'lib/**/*.rb'
-    - 'paper_trail.gemspec'
-    - 'Gemfile'
-    - 'Rakefile'
   Exclude:
-    - 'spec/**/*'
-    - 'test/**/*'
-  RunRailsCops: false
-  DisplayCopNames: true
-  DisplayStyleGuide: true
-  StyleGuideCopsOnly: false
+    - test/dummy/db/schema.rb
+
+# The Ruby Style Guide recommends to "Limit lines to 80 characters."
+# (https://github.com/bbatsov/ruby-style-guide#80-character-limits)
+# but 100 is also reasonable.
+Metrics/LineLength:
+  Max: 100
+
+# Migrations often contain long up/down methods, and extracting smaller methods
+# from these is of questionable value.
+Metrics/MethodLength:
+  Exclude:
+    - 'test/dummy/db/migrate/*'
 
 Style/AlignParameters:
   EnforcedStyle: with_fixed_indentation
@@ -33,6 +42,3 @@ Style/DotPosition:
 # concatenate multiline strings with `+` or use a HEREDOC.
 Style/LineEndConcatenation:
   Enabled: false
-
-Metrics/LineLength:
-  Max: 100

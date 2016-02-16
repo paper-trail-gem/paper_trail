@@ -21,7 +21,11 @@ require 'shoulda'
 require 'ffaker'
 require 'database_cleaner'
 
-if Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new('5.0.0.beta1')
+def active_record_gem_version
+  Gem::Version.new(ActiveRecord::VERSION::STRING)
+end
+
+if active_record_gem_version >= Gem::Version.new('5.0.0.beta1')
   # See https://github.com/rails/rails-controller-testing/issues/5
   ActionController::TestCase.send(:include, Rails::Controller::Testing::TestProcess)
 end
@@ -102,7 +106,7 @@ end
 # ActionDispatch::Integration HTTP request method switch to keyword args
 # (see https://github.com/rails/rails/blob/master/actionpack/CHANGELOG.md)
 def params_wrapper(args)
-  if defined?(::Rails) && Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new('5.0.0.beta1')
+  if defined?(::Rails) && active_record_gem_version >= Gem::Version.new('5.0.0.beta1')
     { params: args }
   else
     args

@@ -16,7 +16,9 @@ describe Gadget, :type => :model do
 
     it "should still generate a version when only the `updated_at` attribute is updated" do
       # Plus 1 second because MySQL lacks sub-second resolution
-      expect { gadget.update_attribute(:updated_at, Time.now + 1) }.to change{gadget.versions.size}.by(1)
+      expect {
+        gadget.update_attribute(:updated_at, Time.now + 1)
+      }.to change{gadget.versions.size}.by(1)
     end
   end
 

@@ -29,9 +29,10 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
       end
 
       should 'removes the earliest version(s)' do
-        most_recent_version_names = @animals.map { |animal| animal.versions.last.reify.name }
+        before = @animals.map { |animal| animal.versions.last.reify.name }
         PaperTrail.clean_versions!
-        assert_equal most_recent_version_names, @animals.map { |animal| animal.versions.last.reify.name }
+        after = @animals.map { |animal| animal.versions.last.reify.name }
+        assert_equal before, after
       end
     end
 
@@ -103,31 +104,37 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
           should 'restrict cleaning properly' do
             PaperTrail.clean_versions!(:date => @date, :keeping => 2)
             [@animal, @dog].each do |animal|
-              animal.versions.reload # reload the association to pick up the destructions made by the `Cleaner`
+              # reload the association to pick up the destructions made by the `Cleaner`
+              animal.versions.reload
               assert_equal 3, animal.versions.size
               assert_equal 2, animal.versions.between(@date, @date+1.day).size
             end
-            assert_equal 9, PaperTrail::Version.count # ensure that the versions for the `@cat` instance wasn't touched
+            # ensure that the versions for the `@cat` instance wasn't touched
+            assert_equal 9, PaperTrail::Version.count
           end
         end
 
         context 'and `:item_id`' do
           should 'restrict cleaning properly' do
             PaperTrail.clean_versions!(:date => @date, :item_id => @dog.id)
-            @dog.versions.reload # reload the association to pick up the destructions made by the `Cleaner`
+            # reload the association to pick up the destructions made by the `Cleaner`
+            @dog.versions.reload
             assert_equal 2, @dog.versions.size
             assert_equal 1, @dog.versions.between(@date, @date+1.day).size
-            assert_equal 9, PaperTrail::Version.count # ensure the versions for other animals besides `@animal` weren't touched
+            # ensure the versions for other animals besides `@animal` weren't touched
+            assert_equal 9, PaperTrail::Version.count
           end
         end
 
         context ', `:item_id`, and `:keeping`' do
           should 'restrict cleaning properly' do
             PaperTrail.clean_versions!(:date => @date, :item_id => @dog.id, :keeping => 2)
-            @dog.versions.reload # reload the association to pick up the destructions made by the `Cleaner`
+            # reload the association to pick up the destructions made by the `Cleaner`
+            @dog.versions.reload
             assert_equal 3, @dog.versions.size
             assert_equal 2, @dog.versions.between(@date, @date+1.day).size
-            assert_equal 10, PaperTrail::Version.count # ensure the versions for other animals besides `@animal` weren't touched
+            # ensure the versions for other animals besides `@animal` weren't touched
+            assert_equal 10, PaperTrail::Version.count
           end
         end
       end
@@ -136,7 +143,8 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
         should 'restrict cleaning properly' do
           PaperTrail.clean_versions!(:keeping => 2, :item_id => @animal.id)
           assert_equal 2, @animal.versions.size
-          assert_equal 8, PaperTrail::Version.count # ensure the versions for other animals besides `@animal` weren't touched
+          # ensure the versions for other animals besides `@animal` weren't touched
+          assert_equal 8, PaperTrail::Version.count
         end
       end
     end

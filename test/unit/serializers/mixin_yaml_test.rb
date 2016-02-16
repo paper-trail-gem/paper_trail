@@ -5,7 +5,11 @@ module CustomYamlSerializer
 
   def self.load(string)
     parsed_value = super(string)
-    parsed_value.is_a?(Hash) ? parsed_value.reject { |k,v| k.blank? || v.blank? } : parsed_value
+    if parsed_value.is_a?(Hash)
+      parsed_value.reject { |k, v| k.blank? || v.blank? }
+    else
+      parsed_value
+    end
   end
 
   def self.dump(object)
@@ -32,7 +36,8 @@ class MixinYamlTest < ActiveSupport::TestCase
     end
 
     should '`deserialize` YAML to Ruby, removing pairs with `blank` keys or values' do
-      assert_equal @hash.reject { |k,v| k.blank? || v.blank? }, CustomYamlSerializer.load(@hash_as_yaml)
+      assert_equal @hash.reject { |k,v| k.blank? || v.blank? },
+        CustomYamlSerializer.load(@hash_as_yaml)
     end
   end
 
@@ -42,7 +47,8 @@ class MixinYamlTest < ActiveSupport::TestCase
     end
 
     should '`serialize` Ruby to YAML, removing pairs with `nil` values' do
-      assert_equal @hash.reject { |k,v| v.nil? }.to_yaml, CustomYamlSerializer.dump(@hash)
+      assert_equal @hash.reject { |k,v| v.nil? }.to_yaml,
+        CustomYamlSerializer.dump(@hash)
     end
   end
 

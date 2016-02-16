@@ -10,7 +10,10 @@ class SerializerTest < ActiveSupport::TestCase
       END
 
       @fluxor = Fluxor.create :name => 'Some text.'
-      @original_fluxor_attributes = @fluxor.send(:attributes_before_change) # this is exactly what PaperTrail serializes
+
+      # this is exactly what PaperTrail serializes
+      @original_fluxor_attributes = @fluxor.send(:attributes_before_change)
+
       @fluxor.update_attributes :name => 'Some more text.'
     end
 
@@ -37,7 +40,10 @@ class SerializerTest < ActiveSupport::TestCase
       END
 
       @fluxor = Fluxor.create :name => 'Some text.'
-      @original_fluxor_attributes = @fluxor.send(:attributes_before_change) # this is exactly what PaperTrail serializes
+
+      # this is exactly what PaperTrail serializes
+      @original_fluxor_attributes = @fluxor.send(:attributes_before_change)
+
       @fluxor.update_attributes :name => 'Some more text.'
     end
 
@@ -52,8 +58,10 @@ class SerializerTest < ActiveSupport::TestCase
       assert_equal 'Some text.', @fluxor.versions[1].reify.name
 
       # Check values are stored as JSON.
-      assert_equal @original_fluxor_attributes, ActiveSupport::JSON.decode(@fluxor.versions[1].object)
-      assert_equal ActiveSupport::JSON.encode(@original_fluxor_attributes), @fluxor.versions[1].object
+      assert_equal @original_fluxor_attributes,
+        ActiveSupport::JSON.decode(@fluxor.versions[1].object)
+      assert_equal ActiveSupport::JSON.encode(@original_fluxor_attributes),
+        @fluxor.versions[1].object
     end
 
     should 'store object_changes' do
@@ -75,7 +83,12 @@ class SerializerTest < ActiveSupport::TestCase
       END
 
       @fluxor = Fluxor.create
-      @original_fluxor_attributes = @fluxor.send(:attributes_before_change).reject { |k,v| v.nil? } # this is exactly what PaperTrail serializes
+
+      # this is exactly what PaperTrail serializes
+      @original_fluxor_attributes = @fluxor.
+        send(:attributes_before_change).
+        reject { |_k, v| v.nil? }
+
       @fluxor.update_attributes :name => 'Some more text.'
     end
 
@@ -90,8 +103,10 @@ class SerializerTest < ActiveSupport::TestCase
       assert_nil @fluxor.versions[1].reify.name
 
       # Check values are stored as JSON.
-      assert_equal @original_fluxor_attributes, ActiveSupport::JSON.decode(@fluxor.versions[1].object)
-      assert_equal ActiveSupport::JSON.encode(@original_fluxor_attributes), @fluxor.versions[1].object
+      assert_equal @original_fluxor_attributes,
+        ActiveSupport::JSON.decode(@fluxor.versions[1].object)
+      assert_equal ActiveSupport::JSON.encode(@original_fluxor_attributes),
+        @fluxor.versions[1].object
     end
 
     should 'store object_changes' do

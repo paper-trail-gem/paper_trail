@@ -15,7 +15,10 @@ if Gem::Version.new(Rack.release) < Gem::Version.new("2.0.0.alpha")
     configs = YAML.load_file(File.expand_path('../../dummy/config/database.yml', __FILE__))
     ActiveRecord::Base.configurations = configs
     ActiveRecord::Base.establish_connection(:test)
-    register PaperTrail::Sinatra # we shouldn't actually need this line if I'm not mistaken but the tests seem to fail without it ATM
+
+    # We shouldn't actually need this line if I'm not mistaken but the tests
+    # seem to fail without it ATM
+    register PaperTrail::Sinatra
 
     get '/test' do
       Widget.create!(:name => 'bar')
