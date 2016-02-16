@@ -2,11 +2,6 @@
 # one by one as the offenses are removed from the code base.
 
 # Offense count: 1
-Lint/UselessAssignment:
-  Exclude:
-    - 'test/functional/controller_test.rb'
-
-# Offense count: 1
 Lint/Void:
   Exclude:
     - 'test/unit/cleaner_test.rb'

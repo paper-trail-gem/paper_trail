@@ -35,7 +35,6 @@ class ControllerTest < ActionController::TestCase
     w = assigns(:widget)
     assert_equal 0, w.versions.length
     delete :destroy, params_wrapper({ id: w.id })
-    widget = assigns(:widget)
     assert_equal 0, PaperTrail::Version.with_item_keys('Widget', w.id).size
   end
 
