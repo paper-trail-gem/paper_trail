@@ -10,6 +10,7 @@ module PaperTrail
     def initialize
       @timestamp_field = :created_at
       @serializer      = PaperTrail::Serializers::YAML
+      @disabled        = false
     end
 
     def serialized_attributes
@@ -34,9 +35,13 @@ module PaperTrail
     end
     alias_method :track_associations?, :track_associations
 
+    def disable!
+      @disabled = true
+    end
+
     # Indicates whether PaperTrail is on or off. Default: true.
     def enabled
-      value = PaperTrail.paper_trail_store.fetch(:paper_trail_enabled, true)
+      value = PaperTrail.paper_trail_store.fetch(:paper_trail_enabled, !@disabled)
       value.nil? ? true : value
     end
 

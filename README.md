@@ -415,22 +415,20 @@ class.
 
 ### Globally
 
-On a global level you can turn PaperTrail off like this:
+On a thread global level you can turn PaperTrail off like this:
 
 ```ruby
 PaperTrail.enabled = false
 ```
 
-For example, you might want to disable PaperTrail in your Rails application's
+You might want to disable PaperTrail in your Rails application's
 test environment to speed up your tests.  This will do it (note: this gets done
 automatically for `RSpec` and `Cucumber`, please see the [Testing
 section](#testing)):
 
 ```ruby
 # in config/environments/test.rb
-config.after_initialize do
-  PaperTrail.enabled = false
-end
+config.paper_trail.enabled = false
 ```
 
 If you disable PaperTrail in your test environment but want to enable it for
