@@ -65,12 +65,9 @@ has been destroyed.
     bundle exec rails generate paper_trail:install
     bundle exec rake db:migrate
     ```
-    If using RailsAdmin, install with:
-    
-    ```
-    bundle exec rails g paper_trail:install --with-associations
-    bundle exec rake db:migrate
-    ```
+
+    If using [rails_admin][38], you must enable the experimental
+    [Associations](#associations) feature.
 
 1. Add `has_paper_trail` to the models you want to track.
 
@@ -1557,3 +1554,4 @@ Released under the MIT licence.
 [35]: https://dev.mysql.com/doc/refman/5.6/en/fractional-seconds.html
 [36]: http://www.postgresql.org/docs/9.4/interactive/ddl.html
 [37]: https://github.com/ankit1910/paper_trail-globalid
+[38]: https://github.com/sferik/rails_admin
