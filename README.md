@@ -65,6 +65,12 @@ has been destroyed.
     bundle exec rails generate paper_trail:install
     bundle exec rake db:migrate
     ```
+    If using RailsAdmin, install with:
+    
+    ```
+    bundle exec rails g paper_trail:install --with-associations
+    bundle exec rake db:migrate
+    ```
 
 1. Add `has_paper_trail` to the models you want to track.
 
