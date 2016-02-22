@@ -34,6 +34,11 @@ Style/BlockDelimiters:
 Style/DotPosition:
   EnforcedStyle: trailing
 
+# Use double negation wherever it would otherwise be impractical to convert
+# a value to an actual boolean.
+Style/DoubleNegation:
+  Enabled: false
+
 # The Ruby Style Guide says:
 #
 # > Use \ instead of + or << to concatenate two string literals at line end.
