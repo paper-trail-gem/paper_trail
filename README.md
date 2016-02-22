@@ -770,9 +770,10 @@ last_version.paper_trail_originator         # 'Alice'
 last_version.terminator                     # 'Bob'
 ```
 
-**Storing Actual object using globalid:**
+### Storing an ActiveRecord globalid in whodunnit
 
-Sometimes you might want to retrieve actual ActiveRecord object in whoddunit. You can achieve this using an extention. [PaperTrailGlobalid][37]
+If you would like `whodunnit` to return an `ActiveRecord` object instead of a
+string, please try the [paper_trail-globalid][37] gem.
 
 ## Associations
 
