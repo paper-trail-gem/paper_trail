@@ -25,7 +25,7 @@ class ProtectedAttrsTest < ActiveSupport::TestCase
     end
 
     should "be `nil` in its previous version" do
-      assert_nil @widget.previous_version
+      assert_nil @widget.paper_trail.previous_version
     end
 
     context "which is then updated" do
@@ -36,14 +36,15 @@ class ProtectedAttrsTest < ActiveSupport::TestCase
       end
 
       should "not be `nil` in its previous version" do
-        assert_not_nil @widget.previous_version
+        assert_not_nil @widget.paper_trail.previous_version
       end
 
       should "the previous version should contain right attributes" do
         # For some reason this test seems to be broken in JRuby 1.9 mode in the
         # test env even though it works in the console. WTF?
         unless ActiveRecord::VERSION::MAJOR >= 4 && defined?(JRUBY_VERSION)
-          assert_attributes_equal @widget.previous_version.attributes, @initial_attributes
+          previous_attributes = @widget.paper_trail.previous_version.attributes
+          assert_attributes_equal previous_attributes, @initial_attributes
         end
       end
     end

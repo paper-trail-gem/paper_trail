@@ -11,7 +11,7 @@ class SerializerTest < ActiveSupport::TestCase
       @fluxor = Fluxor.create name: "Some text."
 
       # this is exactly what PaperTrail serializes
-      @original_fluxor_attributes = @fluxor.send(:attributes_before_change)
+      @original_fluxor_attributes = @fluxor.paper_trail.attributes_before_change
 
       @fluxor.update_attributes name: "Some more text."
     end
@@ -41,7 +41,7 @@ class SerializerTest < ActiveSupport::TestCase
       @fluxor = Fluxor.create name: "Some text."
 
       # this is exactly what PaperTrail serializes
-      @original_fluxor_attributes = @fluxor.send(:attributes_before_change)
+      @original_fluxor_attributes = @fluxor.paper_trail.attributes_before_change
 
       @fluxor.update_attributes name: "Some more text."
     end
@@ -85,7 +85,8 @@ class SerializerTest < ActiveSupport::TestCase
 
       # this is exactly what PaperTrail serializes
       @original_fluxor_attributes = @fluxor.
-        send(:attributes_before_change).
+        paper_trail.
+        attributes_before_change.
         reject { |_k, v| v.nil? }
 
       @fluxor.update_attributes name: "Some more text."

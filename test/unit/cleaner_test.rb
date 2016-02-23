@@ -53,7 +53,7 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
       should "restrict the versions destroyed to those that were created on the date provided" do
         assert_equal 10, PaperTrail::Version.count
         assert_equal 4, @animal.versions.size
-        assert_equal 3, @animal.versions_between(@date, @date + 1.day).size
+        assert_equal 3, @animal.paper_trail.versions_between(@date, @date + 1.day).size
         PaperTrail.clean_versions!(date: @date)
         assert_equal 8, PaperTrail::Version.count
         assert_equal 2, @animal.versions.reload.size

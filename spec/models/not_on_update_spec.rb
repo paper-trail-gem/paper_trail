@@ -5,7 +5,7 @@ describe NotOnUpdate, type: :model do
     let!(:record) { described_class.create! }
 
     it "should create a version, regardless" do
-      expect { record.touch_with_version }.to change {
+      expect { record.paper_trail.touch_with_version }.to change {
         PaperTrail::Version.count
       }.by(+1)
     end
@@ -14,7 +14,7 @@ describe NotOnUpdate, type: :model do
       before = record.updated_at
       # Travel 1 second because MySQL lacks sub-second resolution
       Timecop.travel(1) do
-        record.touch_with_version
+        record.paper_trail.touch_with_version
       end
       expect(record.updated_at).to be > before
     end

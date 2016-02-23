@@ -26,9 +26,9 @@ class ThreadSafetyTest < ActionController::TestCase
     enabled = nil
 
     slow_thread = Thread.new do
-      Widget.new.without_versioning do
+      Widget.new.paper_trail.without_versioning do
         sleep(0.01)
-        enabled = Widget.paper_trail_enabled_for_model?
+        enabled = Widget.paper_trail.enabled?
         sleep(0.01)
       end
       enabled
@@ -36,11 +36,11 @@ class ThreadSafetyTest < ActionController::TestCase
 
     fast_thread = Thread.new do
       sleep(0.005)
-      Widget.paper_trail_enabled_for_model?
+      Widget.paper_trail.enabled?
     end
 
     assert_not_equal slow_thread.value, fast_thread.value
-    assert Widget.paper_trail_enabled_for_model?
+    assert Widget.paper_trail.enabled?
     assert PaperTrail.enabled_for_model?(Widget)
   end
 end

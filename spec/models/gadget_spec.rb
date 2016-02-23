@@ -28,10 +28,8 @@ describe Gadget, type: :model do
         describe '#changed_notably?' do
           subject { Gadget.new(created_at: Time.now) }
 
-          it { expect(subject.private_methods).to include(:changed_notably?) }
-
           context "create events" do
-            it { expect(subject.send(:changed_notably?)).to be true }
+            it { expect(subject.paper_trail.changed_notably?).to be true }
           end
 
           context "update events" do
@@ -40,12 +38,12 @@ describe Gadget, type: :model do
             context "without update timestamps" do
               it "should only acknowledge non-ignored attrs" do
                 subject.name = "Wrench"
-                expect(subject.send(:changed_notably?)).to be true
+                expect(subject.paper_trail.changed_notably?).to be true
               end
 
               it "should not acknowledge ignored attr (brand)" do
                 subject.brand = "Acme"
-                expect(subject.send(:changed_notably?)).to be false
+                expect(subject.paper_trail.changed_notably?).to be false
               end
             end
 
@@ -53,13 +51,13 @@ describe Gadget, type: :model do
               it "should only acknowledge non-ignored attrs" do
                 subject.name = "Wrench"
                 subject.updated_at = Time.now
-                expect(subject.send(:changed_notably?)).to be true
+                expect(subject.paper_trail.changed_notably?).to be true
               end
 
               it "should not acknowledge ignored attrs and timestamps only" do
                 subject.brand = "Acme"
                 subject.updated_at = Time.now
-                expect(subject.send(:changed_notably?)).to be false
+                expect(subject.paper_trail.changed_notably?).to be false
               end
             end
           end

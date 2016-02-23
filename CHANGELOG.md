@@ -1,8 +1,14 @@
-## 5.?.? (Unreleased)
+## 5.2.0 (Unreleased)
 
 ### Breaking Changes
 
 - None
+
+### Deprecated
+
+- [#719](https://github.com/airblade/paper_trail/pull/719) -
+  The majority of model methods. Use paper_trail.x instead of x. Why? Your
+  models are a crowded namespace, and we want to get out of your way!
 
 ### Added
 

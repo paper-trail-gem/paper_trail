@@ -65,7 +65,7 @@ module PaperTrail
       # @api private
       def each_enabled_association(associations)
         associations.each do |assoc|
-          next unless assoc.klass.paper_trail_enabled_for_model?
+          next unless assoc.klass.paper_trail.enabled?
           yield assoc
         end
       end
@@ -112,7 +112,7 @@ module PaperTrail
         collection_keys = through_collection.map { |through_model|
           through_model.send(assoc.source_reflection.foreign_key)
         }
-        version_id_subquery = assoc.klass.paper_trail_version_class.
+        version_id_subquery = assoc.klass.paper_trail.version_class.
           select("MIN(id)").
           where("item_type = ?", assoc.class_name).
           where("item_id IN (?)", collection_keys).
@@ -140,7 +140,7 @@ module PaperTrail
       # from the point in time identified by `transaction_id` or `version_at`.
       # @api private
       def load_version_for_habtm(assoc, id, transaction_id, version_at)
-        assoc.klass.paper_trail_version_class.
+        assoc.klass.paper_trail.version_class.
           where("item_type = ?", assoc.klass.name).
           where("item_id = ?", id).
           where("created_at >= ? OR transaction_id = ?", version_at, transaction_id).
@@ -153,8 +153,8 @@ module PaperTrail
       # record from the point in time identified by `transaction_id` or `version_at`.
       # @api private
       def load_version_for_has_one(assoc, model, transaction_id, version_at)
-        version_table_name = model.class.paper_trail_version_class.table_name
-        model.class.paper_trail_version_class.joins(:version_associations).
+        version_table_name = model.class.paper_trail.version_class.table_name
+        model.class.paper_trail.version_class.joins(:version_associations).
           where("version_associations.foreign_key_name = ?", assoc.foreign_key).
           where("version_associations.foreign_key_id = ?", model.id).
           where("#{version_table_name}.item_type = ?", assoc.class_name).
@@ -263,7 +263,7 @@ module PaperTrail
             if options[:mark_for_destruction]
               model.send(assoc.name).mark_for_destruction if model.send(assoc.name, true)
             else
-              model.appear_as_new_record do
+              model.paper_trail.appear_as_new_record do
                 model.send "#{assoc.name}=", nil
               end
             end
@@ -276,7 +276,7 @@ module PaperTrail
                 has_and_belongs_to_many: false
               )
             )
-            model.appear_as_new_record do
+            model.paper_trail.appear_as_new_record do
               without_persisting(child) do
                 model.send "#{assoc.name}=", child
               end
@@ -289,7 +289,7 @@ module PaperTrail
         associations = model.class.reflect_on_all_associations(:belongs_to)
         each_enabled_association(associations) do |assoc|
           collection_key = model.send(assoc.association_foreign_key)
-          version = assoc.klass.paper_trail_version_class.
+          version = assoc.klass.paper_trail.version_class.
             where("item_type = ?", assoc.class_name).
             where("item_id = ?", collection_key).
             where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
@@ -326,7 +326,7 @@ module PaperTrail
       # Restore the `model`'s has_many associations not associated through
       # another association.
       def reify_has_many_directly(transaction_id, associations, model, options = {})
-        version_table_name = model.class.paper_trail_version_class.table_name
+        version_table_name = model.class.paper_trail.version_class.table_name
         each_enabled_association(associations) do |assoc|
           version_id_subquery = PaperTrail::VersionAssociation.
             joins(model.class.version_association_name).
@@ -366,7 +366,7 @@ module PaperTrail
 
       def reify_has_and_belongs_to_many(transaction_id, model, options = {})
         model.class.reflect_on_all_associations(:has_and_belongs_to_many).each do |assoc|
-          papertrail_enabled = assoc.klass.paper_trail_enabled_for_model?
+          papertrail_enabled = assoc.klass.paper_trail.enabled?
           next unless
             model.class.paper_trail_save_join_tables.include?(assoc.name) ||
                 papertrail_enabled
@@ -429,7 +429,7 @@ module PaperTrail
       #
       def versions_by_id(klass, version_id_subquery)
         klass.
-          paper_trail_version_class.
+          paper_trail.version_class.
           where("id IN (#{version_id_subquery})").
           inject({}) { |a, e| a.merge!(e.item_id => e) }
       end

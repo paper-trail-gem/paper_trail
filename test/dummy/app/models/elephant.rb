@@ -1,3 +1,3 @@
 class Elephant < Animal
-  paper_trail_off!
+  paper_trail.disable
 end
