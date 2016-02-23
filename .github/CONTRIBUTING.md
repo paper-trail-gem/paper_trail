@@ -3,7 +3,7 @@
 Thanks for your interest in PaperTrail!
 
 Ask usage questions on Stack Overflow:
-http://stackoverflow.com/tags/papertrail
+https://stackoverflow.com/tags/paper-trail-gem
 
 **Please do not use github issues to ask usage questions.**
 
