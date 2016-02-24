@@ -5,10 +5,10 @@ module PaperTrail
         # enable versioning for specific blocks (at instance-level)
         def with_versioning
           was_enabled = ::PaperTrail.enabled?
-          ::PaperTrail.enabled = true
+          ::PaperTrail.enabled_in_current_thread = true
           yield
         ensure
-          ::PaperTrail.enabled = was_enabled
+          ::PaperTrail.enabled_in_current_thread = was_enabled
         end
       end
 

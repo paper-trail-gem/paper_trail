@@ -543,13 +543,13 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
   context 'A record' do
     setup { @widget = Widget.create name: 'Zaphod' }
 
-    context 'with PaperTrail globally disabled' do
+    context 'with PaperTrail disabled' do
       setup do
-        PaperTrail.enabled = false
+        PaperTrail.enabled_in_current_thread = false
         @count = @widget.versions.length
       end
 
-      teardown { PaperTrail.enabled = true }
+      teardown { PaperTrail.enabled_in_current_thread = true }
 
       context 'when updated' do
         setup { @widget.update_attributes name: 'Beeblebrox' }

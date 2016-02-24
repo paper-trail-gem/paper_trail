@@ -415,52 +415,27 @@ class.
 
 ### Globally
 
-On a global level you can turn PaperTrail off like this:
+On a thread global level you can turn PaperTrail off like this:
 
 ```ruby
 PaperTrail.enabled = false
 ```
 
-For example, you might want to disable PaperTrail in your Rails application's
-test environment to speed up your tests.  This will do it (note: this gets done
-automatically for `RSpec` and `Cucumber`, please see the [Testing
-section](#testing)):
+### Per Rails Environment
+
+You might want to disable PaperTrail in your Rails application's test
+environment to speed up your tests. This is done automatically for `RSpec` and
+`Cucumber`.
 
 ```ruby
-# in config/environments/test.rb
-config.after_initialize do
-  PaperTrail.enabled = false
-end
+# config/environments/test.rb
+config.paper_trail.enabled = false
 ```
 
-If you disable PaperTrail in your test environment but want to enable it for
-specific tests, you can add a helper like this to your test helper:
+The value provided will simply be passed to `PaperTrail#enabled=` during rails
+initialization.
 
-```ruby
-# in test/test_helper.rb
-def with_versioning
-  was_enabled = PaperTrail.enabled?
-  was_enabled_for_controller = PaperTrail.enabled_for_controller?
-  PaperTrail.enabled = true
-  PaperTrail.enabled_for_controller = true
-  begin
-    yield
-  ensure
-    PaperTrail.enabled = was_enabled
-    PaperTrail.enabled_for_controller = was_enabled_for_controller
-  end
-end
-```
-
-And then use it in your tests like this:
-
-```ruby
-test "something that needs versioning" do
-  with_versioning do
-    # your test
-  end
-end
-```
+See the [Testing section](#testing) for more tips.
 
 ### Per request
 
@@ -674,7 +649,7 @@ For diffing two ActiveRecord objects:
 * [activerecord-diff][23]: rather like ActiveRecord::Dirty but also allows you
   to specify which columns to compare.
 
-If you wish to selectively record changes for some models but not others you
+If you want to selectively record changes for some models but not others you
 can opt out of recording changes by passing `:save_changes => false` to your
 `has_paper_trail` method declaration.
 
@@ -1204,17 +1179,53 @@ end
 
 ## Testing
 
-You may want to turn PaperTrail off to speed up your tests.  See the [Turning
-PaperTrail Off/On](#turning-papertrail-offon) section above for tips on usage
-with `Test::Unit`.
+You may want to turn PaperTrail off to speed up your tests.
+
+### Rails
+
+```ruby
+# config/environments/test.rb
+config.paper_trail.enabled = false
+```
+
+See [Turning PaperTrail Off/On](#turning-papertrail-offon) for details.
+
+### Test::Unit
+
+If you disable PaperTrail in your test environment but want to enable it for
+specific tests, you can add a helper like this to your test helper:
+
+```ruby
+# in test/test_helper.rb
+def with_versioning
+  was_enabled = PaperTrail.enabled?
+  was_enabled_for_controller = PaperTrail.enabled_for_controller?
+  PaperTrail.enabled = true
+  PaperTrail.enabled_for_controller = true
+  begin
+    yield
+  ensure
+    PaperTrail.enabled = was_enabled
+    PaperTrail.enabled_for_controller = was_enabled_for_controller
+  end
+end
+```
+
+And then use it in your tests like this:
+
+```ruby
+test "something that needs versioning" do
+  with_versioning do
+    # your test
+  end
+end
+```
 
 ### RSpec
 
-PaperTrail provides a helper that works with [RSpec][27] to make it easier to
-control when `PaperTrail` is enabled during testing.
-
-If you wish to use the helper, you will need to require it in your RSpec test
-helper like so:
+PaperTrail provides a optional helper that works with [RSpec][27] to make it
+easier to selectively enable `PaperTrail` during testing. The file is
+`paper_trail/frameworks/rspec.rb`. If you want to use the helper, `require` it.
 
 ```ruby
 # spec/rails_helper.rb
@@ -1228,7 +1239,7 @@ require 'paper_trail/frameworks/rspec'
 ```
 
 When the helper is loaded, PaperTrail will be turned off for all tests by
-default. When you wish to enable PaperTrail for a test you can either wrap the
+default. When you want to enable PaperTrail for a test you can either wrap the
 test in a `with_versioning` block, or pass in `:versioning => true` option to a
 spec block, like so:
 
@@ -1304,7 +1315,7 @@ matcher
 ### Cucumber
 
 PaperTrail provides a helper for [Cucumber][28] that works similar to the RSpec
-helper.If you wish to use the helper, you will need to require in your cucumber
+helper.If you want to use the helper, you will need to require in your cucumber
 helper like so:
 
 ```ruby
@@ -1317,7 +1328,7 @@ require 'paper_trail/frameworks/cucumber'
 ```
 
 When the helper is loaded, PaperTrail will be turned off for all scenarios by a
-`before` hook added by the helper by default. When you wish to enable PaperTrail
+`before` hook added by the helper by default. When you want to enable PaperTrail
 for a scenario, you can wrap code in a `with_versioning` block in a step, like
 so:
 
@@ -1336,7 +1347,7 @@ value to `{}` as well, again, to help prevent data spillover between tests.
 
 ### Spork
 
-If you wish to use the `RSpec` or `Cucumber` helpers with [Spork][29], you will
+If you want to use the `RSpec` or `Cucumber` helpers with [Spork][29], you will
 need to manually require the helper(s) in your `prefork` block on your test
 helper, like so:
 
@@ -1359,7 +1370,7 @@ end
 
 ### Zeus or Spring
 
-If you wish to use the `RSpec` or `Cucumber` helpers with [Zeus][30] or
+If you want to use the `RSpec` or `Cucumber` helpers with [Zeus][30] or
 [Spring][31], you will need to manually require the helper(s) in your test
 helper, like so:
 
@@ -1377,7 +1388,7 @@ require 'paper_trail/frameworks/rspec'
 
 Paper Trail has facilities to test against Postgres, Mysql and SQLite. To switch
 between DB engines you will need to export the DB variable for the engine you
-wish to test against.
+want to test against.
 
 Though be aware we do not have the ability to create the db's (except sqlite) for
 you. You can look at .travis.yml before_script for an example of how to create

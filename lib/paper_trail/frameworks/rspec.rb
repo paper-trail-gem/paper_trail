@@ -7,14 +7,14 @@ RSpec.configure do |config|
   config.extend ::PaperTrail::RSpec::Helpers::ClassMethods
 
   config.before(:each) do
-    ::PaperTrail.enabled = false
+    ::PaperTrail.enabled_in_current_thread = false
     ::PaperTrail.enabled_for_controller = true
     ::PaperTrail.whodunnit = nil
     ::PaperTrail.controller_info = {} if defined?(::Rails) && defined?(::RSpec::Rails)
   end
 
   config.before(:each, versioning: true) do
-    ::PaperTrail.enabled = true
+    ::PaperTrail.enabled_in_current_thread = true
   end
 end
 

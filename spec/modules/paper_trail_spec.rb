@@ -5,15 +5,15 @@ describe PaperTrail, type: :module, versioning: true do
     it { is_expected.to respond_to(:config) }
 
     it "should allow for config values to be set" do
-      expect(subject.config.enabled).to eq(true)
-      subject.config.enabled = false
-      expect(subject.config.enabled).to eq(false)
+      expect(subject.config.enabled?).to eq(true)
+      subject.config.enabled_in_current_thread = false
+      expect(subject.config.enabled?).to eq(false)
     end
 
     it "should accept blocks and yield the config instance" do
-      expect(subject.config.enabled).to eq(true)
-      subject.config { |c| c.enabled = false }
-      expect(subject.config.enabled).to eq(false)
+      expect(subject.config.enabled?).to eq(true)
+      subject.config { |c| c.enabled_in_current_thread = false }
+      expect(subject.config.enabled?).to eq(false)
     end
   end
 
