@@ -8,6 +8,11 @@ module PaperTrail
     attr_writer :track_associations
 
     def initialize
+      # Variables which affect all threads, whose access is synchronized.
+      @mutex = Mutex.new
+      @enabled = true
+
+      # Variables which affect all threads, whose access is *not* synchronized.
       @timestamp_field = :created_at
       @serializer      = PaperTrail::Serializers::YAML
     end
@@ -36,12 +41,11 @@ module PaperTrail
 
     # Indicates whether PaperTrail is on or off. Default: true.
     def enabled
-      value = PaperTrail.paper_trail_store.fetch(:paper_trail_enabled, true)
-      value.nil? ? true : value
+      @mutex.synchronize { !!@enabled }
     end
 
     def enabled= enable
-      PaperTrail.paper_trail_store[:paper_trail_enabled] = enable
+      @mutex.synchronize { @enabled = enable }
     end
   end
 end
