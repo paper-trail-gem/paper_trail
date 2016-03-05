@@ -4,7 +4,7 @@ Bundler::GemHelper.install_tasks
 desc "Set a relevant database.yml for testing"
 task :prepare do
   ENV["DB"] ||= "sqlite"
-  FileUtils.cp "test/dummy/config/database.#{ENV["DB"]}.yml", "test/dummy/config/database.yml"
+  FileUtils.cp "test/dummy/config/database.#{ENV['DB']}.yml", "test/dummy/config/database.yml"
 end
 
 require "rake/testtask"

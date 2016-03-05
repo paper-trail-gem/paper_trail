@@ -342,10 +342,3 @@ Style/SpaceInsideParens:
 # SupportedStyles: use_perl_names, use_english_names
 Style/SpecialGlobalVars:
   Enabled: false
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: single_quotes, double_quotes
-Style/StringLiteralsInInterpolation:
-  Enabled: false
