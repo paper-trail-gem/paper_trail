@@ -48,6 +48,9 @@ Style/DoubleNegation:
 Style/LineEndConcatenation:
   Enabled: false
 
+Style/PredicateName:
+  NameWhitelist: has_paper_trail
+
 # The Ruby Style Guide does not prescribe a particular quote character, only
 # that a project should pick one and be consistent. The decision has no
 # performance implications. Double quotes are slightly easier to read.
