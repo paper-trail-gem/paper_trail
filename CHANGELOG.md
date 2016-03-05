@@ -2,7 +2,8 @@
 
 ### Breaking Changes
 
-- `PaperTrail.enabled=` now affects all threads
+- [#723](https://github.com/airblade/paper_trail/pull/723) -
+  `PaperTrail.enabled=` now affects all threads
 - [#556](https://github.com/airblade/paper_trail/pull/556) /
   [#301](https://github.com/airblade/paper_trail/issues/301) -
   If you are tracking who is responsible for changes with `whodunnit`, be aware
@@ -25,6 +26,9 @@
   [#699](https://github.com/airblade/paper_trail/issues/699) -
   Cleaning old versions explicitly preserves the most recent
   versions instead of relying on database result ordering.
+- [#635](https://github.com/airblade/paper_trail/issues/635) -
+  A bug where it was not possible to disable PT when using a multi-threaded
+  webserver.
 
 ## 4.1.0 (2016-01-30)
 
