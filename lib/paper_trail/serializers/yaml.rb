@@ -23,14 +23,18 @@ module PaperTrail
       # in the serialized object_changes
       def where_object_changes_condition(arel_field, field, value)
         # Need to check first (before) and secondary (after) fields
+        m1 = nil
+        m2 = nil
         if (defined?(::YAML::ENGINE) && ::YAML::ENGINE.yamler == "psych") ||
             (defined?(::Psych) && ::YAML == ::Psych)
-          arel_field.matches("%\n#{field}:\n- #{value}\n%").
-            or(arel_field.matches("%\n#{field}:\n-%\n- #{value}\n%"))
-        else # Syck adds extra spaces into array dumps
-          arel_field.matches("%\n#{field}: \n%- #{value}\n%").
-            or(arel_field.matches("%\n#{field}: \n-%\n- #{value}\n%"))
+          m1 = "%\n#{field}:\n- #{value}\n%"
+          m2 = "%\n#{field}:\n-%\n- #{value}\n%"
+        else
+          # Syck adds extra spaces into array dumps
+          m1 = "%\n#{field}: \n%- #{value}\n%"
+          m2 = "%\n#{field}: \n-%\n- #{value}\n%"
         end
+        arel_field.matches(m1).or(arel_field.matches(m2))
       end
     end
   end
