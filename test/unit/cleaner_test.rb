@@ -9,7 +9,7 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
   end
 
   context "`clean_versions!` method" do
-    setup { self.populate_db! }
+    setup { populate_db! }
 
     should "Baseline" do
       assert_equal 9, PaperTrail::Version.count
@@ -152,7 +152,7 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
   context "Custom timestamp field" do
     setup do
       change_schema
-      self.populate_db!
+      populate_db!
       # now mess with the timestamps
       @animals.each do |animal|
         animal.versions.reverse.each_with_index do |version, index|

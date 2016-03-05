@@ -64,12 +64,12 @@ module PaperTrail
       # @return `ActiveRecord::Relation`
       # @api public
       def subsequent(obj, timestamp_arg = false)
-        if timestamp_arg != true && self.primary_key_is_int?
+        if timestamp_arg != true && primary_key_is_int?
           return where(arel_table[primary_key].gt(obj.id)).order(arel_table[primary_key].asc)
         end
 
         obj = obj.send(PaperTrail.timestamp_field) if obj.is_a?(self)
-        where(arel_table[PaperTrail.timestamp_field].gt(obj)).order(self.timestamp_sort_order)
+        where(arel_table[PaperTrail.timestamp_field].gt(obj)).order(timestamp_sort_order)
       end
 
       # Returns versions before `obj`.
@@ -80,27 +80,27 @@ module PaperTrail
       # @return `ActiveRecord::Relation`
       # @api public
       def preceding(obj, timestamp_arg = false)
-        if timestamp_arg != true && self.primary_key_is_int?
+        if timestamp_arg != true && primary_key_is_int?
           return where(arel_table[primary_key].lt(obj.id)).order(arel_table[primary_key].desc)
         end
 
         obj = obj.send(PaperTrail.timestamp_field) if obj.is_a?(self)
         where(arel_table[PaperTrail.timestamp_field].lt(obj)).
-          order(self.timestamp_sort_order("desc"))
+          order(timestamp_sort_order("desc"))
       end
 
       def between(start_time, end_time)
         where(
           arel_table[PaperTrail.timestamp_field].gt(start_time).
           and(arel_table[PaperTrail.timestamp_field].lt(end_time))
-        ).order(self.timestamp_sort_order)
+        ).order(timestamp_sort_order)
       end
 
       # Defaults to using the primary key as the secondary sort order if
       # possible.
       def timestamp_sort_order(direction = "asc")
         [arel_table[PaperTrail.timestamp_field].send(direction.downcase)].tap do |array|
-          array << arel_table[primary_key].send(direction.downcase) if self.primary_key_is_int?
+          array << arel_table[primary_key].send(direction.downcase) if primary_key_is_int?
         end
       end
 
@@ -223,7 +223,7 @@ module PaperTrail
 
     def originator
       ::ActiveSupport::Deprecation.warn "Use paper_trail_originator instead of originator."
-      self.paper_trail_originator
+      paper_trail_originator
     end
 
     # Returns who changed the item from the state it had in this version. This

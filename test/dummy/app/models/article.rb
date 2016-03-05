@@ -19,6 +19,6 @@ class Article < ActiveRecord::Base
   )
 
   def action_data_provider_method
-    self.object_id.to_s
+    object_id.to_s
   end
 end

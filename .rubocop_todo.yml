@@ -233,16 +233,6 @@ Style/Proc:
 Style/RaiseArgs:
   Enabled: false
 
-# Offense count: 35
-# Cop supports --auto-correct.
-Style/RedundantSelf:
-  Exclude:
-    - 'lib/paper_trail/has_paper_trail.rb'
-    - 'lib/paper_trail/version_concern.rb'
-    - 'test/dummy/app/models/article.rb'
-    - 'test/unit/associations_test.rb'
-    - 'test/unit/cleaner_test.rb'
-
 # Offense count: 3
 # Cop supports --auto-correct.
 Style/RescueModifier:
