@@ -1,4 +1,4 @@
-require 'test_helper'
+require "test_helper"
 
 class ThreadSafetyTest < ActionController::TestCase
   test "thread-safe when using #set_paper_trail_whodunnit" do

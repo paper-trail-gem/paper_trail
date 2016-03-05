@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 describe PaperTrail::Version, type: :model do
   it "should include the `VersionConcern` module to get base functionality" do
@@ -14,7 +14,7 @@ describe PaperTrail::Version, type: :model do
     it { is_expected.to have_db_column(:created_at).of_type(:datetime) }
 
     describe "object_changes column", versioning: true do
-      let(:widget) { Widget.create!(name: 'Dashboard') }
+      let(:widget) { Widget.create!(name: "Dashboard") }
       let(:value) { widget.versions.last.object_changes }
 
       context "serializer is YAML" do
@@ -76,13 +76,13 @@ describe PaperTrail::Version, type: :model do
       describe "#originator" do
         it { is_expected.to respond_to(:originator) }
 
-        it 'should set the invoke `paper_trail_originator`' do
+        it "should set the invoke `paper_trail_originator`" do
           allow(ActiveSupport::Deprecation).to receive(:warn)
           is_expected.to receive(:paper_trail_originator)
           subject.originator
         end
 
-        it 'should display a deprecation warning' do
+        it "should display a deprecation warning" do
           expect(ActiveSupport::Deprecation).to receive(:warn).
             with(/Use paper_trail_originator instead of originator/)
           subject.originator
@@ -110,10 +110,10 @@ describe PaperTrail::Version, type: :model do
 
     describe "Class" do
       column_overrides = [false]
-      if ENV['DB'] == 'postgres' && ::ActiveRecord::VERSION::MAJOR >= 4
-        column_overrides << 'json'
+      if ENV["DB"] == "postgres" && ::ActiveRecord::VERSION::MAJOR >= 4
+        column_overrides << "json"
         # 'jsonb' column types are only supported for ActiveRecord 4.2+
-        column_overrides << 'jsonb' if ::ActiveRecord::VERSION::STRING >= '4.2'
+        column_overrides << "jsonb" if ::ActiveRecord::VERSION::STRING >= "4.2"
       end
 
       column_overrides.shuffle.each do |override|
@@ -160,7 +160,7 @@ describe PaperTrail::Version, type: :model do
 
               before do
                 widget.update_attributes!(name: name, an_integer: int)
-                widget.update_attributes!(name: 'foobar', an_integer: 100)
+                widget.update_attributes!(name: "foobar", an_integer: 100)
                 widget.update_attributes!(name: FFaker::Name.last_name, an_integer: 15)
               end
 
@@ -223,7 +223,7 @@ describe PaperTrail::Version, type: :model do
 
               before do
                 widget.update_attributes!(name: name, an_integer: 0)
-                widget.update_attributes!(name: 'foobar', an_integer: 77)
+                widget.update_attributes!(name: "foobar", an_integer: 77)
                 widget.update_attributes!(name: FFaker::Name.last_name, an_integer: int)
               end
 
@@ -244,7 +244,7 @@ describe PaperTrail::Version, type: :model do
 
                 it "handles queries for multiple attributes" do
                   expect(
-                    widget.versions.where_object_changes(an_integer: 77, name: 'foobar')
+                    widget.versions.where_object_changes(an_integer: 77, name: "foobar")
                   ).to eq(widget.versions[1..2])
                 end
               end
@@ -267,7 +267,7 @@ describe PaperTrail::Version, type: :model do
 
                 it "handles queries for multiple attributes" do
                   expect(
-                    widget.versions.where_object_changes(an_integer: 77, name: 'foobar')
+                    widget.versions.where_object_changes(an_integer: 77, name: "foobar")
                   ).to eq(widget.versions[1..2])
                 end
 

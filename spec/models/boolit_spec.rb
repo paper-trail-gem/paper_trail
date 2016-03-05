@@ -1,5 +1,5 @@
-require 'rails_helper'
-require Rails.root.join('..', 'custom_json_serializer')
+require "rails_helper"
+require Rails.root.join("..", "custom_json_serializer")
 
 describe Boolit, type: :model do
   it { is_expected.to be_versioned }

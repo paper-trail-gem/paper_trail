@@ -1,5 +1,5 @@
-require 'active_support/core_ext/object' # provides the `try` method
-require 'paper_trail/attributes_serialization'
+require "active_support/core_ext/object" # provides the `try` method
+require "paper_trail/attributes_serialization"
 
 module PaperTrail
   module Model
@@ -70,7 +70,7 @@ module PaperTrail
         attr_accessor self.version_association_name
 
         class_attribute :version_class_name
-        self.version_class_name = options[:class_name] || 'PaperTrail::Version'
+        self.version_class_name = options[:class_name] || "PaperTrail::Version"
 
         class_attribute :paper_trail_options
 
@@ -115,12 +115,12 @@ module PaperTrail
       end
 
       # Record version before or after "destroy" event
-      def paper_trail_on_destroy(recording_order = 'before')
+      def paper_trail_on_destroy(recording_order = "before")
         unless %w[after before].include?(recording_order.to_s)
           fail ArgumentError, 'recording order can only be "after" or "before"'
         end
 
-        if recording_order == 'after' &&
+        if recording_order == "after" &&
           Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new("5")
           if ::ActiveRecord::Base.belongs_to_required_by_default
             ::ActiveSupport::Deprecation.warn(
@@ -262,7 +262,7 @@ module PaperTrail
       # Temporarily overwrites the value of whodunnit and then executes the
       # provided block.
       def whodunnit(value)
-        raise ArgumentError, 'expected to receive a block' unless block_given?
+        raise ArgumentError, "expected to receive a block" unless block_given?
         current_whodunnit = PaperTrail.whodunnit
         PaperTrail.whodunnit = value
         yield self
@@ -307,7 +307,7 @@ module PaperTrail
       def record_create
         if paper_trail_switched_on?
           data = {
-            event: paper_trail_event || 'create',
+            event: paper_trail_event || "create",
             whodunnit: PaperTrail.whodunnit
           }
           if respond_to?(:updated_at)
@@ -316,7 +316,7 @@ module PaperTrail
           if pt_record_object_changes? && changed_notably?
             data[:object_changes] = pt_recordable_object_changes
           end
-          if self.class.paper_trail_version_class.column_names.include?('transaction_id')
+          if self.class.paper_trail_version_class.column_names.include?("transaction_id")
             data[:transaction_id] = PaperTrail.transaction_id
           end
           version = send(self.class.versions_association_name).create! merge_metadata(data)
@@ -328,7 +328,7 @@ module PaperTrail
       def record_update(force = nil)
         if paper_trail_switched_on? && (force || changed_notably?)
           data = {
-            event: paper_trail_event || 'update',
+            event: paper_trail_event || "update",
             object: pt_recordable_object,
             whodunnit: PaperTrail.whodunnit
           }
@@ -338,7 +338,7 @@ module PaperTrail
           if pt_record_object_changes?
             data[:object_changes] = pt_recordable_object_changes
           end
-          if self.class.paper_trail_version_class.column_names.include?('transaction_id')
+          if self.class.paper_trail_version_class.column_names.include?("transaction_id")
             data[:transaction_id] = PaperTrail.transaction_id
           end
           version = send(self.class.versions_association_name).create merge_metadata(data)
@@ -352,7 +352,7 @@ module PaperTrail
       # @api private
       def pt_record_object_changes?
         paper_trail_options[:save_changes] &&
-          self.class.paper_trail_version_class.column_names.include?('object_changes')
+          self.class.paper_trail_version_class.column_names.include?("object_changes")
       end
 
       # Returns an object which can be assigned to the `object` attribute of a
@@ -416,11 +416,11 @@ module PaperTrail
           data = {
             item_id: self.id,
             item_type: self.class.base_class.name,
-            event: paper_trail_event || 'destroy',
+            event: paper_trail_event || "destroy",
             object: pt_recordable_object,
             whodunnit: PaperTrail.whodunnit
           }
-          if self.class.paper_trail_version_class.column_names.include?('transaction_id')
+          if self.class.paper_trail_version_class.column_names.include?("transaction_id")
             data[:transaction_id] = PaperTrail.transaction_id
           end
           version = self.class.paper_trail_version_class.create(merge_metadata(data))
@@ -456,7 +456,7 @@ module PaperTrail
       end
 
       def set_transaction_id(version)
-        return unless self.class.paper_trail_version_class.column_names.include?('transaction_id')
+        return unless self.class.paper_trail_version_class.column_names.include?("transaction_id")
         if PaperTrail.transaction? && PaperTrail.transaction_id.nil?
            PaperTrail.transaction_id = version.id
            version.transaction_id = version.id
@@ -477,7 +477,7 @@ module PaperTrail
             elsif v.is_a?(Symbol) && respond_to?(v)
               # If it is an attribute that is changing in an existing object,
               # be sure to grab the current version.
-              if has_attribute?(v) && send("#{v}_changed?".to_sym) && data[:event] != 'create'
+              if has_attribute?(v) && send("#{v}_changed?".to_sym) && data[:event] != "create"
                 send("#{v}_was".to_sym)
               else
                 send(v)

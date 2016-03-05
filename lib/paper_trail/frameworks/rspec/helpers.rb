@@ -15,7 +15,7 @@ module PaperTrail
       module ClassMethods
         # enable versioning for specific blocks (at class-level)
         def with_versioning(&block)
-          context 'with versioning', versioning: true do
+          context "with versioning", versioning: true do
             class_exec(&block)
           end
         end

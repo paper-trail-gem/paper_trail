@@ -1,4 +1,4 @@
-require 'active_support/concern'
+require "active_support/concern"
 
 module PaperTrail
   module VersionConcern
@@ -41,19 +41,19 @@ module PaperTrail
       end
 
       def creates
-        where event: 'create'
+        where event: "create"
       end
 
       def updates
-        where event: 'update'
+        where event: "update"
       end
 
       def destroys
-        where event: 'destroy'
+        where event: "destroy"
       end
 
       def not_creates
-        where 'event <> ?', 'create'
+        where "event <> ?", "create"
       end
 
       # Returns versions after `obj`.
@@ -86,7 +86,7 @@ module PaperTrail
 
         obj = obj.send(PaperTrail.timestamp_field) if obj.is_a?(self)
         where(arel_table[PaperTrail.timestamp_field].lt(obj)).
-          order(self.timestamp_sort_order('desc'))
+          order(self.timestamp_sort_order("desc"))
       end
 
       def between(start_time, end_time)
@@ -98,7 +98,7 @@ module PaperTrail
 
       # Defaults to using the primary key as the secondary sort order if
       # possible.
-      def timestamp_sort_order(direction = 'asc')
+      def timestamp_sort_order(direction = "asc")
         [arel_table[PaperTrail.timestamp_field].send(direction.downcase)].tap do |array|
           array << arel_table[primary_key].send(direction.downcase) if self.primary_key_is_int?
         end
@@ -107,11 +107,11 @@ module PaperTrail
       # Performs an attribute search on the serialized object by invoking the
       # identically-named method in the serializer being used.
       def where_object(args = {})
-        raise ArgumentError, 'expected to receive a Hash' unless args.is_a?(Hash)
+        raise ArgumentError, "expected to receive a Hash" unless args.is_a?(Hash)
 
-        if columns_hash['object'].type == :jsonb
+        if columns_hash["object"].type == :jsonb
           where("object @> ?", args.to_json)
-        elsif columns_hash['object'].type == :json
+        elsif columns_hash["object"].type == :json
           predicates = []
           values = []
           args.each do |field, value|
@@ -130,12 +130,12 @@ module PaperTrail
       end
 
       def where_object_changes(args = {})
-        raise ArgumentError, 'expected to receive a Hash' unless args.is_a?(Hash)
+        raise ArgumentError, "expected to receive a Hash" unless args.is_a?(Hash)
 
-        if columns_hash['object_changes'].type == :jsonb
+        if columns_hash["object_changes"].type == :jsonb
           args.each { |field, value| args[field] = [value] }
           where("object_changes @> ?", args.to_json)
-        elsif columns_hash['object'].type == :json
+        elsif columns_hash["object"].type == :json
           predicates = []
           values = []
           args.each do |field, value|
@@ -164,13 +164,13 @@ module PaperTrail
       # Returns whether the `object` column is using the `json` type supported
       # by PostgreSQL.
       def object_col_is_json?
-        [:json, :jsonb].include?(columns_hash['object'].type)
+        [:json, :jsonb].include?(columns_hash["object"].type)
       end
 
       # Returns whether the `object_changes` column is using the `json` type
       # supported by PostgreSQL.
       def object_changes_col_is_json?
-        [:json, :jsonb].include?(columns_hash['object_changes'].try(:type))
+        [:json, :jsonb].include?(columns_hash["object_changes"].try(:type))
       end
     end
 
@@ -212,7 +212,7 @@ module PaperTrail
     # `ActiveModel::Dirty#changes`. returns `nil` if your `versions` table does
     # not have an `object_changes` text column.
     def changeset
-      return nil unless self.class.column_names.include? 'object_changes'
+      return nil unless self.class.column_names.include? "object_changes"
       @changeset ||= load_changeset
     end
 

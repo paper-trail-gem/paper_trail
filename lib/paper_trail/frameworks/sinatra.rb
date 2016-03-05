@@ -1,4 +1,4 @@
-require 'active_support/core_ext/object' # provides the `try` method
+require "active_support/core_ext/object" # provides the `try` method
 
 module PaperTrail
   module Sinatra

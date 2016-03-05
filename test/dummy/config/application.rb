@@ -1,11 +1,11 @@
-require File.expand_path('../boot', __FILE__)
+require File.expand_path("../boot", __FILE__)
 
 # Pick the frameworks you want:
 require "active_record/railtie"
 require "action_controller/railtie"
 
 Bundler.require(:default, Rails.env) if defined?(Bundler)
-require 'paper_trail'
+require "paper_trail"
 
 module Dummy
   class Application < Rails::Application
@@ -62,7 +62,7 @@ module Dummy
     # config.assets.version = '1.0'
 
     # Rails 4 key for generating secret key
-    config.secret_key_base = 'A fox regularly kicked the screaming pile of biscuits.'
+    config.secret_key_base = "A fox regularly kicked the screaming pile of biscuits."
 
     # `raise_in_transactional_callbacks` was added in rails 4, then deprecated
     # in rails 5. Oh, how fickle are the gods.

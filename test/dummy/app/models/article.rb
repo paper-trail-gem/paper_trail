@@ -3,7 +3,7 @@ class Article < ActiveRecord::Base
     ignore: [
       :title, {
         abstract: Proc.new { |obj|
-          ['ignore abstract', 'Other abstract'].include? obj.abstract
+          ["ignore abstract", "Other abstract"].include? obj.abstract
         }
       }
     ],

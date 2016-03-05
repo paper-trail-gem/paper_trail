@@ -1,12 +1,12 @@
-require 'rails_helper'
+require "rails_helper"
 
 describe PaperTrail do
-  context 'default' do
-    it 'should have versioning off by default' do
+  context "default" do
+    it "should have versioning off by default" do
       expect(PaperTrail).not_to be_enabled
     end
 
-    it 'should turn versioning on in a `with_versioning` block' do
+    it "should turn versioning on in a `with_versioning` block" do
       expect(PaperTrail).not_to be_enabled
       with_versioning do
         expect(PaperTrail).to be_enabled
@@ -23,12 +23,12 @@ describe PaperTrail do
     end
   end
 
-  context '`versioning: true`', versioning: true do
-    it 'should have versioning on by default' do
+  context "`versioning: true`", versioning: true do
+    it "should have versioning on by default" do
       expect(PaperTrail).to be_enabled
     end
 
-    it 'should keep versioning on after a with_versioning block' do
+    it "should keep versioning on after a with_versioning block" do
       expect(PaperTrail).to be_enabled
       with_versioning do
         expect(PaperTrail).to be_enabled
@@ -37,21 +37,21 @@ describe PaperTrail do
     end
   end
 
-  context '`with_versioning` block at class level' do
+  context "`with_versioning` block at class level" do
     it { expect(PaperTrail).not_to be_enabled }
 
     with_versioning do
-      it 'should have versioning on by default' do
+      it "should have versioning on by default" do
         expect(PaperTrail).to be_enabled
       end
     end
-    it 'should not leak the `enabled?` state into successive tests' do
+    it "should not leak the `enabled?` state into successive tests" do
       expect(PaperTrail).not_to be_enabled
     end
   end
 
   describe :whodunnit do
-    before(:all) { PaperTrail.whodunnit = 'foobar' }
+    before(:all) { PaperTrail.whodunnit = "foobar" }
 
     it "should get set to `nil` by default" do
       expect(PaperTrail.whodunnit).to be_nil
@@ -59,7 +59,7 @@ describe PaperTrail do
   end
 
   describe :controller_info do
-    before(:all) { ::PaperTrail.controller_info = {foo: 'bar'} }
+    before(:all) { ::PaperTrail.controller_info = {foo: "bar"} }
 
     it "should get set to an empty hash before each test" do
       expect(PaperTrail.controller_info).to eq({})

@@ -105,7 +105,7 @@ module PaperTrail
         array.map! do |record|
           if (version = versions.delete(record.id)).nil?
             record
-          elsif version.event == 'create'
+          elsif version.event == "create"
             options[:mark_for_destruction] ? record.tap(&:mark_for_destruction) : nil
           else
             version.reify(options.merge(has_many: false, has_one: false))
@@ -141,7 +141,7 @@ module PaperTrail
               order("#{version_table_name}.id ASC").
               first
             if version
-              if version.event == 'create'
+              if version.event == "create"
                 if options[:mark_for_destruction]
                   model.send(assoc.name).mark_for_destruction if model.send(assoc.name, true)
                 else

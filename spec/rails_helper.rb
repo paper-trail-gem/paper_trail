@@ -1,18 +1,18 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
-ENV["RAILS_ENV"] ||= 'test'
-ENV["DB"] ||= 'sqlite'
+ENV["RAILS_ENV"] ||= "test"
+ENV["DB"] ||= "sqlite"
 
-unless File.exist?(File.expand_path('../../test/dummy/config/database.yml', __FILE__))
+unless File.exist?(File.expand_path("../../test/dummy/config/database.yml", __FILE__))
   warn "WARNING: No database.yml detected for the dummy app, please run `rake prepare` first"
 end
 
-require 'spec_helper'
-require File.expand_path('../../test/dummy/config/environment', __FILE__)
-require 'rspec/rails'
-require 'paper_trail/frameworks/rspec'
-require 'shoulda/matchers'
-require 'ffaker'
-require 'timecop'
+require "spec_helper"
+require File.expand_path("../../test/dummy/config/environment", __FILE__)
+require "rspec/rails"
+require "paper_trail/frameworks/rspec"
+require "shoulda/matchers"
+require "ffaker"
+require "timecop"
 
 # prevent Test::Unit's AutoRunner from executing during RSpec's rake task
 Test::Unit.run = true if defined?(Test::Unit) && Test::Unit.respond_to?(:run=)

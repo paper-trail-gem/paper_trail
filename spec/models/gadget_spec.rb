@@ -1,17 +1,17 @@
-require 'rails_helper'
+require "rails_helper"
 
 describe Gadget, type: :model do
   it { is_expected.to be_versioned }
 
-  let(:gadget) { Gadget.create!(name: 'Wrench', brand: 'Acme') }
+  let(:gadget) { Gadget.create!(name: "Wrench", brand: "Acme") }
 
   describe "updates", versioning: true do
     it "should generate a version for updates to `name` attribute" do
-      expect { gadget.update_attribute(:name, 'Hammer').to change{gadget.versions.size}.by(1) }
+      expect { gadget.update_attribute(:name, "Hammer").to change{gadget.versions.size}.by(1) }
     end
 
     it "should ignore for updates to `brand` attribute" do
-      expect { gadget.update_attribute(:brand, 'Stanley') }.to_not change{gadget.versions.size}
+      expect { gadget.update_attribute(:brand, "Stanley") }.to_not change{gadget.versions.size}
     end
 
     it "should still generate a version when only the `updated_at` attribute is updated" do
@@ -39,24 +39,24 @@ describe Gadget, type: :model do
 
             context "without update timestamps" do
               it "should only acknowledge non-ignored attrs" do
-                subject.name = 'Wrench'
+                subject.name = "Wrench"
                 expect(subject.send(:changed_notably?)).to be true
               end
 
               it "should not acknowledge ignored attr (brand)" do
-                subject.brand = 'Acme'
+                subject.brand = "Acme"
                 expect(subject.send(:changed_notably?)).to be false
               end
             end
 
             context "with update timestamps" do
               it "should only acknowledge non-ignored attrs" do
-                subject.name, subject.updated_at = 'Wrench', Time.now
+                subject.name, subject.updated_at = "Wrench", Time.now
                 expect(subject.send(:changed_notably?)).to be true
               end
 
               it "should not acknowledge ignored attrs and timestamps only" do
-                subject.brand, subject.updated_at = 'Acme', Time.now
+                subject.brand, subject.updated_at = "Acme", Time.now
                 expect(subject.send(:changed_notably?)).to be false
               end
             end

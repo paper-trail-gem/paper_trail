@@ -3,9 +3,9 @@ module PaperTrail
     MAJOR = 5
     MINOR = 0
     TINY  = 0
-    PRE   = 'pre'
+    PRE   = "pre"
 
-    STRING = [MAJOR, MINOR, TINY, PRE].compact.join('.')
+    STRING = [MAJOR, MINOR, TINY, PRE].compact.join(".")
 
     def self.to_s
       STRING

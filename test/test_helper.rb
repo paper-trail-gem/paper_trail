@@ -1,9 +1,9 @@
-require 'pry-nav'
+require "pry-nav"
 
 ENV["RAILS_ENV"] = "test"
 ENV["DB"] ||= "sqlite"
 
-unless File.exist?(File.expand_path('../../test/dummy/config/database.yml', __FILE__))
+unless File.exist?(File.expand_path("../../test/dummy/config/database.yml", __FILE__))
   warn "WARNING: No database.yml detected for the dummy app, please run `rake prepare` first"
 end
 
@@ -13,15 +13,15 @@ end
 
 require File.expand_path("../dummy/config/environment.rb", __FILE__)
 require "rails/test_help"
-require 'shoulda'
-require 'ffaker'
-require 'database_cleaner'
+require "shoulda"
+require "ffaker"
+require "database_cleaner"
 
 def active_record_gem_version
   Gem::Version.new(ActiveRecord::VERSION::STRING)
 end
 
-if active_record_gem_version >= Gem::Version.new('5.0.0.beta1')
+if active_record_gem_version >= Gem::Version.new("5.0.0.beta1")
   # See https://github.com/rails/rails-controller-testing/issues/5
   ActionController::TestCase.send(:include, Rails::Controller::Testing::TestProcess)
 end
@@ -104,7 +104,7 @@ end
 # ActionDispatch::Integration HTTP request method switch to keyword args
 # (see https://github.com/rails/rails/blob/master/actionpack/CHANGELOG.md)
 def params_wrapper(args)
-  if defined?(::Rails) && active_record_gem_version >= Gem::Version.new('5.0.0.beta1')
+  if defined?(::Rails) && active_record_gem_version >= Gem::Version.new("5.0.0.beta1")
     { params: args }
   else
     args

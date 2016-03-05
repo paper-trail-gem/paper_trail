@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 module Kitchen
   describe Banana, type: :model do
