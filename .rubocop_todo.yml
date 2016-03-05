@@ -227,12 +227,6 @@ Style/Proc:
     - 'test/dummy/app/models/article.rb'
     - 'test/dummy/app/models/translation.rb'
 
-# Offense count: 1
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: compact, exploded
-Style/RaiseArgs:
-  Enabled: false
-
 # Offense count: 3
 # Cop supports --auto-correct.
 Style/RescueModifier:

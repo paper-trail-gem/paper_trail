@@ -35,7 +35,7 @@ module PaperTrail
     # chronological order.
     def gather_versions(item_id = nil, date = :all)
       unless date == :all || date.respond_to?(:to_date)
-        raise ArgumentError.new("`date` argument must receive a Timestamp or `:all`")
+        raise ArgumentError, "Expected date to be a Timestamp or :all"
       end
       versions = item_id ? PaperTrail::Version.where(item_id: item_id) : PaperTrail::Version
       versions = versions.order(PaperTrail::Version.timestamp_sort_order)
