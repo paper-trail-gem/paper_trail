@@ -388,10 +388,3 @@ Style/TrailingBlankLines:
 Style/TrailingCommaInLiteral:
   Exclude:
     - 'lib/paper_trail/frameworks/rails/controller.rb'
-
-# Offense count: 3
-# Cop supports --auto-correct.
-Style/TrailingWhitespace:
-  Exclude:
-    - 'test/dummy/app/models/person.rb'
-    - 'test/paper_trail_test.rb'
