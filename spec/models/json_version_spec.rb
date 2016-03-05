@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 # The `json_versions` table tests postgres' `json` data type. So, that
 # table is only created when testing against postgres and ActiveRecord >= 4.
@@ -15,7 +15,7 @@ if JsonVersion.table_exists?
           it { expect(JsonVersion).to respond_to(:where_object) }
 
           it "escapes values" do
-            f = Fruit.create(name: 'Bobby')
+            f = Fruit.create(name: "Bobby")
             expect(
               f.
                 versions.
@@ -34,7 +34,7 @@ if JsonVersion.table_exists?
           context "valid arguments", versioning: true do
             let(:fruit_names) { %w(apple orange lemon banana lime coconut strawberry blueberry) }
             let(:fruit) { Fruit.new }
-            let(:name) { 'pomegranate' }
+            let(:name) { "pomegranate" }
             let(:color) { FFaker::Color.name }
 
             before do
@@ -54,7 +54,7 @@ if JsonVersion.table_exists?
           it { expect(JsonVersion).to respond_to(:where_object_changes) }
 
           it "escapes values" do
-            f = Fruit.create(name: 'Bobby')
+            f = Fruit.create(name: "Bobby")
             expect(
               f.
                 versions.
@@ -71,9 +71,9 @@ if JsonVersion.table_exists?
           end
 
           context "valid arguments", versioning: true do
-            let(:color) { %w[red green] }
+            let(:color) { %w(red green) }
             let(:fruit) { Fruit.create!(name: name[0]) }
-            let(:name) { %w[banana kiwi mango] }
+            let(:name) { %w(banana kiwi mango) }
 
             before do
               fruit.update_attributes!(name: name[1], color: color[0])

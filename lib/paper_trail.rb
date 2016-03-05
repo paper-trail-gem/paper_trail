@@ -1,13 +1,13 @@
-require 'request_store'
+require "request_store"
 
 # Require files in lib/paper_trail, but not its subdirectories.
-Dir[File.join(File.dirname(__FILE__), 'paper_trail', '*.rb')].each do |file|
-  require File.join('paper_trail', File.basename(file, '.rb'))
+Dir[File.join(File.dirname(__FILE__), "paper_trail", "*.rb")].each do |file|
+  require File.join("paper_trail", File.basename(file, ".rb"))
 end
 
 # Require serializers
-Dir[File.join(File.dirname(__FILE__), 'paper_trail', 'serializers', '*.rb')].each do |file|
-  require File.join('paper_trail', 'serializers', File.basename(file, '.rb'))
+Dir[File.join(File.dirname(__FILE__), "paper_trail", "serializers", "*.rb")].each do |file|
+  require File.join("paper_trail", "serializers", File.basename(file, ".rb"))
 end
 
 module PaperTrail
@@ -164,7 +164,7 @@ end
 unless PaperTrail.active_record_protected_attributes?
   PaperTrail.send(:remove_instance_variable, :@active_record_protected_attributes)
   begin
-    require 'protected_attributes'
+    require "protected_attributes"
   rescue LoadError # rubocop:disable Lint/HandleExceptions
     # In case `protected_attributes` gem is not available.
   end
@@ -175,9 +175,9 @@ ActiveSupport.on_load(:active_record) do
 end
 
 # Require frameworks
-require 'paper_trail/frameworks/sinatra'
-if defined?(::Rails) && ActiveRecord::VERSION::STRING >= '3.2'
-  require 'paper_trail/frameworks/rails'
+require "paper_trail/frameworks/sinatra"
+if defined?(::Rails) && ActiveRecord::VERSION::STRING >= "3.2"
+  require "paper_trail/frameworks/rails"
 else
-  require 'paper_trail/frameworks/active_record'
+  require "paper_trail/frameworks/active_record"
 end

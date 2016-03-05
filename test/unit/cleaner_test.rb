@@ -1,4 +1,4 @@
-require 'test_helper'
+require "test_helper"
 
 class PaperTrailCleanerTest < ActiveSupport::TestCase
   def populate_db!
@@ -8,26 +8,26 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
     end
   end
 
-  context '`clean_versions!` method' do
-    setup { self.populate_db! }
+  context "`clean_versions!` method" do
+    setup { populate_db! }
 
-    should 'Baseline' do
+    should "Baseline" do
       assert_equal 9, PaperTrail::Version.count
       @animals.each { |animal| assert_equal 3, animal.versions.size }
     end
 
-    should 'be extended by `PaperTrail` module' do
+    should "be extended by `PaperTrail` module" do
       assert_respond_to PaperTrail, :clean_versions!
     end
 
-    context 'No options provided' do
-      should 'removes extra versions for each item' do
+    context "No options provided" do
+      should "removes extra versions for each item" do
         PaperTrail.clean_versions!
         assert_equal 3, PaperTrail::Version.count
         @animals.each { |animal| assert_equal 1, animal.versions.size }
       end
 
-      should 'removes the earliest version(s)' do
+      should "removes the earliest version(s)" do
         before = @animals.map { |animal| animal.versions.last.reify.name }
         PaperTrail.clean_versions!
         after = @animals.map { |animal| animal.versions.last.reify.name }
@@ -35,22 +35,22 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
       end
     end
 
-    context '`:keeping` option' do
-      should 'modifies the number of versions ommitted from destruction' do
+    context "`:keeping` option" do
+      should "modifies the number of versions ommitted from destruction" do
         PaperTrail.clean_versions!(keeping: 2)
         assert_equal 6, PaperTrail::Version.all.count
         @animals.each { |animal| assert_equal 2, animal.versions.size }
       end
     end
 
-    context '`:date` option' do
+    context "`:date` option" do
       setup do
         @animal.versions.each { |ver| ver.update_attribute(:created_at, ver.created_at - 1.day) }
         @date = @animal.versions.first.created_at.to_date
         @animal.update_attribute(:name, FFaker::Name.name)
       end
 
-      should 'restrict the versions destroyed to those that were created on the date provided' do
+      should "restrict the versions destroyed to those that were created on the date provided" do
         assert_equal 10, PaperTrail::Version.count
         assert_equal 4, @animal.versions.size
         assert_equal 3, @animal.versions_between(@date, @date + 1.day).size
@@ -62,9 +62,9 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
       end
     end
 
-    context '`:item_id` option' do
-      context 'single ID received' do
-        should 'restrict the versions destroyed to the versions for the Item with that ID' do
+    context "`:item_id` option" do
+      context "single ID received" do
+        should "restrict the versions destroyed to the versions for the Item with that ID" do
           PaperTrail.clean_versions!(item_id: @animal.id)
           assert_equal 1, @animal.versions.size
           assert_equal 7, PaperTrail::Version.count
@@ -81,8 +81,8 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
       end
     end
 
-    context 'options combinations' do # additional tests to cover combinations of options
-      context '`:date`' do
+    context "options combinations" do # additional tests to cover combinations of options
+      context "`:date`" do
         setup do
           [@animal, @dog].each do |animal|
             animal.versions.each { |ver| ver.update_attribute(:created_at, ver.created_at - 1.day) }
@@ -91,55 +91,55 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
           @date = @animal.versions.first.created_at.to_date
         end
 
-        should 'Baseline' do
+        should "Baseline" do
           assert_equal 11, PaperTrail::Version.count
           [@animal, @dog].each do |animal|
             assert_equal 4, animal.versions.size
-            assert_equal 3, animal.versions.between(@date, @date+1.day).size
+            assert_equal 3, animal.versions.between(@date, @date + 1.day).size
           end
         end
 
-        context 'and `:keeping`' do
-          should 'restrict cleaning properly' do
+        context "and `:keeping`" do
+          should "restrict cleaning properly" do
             PaperTrail.clean_versions!(date: @date, keeping: 2)
             [@animal, @dog].each do |animal|
               # reload the association to pick up the destructions made by the `Cleaner`
               animal.versions.reload
               assert_equal 3, animal.versions.size
-              assert_equal 2, animal.versions.between(@date, @date+1.day).size
+              assert_equal 2, animal.versions.between(@date, @date + 1.day).size
             end
             # ensure that the versions for the `@cat` instance wasn't touched
             assert_equal 9, PaperTrail::Version.count
           end
         end
 
-        context 'and `:item_id`' do
-          should 'restrict cleaning properly' do
+        context "and `:item_id`" do
+          should "restrict cleaning properly" do
             PaperTrail.clean_versions!(date: @date, item_id: @dog.id)
             # reload the association to pick up the destructions made by the `Cleaner`
             @dog.versions.reload
             assert_equal 2, @dog.versions.size
-            assert_equal 1, @dog.versions.between(@date, @date+1.day).size
+            assert_equal 1, @dog.versions.between(@date, @date + 1.day).size
             # ensure the versions for other animals besides `@animal` weren't touched
             assert_equal 9, PaperTrail::Version.count
           end
         end
 
-        context ', `:item_id`, and `:keeping`' do
-          should 'restrict cleaning properly' do
+        context ", `:item_id`, and `:keeping`" do
+          should "restrict cleaning properly" do
             PaperTrail.clean_versions!(date: @date, item_id: @dog.id, keeping: 2)
             # reload the association to pick up the destructions made by the `Cleaner`
             @dog.versions.reload
             assert_equal 3, @dog.versions.size
-            assert_equal 2, @dog.versions.between(@date, @date+1.day).size
+            assert_equal 2, @dog.versions.between(@date, @date + 1.day).size
             # ensure the versions for other animals besides `@animal` weren't touched
             assert_equal 10, PaperTrail::Version.count
           end
         end
       end
 
-      context '`:keeping` and `:item_id`' do
-        should 'restrict cleaning properly' do
+      context "`:keeping` and `:item_id`" do
+        should "restrict cleaning properly" do
           PaperTrail.clean_versions!(keeping: 2, item_id: @animal.id)
           assert_equal 2, @animal.versions.size
           # ensure the versions for other animals besides `@animal` weren't touched
@@ -152,7 +152,7 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
   context "Custom timestamp field" do
     setup do
       change_schema
-      self.populate_db!
+      populate_db!
       # now mess with the timestamps
       @animals.each do |animal|
         animal.versions.reverse.each_with_index do |version, index|
@@ -168,7 +168,7 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
       restore_schema
     end
 
-    should 'Baseline' do
+    should "Baseline" do
       assert_equal 9, PaperTrail::Version.count
       @animals.each do |animal|
         assert_equal 3, animal.versions.size
@@ -179,7 +179,7 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
       end
     end
 
-    should 'group by `PaperTrail.timestamp_field` when seperating the versions by date to clean' do
+    should "group by `PaperTrail.timestamp_field` when seperating the versions by date to clean" do
       assert_equal 9, PaperTrail::Version.count
       PaperTrail.clean_versions!
       assert_equal 9, PaperTrail::Version.count

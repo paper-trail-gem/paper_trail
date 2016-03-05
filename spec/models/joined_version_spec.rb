@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 describe JoinedVersion, type: :model, versioning: true do
   it { expect(JoinedVersion.superclass).to be PaperTrail::Version }

@@ -1,6 +1,6 @@
-require 'rspec/core'
-require 'rspec/matchers'
-require 'paper_trail/frameworks/rspec/helpers'
+require "rspec/core"
+require "rspec/matchers"
+require "paper_trail/frameworks/rspec/helpers"
 
 RSpec.configure do |config|
   config.include ::PaperTrail::RSpec::Helpers::InstanceMethods

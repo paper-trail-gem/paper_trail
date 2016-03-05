@@ -1,4 +1,4 @@
-require 'test_helper'
+require "test_helper"
 
 class TimestampTest < ActiveSupport::TestCase
   setup do
@@ -9,9 +9,9 @@ class TimestampTest < ActiveSupport::TestCase
       has_paper_trail
     END
 
-    @fluxor = Fluxor.create name: 'Some text.'
-    @fluxor.update_attributes name: 'Some more text.'
-    @fluxor.update_attributes name: 'Even more text.'
+    @fluxor = Fluxor.create name: "Some text."
+    @fluxor.update_attributes name: "Some more text."
+    @fluxor.update_attributes name: "Even more text."
   end
 
   teardown do
@@ -19,12 +19,12 @@ class TimestampTest < ActiveSupport::TestCase
     restore_schema
   end
 
-  test 'versions works with custom timestamp field' do
+  test "versions works with custom timestamp field" do
     # Normal behaviour
     assert_equal 3, @fluxor.versions.length
     assert_nil @fluxor.versions[0].reify
-    assert_equal 'Some text.', @fluxor.versions[1].reify.name
-    assert_equal 'Some more text.', @fluxor.versions[2].reify.name
+    assert_equal "Some text.", @fluxor.versions[1].reify.name
+    assert_equal "Some more text.", @fluxor.versions[2].reify.name
 
     # Tinker with custom timestamps.
     now = Time.now.utc
@@ -35,7 +35,7 @@ class TimestampTest < ActiveSupport::TestCase
     # Test we are ordering by custom timestamps.
     @fluxor.versions.reload # reload association
     assert_nil @fluxor.versions[2].reify
-    assert_equal 'Some text.', @fluxor.versions[1].reify.name
-    assert_equal 'Some more text.', @fluxor.versions[0].reify.name
+    assert_equal "Some text.", @fluxor.versions[1].reify.name
+    assert_equal "Some more text.", @fluxor.versions[0].reify.name
   end
 end

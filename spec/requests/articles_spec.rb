@@ -1,7 +1,7 @@
-require 'rails_helper'
+require "rails_helper"
 
 describe "Articles management", type: :request, order: :defined do
-  let(:valid_params) { { article: { title: 'Doh', content: FFaker::Lorem.sentence } } }
+  let(:valid_params) { { article: { title: "Doh", content: FFaker::Lorem.sentence } } }
 
   context "versioning disabled" do
     specify { expect(PaperTrail).not_to be_enabled }
@@ -26,8 +26,8 @@ describe "Articles management", type: :request, order: :defined do
         expect {
           post articles_path, params_wrapper(valid_params)
         }.to change(PaperTrail::Version, :count).by(1)
-        expect(article.title).to eq('Doh')
-        expect(article.versions.last.whodunnit).to eq('foobar')
+        expect(article.title).to eq("Doh")
+        expect(article.versions.last.whodunnit).to eq("foobar")
       end
     end
   end

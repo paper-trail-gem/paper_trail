@@ -58,7 +58,7 @@ class CreateVersions < ActiveRecord::Migration
   #
   def versions_table_options
     if MYSQL_ADAPTERS.include?(connection.class.name)
-      { options: 'ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_col' }
+      { options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_col" }
     else
       {}
     end

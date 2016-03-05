@@ -1,5 +1,5 @@
-require 'test_helper'
-require 'time_travel_helper'
+require "test_helper"
+require "time_travel_helper"
 
 class AssociationsTest < ActiveSupport::TestCase
   CHAPTER_NAMES = [
@@ -19,7 +19,7 @@ class AssociationsTest < ActiveSupport::TestCase
 
   # These would have been done in test_helper.rb if using_mysql? is true
   unless using_mysql?
-    if self.respond_to? :use_transactional_tests=
+    if respond_to? :use_transactional_tests=
       self.use_transactional_tests = false
     else
       self.use_transactional_fixtures = false
@@ -34,103 +34,103 @@ class AssociationsTest < ActiveSupport::TestCase
   end
 
   context "a has_one association" do
-    setup { @widget = Widget.create name: 'widget_0' }
+    setup { @widget = Widget.create name: "widget_0" }
 
-    context 'before the associated was created' do
+    context "before the associated was created" do
       setup do
-        @widget.update_attributes name: 'widget_1'
-        @wotsit = @widget.create_wotsit name: 'wotsit_0'
+        @widget.update_attributes name: "widget_1"
+        @wotsit = @widget.create_wotsit name: "wotsit_0"
       end
 
-      context 'when reified' do
+      context "when reified" do
         setup { @widget_0 = @widget.versions.last.reify(has_one: true) }
 
-        should 'see the associated as it was at the time' do
+        should "see the associated as it was at the time" do
           assert_nil @widget_0.wotsit
         end
 
-        should 'not persist changes to the live association' do
+        should "not persist changes to the live association" do
           assert_equal @wotsit, @widget.reload.wotsit
         end
       end
     end
 
-    context 'where the association is created between model versions' do
+    context "where the association is created between model versions" do
       setup do
-        @wotsit = @widget.create_wotsit name: 'wotsit_0'
+        @wotsit = @widget.create_wotsit name: "wotsit_0"
         Timecop.travel 1.second.since
-        @widget.update_attributes name: 'widget_1'
+        @widget.update_attributes name: "widget_1"
       end
 
-      context 'when reified' do
+      context "when reified" do
         setup { @widget_0 = @widget.versions.last.reify(has_one: true) }
 
-        should 'see the associated as it was at the time' do
-          assert_equal 'wotsit_0', @widget_0.wotsit.name
+        should "see the associated as it was at the time" do
+          assert_equal "wotsit_0", @widget_0.wotsit.name
         end
 
-        should 'not persist changes to the live association' do
+        should "not persist changes to the live association" do
           assert_equal @wotsit, @widget.reload.wotsit
         end
       end
 
-      context 'and then the associated is updated between model versions' do
+      context "and then the associated is updated between model versions" do
         setup do
-          @wotsit.update_attributes name: 'wotsit_1'
-          @wotsit.update_attributes name: 'wotsit_2'
+          @wotsit.update_attributes name: "wotsit_1"
+          @wotsit.update_attributes name: "wotsit_2"
           Timecop.travel 1.second.since
-          @widget.update_attributes name: 'widget_2'
-          @wotsit.update_attributes name: 'wotsit_3'
+          @widget.update_attributes name: "widget_2"
+          @wotsit.update_attributes name: "wotsit_3"
         end
 
-        context 'when reified' do
+        context "when reified" do
           setup { @widget_1 = @widget.versions.last.reify(has_one: true) }
 
-          should 'see the associated as it was at the time' do
-            assert_equal 'wotsit_2', @widget_1.wotsit.name
+          should "see the associated as it was at the time" do
+            assert_equal "wotsit_2", @widget_1.wotsit.name
           end
 
-          should 'not persist changes to the live association' do
-            assert_equal 'wotsit_3', @widget.reload.wotsit.name
+          should "not persist changes to the live association" do
+            assert_equal "wotsit_3", @widget.reload.wotsit.name
           end
         end
 
-        context 'when reified opting out of has_one reification' do
+        context "when reified opting out of has_one reification" do
           setup { @widget_1 = @widget.versions.last.reify(has_one: false) }
 
-          should 'see the associated as it is live' do
-            assert_equal 'wotsit_3', @widget_1.wotsit.name
+          should "see the associated as it is live" do
+            assert_equal "wotsit_3", @widget_1.wotsit.name
           end
         end
       end
 
-      context 'and then the associated is destroyed' do
+      context "and then the associated is destroyed" do
         setup do
           @wotsit.destroy
         end
 
-        context 'when reify' do
+        context "when reify" do
           setup { @widget_1 = @widget.versions.last.reify(has_one: true) }
 
-          should 'see the associated as it was at the time' do
+          should "see the associated as it was at the time" do
             assert_equal @wotsit, @widget_1.wotsit
           end
 
-          should 'not persist changes to the live association' do
+          should "not persist changes to the live association" do
             assert_nil @widget.reload.wotsit
           end
         end
 
-        context 'and then the model is updated' do
+        context "and then the model is updated" do
           setup do
             Timecop.travel 1.second.since
-            @widget.update_attributes name: 'widget_3'
+            @widget.update_attributes name: "widget_3"
           end
 
-          context 'when reified' do
+          context "when reified" do
             setup { @widget_2 = @widget.versions.last.reify(has_one: true) }
 
-            should 'see the associated as it was at the time' do
+            should "see the associated as it was at the time" do
               assert_nil @widget_2.wotsit
             end
           end
@@ -140,28 +140,28 @@ class AssociationsTest < ActiveSupport::TestCase
   end
 
   context "a has_many association" do
-    setup { @customer = Customer.create name: 'customer_0' }
+    setup { @customer = Customer.create name: "customer_0" }
 
-    context 'updated before the associated was created' do
+    context "updated before the associated was created" do
       setup do
-        @customer.update_attributes! name: 'customer_1'
+        @customer.update_attributes! name: "customer_1"
         @customer.orders.create! order_date: Date.today
       end
 
-      context 'when reified' do
+      context "when reified" do
         setup { @customer_0 = @customer.versions.last.reify(has_many: true) }
 
-        should 'see the associated as it was at the time' do
+        should "see the associated as it was at the time" do
           assert_equal [], @customer_0.orders
         end
 
-        should 'not persist changes to the live association' do
+        should "not persist changes to the live association" do
           assert_not_equal [], @customer.orders.reload
         end
       end
 
-      context 'when reified with option mark_for_destruction' do
-        should 'mark the associated for destruction' do
+      context "when reified with option mark_for_destruction" do
+        should "mark the associated for destruction" do
           @customer_0 = @customer.versions.last.reify(
             has_many: true,
             mark_for_destruction: true
@@ -171,144 +171,144 @@ class AssociationsTest < ActiveSupport::TestCase
       end
     end
 
-    context 'where the association is created between model versions' do
+    context "where the association is created between model versions" do
       setup do
-        @order = @customer.orders.create! order_date: 'order_date_0'
+        @order = @customer.orders.create! order_date: "order_date_0"
         Timecop.travel 1.second.since
-        @customer.update_attributes name: 'customer_1'
+        @customer.update_attributes name: "customer_1"
       end
 
-      context 'when reified' do
+      context "when reified" do
         setup { @customer_0 = @customer.versions.last.reify(has_many: true) }
 
-        should 'see the associated as it was at the time' do
-          assert_equal ['order_date_0'], @customer_0.orders.map(&:order_date)
+        should "see the associated as it was at the time" do
+          assert_equal ["order_date_0"], @customer_0.orders.map(&:order_date)
         end
       end
 
-      context 'and then a nested has_many association is created' do
+      context "and then a nested has_many association is created" do
         setup do
-          @order.line_items.create! product: 'product_0'
+          @order.line_items.create! product: "product_0"
         end
 
-        context 'when reified' do
+        context "when reified" do
           setup { @customer_0 = @customer.versions.last.reify(has_many: true) }
 
-          should 'see the live version of the nested association' do
-            assert_equal ['product_0'], @customer_0.orders.first.line_items.map(&:product)
+          should "see the live version of the nested association" do
+            assert_equal ["product_0"], @customer_0.orders.first.line_items.map(&:product)
           end
         end
       end
 
-      context 'and then the associated is updated between model versions' do
+      context "and then the associated is updated between model versions" do
         setup do
-          @order.update_attributes order_date: 'order_date_1'
-          @order.update_attributes order_date: 'order_date_2'
+          @order.update_attributes order_date: "order_date_1"
+          @order.update_attributes order_date: "order_date_2"
           Timecop.travel 1.second.since
-          @customer.update_attributes name: 'customer_2'
-          @order.update_attributes order_date: 'order_date_3'
+          @customer.update_attributes name: "customer_2"
+          @order.update_attributes order_date: "order_date_3"
         end
 
-        context 'when reified' do
+        context "when reified" do
           setup { @customer_1 = @customer.versions.last.reify(has_many: true) }
 
-          should 'see the associated as it was at the time' do
-            assert_equal ['order_date_2'], @customer_1.orders.map(&:order_date)
+          should "see the associated as it was at the time" do
+            assert_equal ["order_date_2"], @customer_1.orders.map(&:order_date)
           end
 
-          should 'not persist changes to the live association' do
-            assert_equal ['order_date_3'], @customer.orders.reload.map(&:order_date)
+          should "not persist changes to the live association" do
+            assert_equal ["order_date_3"], @customer.orders.reload.map(&:order_date)
           end
         end
 
-        context 'when reified opting out of has_many reification' do
+        context "when reified opting out of has_many reification" do
           setup { @customer_1 = @customer.versions.last.reify(has_many: false) }
 
-          should 'see the associated as it is live' do
-            assert_equal ['order_date_3'], @customer_1.orders.map(&:order_date)
+          should "see the associated as it is live" do
+            assert_equal ["order_date_3"], @customer_1.orders.map(&:order_date)
           end
         end
 
-        context 'and then the associated is destroyed' do
+        context "and then the associated is destroyed" do
           setup do
             @order.destroy
           end
 
-          context 'when reified' do
+          context "when reified" do
             setup { @customer_1 = @customer.versions.last.reify(has_many: true) }
 
-            should 'see the associated as it was at the time' do
-              assert_equal ['order_date_2'], @customer_1.orders.map(&:order_date)
+            should "see the associated as it was at the time" do
+              assert_equal ["order_date_2"], @customer_1.orders.map(&:order_date)
             end
 
-            should 'not persist changes to the live association' do
+            should "not persist changes to the live association" do
               assert_equal [], @customer.orders.reload
             end
           end
         end
       end
 
-      context 'and then the associated is destroyed' do
+      context "and then the associated is destroyed" do
         setup do
           @order.destroy
         end
 
-        context 'when reified' do
+        context "when reified" do
           setup { @customer_1 = @customer.versions.last.reify(has_many: true) }
 
-          should 'see the associated as it was at the time' do
+          should "see the associated as it was at the time" do
             assert_equal [@order.order_date], @customer_1.orders.map(&:order_date)
           end
 
-          should 'not persist changes to the live association' do
+          should "not persist changes to the live association" do
             assert_equal [], @customer.orders.reload
           end
         end
       end
 
-      context 'and then the associated is destroyed between model versions' do
+      context "and then the associated is destroyed between model versions" do
         setup do
           @order.destroy
           Timecop.travel 1.second.since
-          @customer.update_attributes name: 'customer_2'
+          @customer.update_attributes name: "customer_2"
         end
 
-        context 'when reified' do
+        context "when reified" do
           setup { @customer_1 = @customer.versions.last.reify(has_many: true) }
 
-          should 'see the associated as it was at the time' do
+          should "see the associated as it was at the time" do
             assert_equal [], @customer_1.orders
           end
         end
       end
 
-      context 'and then another association is added' do
+      context "and then another association is added" do
         setup do
-          @customer.orders.create! order_date: 'order_date_1'
+          @customer.orders.create! order_date: "order_date_1"
         end
 
-        context 'when reified' do
+        context "when reified" do
           setup { @customer_0 = @customer.versions.last.reify(has_many: true) }
 
-          should 'see the associated as it was at the time' do
-            assert_equal ['order_date_0'], @customer_0.orders.map(&:order_date)
+          should "see the associated as it was at the time" do
+            assert_equal ["order_date_0"], @customer_0.orders.map(&:order_date)
           end
 
-          should 'not persist changes to the live association' do
-            assert_equal ['order_date_0', 'order_date_1'],
+          should "not persist changes to the live association" do
+            assert_equal %w(order_date_0 order_date_1),
               @customer.orders.reload.map(&:order_date).sort
           end
         end
 
-        context 'when reified with option mark_for_destruction' do
-          should 'mark the newly associated for destruction' do
+        context "when reified with option mark_for_destruction" do
+          should "mark the newly associated for destruction" do
             @customer_0 = @customer.versions.last.reify(
               has_many: true,
               mark_for_destruction: true
             )
             assert @customer_0.
               orders.
-              detect { |o| o.order_date == 'order_date_1'}.
+              detect { |o| o.order_date == "order_date_1" }.
               marked_for_destruction?
           end
         end
@@ -318,27 +318,27 @@ class AssociationsTest < ActiveSupport::TestCase
 
   context "has_many through associations" do
     context "Books, Authors, and Authorships" do
-      setup { @book = Book.create title: 'book_0' }
+      setup { @book = Book.create title: "book_0" }
 
-      context 'updated before the associated was created' do
+      context "updated before the associated was created" do
         setup do
-          @book.update_attributes! title: 'book_1'
-          @book.authors.create! name: 'author_0'
+          @book.update_attributes! title: "book_1"
+          @book.authors.create! name: "author_0"
         end
 
-        context 'when reified' do
+        context "when reified" do
           setup { @book_0 = @book.versions.last.reify(has_many: true) }
 
-          should 'see the associated as it was at the time' do
+          should "see the associated as it was at the time" do
             assert_equal [], @book_0.authors
           end
 
-          should 'not persist changes to the live association' do
-            assert_equal ['author_0'], @book.authors.reload.map(&:name)
+          should "not persist changes to the live association" do
+            assert_equal ["author_0"], @book.authors.reload.map(&:name)
           end
         end
 
-        context 'when reified with option mark_for_destruction' do
+        context "when reified with option mark_for_destruction" do
           setup do
             @book_0 = @book.versions.last.reify(
               has_many: true,
@@ -346,35 +346,35 @@ class AssociationsTest < ActiveSupport::TestCase
             )
           end
 
-          should 'mark the associated for destruction' do
+          should "mark the associated for destruction" do
             assert_equal [true], @book_0.authors.map(&:marked_for_destruction?)
           end
 
-          should 'mark the associated-through for destruction' do
+          should "mark the associated-through for destruction" do
             assert_equal [true], @book_0.authorships.map(&:marked_for_destruction?)
           end
         end
       end
 
-      context 'updated before it is associated with an existing one' do
+      context "updated before it is associated with an existing one" do
         setup do
-          person_existing = Person.create(name: 'person_existing')
+          person_existing = Person.create(name: "person_existing")
           Timecop.travel 1.second.since
-          @book.update_attributes! title: 'book_1'
+          @book.update_attributes! title: "book_1"
           @book.authors << person_existing
         end
 
-        context 'when reified' do
+        context "when reified" do
           setup do
             @book_0 = @book.versions.last.reify(has_many: true)
           end
 
-          should 'see the associated as it was at the time' do
+          should "see the associated as it was at the time" do
             assert_equal [], @book_0.authors
           end
         end
 
-        context 'when reified with option mark_for_destruction' do
+        context "when reified with option mark_for_destruction" do
           setup do
             @book_0 = @book.versions.last.reify(
               has_many: true,
@@ -382,130 +382,130 @@ class AssociationsTest < ActiveSupport::TestCase
             )
           end
 
-          should 'not mark the associated for destruction' do
+          should "not mark the associated for destruction" do
             assert_equal [false], @book_0.authors.map(&:marked_for_destruction?)
           end
 
-          should 'mark the associated-through for destruction' do
+          should "mark the associated-through for destruction" do
             assert_equal [true], @book_0.authorships.map(&:marked_for_destruction?)
           end
         end
       end
 
-      context 'where the association is created between model versions' do
+      context "where the association is created between model versions" do
         setup do
-          @author = @book.authors.create! name: 'author_0'
-          @person_existing = Person.create(name: 'person_existing')
+          @author = @book.authors.create! name: "author_0"
+          @person_existing = Person.create(name: "person_existing")
           Timecop.travel 1.second.since
-          @book.update_attributes! title: 'book_1'
+          @book.update_attributes! title: "book_1"
         end
 
-        context 'when reified' do
+        context "when reified" do
           setup { @book_0 = @book.versions.last.reify(has_many: true) }
 
-          should 'see the associated as it was at the time' do
-            assert_equal ['author_0'], @book_0.authors.map(&:name)
+          should "see the associated as it was at the time" do
+            assert_equal ["author_0"], @book_0.authors.map(&:name)
           end
         end
 
-        context 'and then the associated is updated between model versions' do
+        context "and then the associated is updated between model versions" do
           setup do
-            @author.update_attributes name: 'author_1'
-            @author.update_attributes name: 'author_2'
+            @author.update_attributes name: "author_1"
+            @author.update_attributes name: "author_2"
             Timecop.travel 1.second.since
-            @book.update_attributes title: 'book_2'
-            @author.update_attributes name: 'author_3'
+            @book.update_attributes title: "book_2"
+            @author.update_attributes name: "author_3"
           end
 
-          context 'when reified' do
+          context "when reified" do
             setup { @book_1 = @book.versions.last.reify(has_many: true) }
 
-            should 'see the associated as it was at the time' do
-              assert_equal ['author_2'], @book_1.authors.map(&:name)
+            should "see the associated as it was at the time" do
+              assert_equal ["author_2"], @book_1.authors.map(&:name)
             end
 
-            should 'not persist changes to the live association' do
-              assert_equal ['author_3'], @book.authors.reload.map(&:name)
+            should "not persist changes to the live association" do
+              assert_equal ["author_3"], @book.authors.reload.map(&:name)
             end
           end
 
-          context 'when reified opting out of has_many reification' do
+          context "when reified opting out of has_many reification" do
             setup { @book_1 = @book.versions.last.reify(has_many: false) }
 
-            should 'see the associated as it is live' do
-              assert_equal ['author_3'], @book_1.authors.map(&:name)
+            should "see the associated as it is live" do
+              assert_equal ["author_3"], @book_1.authors.map(&:name)
             end
           end
         end
 
-        context 'and then the associated is destroyed' do
+        context "and then the associated is destroyed" do
           setup do
             @author.destroy
           end
 
-          context 'when reified' do
+          context "when reified" do
             setup { @book_1 = @book.versions.last.reify(has_many: true) }
 
-            should 'see the associated as it was at the time' do
+            should "see the associated as it was at the time" do
               assert_equal [@author.name], @book_1.authors.map(&:name)
             end
 
-            should 'not persist changes to the live association' do
+            should "not persist changes to the live association" do
               assert_equal [], @book.authors.reload
             end
           end
         end
 
-        context 'and then the associated is destroyed between model versions' do
+        context "and then the associated is destroyed between model versions" do
           setup do
             @author.destroy
             Timecop.travel 1.second.since
-            @book.update_attributes title: 'book_2'
+            @book.update_attributes title: "book_2"
           end
 
-          context 'when reified' do
+          context "when reified" do
             setup { @book_1 = @book.versions.last.reify(has_many: true) }
 
-            should 'see the associated as it was at the time' do
+            should "see the associated as it was at the time" do
               assert_equal [], @book_1.authors
             end
           end
         end
 
-        context 'and then the associated is dissociated between model versions' do
+        context "and then the associated is dissociated between model versions" do
           setup do
             @book.authors = []
             Timecop.travel 1.second.since
-            @book.update_attributes title: 'book_2'
+            @book.update_attributes title: "book_2"
           end
 
-          context 'when reified' do
+          context "when reified" do
             setup { @book_1 = @book.versions.last.reify(has_many: true) }
 
-            should 'see the associated as it was at the time' do
+            should "see the associated as it was at the time" do
               assert_equal [], @book_1.authors
             end
           end
         end
 
-        context 'and then another associated is created' do
+        context "and then another associated is created" do
           setup do
-            @book.authors.create! name: 'author_1'
+            @book.authors.create! name: "author_1"
           end
 
-          context 'when reified' do
+          context "when reified" do
             setup { @book_0 = @book.versions.last.reify(has_many: true) }
 
-            should 'only see the first associated' do
-              assert_equal ['author_0'], @book_0.authors.map(&:name)
+            should "only see the first associated" do
+              assert_equal ["author_0"], @book_0.authors.map(&:name)
             end
 
-            should 'not persist changes to the live association' do
-              assert_equal ['author_0', 'author_1'], @book.authors.reload.map(&:name)
+            should "not persist changes to the live association" do
+              assert_equal %w(author_0 author_1), @book.authors.reload.map(&:name)
             end
           end
 
-          context 'when reified with option mark_for_destruction' do
+          context "when reified with option mark_for_destruction" do
             setup do
               @book_0 = @book.versions.last.reify(
                 has_many: true,
@@ -513,40 +513,40 @@ class AssociationsTest < ActiveSupport::TestCase
               )
             end
 
-            should 'mark the newly associated for destruction' do
+            should "mark the newly associated for destruction" do
               assert @book_0.
                 authors.
-                detect { |a| a.name == 'author_1' }.
+                detect { |a| a.name == "author_1" }.
                 marked_for_destruction?
             end
 
-            should 'mark the newly associated-through for destruction' do
+            should "mark the newly associated-through for destruction" do
               assert @book_0.
                 authorships.
-                detect { |as| as.person.name == 'author_1' }.
+                detect { |as| as.person.name == "author_1" }.
                 marked_for_destruction?
             end
           end
         end
 
-        context 'and then an existing one is associated' do
+        context "and then an existing one is associated" do
           setup do
             @book.authors << @person_existing
           end
 
-          context 'when reified' do
+          context "when reified" do
             setup { @book_0 = @book.versions.last.reify(has_many: true) }
 
-            should 'only see the first associated' do
-              assert_equal ['author_0'], @book_0.authors.map(&:name)
+            should "only see the first associated" do
+              assert_equal ["author_0"], @book_0.authors.map(&:name)
             end
 
-            should 'not persist changes to the live association' do
-              assert_equal ['author_0', 'person_existing'], @book.authors.reload.map(&:name).sort
+            should "not persist changes to the live association" do
+              assert_equal %w(author_0 person_existing), @book.authors.reload.map(&:name).sort
             end
           end
 
-          context 'when reified with option mark_for_destruction' do
+          context "when reified with option mark_for_destruction" do
             setup do
               @book_0 = @book.versions.last.reify(
                 has_many: true,
@@ -554,34 +554,34 @@ class AssociationsTest < ActiveSupport::TestCase
               )
             end
 
-            should 'not mark the newly associated for destruction' do
+            should "not mark the newly associated for destruction" do
               assert !@book_0.
                 authors.
-                detect { |a| a.name == 'person_existing' }.
+                detect { |a| a.name == "person_existing" }.
                 marked_for_destruction?
             end
 
-            should 'mark the newly associated-through for destruction' do
+            should "mark the newly associated-through for destruction" do
               assert @book_0.
                 authorships.
-                detect { |as| as.person.name == 'person_existing' }.
+                detect { |as| as.person.name == "person_existing" }.
                 marked_for_destruction?
             end
           end
         end
       end
 
-      context 'updated before the associated without paper_trail was created' do
+      context "updated before the associated without paper_trail was created" do
         setup do
-          @book.update_attributes! title: 'book_1'
-          @book.editors.create! name: 'editor_0'
+          @book.update_attributes! title: "book_1"
+          @book.editors.create! name: "editor_0"
         end
 
-        context 'when reified' do
+        context "when reified" do
           setup { @book_0 = @book.versions.last.reify(has_many: true) }
 
-          should 'see the live association' do
-            assert_equal ['editor_0'], @book_0.editors.map(&:name)
+          should "see the live association" do
+            assert_equal ["editor_0"], @book_0.editors.map(&:name)
           end
         end
       end
@@ -635,7 +635,7 @@ class AssociationsTest < ActiveSupport::TestCase
 
             # Shows the value of the section as it was before
             # the chapter was updated.
-            assert_equal ['section 2'], chapter_v2.sections.map(&:name)
+            assert_equal ["section 2"], chapter_v2.sections.map(&:name)
 
             # Shows the value of the chapter as it was before
             assert_equal CHAPTER_NAMES[1], chapter_v2.name
@@ -652,7 +652,7 @@ class AssociationsTest < ActiveSupport::TestCase
 
           should "have the one section" do
             chapter_v2 = @chapter.versions[2].reify(has_many: true)
-            assert_equal ['section 2'], chapter_v2.sections.map(&:name)
+            assert_equal ["section 2"], chapter_v2.sections.map(&:name)
           end
         end
 
@@ -675,7 +675,7 @@ class AssociationsTest < ActiveSupport::TestCase
             assert_equal 3, @chapter.versions.size
             @section = @chapter.sections.first
             Timecop.travel 1.second.since
-            @paragraph = @section.paragraphs.create name: 'para1'
+            @paragraph = @section.paragraphs.create name: "para1"
           end
 
           context "new chapter version" do
@@ -686,7 +686,7 @@ class AssociationsTest < ActiveSupport::TestCase
               @chapter.update_attributes name: CHAPTER_NAMES[4]
               assert_equal 4, @chapter.versions.size
               Timecop.travel 1.second.since
-              @paragraph.update_attributes name: 'para3'
+              @paragraph.update_attributes name: "para3"
               chapter_v3 = @chapter.versions[3].reify(has_many: true)
               assert_equal [initial_section_name], chapter_v3.sections.map(&:name)
               paragraphs = chapter_v3.sections.first.paragraphs
@@ -753,8 +753,8 @@ class AssociationsTest < ActiveSupport::TestCase
       context "a chapter with one paragraph and one citation" do
         should "reify paragraphs and citations" do
           chapter = Chapter.create(name: CHAPTER_NAMES[0])
-          section = Section.create(name: 'Section One', chapter: chapter)
-          paragraph = Paragraph.create(name: 'Paragraph One', section: section)
+          section = Section.create(name: "Section One", chapter: chapter)
+          paragraph = Paragraph.create(name: "Paragraph One", section: section)
           quotation = Quotation.create(chapter: chapter)
           citation = Citation.create(quotation: quotation)
           Timecop.travel 1.second.since

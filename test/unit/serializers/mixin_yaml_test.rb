@@ -1,4 +1,4 @@
-require 'test_helper'
+require "test_helper"
 
 module CustomYamlSerializer
   extend PaperTrail::Serializers::YAML
@@ -24,28 +24,28 @@ class MixinYamlTest < ActiveSupport::TestCase
     (1..4).each do |i|
       @hash["key#{i}"] = [FFaker::Lorem.word, nil].sample
     end
-    @hash['tkey'] = nil
-    @hash[''] = 'foo'
+    @hash["tkey"] = nil
+    @hash[""] = "foo"
     @hash_as_yaml = @hash.to_yaml
   end
 
-  context '`load` class method' do
-    should 'exist' do
+  context "`load` class method" do
+    should "exist" do
       assert CustomYamlSerializer.respond_to?(:load)
     end
 
-    should '`deserialize` YAML to Ruby, removing pairs with `blank` keys or values' do
+    should "`deserialize` YAML to Ruby, removing pairs with `blank` keys or values" do
       assert_equal @hash.reject { |k, v| k.blank? || v.blank? },
         CustomYamlSerializer.load(@hash_as_yaml)
     end
   end
 
-  context '`dump` class method' do
-    should 'exist' do
+  context "`dump` class method" do
+    should "exist" do
       assert CustomYamlSerializer.respond_to?(:dump)
     end
 
-    should '`serialize` Ruby to YAML, removing pairs with `nil` values' do
+    should "`serialize` Ruby to YAML, removing pairs with `nil` values" do
       assert_equal @hash.reject { |_k, v| v.nil? }.to_yaml,
         CustomYamlSerializer.dump(@hash)
     end

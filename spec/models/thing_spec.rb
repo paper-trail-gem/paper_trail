@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 describe Thing, type: :model do
   it { is_expected.to be_versioned }

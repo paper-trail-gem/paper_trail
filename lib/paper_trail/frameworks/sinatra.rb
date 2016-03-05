@@ -1,4 +1,4 @@
-require 'active_support/core_ext/object' # provides the `try` method
+require "active_support/core_ext/object" # provides the `try` method
 
 module PaperTrail
   module Sinatra
@@ -28,7 +28,7 @@ module PaperTrail
 
     # Tells PaperTrail who is responsible for any changes that occur.
     def set_paper_trail_whodunnit
-      @set_paper_trail_whodunnit_called=true
+      @set_paper_trail_whodunnit_called = true
       ::PaperTrail.whodunnit = user_for_paper_trail if ::PaperTrail.enabled?
     end
   end
