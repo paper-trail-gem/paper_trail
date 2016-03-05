@@ -220,13 +220,6 @@ Style/PredicateName:
   Exclude:
     - 'lib/paper_trail/has_paper_trail.rb'
 
-# Offense count: 6
-# Cop supports --auto-correct.
-Style/Proc:
-  Exclude:
-    - 'test/dummy/app/models/article.rb'
-    - 'test/dummy/app/models/translation.rb'
-
 # Offense count: 3
 # Cop supports --auto-correct.
 Style/RescueModifier:
