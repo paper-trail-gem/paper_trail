@@ -121,7 +121,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       end
 
       should "have stored only non-skipped attributes" do
-        assert_equal ({"content" => [nil, "Some text here."]}),
+        assert_equal ({ "content" => [nil, "Some text here."] }),
           @article.versions.last.changeset
       end
 
@@ -328,11 +328,11 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           actual = PaperTrail.serializer.load(last_obj_changes).reject { |k, _v|
             k.to_sym == :updated_at
           }
-          assert_equal ({"name" => %w(Henry Harry)}), actual
+          assert_equal ({ "name" => %w(Henry Harry) }), actual
           actual = @widget.versions.last.changeset.reject { |k, _v|
             k.to_sym == :updated_at
           }
-          assert_equal ({"name" => %w(Henry Harry)}), actual
+          assert_equal ({ "name" => %w(Henry Harry) }), actual
         end
 
         should "return changes with indifferent access" do

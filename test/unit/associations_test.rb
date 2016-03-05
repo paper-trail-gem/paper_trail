@@ -308,7 +308,7 @@ class AssociationsTest < ActiveSupport::TestCase
             )
             assert @customer_0.
               orders.
-              detect { |o| o.order_date == "order_date_1"}.
+              detect { |o| o.order_date == "order_date_1" }.
               marked_for_destruction?
           end
         end

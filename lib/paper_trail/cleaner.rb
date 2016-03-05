@@ -15,7 +15,7 @@ module PaperTrail
     #   causes all items to be cleaned. Defaults to `nil`.
     #
     def clean_versions!(options = {})
-      options = {keeping: 1, date: :all}.merge(options)
+      options = { keeping: 1, date: :all }.merge(options)
       gather_versions(options[:item_id], options[:date]).each do |_item_id, item_versions|
         group_versions_by_date(item_versions).each do |_date, date_versions|
           # Remove the number of versions we wish to keep from the collection

@@ -9,7 +9,7 @@ describe Widget, type: :model do
 
   describe "`have_a_version_with` matcher", versioning: true do
     before do
-      widget.update_attributes!(name: "Leonard", an_integer: 1 )
+      widget.update_attributes!(name: "Leonard", an_integer: 1)
       widget.update_attributes!(name: "Tom")
       widget.update_attributes!(name: "Bob")
     end

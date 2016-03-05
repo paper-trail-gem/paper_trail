@@ -22,7 +22,7 @@ class ApplicationController < ActionController::Base
   attr_reader :current_user
 
   def info_for_paper_trail
-    {ip: request.remote_ip, user_agent: request.user_agent}
+    { ip: request.remote_ip, user_agent: request.user_agent }
   end
 
   private

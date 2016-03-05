@@ -7,7 +7,7 @@ class Article < ActiveRecord::Base
         }
       }
     ],
-    only: [:content, { abstract: Proc.new { |obj| obj.abstract.present? } } ],
+    only: [:content, { abstract: Proc.new { |obj| obj.abstract.present? } }],
     skip: [:file_upload],
     meta: {
       answer: 42,

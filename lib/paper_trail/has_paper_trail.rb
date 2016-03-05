@@ -201,7 +201,7 @@ module PaperTrail
       end
 
       # Returns the object (not a Version) as it was at the given timestamp.
-      def version_at(timestamp, reify_options={})
+      def version_at(timestamp, reify_options = {})
         # Because a version stores how its object looked *before* the change,
         # we need to look for the first version created *after* the timestamp.
         v = send(self.class.versions_association_name).subsequent(timestamp, true).first
@@ -212,7 +212,7 @@ module PaperTrail
       # Returns the objects (not Versions) as they were between the given times.
       # TODO: Either add support for the third argument, `_reify_options`, or
       # add a deprecation warning if someone tries to use it.
-      def versions_between(start_time, end_time, _reify_options={})
+      def versions_between(start_time, end_time, _reify_options = {})
         versions = send(self.class.versions_association_name).between(start_time, end_time)
         versions.collect { |version| version_at(version.send PaperTrail.timestamp_field) }
       end

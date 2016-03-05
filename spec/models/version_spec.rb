@@ -92,7 +92,7 @@ describe PaperTrail::Version, type: :model do
       describe '#terminator' do
         it { is_expected.to respond_to(:terminator) }
 
-        let(:attributes) { {whodunnit: FFaker::Name.first_name} }
+        let(:attributes) { { whodunnit: FFaker::Name.first_name } }
 
         it "is an alias for the `whodunnit` attribute" do
           expect(subject.terminator).to eq(attributes[:whodunnit])

@@ -95,7 +95,7 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
           assert_equal 11, PaperTrail::Version.count
           [@animal, @dog].each do |animal|
             assert_equal 4, animal.versions.size
-            assert_equal 3, animal.versions.between(@date, @date+1.day).size
+            assert_equal 3, animal.versions.between(@date, @date + 1.day).size
           end
         end
 
@@ -106,7 +106,7 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
               # reload the association to pick up the destructions made by the `Cleaner`
               animal.versions.reload
               assert_equal 3, animal.versions.size
-              assert_equal 2, animal.versions.between(@date, @date+1.day).size
+              assert_equal 2, animal.versions.between(@date, @date + 1.day).size
             end
             # ensure that the versions for the `@cat` instance wasn't touched
             assert_equal 9, PaperTrail::Version.count
@@ -119,7 +119,7 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
             # reload the association to pick up the destructions made by the `Cleaner`
             @dog.versions.reload
             assert_equal 2, @dog.versions.size
-            assert_equal 1, @dog.versions.between(@date, @date+1.day).size
+            assert_equal 1, @dog.versions.between(@date, @date + 1.day).size
             # ensure the versions for other animals besides `@animal` weren't touched
             assert_equal 9, PaperTrail::Version.count
           end
@@ -131,7 +131,7 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
             # reload the association to pick up the destructions made by the `Cleaner`
             @dog.versions.reload
             assert_equal 3, @dog.versions.size
-            assert_equal 2, @dog.versions.between(@date, @date+1.day).size
+            assert_equal 2, @dog.versions.between(@date, @date + 1.day).size
             # ensure the versions for other animals besides `@animal` weren't touched
             assert_equal 10, PaperTrail::Version.count
           end

@@ -12,12 +12,12 @@ module PaperTrail
 
         if base.respond_to? :before_action
           # Rails 4+
-          before.map {|sym| base.before_action sym }
-          after.map  {|sym| base.after_action  sym }
+          before.map { |sym| base.before_action sym }
+          after.map  { |sym| base.after_action  sym }
         else
           # Rails 3.
-          before.map {|sym| base.before_filter sym }
-          after.map  {|sym| base.after_filter  sym }
+          before.map { |sym| base.before_filter sym }
+          after.map  { |sym| base.after_filter  sym }
         end
       end
 
@@ -76,7 +76,7 @@ module PaperTrail
 
       # Tells PaperTrail who is responsible for any changes that occur.
       def set_paper_trail_whodunnit
-        @set_paper_trail_whodunnit_called=true
+        @set_paper_trail_whodunnit_called = true
         ::PaperTrail.whodunnit = user_for_paper_trail if ::PaperTrail.enabled_for_controller?
       end
 
