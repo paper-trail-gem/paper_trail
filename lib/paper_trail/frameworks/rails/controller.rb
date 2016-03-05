@@ -4,10 +4,10 @@ module PaperTrail
       def self.included(base)
         before = [
           :set_paper_trail_enabled_for_controller,
-          :set_paper_trail_controller_info,
+          :set_paper_trail_controller_info
         ]
         after = [
-          :warn_about_not_setting_whodunnit,
+          :warn_about_not_setting_whodunnit
         ]
 
         if base.respond_to? :before_action
