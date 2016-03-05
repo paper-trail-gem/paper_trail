@@ -356,12 +356,3 @@ Style/StringLiterals:
 # SupportedStyles: single_quotes, double_quotes
 Style/StringLiteralsInInterpolation:
   Enabled: false
-
-# Offense count: 3
-# Cop supports --auto-correct.
-# Configuration parameters: IgnoredMethods.
-# IgnoredMethods: respond_to
-Style/SymbolProc:
-  Exclude:
-    - 'lib/paper_trail/reifier.rb'
-    - 'test/unit/version_test.rb'

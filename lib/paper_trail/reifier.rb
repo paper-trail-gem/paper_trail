@@ -106,7 +106,7 @@ module PaperTrail
           if (version = versions.delete(record.id)).nil?
             record
           elsif version.event == 'create'
-            options[:mark_for_destruction] ? record.tap { |r| r.mark_for_destruction } : nil
+            options[:mark_for_destruction] ? record.tap(&:mark_for_destruction) : nil
           else
             version.reify(options.merge(has_many: false, has_one: false))
           end
