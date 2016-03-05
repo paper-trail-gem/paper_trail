@@ -397,14 +397,6 @@ Style/TrailingWhitespace:
     - 'test/paper_trail_test.rb'
 
 # Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: ExactNameMatch, AllowPredicates, AllowDSLWriters, IgnoreClassMethods, Whitelist.
-# Whitelist: to_ary, to_a, to_c, to_enum, to_h, to_hash, to_i, to_int, to_io, to_open, to_path, to_proc, to_r, to_regexp, to_str, to_s, to_sym
-Style/TrivialAccessors:
-  Exclude:
-    - 'test/dummy/app/controllers/application_controller.rb'
-
-# Offense count: 1
 Style/UnlessElse:
   Exclude:
     - 'lib/generators/paper_trail/install_generator.rb'
