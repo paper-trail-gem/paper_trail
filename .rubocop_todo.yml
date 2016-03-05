@@ -395,8 +395,3 @@ Style/TrailingWhitespace:
   Exclude:
     - 'test/dummy/app/models/person.rb'
     - 'test/paper_trail_test.rb'
-
-# Offense count: 1
-Style/UnlessElse:
-  Exclude:
-    - 'lib/generators/paper_trail/install_generator.rb'
