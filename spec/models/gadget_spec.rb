@@ -51,12 +51,14 @@ describe Gadget, type: :model do
 
             context "with update timestamps" do
               it "should only acknowledge non-ignored attrs" do
-                subject.name, subject.updated_at = "Wrench", Time.now
+                subject.name = "Wrench"
+                subject.updated_at = Time.now
                 expect(subject.send(:changed_notably?)).to be true
               end
 
               it "should not acknowledge ignored attrs and timestamps only" do
-                subject.brand, subject.updated_at = "Acme", Time.now
+                subject.brand = "Acme"
+                subject.updated_at = Time.now
                 expect(subject.send(:changed_notably?)).to be false
               end
             end

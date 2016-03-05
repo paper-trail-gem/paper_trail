@@ -58,7 +58,8 @@ module ActiveSupport
 
     def assert_attributes_equal(expected, actual)
       if using_mysql?
-        expected, actual = expected.dup, actual.dup
+        expected = expected.dup
+        actual = actual.dup
 
         # Adjust timestamps for missing fractional seconds precision.
         %w(created_at updated_at).each do |timestamp|
@@ -72,7 +73,8 @@ module ActiveSupport
 
     def assert_changes_equal(expected, actual)
       if using_mysql?
-        expected, actual = expected.dup, actual.dup
+        expected = expected.dup
+        actual = actual.dup
 
         # Adjust timestamps for missing fractional seconds precision.
         %w(created_at updated_at).each do |timestamp|

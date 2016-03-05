@@ -194,13 +194,6 @@ Style/Not:
 Style/NumericLiterals:
   MinDigits: 15
 
-# Offense count: 4
-# Cop supports --auto-correct.
-Style/ParallelAssignment:
-  Exclude:
-    - 'spec/models/gadget_spec.rb'
-    - 'test/test_helper.rb'
-
 # Offense count: 3
 # Cop supports --auto-correct.
 Style/RescueModifier:
