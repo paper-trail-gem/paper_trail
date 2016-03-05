@@ -121,7 +121,7 @@ module PaperTrail
         end
 
         if recording_order == "after" &&
-          Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new("5")
+            Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new("5")
           if ::ActiveRecord::Base.belongs_to_required_by_default
             ::ActiveSupport::Deprecation.warn(
               "paper_trail_on_destroy(:after) is incompatible with ActiveRecord " +

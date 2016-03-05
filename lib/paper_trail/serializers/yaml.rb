@@ -24,7 +24,7 @@ module PaperTrail
       def where_object_changes_condition(arel_field, field, value)
         # Need to check first (before) and secondary (after) fields
         if (defined?(::YAML::ENGINE) && ::YAML::ENGINE.yamler == "psych") ||
-          (defined?(::Psych) && ::YAML == ::Psych)
+            (defined?(::Psych) && ::YAML == ::Psych)
           arel_field.matches("%\n#{field}:\n- #{value}\n%").
             or(arel_field.matches("%\n#{field}:\n-%\n- #{value}\n%"))
         else # Syck adds extra spaces into array dumps

@@ -48,6 +48,12 @@ Style/DoubleNegation:
 Style/LineEndConcatenation:
   Enabled: false
 
+Style/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+Style/MultilineOperationIndentation:
+  EnforcedStyle: indented
+
 Style/PredicateName:
   NameWhitelist: has_paper_trail
 

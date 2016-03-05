@@ -140,20 +140,6 @@ Style/MultilineBlockLayout:
   Exclude:
     - 'test/unit/model_test.rb'
 
-# Offense count: 23
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, IndentationWidth.
-# SupportedStyles: aligned, indented
-Style/MultilineMethodCallIndentation:
-  Enabled: false
-
-# Offense count: 3
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, IndentationWidth.
-# SupportedStyles: aligned, indented
-Style/MultilineOperationIndentation:
-  Enabled: false
-
 # Offense count: 4
 Style/MultilineTernaryOperator:
   Exclude:
