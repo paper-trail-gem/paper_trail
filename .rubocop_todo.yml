@@ -335,10 +335,3 @@ Style/SpaceInsideHashLiteralBraces:
 Style/SpaceInsideParens:
   Exclude:
     - 'spec/models/widget_spec.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: use_perl_names, use_english_names
-Style/SpecialGlobalVars:
-  Enabled: false
