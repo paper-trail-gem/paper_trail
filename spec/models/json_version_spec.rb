@@ -71,9 +71,9 @@ if JsonVersion.table_exists?
           end
 
           context "valid arguments", versioning: true do
-            let(:color) { %w[red green] }
+            let(:color) { %w(red green) }
             let(:fruit) { Fruit.create!(name: name[0]) }
-            let(:name) { %w[banana kiwi mango] }
+            let(:name) { %w(banana kiwi mango) }
 
             before do
               fruit.update_attributes!(name: name[1], color: color[0])

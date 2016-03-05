@@ -116,7 +116,7 @@ module PaperTrail
 
       # Record version before or after "destroy" event
       def paper_trail_on_destroy(recording_order = "before")
-        unless %w[after before].include?(recording_order.to_s)
+        unless %w(after before).include?(recording_order.to_s)
           raise ArgumentError, 'recording order can only be "after" or "before"'
         end
 
