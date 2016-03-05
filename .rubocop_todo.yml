@@ -408,11 +408,3 @@ Style/TrivialAccessors:
 Style/UnlessElse:
   Exclude:
     - 'lib/generators/paper_trail/install_generator.rb'
-
-# Offense count: 13
-# Cop supports --auto-correct.
-# Configuration parameters: SupportedStyles, WordRegex.
-# SupportedStyles: percent, brackets
-Style/WordArray:
-  EnforcedStyle: percent
-  MinSize: 4
