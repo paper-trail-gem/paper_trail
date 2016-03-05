@@ -26,7 +26,7 @@ has been destroyed.
   - [Choosing Lifecycle Events To Monitor](#choosing-lifecycle-events-to-monitor)
   - [Choosing When To Save New Versions](#choosing-when-to-save-new-versions)
   - [Choosing Attributes To Monitor](#choosing-attributes-to-monitor)
-  - [Turning PaperTrail Off/On](#turning-papertrail-offon)
+  - [Turning PaperTrail Off](#turning-papertrail-off)
   - [Limiting the Number of Versions Created](#limiting-the-number-of-versions-created)
 - Working With Versions
   - [Reverting And Undeleting A Model](#reverting-and-undeleting-a-model)
@@ -404,69 +404,23 @@ class Article < ActiveRecord::Base
 end
 ```
 
-## Turning PaperTrail Off/On
+## Turning PaperTrail Off
 
-Sometimes you don't want to store changes.  Perhaps you are only interested in
-changes made by your users and don't need to store changes you make yourself in,
-say, a migration -- or when testing your application.
+PaperTrail is on by default, but sometimes you don't want to record versions.
 
-You can turn PaperTrail on or off in three ways: globally, per request, or per
-class.
+### Per Process
 
-### Globally
-
-On a global level you can turn PaperTrail off like this:
+Turn PaperTrail off for all threads in a `ruby` process.
 
 ```ruby
 PaperTrail.enabled = false
 ```
 
-For example, you might want to disable PaperTrail in your Rails application's
-test environment to speed up your tests.  This will do it (note: this gets done
-automatically for `RSpec` and `Cucumber`, please see the [Testing
-section](#testing)):
+This is commonly used to speed up tests. See [Testing](#testing) below.
 
-```ruby
-# in config/environments/test.rb
-config.after_initialize do
-  PaperTrail.enabled = false
-end
-```
+### Per Request
 
-If you disable PaperTrail in your test environment but want to enable it for
-specific tests, you can add a helper like this to your test helper:
-
-```ruby
-# in test/test_helper.rb
-def with_versioning
-  was_enabled = PaperTrail.enabled?
-  was_enabled_for_controller = PaperTrail.enabled_for_controller?
-  PaperTrail.enabled = true
-  PaperTrail.enabled_for_controller = true
-  begin
-    yield
-  ensure
-    PaperTrail.enabled = was_enabled
-    PaperTrail.enabled_for_controller = was_enabled_for_controller
-  end
-end
-```
-
-And then use it in your tests like this:
-
-```ruby
-test "something that needs versioning" do
-  with_versioning do
-    # your test
-  end
-end
-```
-
-### Per request
-
-You can turn PaperTrail on or off per request by adding a
-`paper_trail_enabled_for_controller` method to your controller which returns
-`true` or `false`:
+Add a `paper_trail_enabled_for_controller` method to your controller.
 
 ```ruby
 class ApplicationController < ActionController::Base
@@ -476,22 +430,14 @@ class ApplicationController < ActionController::Base
 end
 ```
 
-### Per class
-
-If you are about to change some widgets and you don't want a paper trail of your
-changes, you can turn PaperTrail off like this:
+### Per Class
 
 ```ruby
 Widget.paper_trail_off!
-```
-
-And on again like this:
-
-```ruby
 Widget.paper_trail_on!
 ```
 
-### Per method call
+### Per Method
 
 You can call a method without creating a new version using `without_versioning`.
  It takes either a method name as a symbol:
@@ -1204,21 +1150,57 @@ end
 
 ## Testing
 
-You may want to turn PaperTrail off to speed up your tests.  See the [Turning
-PaperTrail Off/On](#turning-papertrail-offon) section above for tips on usage
-with `Test::Unit`.
+You may want to turn PaperTrail off to speed up your tests.  See [Turning
+PaperTrail Off](#turning-papertrail-off) above.
+
+### Minitest
+
+First, disable PT for the entire `ruby` process.
+
+```ruby
+# in config/environments/test.rb
+config.after_initialize do
+  PaperTrail.enabled = false
+end
+```
+
+Then, to enable PT for specific tests, you can add a `with_versioning` test
+helper method.
+
+```ruby
+# in test/test_helper.rb
+def with_versioning
+  was_enabled = PaperTrail.enabled?
+  was_enabled_for_controller = PaperTrail.enabled_for_controller?
+  PaperTrail.enabled = true
+  PaperTrail.enabled_for_controller = true
+  begin
+    yield
+  ensure
+    PaperTrail.enabled = was_enabled
+    PaperTrail.enabled_for_controller = was_enabled_for_controller
+  end
+end
+```
+
+Then, use the helper in your tests.
+
+```ruby
+test "something that needs versioning" do
+  with_versioning do
+    # your test
+  end
+end
+```
 
 ### RSpec
 
-PaperTrail provides a helper that works with [RSpec][27] to make it easier to
-control when `PaperTrail` is enabled during testing.
-
-If you wish to use the helper, you will need to require it in your RSpec test
-helper like so:
+PaperTrail provides a helper, `paper_trail/frameworks/rspec.rb`, that works with
+[RSpec][27] to make it easier to control when `PaperTrail` is enabled during
+testing.
 
 ```ruby
 # spec/rails_helper.rb
-
 ENV["RAILS_ENV"] ||= 'test'
 require 'spec_helper'
 require File.expand_path("../../config/environment", __FILE__)
@@ -1227,10 +1209,10 @@ require 'rspec/rails'
 require 'paper_trail/frameworks/rspec'
 ```
 
-When the helper is loaded, PaperTrail will be turned off for all tests by
-default. When you wish to enable PaperTrail for a test you can either wrap the
+With the helper loaded, PaperTrail will be turned off for all tests by
+default. To enable PaperTrail for a test you can either wrap the
 test in a `with_versioning` block, or pass in `:versioning => true` option to a
-spec block, like so:
+spec block.
 
 ```ruby
 describe "RSpec test group" do
