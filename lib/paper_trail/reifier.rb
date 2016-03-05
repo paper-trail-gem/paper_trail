@@ -263,7 +263,7 @@ module PaperTrail
         klass.
           paper_trail_version_class.
           where("id IN (#{version_id_subquery})").
-          inject({}) { |acc, v| acc.merge!(v.item_id => v) }
+          inject({}) { |a, e| a.merge!(e.item_id => e) }
       end
 
       # Temporarily suppress #save so we can reassociate with the reified

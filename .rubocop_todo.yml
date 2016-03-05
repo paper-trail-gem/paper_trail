@@ -258,10 +258,3 @@ Style/RescueModifier:
 Style/SignalException:
   Exclude:
     - 'lib/paper_trail/has_paper_trail.rb'
-
-# Offense count: 1
-# Configuration parameters: Methods.
-# Methods: {"reduce"=>["a", "e"]}, {"inject"=>["a", "e"]}
-Style/SingleLineBlockParams:
-  Exclude:
-    - 'lib/paper_trail/reifier.rb'
