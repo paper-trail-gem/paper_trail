@@ -183,12 +183,6 @@ Style/Next:
   Exclude:
     - 'lib/paper_trail/reifier.rb'
 
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/Not:
-  Exclude:
-    - 'lib/paper_trail/has_paper_trail.rb'
-
 # Offense count: 3
 # Cop supports --auto-correct.
 Style/RescueModifier:
