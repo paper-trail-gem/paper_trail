@@ -110,6 +110,10 @@ describe Widget, type: :model do
           expect(changeset.fetch("name", [])).to_not include(rolled_back_name)
         end
       end
+
+      it "has not yet loaded the assocation" do
+        expect(widget.versions).to_not be_loaded
+      end
     end
   end
 
