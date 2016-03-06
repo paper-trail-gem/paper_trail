@@ -22,6 +22,8 @@
 
 ### Fixed
 
+- [#715](https://github.com/airblade/paper_trail/issues/715) -
+  Optimize post-rollback association reset.
 - [#701](https://github.com/airblade/paper_trail/pull/701) /
   [#699](https://github.com/airblade/paper_trail/issues/699) -
   Cleaning old versions explicitly preserves the most recent

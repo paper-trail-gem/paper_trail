@@ -195,9 +195,11 @@ module PaperTrail
       end
 
       # Invoked after rollbacks to ensure versions records are not created
-      # for changes that never actually took place
+      # for changes that never actually took place.
+      # Optimization: Use lazy `reset` instead of eager `reload` because, in
+      # many use cases, the association will not be used.
       def clear_rolled_back_versions
-        send(self.class.versions_association_name).reload
+        send(self.class.versions_association_name).reset
       end
 
       # Returns the object (not a Version) as it was at the given timestamp.
