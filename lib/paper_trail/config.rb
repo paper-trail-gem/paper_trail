@@ -9,6 +9,7 @@ module PaperTrail
 
     def initialize
       @timestamp_field = :created_at
+      @whoddunit_field = :whodunnit
       @serializer      = PaperTrail::Serializers::YAML
     end
 
@@ -42,6 +43,14 @@ module PaperTrail
 
     def enabled= enable
       PaperTrail.paper_trail_store[:paper_trail_enabled] = enable
+    end
+
+    def whodunnit_field=(field_name)
+      @whodunnit_field = field_name
+    end
+
+    def whodunnit_field
+      @whodunnit_field
     end
   end
 end
