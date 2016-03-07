@@ -52,7 +52,7 @@ class SetUpTestTables < ActiveRecord::Migration
     add_index :version_associations, [:version_id]
     add_index :version_associations,
       [:foreign_key_name, :foreign_key_id],
-      name: 'index_version_associations_on_foreign_key'
+      name: "index_version_associations_on_foreign_key"
 
     create_table :post_versions, force: true do |t|
       t.string   :item_type, null: false
@@ -68,7 +68,7 @@ class SetUpTestTables < ActiveRecord::Migration
     end
     add_index :post_versions, [:item_type, :item_id]
 
-    if ENV['DB'] == 'postgres' && ::ActiveRecord::VERSION::MAJOR >= 4
+    if ENV["DB"] == "postgres" && ::ActiveRecord::VERSION::MAJOR >= 4
       create_table :json_versions, force: true do |t|
         t.string   :item_type, null: false
         t.integer  :item_id,   null: false
@@ -282,7 +282,7 @@ class SetUpTestTables < ActiveRecord::Migration
     drop_table :sections
     drop_table :paragraphs
     remove_index :version_associations, column: [:version_id]
-    remove_index :version_associations, name: 'index_version_associations_on_foreign_key'
+    remove_index :version_associations, name: "index_version_associations_on_foreign_key"
     drop_table :version_associations
     drop_table :callback_modifiers
   end

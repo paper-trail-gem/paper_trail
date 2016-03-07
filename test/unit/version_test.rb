@@ -1,4 +1,4 @@
-require 'test_helper'
+require "test_helper"
 
 module PaperTrail
   class VersionTest < ActiveSupport::TestCase
@@ -24,7 +24,7 @@ module PaperTrail
 
     context ".updates" do
       setup {
-        @animal.update_attributes(name: 'Animal')
+        @animal.update_attributes(name: "Animal")
         assert Version.updates.present?
       }
 
@@ -50,7 +50,7 @@ module PaperTrail
 
     context ".not_creates" do
       setup {
-        @animal.update_attributes(name: 'Animal')
+        @animal.update_attributes(name: "Animal")
         @animal.destroy
         assert Version.not_creates.present?
       }
@@ -82,7 +82,7 @@ module PaperTrail
 
       context "given a Version" do
         should "grab the timestamp from the version and use that as the value" do
-          expected = @animal.versions.to_a.tap { |assoc| assoc.shift }
+          expected = @animal.versions.to_a.tap(&:shift)
           actual = Version.subsequent(@animal.versions.first)
           assert_equal expected, actual
         end
@@ -109,7 +109,7 @@ module PaperTrail
 
       context "given a Version" do
         should "grab the timestamp from the version and use that as the value" do
-          expected = @animal.versions.to_a.tap { |assoc| assoc.pop }.reverse
+          expected = @animal.versions.to_a.tap(&:pop).reverse
           actual = Version.preceding(@animal.versions.last)
           assert_equal expected, actual
         end

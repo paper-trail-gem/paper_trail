@@ -19,7 +19,7 @@ class Person < ActiveRecord::Base
       def dump(zone)
         zone.try(:name)
       end
-   
+
       def load(value)
         ::Time.find_zone!(value) rescue nil
       end
@@ -33,6 +33,6 @@ class Person < ActiveRecord::Base
       self.class.load(value)
     end
   end
- 
+
   serialize :time_zone, TimeZoneSerializer.new
 end

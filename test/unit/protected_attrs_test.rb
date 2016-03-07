@@ -1,4 +1,4 @@
-require 'test_helper'
+require "test_helper"
 
 class ProtectedAttrsTest < ActiveSupport::TestCase
   subject { ProtectedWidget.new }
@@ -18,28 +18,28 @@ class ProtectedAttrsTest < ActiveSupport::TestCase
     end
   end
 
-  context 'A model with `attr_accessible` created' do
+  context "A model with `attr_accessible` created" do
     setup do
-      @widget = ProtectedWidget.create! name: 'Henry'
+      @widget = ProtectedWidget.create! name: "Henry"
       @initial_attributes = @widget.attributes
     end
 
-    should 'be `nil` in its previous version' do
+    should "be `nil` in its previous version" do
       assert_nil @widget.previous_version
     end
 
-    context 'which is then updated' do
+    context "which is then updated" do
       setup do
-        @widget.assign_attributes(name: 'Jeff', a_text: 'Short statement')
+        @widget.assign_attributes(name: "Jeff", a_text: "Short statement")
         @widget.an_integer = 42
         @widget.save!
       end
 
-      should 'not be `nil` in its previous version' do
+      should "not be `nil` in its previous version" do
         assert_not_nil @widget.previous_version
       end
 
-      should 'the previous version should contain right attributes' do
+      should "the previous version should contain right attributes" do
         # For some reason this test seems to be broken in JRuby 1.9 mode in the
         # test env even though it works in the console. WTF?
         unless ActiveRecord::VERSION::MAJOR >= 4 && defined?(JRUBY_VERSION)

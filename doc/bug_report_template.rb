@@ -2,25 +2,25 @@
 # It is based on the ActiveRecord template.
 # https://github.com/rails/rails/blob/master/guides/bug_report_templates/active_record_gem.rb
 begin
-  require 'bundler/inline'
+  require "bundler/inline"
 rescue LoadError => e
-  $stderr.puts 'Bundler version 1.10 or later is required. Please update your Bundler'
+  $stderr.puts "Bundler version 1.10 or later is required. Please update your Bundler"
   raise e
 end
 
 gemfile(true) do
-  ruby '2.2.3'
-  source 'https://rubygems.org'
-  gem 'activerecord', '4.2.0'
-  gem 'minitest', '5.8.3'
-  gem 'paper_trail', '4.0.0', require: false
-  gem 'sqlite3'
+  ruby "2.2.3"
+  source "https://rubygems.org"
+  gem "activerecord", "4.2.0"
+  gem "minitest", "5.8.3"
+  gem "paper_trail", "4.0.0", require: false
+  gem "sqlite3"
 end
 
-require 'active_record'
-require 'minitest/autorun'
-require 'logger'
-ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: ':memory:')
+require "active_record"
+require "minitest/autorun"
+require "logger"
+ActiveRecord::Base.establish_connection(adapter: "sqlite3", database: ":memory:")
 ActiveRecord::Base.logger = Logger.new(STDOUT)
 
 ActiveRecord::Schema.define do
@@ -48,12 +48,12 @@ ActiveRecord::Schema.define do
   end
   add_index :version_associations, [:version_id]
   add_index :version_associations, [:foreign_key_name, :foreign_key_id],
-    name: 'index_version_associations_on_foreign_key'
+    name: "index_version_associations_on_foreign_key"
 end
 
 # We must wait to require `paper_trail.rb` until after the
 # `version_associations` table exists or else PT won't track associations.
-require 'paper_trail'
+require "paper_trail"
 
 class User < ActiveRecord::Base
   has_paper_trail

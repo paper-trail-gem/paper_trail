@@ -5,7 +5,7 @@ class ArticlesController < ApplicationController
   end
 
   def current_user
-    'foobar'
+    "foobar"
   end
 
   private

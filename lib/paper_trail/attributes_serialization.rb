@@ -32,7 +32,7 @@ module PaperTrail
         [:type_cast_for_database, :type_cast_from_database]
       end
 
-    if ::ActiveRecord::VERSION::STRING < '4.2'
+    if ::ActiveRecord::VERSION::STRING < "4.2"
       # Backport Rails 4.2 and later's `type_for_attribute` to build
       # on a common interface.
       def type_for_attribute(attr_name)

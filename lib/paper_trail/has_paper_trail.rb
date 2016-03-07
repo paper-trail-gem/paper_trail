@@ -1,5 +1,5 @@
-require 'active_support/core_ext/object' # provides the `try` method
-require 'paper_trail/attributes_serialization'
+require "active_support/core_ext/object" # provides the `try` method
+require "paper_trail/attributes_serialization"
 
 module PaperTrail
   module Model
@@ -67,10 +67,10 @@ module PaperTrail
         self.version_association_name = options[:version] || :version
 
         # The version this instance was reified from.
-        attr_accessor self.version_association_name
+        attr_accessor version_association_name
 
         class_attribute :version_class_name
-        self.version_class_name = options[:class_name] || 'PaperTrail::Version'
+        self.version_class_name = options[:class_name] || "PaperTrail::Version"
 
         class_attribute :paper_trail_options
 
@@ -92,14 +92,14 @@ module PaperTrail
 
         # `has_many` syntax for specifying order uses a lambda in Rails 4
         if ::ActiveRecord::VERSION::MAJOR >= 4
-          has_many self.versions_association_name,
+          has_many versions_association_name,
             lambda { order(model.timestamp_sort_order) },
-            class_name: self.version_class_name, as: :item
+            class_name: version_class_name, as: :item
         else
-          has_many self.versions_association_name,
-            class_name: self.version_class_name,
+          has_many versions_association_name,
+            class_name: version_class_name,
             as: :item,
-            order: self.paper_trail_version_class.timestamp_sort_order
+            order: paper_trail_version_class.timestamp_sort_order
         end
 
         # Reset the transaction id when the transaction is closed.
@@ -115,13 +115,13 @@ module PaperTrail
       end
 
       # Record version before or after "destroy" event
-      def paper_trail_on_destroy(recording_order = 'before')
-        unless %w[after before].include?(recording_order.to_s)
-          fail ArgumentError, 'recording order can only be "after" or "before"'
+      def paper_trail_on_destroy(recording_order = "before")
+        unless %w(after before).include?(recording_order.to_s)
+          raise ArgumentError, 'recording order can only be "after" or "before"'
         end
 
-        if recording_order == 'after' &&
-          Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new("5")
+        if recording_order == "after" &&
+            Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new("5")
           if ::ActiveRecord::Base.belongs_to_required_by_default
             ::ActiveSupport::Deprecation.warn(
               "paper_trail_on_destroy(:after) is incompatible with ActiveRecord " +
@@ -166,7 +166,7 @@ module PaperTrail
       end
 
       def paper_trail_enabled_for_model?
-        return false unless self.include?(PaperTrail::Model::InstanceMethods)
+        return false unless include?(PaperTrail::Model::InstanceMethods)
         PaperTrail.enabled_for_model?(self)
       end
 
@@ -191,28 +191,30 @@ module PaperTrail
 
       def originator
         ::ActiveSupport::Deprecation.warn "Use paper_trail_originator instead of originator."
-        self.paper_trail_originator
+        paper_trail_originator
       end
 
       # Invoked after rollbacks to ensure versions records are not created
-      # for changes that never actually took place
+      # for changes that never actually took place.
+      # Optimization: Use lazy `reset` instead of eager `reload` because, in
+      # many use cases, the association will not be used.
       def clear_rolled_back_versions
-        send(self.class.versions_association_name).reload
+        send(self.class.versions_association_name).reset
       end
 
       # Returns the object (not a Version) as it was at the given timestamp.
-      def version_at(timestamp, reify_options={})
+      def version_at(timestamp, reify_options = {})
         # Because a version stores how its object looked *before* the change,
         # we need to look for the first version created *after* the timestamp.
         v = send(self.class.versions_association_name).subsequent(timestamp, true).first
         return v.reify(reify_options) if v
-        self unless self.destroyed?
+        self unless destroyed?
       end
 
       # Returns the objects (not Versions) as they were between the given times.
       # TODO: Either add support for the third argument, `_reify_options`, or
       # add a deprecation warning if someone tries to use it.
-      def versions_between(start_time, end_time, _reify_options={})
+      def versions_between(start_time, end_time, _reify_options = {})
         versions = send(self.class.versions_association_name).between(start_time, end_time)
         versions.collect { |version| version_at(version.send PaperTrail.timestamp_field) }
       end
@@ -230,7 +232,7 @@ module PaperTrail
       #  "live" item, we return nil.  Perhaps we should return self instead?
       def next_version
         subsequent_version = source_version.next
-        subsequent_version ? subsequent_version.reify : self.class.find(self.id)
+        subsequent_version ? subsequent_version.reify : self.class.find(id)
       rescue
         nil
       end
@@ -241,7 +243,7 @@ module PaperTrail
 
       # Executes the given method or block without creating a new version.
       def without_versioning(method = nil)
-        paper_trail_was_enabled = self.paper_trail_enabled_for_model?
+        paper_trail_was_enabled = paper_trail_enabled_for_model?
         self.class.paper_trail_off!
         method ? method.to_proc.call(self) : yield(self)
       ensure
@@ -262,7 +264,7 @@ module PaperTrail
       # Temporarily overwrites the value of whodunnit and then executes the
       # provided block.
       def whodunnit(value)
-        raise ArgumentError, 'expected to receive a block' unless block_given?
+        raise ArgumentError, "expected to receive a block" unless block_given?
         current_whodunnit = PaperTrail.whodunnit
         PaperTrail.whodunnit = value
         yield self
@@ -318,7 +320,7 @@ module PaperTrail
           if pt_record_object_changes? && changed_notably?
             data[:object_changes] = pt_recordable_object_changes
           end
-          if self.class.paper_trail_version_class.column_names.include?('transaction_id')
+          if self.class.paper_trail_version_class.column_names.include?("transaction_id")
             data[:transaction_id] = PaperTrail.transaction_id
           end
           version = send(self.class.versions_association_name).create! merge_metadata(data)
@@ -330,7 +332,7 @@ module PaperTrail
       def record_update(force = nil)
         if paper_trail_switched_on? && (force || changed_notably?)
           data = {
-            event: paper_trail_event || 'update',
+            event: paper_trail_event || "update",
             object: pt_recordable_object
           }
 
@@ -342,7 +344,7 @@ module PaperTrail
           if pt_record_object_changes?
             data[:object_changes] = pt_recordable_object_changes
           end
-          if self.class.paper_trail_version_class.column_names.include?('transaction_id')
+          if self.class.paper_trail_version_class.column_names.include?("transaction_id")
             data[:transaction_id] = PaperTrail.transaction_id
           end
           version = send(self.class.versions_association_name).create merge_metadata(data)
@@ -356,7 +358,7 @@ module PaperTrail
       # @api private
       def pt_record_object_changes?
         paper_trail_options[:save_changes] &&
-          self.class.paper_trail_version_class.column_names.include?('object_changes')
+          self.class.paper_trail_version_class.column_names.include?("object_changes")
       end
 
       # Returns an object which can be assigned to the `object` attribute of a
@@ -403,7 +405,7 @@ module PaperTrail
       # Invoked via callback when a user attempts to persist a reified
       # `Version`.
       def reset_timestamp_attrs_for_update_if_needed!
-        return if self.live?
+        return if live?
         timestamp_attributes_for_update_in_model.each do |column|
           # ActiveRecord 4.2 deprecated `reset_column!` in favor of
           # `restore_column!`.
@@ -418,15 +420,15 @@ module PaperTrail
       def record_destroy
         if paper_trail_switched_on? && !new_record?
           data = {
-            item_id: self.id,
+            item_id: id,
             item_type: self.class.base_class.name,
-            event: paper_trail_event || 'destroy',
-            object: pt_recordable_object
+            event: paper_trail_event || "destroy",
+            object: pt_recordable_object,
           }
 
           data[PaperTrail.whodunnit_field] = PaperTrail.whodunnit
 
-          if self.class.paper_trail_version_class.column_names.include?('transaction_id')
+          if self.class.paper_trail_version_class.column_names.include?("transaction_id")
             data[:transaction_id] = PaperTrail.transaction_id
           end
           version = self.class.paper_trail_version_class.create(merge_metadata(data))
@@ -462,7 +464,7 @@ module PaperTrail
       end
 
       def set_transaction_id(version)
-        return unless self.class.paper_trail_version_class.column_names.include?('transaction_id')
+        return unless self.class.paper_trail_version_class.column_names.include?("transaction_id")
         if PaperTrail.transaction? && PaperTrail.transaction_id.nil?
            PaperTrail.transaction_id = version.id
            version.transaction_id = version.id
@@ -483,7 +485,7 @@ module PaperTrail
             elsif v.is_a?(Symbol) && respond_to?(v)
               # If it is an attribute that is changing in an existing object,
               # be sure to grab the current version.
-              if has_attribute?(v) && send("#{v}_changed?".to_sym) && data[:event] != 'create'
+              if has_attribute?(v) && send("#{v}_changed?".to_sym) && data[:event] != "create"
                 send("#{v}_was".to_sym)
               else
                 send(v)
@@ -499,7 +501,7 @@ module PaperTrail
 
       def attributes_before_change
         attributes.tap do |prev|
-          enums = self.respond_to?(:defined_enums) ? self.defined_enums : {}
+          enums = respond_to?(:defined_enums) ? defined_enums : {}
           attrs = changed_attributes.select { |k, _v| self.class.column_names.include?(k) }
           attrs.each do |attr, before|
             before = enums[attr][before] if enums[attr]
@@ -511,7 +513,7 @@ module PaperTrail
       # Returns hash of attributes (with appropriate attributes serialized),
       # ommitting attributes to be skipped.
       def object_attrs_for_paper_trail(attributes_hash)
-        attrs = attributes_hash.except(*self.paper_trail_options[:skip])
+        attrs = attributes_hash.except(*paper_trail_options[:skip])
         self.class.serialize_attributes_for_paper_trail!(attrs)
         attrs
       end
@@ -532,12 +534,12 @@ module PaperTrail
       # and/or the `:skip` option.  Returns true if an ignored attribute has
       # changed.
       def ignored_attr_has_changed?
-        ignored = self.paper_trail_options[:ignore] + self.paper_trail_options[:skip]
+        ignored = paper_trail_options[:ignore] + paper_trail_options[:skip]
         ignored.any? && (changed & ignored).any?
       end
 
       def notably_changed
-        only = self.paper_trail_options[:only].dup
+        only = paper_trail_options[:only].dup
         # Remove Hash arguments and then evaluate whether the attributes (the
         # keys of the hash) should also get pushed into the collection.
         only.delete_if do |obj|
@@ -550,7 +552,7 @@ module PaperTrail
       end
 
       def changed_and_not_ignored
-        ignore = self.paper_trail_options[:ignore].dup
+        ignore = paper_trail_options[:ignore].dup
         # Remove Hash arguments and then evaluate whether the attributes (the
         # keys of the hash) should also get pushed into the collection.
         ignore.delete_if do |obj|
@@ -559,19 +561,19 @@ module PaperTrail
               ignore << attr if condition.respond_to?(:call) && condition.call(self)
             }
         end
-        skip = self.paper_trail_options[:skip]
+        skip = paper_trail_options[:skip]
         changed - ignore - skip
       end
 
       def paper_trail_switched_on?
         PaperTrail.enabled? &&
           PaperTrail.enabled_for_controller? &&
-          self.paper_trail_enabled_for_model?
+          paper_trail_enabled_for_model?
       end
 
       def save_version?
-        if_condition     = self.paper_trail_options[:if]
-        unless_condition = self.paper_trail_options[:unless]
+        if_condition     = paper_trail_options[:if]
+        unless_condition = paper_trail_options[:unless]
         (if_condition.blank? || if_condition.call(self)) && !unless_condition.try(:call, self)
       end
     end

@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 describe PaperTrail, type: :module, versioning: true do
   describe '#config' do

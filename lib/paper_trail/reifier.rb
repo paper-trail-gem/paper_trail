@@ -105,8 +105,8 @@ module PaperTrail
         array.map! do |record|
           if (version = versions.delete(record.id)).nil?
             record
-          elsif version.event == 'create'
-            options[:mark_for_destruction] ? record.tap { |r| r.mark_for_destruction } : nil
+          elsif version.event == "create"
+            options[:mark_for_destruction] ? record.tap(&:mark_for_destruction) : nil
           else
             version.reify(options.merge(has_many: false, has_one: false))
           end
@@ -132,30 +132,28 @@ module PaperTrail
       def reify_has_ones(transaction_id, model, options = {})
         version_table_name = model.class.paper_trail_version_class.table_name
         model.class.reflect_on_all_associations(:has_one).each do |assoc|
-          if assoc.klass.paper_trail_enabled_for_model?
-            version = model.class.paper_trail_version_class.joins(:version_associations).
-              where("version_associations.foreign_key_name = ?", assoc.foreign_key).
-              where("version_associations.foreign_key_id = ?", model.id).
-              where("#{version_table_name}.item_type = ?", assoc.class_name).
-              where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
-              order("#{version_table_name}.id ASC").
-              first
-            if version
-              if version.event == 'create'
-                if options[:mark_for_destruction]
-                  model.send(assoc.name).mark_for_destruction if model.send(assoc.name, true)
-                else
-                  model.appear_as_new_record do
-                    model.send "#{assoc.name}=", nil
-                  end
-                end
-              else
-                child = version.reify(options.merge(has_many: false, has_one: false))
-                model.appear_as_new_record do
-                  without_persisting(child) do
-                    model.send "#{assoc.name}=", child
-                  end
-                end
+          next unless assoc.klass.paper_trail_enabled_for_model?
+          version = model.class.paper_trail_version_class.joins(:version_associations).
+            where("version_associations.foreign_key_name = ?", assoc.foreign_key).
+            where("version_associations.foreign_key_id = ?", model.id).
+            where("#{version_table_name}.item_type = ?", assoc.class_name).
+            where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
+            order("#{version_table_name}.id ASC").
+            first
+          next unless version
+          if version.event == "create"
+            if options[:mark_for_destruction]
+              model.send(assoc.name).mark_for_destruction if model.send(assoc.name, true)
+            else
+              model.appear_as_new_record do
+                model.send "#{assoc.name}=", nil
+              end
+            end
+          else
+            child = version.reify(options.merge(has_many: false, has_one: false))
+            model.appear_as_new_record do
+              without_persisting(child) do
+                model.send "#{assoc.name}=", child
               end
             end
           end
@@ -263,7 +261,7 @@ module PaperTrail
         klass.
           paper_trail_version_class.
           where("id IN (#{version_id_subquery})").
-          inject({}) { |acc, v| acc.merge!(v.item_id => v) }
+          inject({}) { |a, e| a.merge!(e.item_id => e) }
       end
 
       # Temporarily suppress #save so we can reassociate with the reified
