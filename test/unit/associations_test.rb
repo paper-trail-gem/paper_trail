@@ -769,4 +769,126 @@ class AssociationsTest < ActiveSupport::TestCase
       end
     end
   end
+
+  context "belongs_to associations" do
+    context "Wotsit and Widget" do
+      setup { @widget = Widget.create(name: "widget_0") }
+
+      context "where the association is created between model versions" do
+        setup do
+          @wotsit = Wotsit.create(name: "wotsit_0")
+          Timecop.travel 1.second.since
+          @wotsit.update_attributes widget_id: @widget.id, name: "wotsit_1"
+        end
+
+        context "when reified" do
+          setup { @wotsit_0 = @wotsit.versions.last.reify(belongs_to: true) }
+
+          should "see the associated as it was at the time" do
+            assert_equal nil, @wotsit_0.widget
+          end
+
+          should "not persist changes to the live association" do
+            assert_equal @widget, @wotsit.reload.widget
+          end
+        end
+
+        context "and then the associated is updated between model versions" do
+          setup do
+            @widget.update_attributes name: "widget_1"
+            @widget.update_attributes name: "widget_2"
+            Timecop.travel 1.second.since
+            @wotsit.update_attributes name: "wotsit_2"
+            @widget.update_attributes name: "widget_3"
+          end
+
+          context "when reified" do
+            setup { @wotsit_1 = @wotsit.versions.last.reify(belongs_to: true) }
+
+            should "see the associated as it was at the time" do
+              assert_equal "widget_2", @wotsit_1.widget.name
+            end
+
+            should "not persist changes to the live association" do
+              assert_equal "widget_3", @wotsit.reload.widget.name
+            end
+          end
+
+          context "when reified opting out of belongs_to reification" do
+            setup { @wotsit_1 = @wotsit.versions.last.reify(belongs_to: false) }
+
+            should "see the associated as it is live" do
+              assert_equal "widget_3", @wotsit_1.widget.name
+            end
+          end
+        end
+
+        context "and then the associated is destroyed" do
+          setup do
+            @wotsit.update_attributes name: "wotsit_2"
+            @widget.destroy
+          end
+
+          context "when reified" do
+            setup { @wotsit_2 = @wotsit.versions.last.reify(belongs_to: true) }
+
+            should "see the associated as it was at the time" do
+              assert_equal @widget, @wotsit_2.widget
+            end
+
+            should "not persist changes to the live association" do
+              assert_nil @wotsit.reload.widget
+            end
+          end
+
+          context "and then the model is updated" do
+            setup do
+              Timecop.travel 1.second.since
+              @wotsit.update_attributes name: "wotsit_3"
+            end
+
+            context "when reified" do
+              setup { @wotsit_2 = @wotsit.versions.last.reify(belongs_to: true) }
+
+              should "see the associated as it was the time" do
+                assert_nil @wotsit_2.widget
+              end
+            end
+          end
+        end
+      end
+
+      context "where the association is changed between model versions" do
+        setup do
+          @wotsit = @widget.create_wotsit(name: "wotsit_0")
+          Timecop.travel 1.second.since
+          @new_widget = Widget.create(name: "new_widget")
+          @wotsit.update_attributes(widget_id: @new_widget.id, name: "wotsit_1")
+        end
+
+        context "when reified" do
+          setup { @wotsit_0 = @wotsit.versions.last.reify(belongs_to: true) }
+
+          should "see the association as it was at the time" do
+            assert_equal "widget_0", @wotsit_0.widget.name
+          end
+
+          should "not persist changes to the live association" do
+            assert_equal @new_widget, @wotsit.reload.widget
+          end
+        end
+
+        context "when reified with option mark_for_destruction" do
+          setup do
+            @wotsit_0 = @wotsit.versions.last.
+              reify(belongs_to: true, mark_for_destruction: true)
+          end
+
+          should "should not mark the new associated for destruction" do
+            assert_equal false, @new_widget.marked_for_destruction?
+          end
+        end
+      end
+    end
+  end
 end

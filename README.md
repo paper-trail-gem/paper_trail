@@ -746,7 +746,8 @@ the association that are created in the same transaction.
 
 To restore Has-One associations as they were at the time, pass option `:has_one
 => true` to `reify`. To restore Has-Many and Has-Many-Through associations, use
-option `:has_many => true`.  For example:
+option `:has_many => true`. To restore Belongs-To association, use
+option `:belongs_to => true`. For example:
 
 ```ruby
 class Location < ActiveRecord::Base
