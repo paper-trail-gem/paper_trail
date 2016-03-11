@@ -364,11 +364,10 @@ module PaperTrail
       # `PaperTrail.serializer`.
       # @api private
       def pt_recordable_object
-        object_attrs = object_attrs_for_paper_trail(attributes_before_change)
         if self.class.paper_trail_version_class.object_col_is_json?
-          object_attrs
+          object_attrs_for_paper_trail
         else
-          PaperTrail.serializer.dump(object_attrs)
+          PaperTrail.serializer.dump(object_attrs_for_paper_trail)
         end
       end
 
@@ -494,20 +493,14 @@ module PaperTrail
       end
 
       def attributes_before_change
-        attributes.tap do |prev|
-          enums = respond_to?(:defined_enums) ? defined_enums : {}
-          attrs = changed_attributes.select { |k, _v| self.class.column_names.include?(k) }
-          attrs.each do |attr, before|
-            before = enums[attr][before] if enums[attr]
-            prev[attr] = before
-          end
-        end
+        changed = changed_attributes.select { |k, _v| self.class.column_names.include?(k) }
+        attributes.merge(changed)
       end
 
       # Returns hash of attributes (with appropriate attributes serialized),
       # ommitting attributes to be skipped.
-      def object_attrs_for_paper_trail(attributes_hash)
-        attrs = attributes_hash.except(*paper_trail_options[:skip])
+      def object_attrs_for_paper_trail
+        attrs = attributes_before_change.except(*paper_trail_options[:skip])
         self.class.serialize_attributes_for_paper_trail!(attrs)
         attrs
       end
