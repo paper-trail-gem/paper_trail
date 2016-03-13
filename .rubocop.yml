@@ -39,6 +39,12 @@ Style/DotPosition:
 Style/DoubleNegation:
   Enabled: false
 
+# The decision of when to use a guard clause to improve readability is subtle,
+# and it's not clear that it can be linted. Certainly, the default
+# `MinBodyLength` of 1 can actually hurt readability.
+Style/GuardClause:
+  MinBodyLength: 3
+
 # The Ruby Style Guide says:
 #
 # > Use \ instead of + or << to concatenate two string literals at line end.
