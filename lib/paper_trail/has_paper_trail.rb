@@ -170,6 +170,14 @@ module PaperTrail
         PaperTrail.enabled_for_model?(self)
       end
 
+      def paper_trail_enabled_for_assiociation? association
+        if paper_trail_options[:associations]
+          paper_trail_options[:associations].include? association.name
+        else
+          true
+        end
+      end
+
       def paper_trail_version_class
         @paper_trail_version_class ||= version_class_name.constantize
       end
@@ -437,6 +445,8 @@ module PaperTrail
       def save_associations(version)
         return unless PaperTrail.config.track_associations?
         self.class.reflect_on_all_associations(:belongs_to).each do |assoc|
+          next unless self.class.paper_trail_enabled_for_assiociation? assoc
+
           assoc_version_args = {
               version_id: version.id,
               foreign_key_name: assoc.foreign_key
