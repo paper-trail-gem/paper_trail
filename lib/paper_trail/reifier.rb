@@ -31,7 +31,6 @@ module PaperTrail
         # table inheritance and the `item_type` will be the base class, not the
         # actual subclass. If `type` is present but empty, the class is the base
         # class.
-
         if options[:dup] != true && version.item
           model = version.item
           # Look for attributes that exist in the model and not in this
@@ -40,11 +39,7 @@ module PaperTrail
             (model.attribute_names - attrs.keys).each { |k| attrs[k] = nil }
           end
         else
-          inheritance_column_name = version.item_type.constantize.inheritance_column
-          class_name = attrs[inheritance_column_name].blank? ?
-            version.item_type :
-            attrs[inheritance_column_name]
-          klass = class_name.constantize
+          klass = version_reification_class(version, attrs)
           # The `dup` option always returns a new object, otherwise we should
           # attempt to look for the item outside of default scope(s).
           if options[:dup] || (item_found = klass.unscoped.find_by_id(version.item_id)).nil?
@@ -257,6 +252,18 @@ module PaperTrail
           # `collection` (an array of `Paragraph`s).
           model.send(assoc.name).proxy_association.target = collection
         end
+      end
+
+      # Given a `version`, return the class to reify. This method supports
+      # Single Table Inheritance (STI). For example, given a `version` whose
+      # `item_type` is "Banana", where `Banana` is an STI model in the `fruits`
+      # table, this method would return the constant `Fruit`.
+      def version_reification_class(version, attrs)
+        inheritance_column_name = version.item_type.constantize.inheritance_column
+        class_name = attrs[inheritance_column_name].blank? ?
+          version.item_type :
+          attrs[inheritance_column_name]
+        class_name.constantize
       end
 
       # Given a SQL fragment that identifies the IDs of version records,
