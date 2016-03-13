@@ -216,7 +216,7 @@ module PaperTrail
       # add a deprecation warning if someone tries to use it.
       def versions_between(start_time, end_time, _reify_options = {})
         versions = send(self.class.versions_association_name).between(start_time, end_time)
-        versions.collect { |version| version_at(version.send PaperTrail.timestamp_field) }
+        versions.collect { |version| version_at(version.send(PaperTrail.timestamp_field)) }
       end
 
       # Returns the object (not a Version) as it was most recently.

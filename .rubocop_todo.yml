@@ -149,11 +149,6 @@ Style/MutableConstant:
     - 'test/dummy/app/models/widget.rb'
     - 'test/unit/associations_test.rb'
 
-# Offense count: 1
-Style/NestedParenthesizedCalls:
-  Exclude:
-    - 'lib/paper_trail/has_paper_trail.rb'
-
 # Offense count: 3
 # Cop supports --auto-correct.
 Style/RescueModifier:
