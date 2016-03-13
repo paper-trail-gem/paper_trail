@@ -116,13 +116,6 @@ Style/LineEndConcatenation:
     - 'lib/paper_trail/config.rb'
     - 'lib/paper_trail/has_paper_trail.rb'
 
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: require_parentheses, require_no_parentheses, require_no_parentheses_except_multiline
-Style/MethodDefParentheses:
-  Enabled: false
-
 # Offense count: 2
 Style/ModuleFunction:
   Exclude:
