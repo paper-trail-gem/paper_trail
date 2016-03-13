@@ -418,6 +418,13 @@ PaperTrail.enabled = false
 
 This is commonly used to speed up tests. See [Testing](#testing) below.
 
+There is also a rails config option that does the same thing.
+
+```ruby
+# in config/environments/test.rb
+config.paper_trail.enabled = false
+```
+
 ### Per Request
 
 Add a `paper_trail_enabled_for_controller` method to your controller.
