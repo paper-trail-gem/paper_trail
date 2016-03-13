@@ -101,12 +101,6 @@ Style/Lambda:
     - 'test/dummy/app/models/widget.rb'
     - 'test/unit/model_test.rb'
 
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/LeadingCommentSpace:
-  Exclude:
-    - 'test/unit/model_test.rb'
-
 # Offense count: 6
 # Cop supports --auto-correct.
 Style/LineEndConcatenation:
