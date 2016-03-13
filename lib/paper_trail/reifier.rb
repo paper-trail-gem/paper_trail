@@ -53,21 +53,21 @@ module PaperTrail
         end
 
         reify_attributes(model, version, attrs)
-
         model.send "#{model.class.version_association_name}=", version
-
-        unless options[:has_one] == false
-          reify_has_ones version.transaction_id, model, options
-        end
-
-        unless options[:has_many] == false
-          reify_has_manys version.transaction_id, model, options
-        end
-
+        reify_associations(model, options, version)
         model
       end
 
       private
+
+      def reify_associations(model, options, version)
+        if options[:has_one]
+          reify_has_ones version.transaction_id, model, options
+        end
+        if options[:has_many]
+          reify_has_manys version.transaction_id, model, options
+        end
+      end
 
       # Set all the attributes in this version on the model.
       def reify_attributes(model, version, attrs)
