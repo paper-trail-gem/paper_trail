@@ -1,4 +1,11 @@
 module PaperTrail
+  # "Serialization" here refers to the preparation of data for insertion into a
+  # database, particularly the `object` and `object_changes` columns in the
+  # `versions` table.
+  #
+  # Likewise, "deserialization" refers to any processing of data after they
+  # have been read from the database, for example preparing the result of
+  # `VersionConcern#changeset`.
   module AttributesSerialization
     class NoOpAttribute
       def type_cast_for_database(value)
@@ -25,6 +32,17 @@ module PaperTrail
       end
     end
 
+    # The `AbstractSerializer` (de)serializes model attribute values. For
+    # example, the string "1.99" serializes into the integer `1` when assigned
+    # to an attribute of type `ActiveRecord::Type::Integer`.
+    #
+    # This implementation depends on the `type_for_attribute` method, which was
+    # introduced in rails 4.2. In older versions of rails, we shim this method
+    # below.
+    #
+    # At runtime, the `AbstractSerializer` has only one child class, the
+    # `CastedAttributeSerializer`, whose implementation varies depending on the
+    # version of ActiveRecord.
     class AbstractSerializer
       def initialize(klass)
         @klass = klass
@@ -72,9 +90,9 @@ module PaperTrail
       end
     end
 
+    # Backport Rails 4.2 and later's `type_for_attribute` to build
+    # on a common interface.
     if ::ActiveRecord::VERSION::STRING < "4.2"
-      # Backport Rails 4.2 and later's `type_for_attribute` to build
-      # on a common interface.
       def type_for_attribute(attr_name)
         serialized_attribute_types[attr_name.to_s] || NO_OP_ATTRIBUTE
       end
