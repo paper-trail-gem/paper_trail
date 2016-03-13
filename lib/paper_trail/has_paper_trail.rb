@@ -459,9 +459,9 @@ module PaperTrail
       def set_transaction_id(version)
         return unless self.class.paper_trail_version_class.column_names.include?("transaction_id")
         if PaperTrail.transaction? && PaperTrail.transaction_id.nil?
-           PaperTrail.transaction_id = version.id
-           version.transaction_id = version.id
-           version.save
+          PaperTrail.transaction_id = version.id
+          version.transaction_id = version.id
+          version.save
         end
       end
 

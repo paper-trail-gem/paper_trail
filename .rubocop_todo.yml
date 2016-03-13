@@ -84,14 +84,6 @@ Style/IfUnlessModifier:
 Style/IndentHash:
   Enabled: false
 
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: Width.
-Style/IndentationWidth:
-  Exclude:
-    - 'lib/paper_trail/has_paper_trail.rb'
-    - 'spec/models/widget_spec.rb'
-
 # Offense count: 4
 # Cop supports --auto-correct.
 Style/Lambda:
