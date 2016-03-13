@@ -57,20 +57,7 @@ module PaperTrail
           end
         end
 
-        model.class.unserialize_attributes_for_paper_trail! attrs
-
-        # Set all the attributes in this version on the model.
-        attrs.each do |k, v|
-          if model.has_attribute?(k)
-            model[k.to_sym] = v
-          elsif model.respond_to?("#{k}=")
-            model.send("#{k}=", v)
-          else
-            version.logger.warn(
-              "Attribute #{k} does not exist on #{version.item_type} (Version id: #{version.id})."
-            )
-          end
-        end
+        reify_attributes(model, version, attrs)
 
         model.send "#{model.class.version_association_name}=", version
 
@@ -86,6 +73,30 @@ module PaperTrail
       end
 
       private
+
+      # Set all the attributes in this version on the model.
+      def reify_attributes(model, version, attrs)
+        enums = model.class.respond_to?(:defined_enums) ? model.class.defined_enums : {}
+        model.class.unserialize_attributes_for_paper_trail! attrs
+
+        attrs.each do |k, v|
+          # `unserialize_attributes_for_paper_trail!` will return the mapped enum value
+          # and in Rails < 5, the []= uses the integer type caster from the column
+          # definition (in general) and thus will turn a (usually) string to 0 instead
+          # of the correct value
+          is_enum_without_type_caster = ::ActiveRecord::VERSION::MAJOR < 5 && enums[k]
+
+          if model.has_attribute?(k) && !is_enum_without_type_caster
+            model[k.to_sym] = v
+          elsif model.respond_to?("#{k}=")
+            model.send("#{k}=", v)
+          else
+            version.logger.warn(
+              "Attribute #{k} does not exist on #{version.item_type} (Version id: #{version.id})."
+            )
+          end
+        end
+      end
 
       # Replaces each record in `array` with its reified version, if present
       # in `versions`.

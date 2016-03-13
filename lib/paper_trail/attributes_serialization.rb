@@ -25,12 +25,52 @@ module PaperTrail
       end
     end
 
-    SERIALIZE, DESERIALIZE =
-      if ::ActiveRecord::VERSION::MAJOR >= 5
-        [:serialize, :deserialize]
-      else
-        [:type_cast_for_database, :type_cast_from_database]
+    class AbstractSerializer
+      def initialize(klass)
+        @klass = klass
       end
+
+      private
+
+      def apply_serialization(method, attr, val)
+        @klass.type_for_attribute(attr).send(method, val)
+      end
+    end
+
+    if ::ActiveRecord::VERSION::MAJOR >= 5
+      class CastedAttributeSerializer < AbstractSerializer
+        def serialize(attr, val)
+          apply_serialization(:serialize, attr, val)
+        end
+
+        def deserialize(attr, val)
+          apply_serialization(:deserialize, attr, val)
+        end
+      end
+    else
+      class CastedAttributeSerializer < AbstractSerializer
+        def serialize(attr, val)
+          val = defined_enums[attr][val] if defined_enums[attr]
+          apply_serialization(:type_cast_for_database, attr, val)
+        end
+
+        def deserialize(attr, val)
+          val = apply_serialization(:type_cast_from_database, attr, val)
+
+          if defined_enums[attr]
+            defined_enums[attr].key(val)
+          else
+            val
+          end
+        end
+
+        private
+
+        def defined_enums
+          @defined_enums ||= (@klass.respond_to?(:defined_enums) ? @klass.defined_enums : {})
+        end
+      end
+    end
 
     if ::ActiveRecord::VERSION::STRING < "4.2"
       # Backport Rails 4.2 and later's `type_for_attribute` to build
@@ -49,40 +89,43 @@ module PaperTrail
 
     # Used for `Version#object` attribute.
     def serialize_attributes_for_paper_trail!(attributes)
-      alter_attributes_for_paper_trail!(SERIALIZE, attributes)
+      alter_attributes_for_paper_trail!(:serialize, attributes)
     end
 
     def unserialize_attributes_for_paper_trail!(attributes)
-      alter_attributes_for_paper_trail!(DESERIALIZE, attributes)
+      alter_attributes_for_paper_trail!(:deserialize, attributes)
     end
 
-    def alter_attributes_for_paper_trail!(serializer, attributes)
+    def alter_attributes_for_paper_trail!(serialization_method, attributes)
       # Don't serialize before values before inserting into columns of type
       # `JSON` on `PostgreSQL` databases.
       return attributes if paper_trail_version_class.object_col_is_json?
 
+      serializer = CastedAttributeSerializer.new(self)
       attributes.each do |key, value|
-        attributes[key] = type_for_attribute(key).send(serializer, value)
+        attributes[key] = serializer.send(serialization_method, key, value)
       end
     end
 
     # Used for Version#object_changes attribute.
     def serialize_attribute_changes_for_paper_trail!(changes)
-      alter_attribute_changes_for_paper_trail!(SERIALIZE, changes)
+      alter_attribute_changes_for_paper_trail!(:serialize, changes)
     end
 
     def unserialize_attribute_changes_for_paper_trail!(changes)
-      alter_attribute_changes_for_paper_trail!(DESERIALIZE, changes)
+      alter_attribute_changes_for_paper_trail!(:deserialize, changes)
     end
 
-    def alter_attribute_changes_for_paper_trail!(serializer, changes)
+    def alter_attribute_changes_for_paper_trail!(serialization_method, changes)
       # Don't serialize before values before inserting into columns of type
       # `JSON` on `PostgreSQL` databases.
       return changes if paper_trail_version_class.object_changes_col_is_json?
 
+      serializer = CastedAttributeSerializer.new(self)
       changes.clone.each do |key, change|
-        type = type_for_attribute(key)
-        changes[key] = Array(change).map { |value| type.send(serializer, value) }
+        changes[key] = Array(change).map do |value|
+          serializer.send(serialization_method, key, value)
+        end
       end
     end
   end
