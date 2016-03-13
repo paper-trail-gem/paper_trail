@@ -84,7 +84,7 @@ module PaperTrail
           # and in Rails < 5, the []= uses the integer type caster from the column
           # definition (in general) and thus will turn a (usually) string to 0 instead
           # of the correct value
-          is_enum_without_type_caster = ::ActiveRecord::VERSION::MAJOR < 5 && enums[k]
+          is_enum_without_type_caster = ::ActiveRecord::VERSION::MAJOR < 5 && enums.key?(k)
 
           if model.has_attribute?(k) && !is_enum_without_type_caster
             model[k.to_sym] = v
