@@ -437,8 +437,8 @@ module PaperTrail
         return unless PaperTrail.config.track_associations?
         self.class.reflect_on_all_associations(:belongs_to).each do |assoc|
           assoc_version_args = {
-              version_id: version.id,
-              foreign_key_name: assoc.foreign_key
+            version_id: version.id,
+            foreign_key_name: assoc.foreign_key
           }
 
           if assoc.options[:polymorphic]

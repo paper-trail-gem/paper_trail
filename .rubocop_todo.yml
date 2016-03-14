@@ -77,13 +77,6 @@ Style/IfUnlessModifier:
   Exclude:
     - 'test/dummy/config/application.rb'
 
-# Offense count: 3
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, IndentationWidth.
-# SupportedStyles: special_inside_parentheses, consistent, align_braces
-Style/IndentHash:
-  Enabled: false
-
 # Offense count: 4
 # Cop supports --auto-correct.
 Style/Lambda:
