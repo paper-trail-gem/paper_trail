@@ -32,7 +32,7 @@ module PaperTrail
 
       after_create :enforce_version_limit!
 
-      scope :within_transaction, lambda { |id| where transaction_id: id }
+      scope :within_transaction, ->(id) { where transaction_id: id }
     end
 
     module ClassMethods

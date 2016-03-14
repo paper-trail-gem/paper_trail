@@ -698,7 +698,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     # In rails 5, `capture` is deprecated in favor of `capture_io`.
     #
     should "not generate warning" do
-      assert_update_raises_nothing = -> {
+      assert_update_raises_nothing = lambda {
         assert_nothing_raised {
           @wotsit.update_attributes! name: "changed"
         }

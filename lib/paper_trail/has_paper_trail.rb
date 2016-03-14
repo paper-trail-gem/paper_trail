@@ -93,7 +93,7 @@ module PaperTrail
         # `has_many` syntax for specifying order uses a lambda in Rails 4
         if ::ActiveRecord::VERSION::MAJOR >= 4
           has_many versions_association_name,
-            lambda { order(model.timestamp_sort_order) },
+            -> { order(model.timestamp_sort_order) },
             class_name: version_class_name, as: :item
         else
           has_many versions_association_name,
