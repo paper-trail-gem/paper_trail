@@ -54,9 +54,7 @@ module Dummy
     end
 
     # `config.assets` is a `NoMethodError` in rails 5.
-    if config.respond_to?(:assets)
-      config.assets.enabled = false
-    end
+    config.assets.enabled = false if config.respond_to?(:assets)
 
     # Version of your assets, change this if you want to expire all your assets
     # config.assets.version = '1.0'

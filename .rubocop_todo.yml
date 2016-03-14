@@ -70,13 +70,6 @@ Style/FirstParameterIndentation:
   Exclude:
     - 'lib/paper_trail/serializers/json.rb'
 
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: MaxLineLength.
-Style/IfUnlessModifier:
-  Exclude:
-    - 'test/dummy/config/application.rb'
-
 # Offense count: 4
 # Cop supports --auto-correct.
 Style/Lambda:
