@@ -25,8 +25,7 @@ module PaperTrail
         # 123.
         if value.is_a? Numeric
           arel_field.matches("%\"#{field}\":#{json_value},%").
-            or(
-          arel_field.matches("%\"#{field}\":#{json_value}}%"))
+            or(arel_field.matches("%\"#{field}\":#{json_value}}%"))
         else
           arel_field.matches("%\"#{field}\":#{json_value}%")
         end
