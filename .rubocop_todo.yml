@@ -62,15 +62,6 @@ Style/ClassAndModuleChildren:
 Style/Documentation:
   Enabled: false
 
-# Offense count: 6
-# Cop supports --auto-correct.
-Style/LineEndConcatenation:
-  Exclude:
-    - 'lib/generators/paper_trail/install_generator.rb'
-    - 'lib/paper_trail.rb'
-    - 'lib/paper_trail/config.rb'
-    - 'lib/paper_trail/has_paper_trail.rb'
-
 # Offense count: 2
 Style/ModuleFunction:
   Exclude:
