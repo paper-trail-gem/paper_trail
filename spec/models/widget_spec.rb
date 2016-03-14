@@ -15,9 +15,9 @@ describe Widget, type: :model do
     end
 
     it "is possible to do assertions on versions" do
-       expect(widget).to have_a_version_with name: "Leonard", an_integer: 1
-       expect(widget).to have_a_version_with an_integer: 1
-       expect(widget).to have_a_version_with name: "Tom"
+      expect(widget).to have_a_version_with name: "Leonard", an_integer: 1
+      expect(widget).to have_a_version_with an_integer: 1
+      expect(widget).to have_a_version_with name: "Tom"
     end
   end
 

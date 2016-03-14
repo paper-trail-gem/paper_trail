@@ -9,7 +9,7 @@ class Widget < ActiveRecord::Base
 
   # `has_many` syntax for specifying order uses a lambda in Rails 4
   if ::ActiveRecord::VERSION::MAJOR >= 4
-    has_many :fluxors, lambda { order(:name) }
+    has_many :fluxors, -> { order(:name) }
   else
     has_many :fluxors, order: :name
   end

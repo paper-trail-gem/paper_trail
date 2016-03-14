@@ -93,7 +93,7 @@ module PaperTrail
         # `has_many` syntax for specifying order uses a lambda in Rails 4
         if ::ActiveRecord::VERSION::MAJOR >= 4
           has_many versions_association_name,
-            lambda { order(model.timestamp_sort_order) },
+            -> { order(model.timestamp_sort_order) },
             class_name: version_class_name, as: :item
         else
           has_many versions_association_name,
@@ -216,7 +216,7 @@ module PaperTrail
       # add a deprecation warning if someone tries to use it.
       def versions_between(start_time, end_time, _reify_options = {})
         versions = send(self.class.versions_association_name).between(start_time, end_time)
-        versions.collect { |version| version_at(version.send PaperTrail.timestamp_field) }
+        versions.collect { |version| version_at(version.send(PaperTrail.timestamp_field)) }
       end
 
       # Returns the object (not a Version) as it was most recently.
@@ -437,8 +437,8 @@ module PaperTrail
         return unless PaperTrail.config.track_associations?
         self.class.reflect_on_all_associations(:belongs_to).each do |assoc|
           assoc_version_args = {
-              version_id: version.id,
-              foreign_key_name: assoc.foreign_key
+            version_id: version.id,
+            foreign_key_name: assoc.foreign_key
           }
 
           if assoc.options[:polymorphic]
@@ -459,9 +459,9 @@ module PaperTrail
       def set_transaction_id(version)
         return unless self.class.paper_trail_version_class.column_names.include?("transaction_id")
         if PaperTrail.transaction? && PaperTrail.transaction_id.nil?
-           PaperTrail.transaction_id = version.id
-           version.transaction_id = version.id
-           version.save
+          PaperTrail.transaction_id = version.id
+          version.transaction_id = version.id
+          version.save
         end
       end
 

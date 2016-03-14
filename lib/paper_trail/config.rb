@@ -44,7 +44,7 @@ module PaperTrail
       @mutex.synchronize { !!@enabled }
     end
 
-    def enabled= enable
+    def enabled=(enable)
       @mutex.synchronize { @enabled = enable }
     end
   end

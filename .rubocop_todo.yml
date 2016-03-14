@@ -62,67 +62,6 @@ Style/ClassAndModuleChildren:
 Style/Documentation:
   Enabled: false
 
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, IndentationWidth.
-# SupportedStyles: consistent, special_for_inner_method_call, special_for_inner_method_call_in_parentheses
-Style/FirstParameterIndentation:
-  Exclude:
-    - 'lib/paper_trail/serializers/json.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: MaxLineLength.
-Style/IfUnlessModifier:
-  Exclude:
-    - 'test/dummy/config/application.rb'
-
-# Offense count: 3
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, IndentationWidth.
-# SupportedStyles: special_inside_parentheses, consistent, align_braces
-Style/IndentHash:
-  Enabled: false
-
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: Width.
-Style/IndentationWidth:
-  Exclude:
-    - 'lib/paper_trail/has_paper_trail.rb'
-    - 'spec/models/widget_spec.rb'
-
-# Offense count: 4
-# Cop supports --auto-correct.
-Style/Lambda:
-  Exclude:
-    - 'lib/paper_trail/has_paper_trail.rb'
-    - 'lib/paper_trail/version_concern.rb'
-    - 'test/dummy/app/models/widget.rb'
-    - 'test/unit/model_test.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/LeadingCommentSpace:
-  Exclude:
-    - 'test/unit/model_test.rb'
-
-# Offense count: 6
-# Cop supports --auto-correct.
-Style/LineEndConcatenation:
-  Exclude:
-    - 'lib/generators/paper_trail/install_generator.rb'
-    - 'lib/paper_trail.rb'
-    - 'lib/paper_trail/config.rb'
-    - 'lib/paper_trail/has_paper_trail.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: require_parentheses, require_no_parentheses, require_no_parentheses_except_multiline
-Style/MethodDefParentheses:
-  Enabled: false
-
 # Offense count: 2
 Style/ModuleFunction:
   Exclude:
@@ -155,11 +94,6 @@ Style/MutableConstant:
     - 'lib/paper_trail/version_number.rb'
     - 'test/dummy/app/models/widget.rb'
     - 'test/unit/associations_test.rb'
-
-# Offense count: 1
-Style/NestedParenthesizedCalls:
-  Exclude:
-    - 'lib/paper_trail/has_paper_trail.rb'
 
 # Offense count: 3
 # Cop supports --auto-correct.
