@@ -14,6 +14,7 @@ module PaperTrail
 
       # Variables which affect all threads, whose access is *not* synchronized.
       @timestamp_field = :created_at
+      @whodunnit_field = :whodunnit
       @serializer      = PaperTrail::Serializers::YAML
     end
 
@@ -46,6 +47,14 @@ module PaperTrail
 
     def enabled=(enable)
       @mutex.synchronize { @enabled = enable }
+    end
+
+    def whodunnit_field=(field_name)
+      @whodunnit_field = field_name
+    end
+
+    def whodunnit_field
+      @whodunnit_field
     end
   end
 end

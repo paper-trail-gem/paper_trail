@@ -186,7 +186,7 @@ module PaperTrail
 
       # Returns who put the object into its current state.
       def paper_trail_originator
-        (source_version || send(self.class.versions_association_name).last).try(:whodunnit)
+        (source_version || send(self.class.versions_association_name).last).try(PaperTrail.whodunnit_field)
       end
 
       def originator
@@ -309,9 +309,11 @@ module PaperTrail
       def record_create
         if paper_trail_switched_on?
           data = {
-            event: paper_trail_event || "create",
-            whodunnit: PaperTrail.whodunnit
+            event: paper_trail_event || 'create'
           }
+
+          data[PaperTrail.whodunnit_field] = PaperTrail.whodunnit
+
           if respond_to?(:updated_at)
             data[PaperTrail.timestamp_field] = updated_at
           end
@@ -331,9 +333,11 @@ module PaperTrail
         if paper_trail_switched_on? && (force || changed_notably?)
           data = {
             event: paper_trail_event || "update",
-            object: pt_recordable_object,
-            whodunnit: PaperTrail.whodunnit
+            object: pt_recordable_object
           }
+
+          data[PaperTrail.whodunnit_field] = PaperTrail.whodunnit
+
           if respond_to?(:updated_at)
             data[PaperTrail.timestamp_field] = updated_at
           end
@@ -419,8 +423,10 @@ module PaperTrail
             item_type: self.class.base_class.name,
             event: paper_trail_event || "destroy",
             object: pt_recordable_object,
-            whodunnit: PaperTrail.whodunnit
           }
+
+          data[PaperTrail.whodunnit_field] = PaperTrail.whodunnit
+
           if self.class.paper_trail_version_class.column_names.include?("transaction_id")
             data[:transaction_id] = PaperTrail.transaction_id
           end

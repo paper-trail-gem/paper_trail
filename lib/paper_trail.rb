@@ -75,6 +75,18 @@ module PaperTrail
       PaperTrail.config.timestamp_field
     end
 
+    # Sets the PaperTrail column
+    # @api public
+    def whodunnit_field=(field_name)
+      PaperTrail.config.whodunnit_field = field_name
+    end
+
+    # Gets the PaperTrail column
+    # @api public
+    def whodunnit_field
+      PaperTrail.config.whodunnit_field
+    end
+
     # Sets who is responsible for any changes that occur. You would normally use
     # this in a migration or on the console, when working with models directly.
     # In a controller it is set automatically to the `current_user`.
