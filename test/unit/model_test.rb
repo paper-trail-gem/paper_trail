@@ -1209,6 +1209,10 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       should "not have stored changes when object_changes column doesn't exist" do
         assert_nil @post.versions.last.changeset
       end
+
+      should "store information defined in .meta in custom version class" do
+        assert_equal(42, @post.versions.last.comments_count)
+      end
     end
   end
 

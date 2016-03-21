@@ -56,6 +56,10 @@ module PaperTrail
         where "event <> ?", "create"
       end
 
+      def meta
+        {}
+      end
+
       # Returns versions after `obj`.
       #
       # @param obj - a `Version` or a timestamp

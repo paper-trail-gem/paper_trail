@@ -65,6 +65,9 @@ class SetUpTestTables < ActiveRecord::Migration
       # Controller info columns.
       t.string :ip
       t.string :user_agent
+
+      # Default meta info columns
+      t.integer :comments_count
     end
     add_index :post_versions, [:item_type, :item_id]
 
