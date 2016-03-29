@@ -34,7 +34,13 @@ module PaperTrail
 
     def track_associations?
       if @track_associations.nil?
-        PaperTrail::VersionAssociation.table_exists?
+        # Validate presence of database before validating
+        # table existence
+        begin
+          PaperTrail::VersionAssociation.table_exists?
+        rescue ActiveRecord::NoDatabaseError
+          false
+        end
       else
         @track_associations
       end
