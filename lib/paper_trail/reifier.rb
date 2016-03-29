@@ -13,6 +13,7 @@ module PaperTrail
           mark_for_destruction: false,
           has_one: false,
           has_many: false,
+          belongs_to: false,
           unversioned_attributes: :nil
         )
 
@@ -60,15 +61,6 @@ module PaperTrail
 
       private
 
-      def reify_associations(model, options, version)
-        if options[:has_one]
-          reify_has_ones version.transaction_id, model, options
-        end
-        if options[:has_many]
-          reify_has_manys version.transaction_id, model, options
-        end
-      end
-
       # Set all the attributes in this version on the model.
       def reify_attributes(model, version, attrs)
         enums = model.class.respond_to?(:defined_enums) ? model.class.defined_enums : {}
@@ -114,7 +106,7 @@ module PaperTrail
           elsif version.event == "create"
             options[:mark_for_destruction] ? record.tap(&:mark_for_destruction) : nil
           else
-            version.reify(options.merge(has_many: false, has_one: false))
+            version.reify(options.merge(has_many: false, has_one: false, belongs_to: false))
           end
         end
 
@@ -123,13 +115,21 @@ module PaperTrail
         # associations.
         array.concat(
           versions.values.map { |v|
-            v.reify(options.merge(has_many: false, has_one: false))
+            v.reify(options.merge(has_many: false, has_one: false, belongs_to: false))
           }
         )
 
         array.compact!
 
         nil
+      end
+
+      def reify_associations(model, options, version)
+        reify_has_ones version.transaction_id, model, options if options[:has_one]
+
+        reify_belongs_tos version.transaction_id, model, options if options[:belongs_to]
+
+        reify_has_manys version.transaction_id, model, options if options[:has_many]
       end
 
       # Restore the `model`'s has_one associations as they were when this
@@ -156,13 +156,37 @@ module PaperTrail
               end
             end
           else
-            child = version.reify(options.merge(has_many: false, has_one: false))
+            child = version.reify(options.merge(has_many: false, has_one: false, belongs_to: false))
             model.appear_as_new_record do
               without_persisting(child) do
                 model.send "#{assoc.name}=", child
               end
             end
           end
+        end
+      end
+
+      def reify_belongs_tos(transaction_id, model, options = {})
+        associations = model.class.reflect_on_all_associations(:belongs_to)
+
+        associations.each do |assoc|
+          next unless assoc.klass.paper_trail_enabled_for_model?
+          collection_key = model.send(assoc.association_foreign_key)
+
+          version = assoc.klass.paper_trail_version_class.
+            where("item_type = ?", assoc.class_name).
+            where("item_id = ?", collection_key).
+            where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
+            order("id").limit(1).first
+
+          collection = if version.nil?
+                         assoc.klass.where(assoc.klass.primary_key => collection_key).first
+                       else
+                         version.reify(options.merge(has_many: false, has_one: false,
+                                                     belongs_to: false))
+                       end
+
+          model.send("#{assoc.name}=".to_sym, collection)
         end
       end
 
