@@ -20,6 +20,8 @@
 - [#689](https://github.com/airblade/paper_trail/pull/689) -
   Rails 5 compatibility
 - Added a rails config option: `config.paper_trail.enabled`
+- [#503](https://github.com/airblade/paper_trail/pull/730) -
+  Support for reifying belongs_to associations.
 
 ### Fixed
 
