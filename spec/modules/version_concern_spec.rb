@@ -17,6 +17,11 @@ describe PaperTrail::VersionConcern do
     expect(Bar::Document.version_class_name).to eq("Bar::Version")
   end
 
+  it "defines default meta value" do
+    expect(Foo::Version.meta).to eq({})
+    expect(Bar::Version.meta).to eq({})
+  end
+
   describe "persistence", versioning: true do
     before do
       @foo_doc = Foo::Document.create!(name: "foobar")

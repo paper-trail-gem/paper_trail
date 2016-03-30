@@ -141,6 +141,7 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.datetime "created_at"
     t.string   "ip"
     t.string   "user_agent"
+    t.integer  "comments_count"
   end
 
   add_index "post_versions", ["item_type", "item_id"], name: "index_post_versions_on_item_type_and_item_id"

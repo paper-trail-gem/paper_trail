@@ -82,7 +82,7 @@ module PaperTrail
           }
         end
 
-        paper_trail_options[:meta] ||= {}
+        paper_trail_options[:meta] ||= paper_trail_version_class.meta
         paper_trail_options[:save_changes] = true if paper_trail_options[:save_changes].nil?
 
         class_attribute :versions_association_name
