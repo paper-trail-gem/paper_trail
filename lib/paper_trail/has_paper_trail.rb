@@ -456,7 +456,7 @@ module PaperTrail
         end
       end
 
-      def set_transaction_id(version)
+      def set_transaction_id(version) # rubocop:disable Style/AccessorMethodName
         return unless self.class.paper_trail_version_class.column_names.include?("transaction_id")
         if PaperTrail.transaction? && PaperTrail.transaction_id.nil?
           PaperTrail.transaction_id = version.id
