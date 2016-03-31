@@ -301,7 +301,7 @@ class SetUpTestTables < ActiveRecord::Migration
   def versions_table_options
     opts = { force: true }
     if MYSQL_ADAPTERS.include?(connection.class.name)
-      opts[:options] = "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_col"
+      opts[:options] = "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci"
     end
     opts
   end

@@ -36,7 +36,7 @@ RSpec.describe CreateVersions do
       it "uses utf8mb4_col collation" do
         migration.change
         expect(migration).to have_received(:create_table) do |_, arg2|
-          expect(arg2[:options]).to match(/COLLATE=utf8mb4_col/)
+          expect(arg2[:options]).to match(/COLLATE=utf8mb4_general_ci/)
         end
       end
     else
