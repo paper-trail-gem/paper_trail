@@ -1,4 +1,13 @@
+# Keep this migration in sync with
+# `lib/generators/paper_trail/templates/create_versions.rb`
+# TODO: Is there a way to avoid duplication?
 class SetUpTestTables < ActiveRecord::Migration
+  MYSQL_ADAPTERS = [
+    "ActiveRecord::ConnectionAdapters::MysqlAdapter",
+    "ActiveRecord::ConnectionAdapters::Mysql2Adapter"
+  ].freeze
+  TEXT_BYTES = 1_073_741_823
+
   def up
     create_table :skippers, force: true do |t|
       t.string     :name
@@ -21,13 +30,13 @@ class SetUpTestTables < ActiveRecord::Migration
       t.timestamps null: true
     end
 
-    create_table :versions, force: true do |t|
+    create_table :versions, versions_table_options do |t|
       t.string   :item_type, null: false
       t.integer  :item_id,   null: false
       t.string   :event,     null: false
       t.string   :whodunnit
-      t.text     :object
-      t.text     :object_changes
+      t.text     :object, limit: TEXT_BYTES
+      t.text     :object_changes, limit: TEXT_BYTES
       t.integer  :transaction_id
       t.datetime :created_at
 
@@ -285,5 +294,15 @@ class SetUpTestTables < ActiveRecord::Migration
     remove_index :version_associations, name: "index_version_associations_on_foreign_key"
     drop_table :version_associations
     drop_table :callback_modifiers
+  end
+
+  private
+
+  def versions_table_options
+    opts = { force: true }
+    if MYSQL_ADAPTERS.include?(connection.class.name)
+      opts[:options] = "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci"
+    end
+    opts
   end
 end

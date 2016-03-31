@@ -3,7 +3,9 @@
 
 # Offense count: 19
 Metrics/AbcSize:
-  Max: 159
+  Exclude:
+    - 'test/dummy/db/migrate/20110208155312_set_up_test_tables.rb'
+  Max: 46 # Goal: 15
 
 # Offense count: 1
 Metrics/BlockNesting:
