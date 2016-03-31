@@ -1,5 +1,5 @@
 class SetUpTestTables < ActiveRecord::Migration
-  def self.up
+  def up
     create_table :skippers, force: true do |t|
       t.string     :name
       t.datetime   :another_timestamp
@@ -242,7 +242,7 @@ class SetUpTestTables < ActiveRecord::Migration
     end
   end
 
-  def self.down
+  def down
     drop_table :citations
     drop_table :quotations
     drop_table :animals
