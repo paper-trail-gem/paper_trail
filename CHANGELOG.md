@@ -17,6 +17,9 @@
 
 ### Added
 
+- [#741](https://github.com/airblade/paper_trail/issues/741) /
+  [#681](https://github.com/airblade/paper_trail/pull/681)
+  MySQL unicode support in migration generator
 - [#689](https://github.com/airblade/paper_trail/pull/689) -
   Rails 5 compatibility
 - Added a rails config option: `config.paper_trail.enabled`
