@@ -3,15 +3,15 @@ require "active_support/json"
 module PaperTrail
   module Serializers
     module JSON
-      extend self # makes all instance methods become module methods as well
-
       def load(string)
         ActiveSupport::JSON.decode string
       end
+      module_function :load
 
       def dump(object)
         ActiveSupport::JSON.encode object
       end
+      module_function :dump
 
       # Returns a SQL condition to be used to match the given field and value
       # in the serialized object
@@ -30,6 +30,7 @@ module PaperTrail
           arel_field.matches("%\"#{field}\":#{json_value}%")
         end
       end
+      module_function :where_object_condition
 
       # Returns a SQL condition to be used to match the given field and value
       # in the serialized object_changes
@@ -41,6 +42,7 @@ module PaperTrail
         arel_field.matches("%\"#{field}\":[#{json_value},%").
           or(arel_field.matches("%\"#{field}\":[%,#{json_value}]%"))
       end
+      module_function :where_object_changes_condition
     end
   end
 end
