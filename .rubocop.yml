@@ -23,6 +23,9 @@ Metrics/LineLength:
 
 # Migrations often contain long up/down methods, and extracting smaller methods
 # from these is of questionable value.
+Metrics/AbcSize:
+  Exclude:
+    - 'test/dummy/db/migrate/*'
 Metrics/MethodLength:
   Exclude:
     - 'test/dummy/db/migrate/*'
