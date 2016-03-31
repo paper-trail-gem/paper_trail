@@ -18,19 +18,6 @@ Metrics/ModuleLength:
 Metrics/PerceivedComplexity:
   Max: 16
 
-# Offense count: 11
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: prefer_alias, prefer_alias_method
-Style/Alias:
-  Exclude:
-    - 'lib/paper_trail.rb'
-    - 'lib/paper_trail/config.rb'
-    - 'lib/paper_trail/has_paper_trail.rb'
-    - 'lib/paper_trail/version_concern.rb'
-    - 'test/dummy/app/models/song.rb'
-    - 'test/unit/model_test.rb'
-
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 # SupportedStyles: nested, compact
 Style/ClassAndModuleChildren:
