@@ -126,6 +126,17 @@ describe Widget, type: :model do
     end
   end
 
+  if defined?(ActiveRecord::IdentityMap) && ActiveRecord::IdentityMap.respond_to?(:without)
+    describe "IdentityMap", versioning: true do
+      it "should not clobber the IdentityMap when reifying" do
+        widget.update_attributes name: "Henry", created_at: Time.now - 1.day
+        widget.update_attributes name: "Harry"
+        expect(ActiveRecord::IdentityMap).to receive(:without).once
+        widget.versions.last.reify
+      end
+    end
+  end
+
   describe "Methods" do
     describe "Instance", versioning: true do
       describe '#paper_trail_originator' do
