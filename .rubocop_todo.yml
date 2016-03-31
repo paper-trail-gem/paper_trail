@@ -5,11 +5,6 @@
 Metrics/AbcSize:
   Max: 50
 
-# Offense count: 1
-Metrics/BlockNesting:
-  Max: 5
-
-
 # Offense count: 6
 Metrics/CyclomaticComplexity:
   Max: 13
@@ -66,12 +61,6 @@ Style/ModuleFunction:
 Style/MultilineBlockChain:
   Exclude:
     - 'lib/paper_trail/version_concern.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-Style/MultilineBlockLayout:
-  Exclude:
-    - 'test/unit/model_test.rb'
 
 # Offense count: 4
 Style/MultilineTernaryOperator:
