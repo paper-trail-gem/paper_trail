@@ -255,6 +255,7 @@ module PaperTrail
 
       # Utility method for reifying. Anything executed inside the block will
       # appear like a new record.
+      # rubocop: disable Style/Alias
       def appear_as_new_record
         instance_eval {
           alias :old_new_record? :new_record?
@@ -263,6 +264,7 @@ module PaperTrail
         yield
         instance_eval { alias :new_record? :old_new_record? }
       end
+      # rubocop: enable Style/Alias
 
       # Temporarily overwrites the value of whodunnit and then executes the
       # provided block.

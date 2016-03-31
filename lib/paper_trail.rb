@@ -154,8 +154,7 @@ module PaperTrail
       yield @config if block_given?
       @config
     end
-
-    alias_method :configure, :config
+    alias configure config
   end
 end
 
