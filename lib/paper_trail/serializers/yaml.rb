@@ -3,21 +3,22 @@ require "yaml"
 module PaperTrail
   module Serializers
     module YAML
-      extend self # makes all instance methods become module methods as well
-
       def load(string)
         ::YAML.load string
       end
+      module_function :load
 
       def dump(object)
         ::YAML.dump object
       end
+      module_function :dump
 
       # Returns a SQL condition to be used to match the given field and value
       # in the serialized object
       def where_object_condition(arel_field, field, value)
         arel_field.matches("%\n#{field}: #{value}\n%")
       end
+      module_function :where_object_condition
 
       # Returns a SQL condition to be used to match the given field and value
       # in the serialized object_changes
@@ -38,6 +39,7 @@ module PaperTrail
         end
         arel_field.matches(m1).or(arel_field.matches(m2))
       end
+      module_function :where_object_changes_condition
 
       # Returns a symbol identifying the YAML engine. Syck was removed from
       # the ruby stdlib in ruby 2.0, but is still available as a gem.
@@ -50,6 +52,7 @@ module PaperTrail
           :syck
         end
       end
+      module_function :yaml_engine_id
     end
   end
 end
