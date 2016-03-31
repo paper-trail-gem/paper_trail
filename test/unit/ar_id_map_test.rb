@@ -9,12 +9,14 @@ class ARIdMapTest < ActiveSupport::TestCase
 
   if defined?(ActiveRecord::IdentityMap) && ActiveRecord::IdentityMap.respond_to?(:without)
     should "not clobber the IdentityMap when reifying" do
-      module ActiveRecord::IdentityMap
-        class << self
-          alias __without without
-          def without(&block)
-            @unclobbered = true
-            __without(&block)
+      module ActiveRecord
+        module IdentityMap
+          class << self
+            alias __without without
+            def without(&block)
+              @unclobbered = true
+              __without(&block)
+            end
           end
         end
       end

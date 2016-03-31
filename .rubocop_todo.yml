@@ -23,12 +23,6 @@ Metrics/ModuleLength:
 Metrics/PerceivedComplexity:
   Max: 16
 
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: nested, compact
-Style/ClassAndModuleChildren:
-  Exclude:
-    - 'test/unit/ar_id_map_test.rb'
-
 # Offense count: 33
 Style/Documentation:
   Enabled: false
