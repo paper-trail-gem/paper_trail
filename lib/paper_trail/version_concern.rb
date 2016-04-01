@@ -218,7 +218,7 @@ module PaperTrail
 
     # Returns who put the item into the state stored in this version.
     def paper_trail_originator
-      @paper_trail_originator ||= previous.whodunnit rescue nil
+      @paper_trail_originator ||= previous && previous.whodunnit
     end
 
     def originator
