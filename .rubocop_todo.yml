@@ -28,13 +28,6 @@ Style/Documentation:
   Enabled: false
 
 # Offense count: 4
-Style/MultilineTernaryOperator:
-  Exclude:
-    - 'lib/paper_trail/config.rb'
-    - 'lib/paper_trail/has_paper_trail.rb'
-    - 'lib/paper_trail/reifier.rb'
-
-# Offense count: 4
 # Cop supports --auto-correct.
 Style/MutableConstant:
   Exclude:
