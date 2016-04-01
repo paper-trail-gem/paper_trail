@@ -48,10 +48,3 @@ Style/ModuleFunction:
   Exclude:
     - 'lib/paper_trail/serializers/json.rb'
     - 'lib/paper_trail/serializers/yaml.rb'
-
-# Offense count: 4
-Style/MultilineTernaryOperator:
-  Exclude:
-    - 'lib/paper_trail/config.rb'
-    - 'lib/paper_trail/has_paper_trail.rb'
-    - 'lib/paper_trail/reifier.rb'
