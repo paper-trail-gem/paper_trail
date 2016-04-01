@@ -221,10 +221,13 @@ module PaperTrail
 
       # Returns the object (not a Version) as it was most recently.
       def previous_version
-        preceding_version = source_version ?
-          source_version.previous :
-          send(self.class.versions_association_name).last
-        preceding_version.reify if preceding_version
+        previous =
+          if source_version
+            source_version.previous
+          else
+            send(self.class.versions_association_name).last
+          end
+        previous.try(:reify)
       end
 
       # Returns the object (not a Version) as it became next.
