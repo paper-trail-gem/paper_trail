@@ -15,7 +15,7 @@ class AssociationsTest < ActiveSupport::TestCase
     "The Lobster Quadrille",
     "Who Stole the Tarts?",
     "Alice's Evidence"
-  ]
+  ].freeze
 
   # These would have been done in test_helper.rb if using_mysql? is true
   unless using_mysql?

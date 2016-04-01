@@ -7,25 +7,14 @@ Metrics/AbcSize:
     - 'test/dummy/db/migrate/20110208155312_set_up_test_tables.rb'
   Max: 46 # Goal: 15
 
-# Offense count: 1
-Metrics/BlockNesting:
-  Max: 5
-
-# Offense count: 4
-# Configuration parameters: CountComments.
-Metrics/ClassLength:
-  Max: 1106
-  Exclude:
-    - test/**/*
-
 # Offense count: 6
 Metrics/CyclomaticComplexity:
   Max: 13
 
-# Offense count: 18
+# Offense count: 19
 # Configuration parameters: CountComments.
 Metrics/MethodLength:
-  Max: 195
+  Max: 35
 
 # Offense count: 2
 # Configuration parameters: CountComments.
@@ -75,27 +64,12 @@ Style/MultilineBlockChain:
   Exclude:
     - 'lib/paper_trail/version_concern.rb'
 
-# Offense count: 2
-# Cop supports --auto-correct.
-Style/MultilineBlockLayout:
-  Exclude:
-    - 'test/unit/model_test.rb'
-
 # Offense count: 4
 Style/MultilineTernaryOperator:
   Exclude:
     - 'lib/paper_trail/config.rb'
     - 'lib/paper_trail/has_paper_trail.rb'
     - 'lib/paper_trail/reifier.rb'
-
-# Offense count: 4
-# Cop supports --auto-correct.
-Style/MutableConstant:
-  Exclude:
-    - 'lib/generators/paper_trail/templates/create_versions.rb'
-    - 'lib/paper_trail/version_number.rb'
-    - 'test/dummy/app/models/widget.rb'
-    - 'test/unit/associations_test.rb'
 
 # Offense count: 3
 # Cop supports --auto-correct.
