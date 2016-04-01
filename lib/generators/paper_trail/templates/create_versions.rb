@@ -5,7 +5,7 @@ class CreateVersions < ActiveRecord::Migration
   MYSQL_ADAPTERS = [
     "ActiveRecord::ConnectionAdapters::MysqlAdapter",
     "ActiveRecord::ConnectionAdapters::Mysql2Adapter"
-  ]
+  ].freeze
 
   # The largest text column available in all supported RDBMS is
   # 1024^3 - 1 bytes, roughly one gibibyte.  We specify a size

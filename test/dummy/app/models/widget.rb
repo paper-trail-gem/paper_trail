@@ -3,7 +3,7 @@ class Widget < ActiveRecord::Base
   has_one :wotsit
   has_many :whatchamajiggers, as: :owner
 
-  EXCLUDED_NAME = "Biglet"
+  EXCLUDED_NAME = "Biglet".freeze
 
   validates :name, exclusion: { in: [EXCLUDED_NAME] }
 

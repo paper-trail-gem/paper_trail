@@ -124,7 +124,8 @@ module PaperTrail
           arel_field = arel_table[:object]
           where_conditions = args.map { |field, value|
             PaperTrail.serializer.where_object_condition(arel_field, field, value)
-          }.reduce { |a, e| a.and(e) }
+          }
+          where_conditions = where_conditions.reduce { |a, e| a.and(e) }
           where(where_conditions)
         end
       end
@@ -150,7 +151,8 @@ module PaperTrail
           arel_field = arel_table[:object_changes]
           where_conditions = args.map { |field, value|
             PaperTrail.serializer.where_object_changes_condition(arel_field, field, value)
-          }.reduce { |a, e| a.and(e) }
+          }
+          where_conditions = where_conditions.reduce { |a, e| a.and(e) }
           where(where_conditions)
         end
       end
@@ -218,7 +220,7 @@ module PaperTrail
 
     # Returns who put the item into the state stored in this version.
     def paper_trail_originator
-      @paper_trail_originator ||= previous.whodunnit rescue nil
+      @paper_trail_originator ||= previous && previous.whodunnit
     end
 
     def originator
@@ -231,7 +233,7 @@ module PaperTrail
     def terminator
       @terminator ||= whodunnit
     end
-    alias_method :version_author, :terminator
+    alias version_author terminator
 
     def sibling_versions(reload = false)
       if reload || @sibling_versions.nil?
