@@ -21,7 +21,7 @@ class Person < ActiveRecord::Base
       end
 
       def load(value)
-        ::Time.find_zone!(value) rescue nil
+        ::Time.find_zone(value)
       end
     end
 

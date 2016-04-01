@@ -21,11 +21,3 @@ Metrics/PerceivedComplexity:
 # Offense count: 33
 Style/Documentation:
   Enabled: false
-
-# Offense count: 3
-# Cop supports --auto-correct.
-Style/RescueModifier:
-  Exclude:
-    - 'lib/paper_trail/version_concern.rb'
-    - 'spec/models/version_spec.rb'
-    - 'test/dummy/app/models/person.rb'
