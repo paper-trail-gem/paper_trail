@@ -22,11 +22,6 @@ Metrics/PerceivedComplexity:
 Style/Documentation:
   Enabled: false
 
-# Offense count: 2
-Style/MultilineBlockChain:
-  Exclude:
-    - 'lib/paper_trail/version_concern.rb'
-
 # Offense count: 4
 Style/MultilineTernaryOperator:
   Exclude:
