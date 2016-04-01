@@ -21,11 +21,11 @@ Metrics/ClassLength:
 Metrics/LineLength:
   Max: 100
 
-# Migrations often contain long up/down methods, and extracting smaller methods
-# from these is of questionable value.
+# The number of lines in a method is not a useful metric compared to `AbcSize`.
+# It's common to have very long methods (> 50 lines) which are quite simple. For
+# example, a method that returns a long string with only a few interpolations.
 Metrics/MethodLength:
-  Exclude:
-    - 'test/dummy/db/migrate/*'
+  Enabled: false
 
 Style/AlignParameters:
   EnforcedStyle: with_fixed_indentation
