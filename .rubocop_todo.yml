@@ -71,15 +71,6 @@ Style/MultilineTernaryOperator:
     - 'lib/paper_trail/has_paper_trail.rb'
     - 'lib/paper_trail/reifier.rb'
 
-# Offense count: 4
-# Cop supports --auto-correct.
-Style/MutableConstant:
-  Exclude:
-    - 'lib/generators/paper_trail/templates/create_versions.rb'
-    - 'lib/paper_trail/version_number.rb'
-    - 'test/dummy/app/models/widget.rb'
-    - 'test/unit/associations_test.rb'
-
 # Offense count: 3
 # Cop supports --auto-correct.
 Style/RescueModifier:
