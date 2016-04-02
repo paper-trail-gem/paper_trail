@@ -32,12 +32,13 @@ module PaperTrail
       )
     end
 
-    def track_associations
-      @track_associations.nil? ?
-        PaperTrail::VersionAssociation.table_exists? :
+    def track_associations?
+      if @track_associations.nil?
+        PaperTrail::VersionAssociation.table_exists?
+      else
         @track_associations
+      end
     end
-    alias_method :track_associations?, :track_associations
 
     # Indicates whether PaperTrail is on or off. Default: true.
     def enabled

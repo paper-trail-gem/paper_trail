@@ -3,9 +3,7 @@
 
 # Offense count: 19
 Metrics/AbcSize:
-  Exclude:
-    - 'test/dummy/db/migrate/20110208155312_set_up_test_tables.rb'
-  Max: 46 # Goal: 15
+  Max: 50
 
 # Offense count: 6
 Metrics/CyclomaticComplexity:
@@ -20,56 +18,6 @@ Metrics/ModuleLength:
 Metrics/PerceivedComplexity:
   Max: 16
 
-# Offense count: 1
-Style/AccessorMethodName:
-  Exclude:
-    - 'lib/paper_trail/has_paper_trail.rb'
-
-# Offense count: 11
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: prefer_alias, prefer_alias_method
-Style/Alias:
-  Exclude:
-    - 'lib/paper_trail.rb'
-    - 'lib/paper_trail/config.rb'
-    - 'lib/paper_trail/has_paper_trail.rb'
-    - 'lib/paper_trail/version_concern.rb'
-    - 'test/dummy/app/models/song.rb'
-    - 'test/unit/model_test.rb'
-
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: nested, compact
-Style/ClassAndModuleChildren:
-  Exclude:
-    - 'test/unit/ar_id_map_test.rb'
-
 # Offense count: 33
 Style/Documentation:
   Enabled: false
-
-# Offense count: 2
-Style/ModuleFunction:
-  Exclude:
-    - 'lib/paper_trail/serializers/json.rb'
-    - 'lib/paper_trail/serializers/yaml.rb'
-
-# Offense count: 2
-Style/MultilineBlockChain:
-  Exclude:
-    - 'lib/paper_trail/version_concern.rb'
-
-# Offense count: 4
-Style/MultilineTernaryOperator:
-  Exclude:
-    - 'lib/paper_trail/config.rb'
-    - 'lib/paper_trail/has_paper_trail.rb'
-    - 'lib/paper_trail/reifier.rb'
-
-# Offense count: 3
-# Cop supports --auto-correct.
-Style/RescueModifier:
-  Exclude:
-    - 'lib/paper_trail/version_concern.rb'
-    - 'spec/models/version_spec.rb'
-    - 'test/dummy/app/models/person.rb'

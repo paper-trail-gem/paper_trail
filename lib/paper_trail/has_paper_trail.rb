@@ -221,9 +221,12 @@ module PaperTrail
 
       # Returns the object (not a Version) as it was most recently.
       def previous_version
-        preceding_version = source_version ?
-          source_version.previous :
-          send(self.class.versions_association_name).last
+        preceding_version =
+          if source_version
+            source_version.previous
+          else
+            send(self.class.versions_association_name).last
+          end
         preceding_version.reify if preceding_version
       end
 
@@ -252,6 +255,7 @@ module PaperTrail
 
       # Utility method for reifying. Anything executed inside the block will
       # appear like a new record.
+      # rubocop: disable Style/Alias
       def appear_as_new_record
         instance_eval {
           alias :old_new_record? :new_record?
@@ -260,6 +264,7 @@ module PaperTrail
         yield
         instance_eval { alias :new_record? :old_new_record? }
       end
+      # rubocop: enable Style/Alias
 
       # Temporarily overwrites the value of whodunnit and then executes the
       # provided block.
@@ -456,7 +461,7 @@ module PaperTrail
         end
       end
 
-      def set_transaction_id(version)
+      def set_transaction_id(version) # rubocop:disable Style/AccessorMethodName
         return unless self.class.paper_trail_version_class.column_names.include?("transaction_id")
         if PaperTrail.transaction? && PaperTrail.transaction_id.nil?
           PaperTrail.transaction_id = version.id
