@@ -43,7 +43,7 @@ describe PaperTrail::Version, type: :model do
 
   describe "Methods" do
     describe "Instance" do
-      subject { PaperTrail::Version.new(attributes) rescue PaperTrail::Version.new }
+      subject { PaperTrail::Version.new }
 
       describe '#paper_trail_originator' do
         it { is_expected.to respond_to(:paper_trail_originator) }
@@ -90,9 +90,10 @@ describe PaperTrail::Version, type: :model do
       end
 
       describe '#terminator' do
-        it { is_expected.to respond_to(:terminator) }
-
         let(:attributes) { { whodunnit: FFaker::Name.first_name } }
+        subject { PaperTrail::Version.new attributes }
+
+        it { is_expected.to respond_to(:terminator) }
 
         it "is an alias for the `whodunnit` attribute" do
           expect(subject.terminator).to eq(attributes[:whodunnit])
