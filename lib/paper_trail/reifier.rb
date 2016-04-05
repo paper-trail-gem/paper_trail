@@ -282,12 +282,8 @@ module PaperTrail
       # table, this method would return the constant `Fruit`.
       def version_reification_class(version, attrs)
         inheritance_column_name = version.item_type.constantize.inheritance_column
-        class_name =
-          if attrs[inheritance_column_name].blank?
-            version.item_type
-          else
-            attrs[inheritance_column_name]
-          end
+        class_name = attrs[inheritance_column_name] || version.item_type
+
         class_name.constantize
       end
 
