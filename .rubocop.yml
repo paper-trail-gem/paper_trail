@@ -11,6 +11,12 @@ AllCops:
   Exclude:
     - test/dummy/db/schema.rb
 
+# Migrations often contain long up/down methods, and extracting smaller methods
+# from these is of questionable value.
+Metrics/AbcSize:
+  Exclude:
+    - 'test/dummy/db/migrate/*'
+
 Metrics/ClassLength:
   Exclude:
     - test/**/*
