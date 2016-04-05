@@ -891,4 +891,102 @@ class AssociationsTest < ActiveSupport::TestCase
       end
     end
   end
+
+  context "has_and_belongs_to_many associations" do
+    context "foo and bar" do
+      setup do
+        @foo = FooHabtm.create(name: "foo")
+        Timecop.travel 1.second.since
+      end
+
+      context "where the association is created between model versions" do
+        setup do
+          @foo.update_attributes(name: "foo1", bar_habtms: [BarHabtm.create(name: "bar")])
+        end
+
+        context "when reified" do
+          setup { @reified = @foo.versions.last.reify(has_and_belongs_to_many: true) }
+
+          should "see the associated as it was at the time" do
+            assert_equal 0, @reified.bar_habtms.length
+          end
+
+          should "not persist changes to the live association" do
+            assert_not_equal @reified.bar_habtms, @foo.reload.bar_habtms
+          end
+        end
+      end
+
+      context "where the association is changed between model versions" do
+        setup do
+          @foo.update_attributes(name: "foo2", bar_habtms: [BarHabtm.create(name: "bar2")])
+          Timecop.travel 1.second.since
+          @foo.update_attributes(name: "foo3", bar_habtms: [BarHabtm.create(name: "bar3")])
+        end
+
+        context "when reified" do
+          setup { @reified = @foo.versions.last.reify(has_and_belongs_to_many: true) }
+
+          should "see the association as it was at the time" do
+            assert_equal "bar2", @reified.bar_habtms.first.name
+          end
+
+          should "not persist changes to the live association" do
+            assert_not_equal @reified.bar_habtms.first, @foo.reload.bar_habtms.first
+          end
+        end
+
+        context "when reified with has_and_belongs_to_many: false" do
+          setup { @reified = @foo.versions.last.reify }
+
+          should "see the association as it is now" do
+            assert_equal "bar3", @reified.bar_habtms.first.name
+          end
+        end
+      end
+
+      context "where the association is destroyed between model versions" do
+        setup do
+          @foo.update_attributes(name: "foo2", bar_habtms: [BarHabtm.create(name: "bar2")])
+          Timecop.travel 1.second.since
+          @foo.update_attributes(name: "foo3", bar_habtms: [])
+        end
+
+        context "when reified" do
+          setup { @reified = @foo.versions.last.reify(has_and_belongs_to_many: true) }
+
+          should "see the association as it was at the time" do
+            assert_equal "bar2", @reified.bar_habtms.first.name
+          end
+
+          should "not persist changes to the live association" do
+            assert_not_equal @reified.bar_habtms.first, @foo.reload.bar_habtms.first
+          end
+        end
+      end
+
+      context "where the unassociated model changes" do
+        setup do
+          @bar = BarHabtm.create(name: "bar2")
+          @foo.update_attributes(name: "foo2", bar_habtms: [@bar])
+          Timecop.travel 1.second.since
+          @foo.update_attributes(name: "foo3", bar_habtms: [BarHabtm.create(name: "bar4")])
+          Timecop.travel 1.second.since
+          @bar.update_attributes(name: "bar3")
+        end
+
+        context "when reified" do
+          setup { @reified = @foo.versions.last.reify(has_and_belongs_to_many: true) }
+
+          should "see the association as it was at the time" do
+            assert_equal "bar2", @reified.bar_habtms.first.name
+          end
+
+          should "not persist changes to the live association" do
+            assert_not_equal @reified.bar_habtms.first, @foo.reload.bar_habtms.first
+          end
+        end
+      end
+    end
+  end
 end
