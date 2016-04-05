@@ -322,7 +322,7 @@ module PaperTrail
             data[:transaction_id] = PaperTrail.transaction_id
           end
           version = send(self.class.versions_association_name).create! merge_metadata(data)
-          set_transaction_id(version)
+          update_transaction_id(version)
           save_associations(version)
         end
       end
@@ -344,7 +344,7 @@ module PaperTrail
             data[:transaction_id] = PaperTrail.transaction_id
           end
           version = send(self.class.versions_association_name).create merge_metadata(data)
-          set_transaction_id(version)
+          update_transaction_id(version)
           save_associations(version)
         end
       end
@@ -427,7 +427,7 @@ module PaperTrail
           version = self.class.paper_trail_version_class.create(merge_metadata(data))
           send("#{self.class.version_association_name}=", version)
           send(self.class.versions_association_name).send :load_target
-          set_transaction_id(version)
+          update_transaction_id(version)
           save_associations(version)
         end
       end
@@ -453,15 +453,6 @@ module PaperTrail
           if assoc_version_args.key?(:foreign_key_id)
             PaperTrail::VersionAssociation.create(assoc_version_args)
           end
-        end
-      end
-
-      def set_transaction_id(version)
-        return unless self.class.paper_trail_version_class.column_names.include?("transaction_id")
-        if PaperTrail.transaction? && PaperTrail.transaction_id.nil?
-          PaperTrail.transaction_id = version.id
-          version.transaction_id = version.id
-          version.save
         end
       end
 
@@ -562,6 +553,16 @@ module PaperTrail
         if_condition     = paper_trail_options[:if]
         unless_condition = paper_trail_options[:unless]
         (if_condition.blank? || if_condition.call(self)) && !unless_condition.try(:call, self)
+      end
+
+      # @api private
+      def update_transaction_id(version)
+        return unless self.class.paper_trail_version_class.column_names.include?("transaction_id")
+        if PaperTrail.transaction? && PaperTrail.transaction_id.nil?
+          PaperTrail.transaction_id = version.id
+          version.transaction_id = version.id
+          version.save
+        end
       end
     end
   end
