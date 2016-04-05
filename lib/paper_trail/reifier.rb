@@ -17,12 +17,7 @@ module PaperTrail
           unversioned_attributes: :nil
         )
 
-        attrs =
-          if version.class.object_col_is_json?
-            version.object
-          else
-            PaperTrail.serializer.load(version.object)
-          end
+        attrs = version.send(:object_deserialized)
 
         # Normally a polymorphic belongs_to relationship allows us to get the
         # object we belong to by calling, in this case, `item`.  However this
