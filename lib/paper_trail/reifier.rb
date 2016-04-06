@@ -279,9 +279,15 @@ module PaperTrail
       end
 
       # Given a `version`, return the class to reify. This method supports
-      # Single Table Inheritance (STI). For example, given a `version` whose
-      # `item_type` is "Banana", where `Banana` is an STI model in the `fruits`
-      # table, this method would return the constant `Fruit`.
+      # Single Table Inheritance (STI) with custom inheritance columns.
+      #
+      # For example, imagine a `version` whose `item_type` is "Animal". The
+      # `animals` table is an STI table (it has cats and dogs) and it has a
+      # custom inheritance column, `species`. If `attrs["species"]` is "Dog",
+      # this method returns the constant `Dog`. If `attrs["species"]` is blank,
+      # this method returns the constant `Animal`. You can see this particular
+      # example in action in `spec/models/animal_spec.rb`.
+      #
       def version_reification_class(version, attrs)
         inheritance_column_name = version.item_type.constantize.inheritance_column
         class_name = attrs[inheritance_column_name].blank? ?
