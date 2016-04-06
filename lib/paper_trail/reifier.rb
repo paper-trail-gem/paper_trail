@@ -17,9 +17,7 @@ module PaperTrail
           unversioned_attributes: :nil
         )
 
-        attrs = version.class.object_col_is_json? ?
-          version.object :
-          PaperTrail.serializer.load(version.object)
+        attrs = version.send(:object_deserialized)
 
         # Normally a polymorphic belongs_to relationship allows us to get the
         # object we belong to by calling, in this case, `item`.  However this
@@ -284,9 +282,8 @@ module PaperTrail
       # table, this method would return the constant `Fruit`.
       def version_reification_class(version, attrs)
         inheritance_column_name = version.item_type.constantize.inheritance_column
-        class_name = attrs[inheritance_column_name].blank? ?
-          version.item_type :
-          attrs[inheritance_column_name]
+        class_name = attrs[inheritance_column_name] || version.item_type
+
         class_name.constantize
       end
 

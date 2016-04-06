@@ -270,6 +270,15 @@ module PaperTrail
     end
 
     # @api private
+    def object_deserialized
+      if self.class.object_col_is_json?
+        object
+      else
+        PaperTrail.serializer.load(object)
+      end
+    end
+
+    # @api private
     def object_changes_deserialized
       if self.class.object_changes_col_is_json?
         object_changes
