@@ -176,6 +176,15 @@ module PaperTrail
       end
     end
 
+    # @api private
+    def object_deserialized
+      if self.class.object_col_is_json?
+        object
+      else
+        PaperTrail.serializer.load(object)
+      end
+    end
+
     # Restore the item from this version.
     #
     # Optionally this can also restore all :has_one and :has_many (including
