@@ -31,12 +31,6 @@ Style/Alias:
     - 'test/dummy/app/models/song.rb'
     - 'test/unit/model_test.rb'
 
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: nested, compact
-Style/ClassAndModuleChildren:
-  Exclude:
-    - 'test/unit/ar_id_map_test.rb'
-
 # Offense count: 33
 Style/Documentation:
   Enabled: false
