@@ -469,7 +469,7 @@ module PaperTrail
           data[k] =
             if v.respond_to?(:call)
               v.call(self)
-            elsif v.is_a?(Symbol) && respond_to?(v)
+            elsif v.is_a?(Symbol) && respond_to?(v, true)
               # If it is an attribute that is changing in an existing object,
               # be sure to grab the current version.
               if has_attribute?(v) && send("#{v}_changed?".to_sym) && data[:event] != "create"
