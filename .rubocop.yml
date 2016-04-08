@@ -64,6 +64,16 @@ Style/GuardClause:
 Style/LineEndConcatenation:
   Enabled: false
 
+# Using `module_function` instead of `extend self` would make the instance
+# methods in these modules private. That would be a breaking change, so these
+# modules are excluded. See discussion in:
+# - https://github.com/airblade/paper_trail/pull/756
+# - https://github.com/bbatsov/ruby-style-guide/issues/556
+Style/ModuleFunction:
+  Exclude:
+    - 'lib/paper_trail/serializers/json.rb'
+    - 'lib/paper_trail/serializers/yaml.rb'
+
 Style/MultilineMethodCallIndentation:
   EnforcedStyle: indented
 

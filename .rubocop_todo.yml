@@ -21,9 +21,3 @@ Metrics/PerceivedComplexity:
 # Offense count: 33
 Style/Documentation:
   Enabled: false
-
-# Offense count: 2
-Style/ModuleFunction:
-  Exclude:
-    - 'lib/paper_trail/serializers/json.rb'
-    - 'lib/paper_trail/serializers/yaml.rb'
