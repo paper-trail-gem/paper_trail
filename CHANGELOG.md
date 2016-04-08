@@ -2,6 +2,9 @@
 
 ### Breaking Changes
 
+- [#758](https://github.com/airblade/paper_trail/pull/758) -
+  `PaperTrail.config.track_associations` getter method removed,
+  use `track_associations?` instead.
 - [#723](https://github.com/airblade/paper_trail/pull/723) -
   `PaperTrail.enabled=` now affects all threads
 - [#556](https://github.com/airblade/paper_trail/pull/556) /
