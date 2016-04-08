@@ -316,6 +316,11 @@ class Translation < ActiveRecord::Base
 end
 ```
 
+### Choosing Based on Changed Attributes
+
+Starting with PaperTrail 4.0, versions are saved during an after-callback. If
+you decide whether to save a new version based on changed attributes, please
+use attribute_name_was instead of attribute_name.
 
 ## Choosing Attributes To Monitor
 
