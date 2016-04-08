@@ -315,7 +315,7 @@ class Translation < ActiveRecord::Base
                   :unless => Proc.new { |t| t.type == 'DRAFT'       }
 end
 ```
-
+*Note: starting with v4.0, versions are saved with an after_callback instead of before_callback. Hence if you want to decide whether to save a new version based on changed attributes, you must use attribute_name_was instead of attribute_name.*
 
 ## Choosing Attributes To Monitor
 
