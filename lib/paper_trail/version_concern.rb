@@ -242,7 +242,7 @@ module PaperTrail
     def terminator
       @terminator ||= whodunnit
     end
-    alias_method :version_author, :terminator
+    alias version_author terminator
 
     def sibling_versions(reload = false)
       if reload || @sibling_versions.nil?

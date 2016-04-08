@@ -23,8 +23,8 @@ class Song < ActiveRecord::Base
 
   # `alias_method_chain` is deprecated in rails 5, but we cannot use the
   # suggested replacement, `Module#prepend`, because we still support ruby 1.9.
-  alias_method :attributes_without_name, :attributes
-  alias_method :attributes, :attributes_with_name
+  alias attributes_without_name attributes
+  alias attributes attributes_with_name
 
   def changed_attributes_with_name
     if name
@@ -36,6 +36,6 @@ class Song < ActiveRecord::Base
 
   # `alias_method_chain` is deprecated in rails 5, but we cannot use the
   # suggested replacement, `Module#prepend`, because we still support ruby 1.9.
-  alias_method :changed_attributes_without_name, :changed_attributes
-  alias_method :changed_attributes, :changed_attributes_with_name
+  alias changed_attributes_without_name changed_attributes
+  alias changed_attributes changed_attributes_with_name
 end
