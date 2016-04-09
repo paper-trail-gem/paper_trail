@@ -55,6 +55,11 @@ Style/DoubleNegation:
 Style/GuardClause:
   MinBodyLength: 3
 
+# Use postfix (modifier) conditionals for one-liners, unless doing so would
+# exceed 60 characters.
+Style/IfUnlessModifier:
+  MaxLineLength: 60
+
 # The Ruby Style Guide says:
 #
 # > Use \ instead of + or << to concatenate two string literals at line end.
