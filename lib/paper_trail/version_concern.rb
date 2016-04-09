@@ -1,6 +1,10 @@
 require "active_support/concern"
 
 module PaperTrail
+  # Originally, PaperTrail did not provide this module, and all of this
+  # functionality was in `PaperTrail::Version`. That model still exists (and is
+  # used by most apps) but by moving the functionality to this module, people
+  # can include this concern instead of sub-classing the `Version` model.
   module VersionConcern
     extend ::ActiveSupport::Concern
 
@@ -35,6 +39,7 @@ module PaperTrail
       scope :within_transaction, ->(id) { where transaction_id: id }
     end
 
+    # :nodoc:
     module ClassMethods
       def with_item_keys(item_type, item_id)
         where item_type: item_type, item_id: item_id

@@ -7,6 +7,8 @@ module PaperTrail
   # have been read from the database, for example preparing the result of
   # `VersionConcern#changeset`.
   module AttributesSerialization
+    # An attribute which needs no processing. It is part of our backport (shim)
+    # of rails 4.2's attribute API. See `type_for_attribute` below.
     class NoOpAttribute
       def type_cast_for_database(value)
         value
@@ -18,6 +20,9 @@ module PaperTrail
     end
     NO_OP_ATTRIBUTE = NoOpAttribute.new
 
+    # An attribute which requires manual (de)serialization to/from what we get
+    # from the database. It is part of our backport (shim) of rails 4.2's
+    # attribute API. See `type_for_attribute` below.
     class SerializedAttribute
       def initialize(coder)
         @coder = coder.respond_to?(:dump) ? coder : PaperTrail.serializer
@@ -56,6 +61,7 @@ module PaperTrail
     end
 
     if ::ActiveRecord::VERSION::MAJOR >= 5
+      # This implementation uses AR 5's `serialize` and `deserialize`.
       class CastedAttributeSerializer < AbstractSerializer
         def serialize(attr, val)
           apply_serialization(:serialize, attr, val)
@@ -66,6 +72,10 @@ module PaperTrail
         end
       end
     else
+      # This implementation uses AR 4.2's `type_cast_for_database`. For
+      # versions of AR < 4.2 we provide an implementation of
+      # `type_cast_for_database` in our shim attribute type classes,
+      # `NoOpAttribute` and `SerializedAttribute`.
       class CastedAttributeSerializer < AbstractSerializer
         def serialize(attr, val)
           val = defined_enums[attr][val] if defined_enums[attr]
@@ -90,7 +100,7 @@ module PaperTrail
       end
     end
 
-    # Backport Rails 4.2 and later's `type_for_attribute` to build
+    # Backport Rails 4.2 and later's `type_for_attribute` so we can build
     # on a common interface.
     if ::ActiveRecord::VERSION::STRING < "4.2"
       def type_for_attribute(attr_name)

@@ -51,14 +51,17 @@ ActiveRecord::Schema.define do
     name: "index_version_associations_on_foreign_key"
 end
 
-# We must wait to require `paper_trail.rb` until after the
-# `version_associations` table exists or else PT won't track associations.
+# Require `paper_trail.rb` after the `version_associations` table
+# exists so that PT will track associations.
 require "paper_trail"
 
+# Include your models here. Please only include the minimum code necessary to
+# reproduce your issue.
 class User < ActiveRecord::Base
   has_paper_trail
 end
 
+# Please write a test that demonstrates your issue by failing.
 class BugTest < ActiveSupport::TestCase
   def test_1
     assert_difference(-> { PaperTrail::Version.count }, +1) {

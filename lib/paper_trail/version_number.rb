@@ -1,4 +1,5 @@
 module PaperTrail
+  # :nodoc:
   module VERSION
     MAJOR = 5
     MINOR = 0

@@ -10,6 +10,8 @@ Dir[File.join(File.dirname(__FILE__), "paper_trail", "serializers", "*.rb")].eac
   require File.join("paper_trail", "serializers", File.basename(file, ".rb"))
 end
 
+# An ActiveRecord extension that tracks changes to your models, for auditing or
+# versioning.
 module PaperTrail
   extend PaperTrail::Cleaner
 

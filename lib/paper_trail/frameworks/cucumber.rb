@@ -8,6 +8,7 @@ end
 
 module PaperTrail
   module Cucumber
+    # Helper method for enabling PT in Cucumber features.
     module Extensions
       # :call-seq:
       # with_versioning
