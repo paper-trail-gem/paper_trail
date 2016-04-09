@@ -275,10 +275,10 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         # to test.
 
         changes = {
-          "name"       => [nil, "Henry"],
+          "name" => [nil, "Henry"],
           "created_at" => [nil, @widget.created_at.to_time.utc],
           "updated_at" => [nil, @widget.updated_at.to_time.utc],
-          "id"         => [nil, @widget.id]
+          "id" => [nil, @widget.id]
         }
 
         assert_kind_of Time, @widget.versions.last.changeset["updated_at"][1]
@@ -754,8 +754,8 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
     context "which were created over time" do
       setup do
-        @created       = 2.days.ago
-        @first_update  = 1.day.ago
+        @created = 2.days.ago
+        @first_update = 1.day.ago
         @second_update = 1.hour.ago
         @widget.versions[0].update_attributes created_at: @created
         @widget.versions[1].update_attributes created_at: @first_update
@@ -980,7 +980,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       @widget = Widget.create name: "Bob"
       %w(Tom Dick Jane).each { |name| @widget.update_attributes name: name }
       @second_widget = @widget.versions[1].reify # first widget is `nil`
-      @last_widget   = @widget.versions.last.reify
+      @last_widget = @widget.versions.last.reify
     end
 
     should "have a previous version" do
@@ -997,7 +997,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
   context ":has_many :through" do
     setup do
       @book = Book.create title: "War and Peace"
-      @dostoyevsky  = Person.create name: "Dostoyevsky"
+      @dostoyevsky = Person.create name: "Dostoyevsky"
       @solzhenitsyn = Person.create name: "Solzhenitsyn"
     end
 

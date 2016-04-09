@@ -2,19 +2,19 @@ $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
 require "paper_trail/version_number"
 
 Gem::Specification.new do |s|
-  s.name          = "paper_trail"
-  s.version       = PaperTrail::VERSION::STRING
-  s.platform      = Gem::Platform::RUBY
-  s.summary       = "Track changes to your models' data. Good for auditing or versioning."
-  s.description   = s.summary
-  s.homepage      = "https://github.com/airblade/paper_trail"
-  s.authors       = ["Andy Stewart", "Ben Atkins"]
-  s.email         = "batkinz@gmail.com"
-  s.license       = "MIT"
+  s.name = "paper_trail"
+  s.version = PaperTrail::VERSION::STRING
+  s.platform = Gem::Platform::RUBY
+  s.summary = "Track changes to your models' data. Good for auditing or versioning."
+  s.description = s.summary
+  s.homepage = "https://github.com/airblade/paper_trail"
+  s.authors = ["Andy Stewart", "Ben Atkins"]
+  s.email = "batkinz@gmail.com"
+  s.license = "MIT"
 
-  s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
+  s.files = `git ls-files`.split("\n")
+  s.test_files = `git ls-files -- {test,spec,features}/*`.split("\n")
+  s.executables = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
   s.require_paths = ["lib"]
 
   s.required_rubygems_version = ">= 1.3.6"

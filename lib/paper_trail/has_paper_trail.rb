@@ -555,7 +555,7 @@ module PaperTrail
       end
 
       def save_version?
-        if_condition     = paper_trail_options[:if]
+        if_condition = paper_trail_options[:if]
         unless_condition = paper_trail_options[:unless]
         (if_condition.blank? || if_condition.call(self)) && !unless_condition.try(:call, self)
       end

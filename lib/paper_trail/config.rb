@@ -14,7 +14,7 @@ module PaperTrail
 
       # Variables which affect all threads, whose access is *not* synchronized.
       @timestamp_field = :created_at
-      @serializer      = PaperTrail::Serializers::YAML
+      @serializer = PaperTrail::Serializers::YAML
     end
 
     def serialized_attributes
