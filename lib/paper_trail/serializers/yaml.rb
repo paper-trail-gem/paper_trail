@@ -2,6 +2,7 @@ require "yaml"
 
 module PaperTrail
   module Serializers
+    # The default serializer for, e.g. `versions.object`.
     module YAML
       extend self # makes all instance methods become module methods as well
 

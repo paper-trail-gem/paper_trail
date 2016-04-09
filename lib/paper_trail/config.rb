@@ -2,6 +2,8 @@ require "singleton"
 require "paper_trail/serializers/yaml"
 
 module PaperTrail
+  # Global configuration affecting all threads. Some thread-specific
+  # configuration can be found in `paper_trail.rb`, others in `controller.rb`.
   class Config
     include Singleton
     attr_accessor :timestamp_field, :serializer, :version_limit
@@ -14,7 +16,7 @@ module PaperTrail
 
       # Variables which affect all threads, whose access is *not* synchronized.
       @timestamp_field = :created_at
-      @serializer      = PaperTrail::Serializers::YAML
+      @serializer = PaperTrail::Serializers::YAML
     end
 
     def serialized_attributes

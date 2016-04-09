@@ -17,7 +17,3 @@ Metrics/ModuleLength:
 # Offense count: 6
 Metrics/PerceivedComplexity:
   Max: 16
-
-# Offense count: 33
-Style/Documentation:
-  Enabled: false

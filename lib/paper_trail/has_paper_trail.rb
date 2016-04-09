@@ -2,11 +2,13 @@ require "active_support/core_ext/object" # provides the `try` method
 require "paper_trail/attributes_serialization"
 
 module PaperTrail
+  # Extensions to `ActiveRecord::Base`.  See `frameworks/active_record.rb`.
   module Model
     def self.included(base)
       base.send :extend, ClassMethods
     end
 
+    # :nodoc:
     module ClassMethods
       # Declare this in your model to track every create, update, and destroy.
       # Each version of the model is available in the `versions` association.
@@ -555,7 +557,7 @@ module PaperTrail
       end
 
       def save_version?
-        if_condition     = paper_trail_options[:if]
+        if_condition = paper_trail_options[:if]
         unless_condition = paper_trail_options[:unless]
         (if_condition.blank? || if_condition.call(self)) && !unless_condition.try(:call, self)
       end

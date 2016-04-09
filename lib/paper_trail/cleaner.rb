@@ -1,4 +1,5 @@
 module PaperTrail
+  # Utilities for deleting version records.
   module Cleaner
     # Destroys all but the most recent version(s) for items on a given date
     # (or on all dates). Useful for deleting drafts.

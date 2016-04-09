@@ -1,3 +1,5 @@
+# This migration and AddTransactionIdColumnToVersions provide the necessary
+# schema for tracking associations.
 class CreateVersionAssociations < ActiveRecord::Migration
   def self.up
     create_table :version_associations do |t|

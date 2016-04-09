@@ -55,6 +55,11 @@ Style/DoubleNegation:
 Style/GuardClause:
   MinBodyLength: 3
 
+# Use postfix (modifier) conditionals for one-liners, unless doing so would
+# exceed 60 characters.
+Style/IfUnlessModifier:
+  MaxLineLength: 60
+
 # The Ruby Style Guide says:
 #
 # > Use \ instead of + or << to concatenate two string literals at line end.
@@ -88,3 +93,8 @@ Style/PredicateName:
 # performance implications. Double quotes are slightly easier to read.
 Style/StringLiterals:
   EnforcedStyle: double_quotes
+
+# Use exactly one space on each side of an operator. Do not align operators
+# because it makes the code harder to edit, and makes lines unnecessarily long.
+Style/SpaceAroundOperators:
+  AllowForAlignment: false

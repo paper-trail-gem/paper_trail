@@ -1,6 +1,7 @@
 require "active_support/core_ext/object" # provides the `try` method
 
 module PaperTrail
+  # Extensions to `Sinatra`.
   module Sinatra
     # Register this module inside your Sinatra application to gain access to
     # controller-level methods used by PaperTrail.
@@ -32,6 +33,8 @@ module PaperTrail
       ::PaperTrail.whodunnit = user_for_paper_trail if ::PaperTrail.enabled?
     end
   end
+end
 
-  ::Sinatra.register PaperTrail::Sinatra if defined?(::Sinatra)
+if defined?(::Sinatra)
+  ::Sinatra.register(::PaperTrail::Sinatra)
 end

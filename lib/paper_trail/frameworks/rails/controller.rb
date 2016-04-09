@@ -1,5 +1,8 @@
 module PaperTrail
   module Rails
+    # Extensions to rails controllers. Provides convenient ways to pass certain
+    # information to the model layer, with `controller_info` and `whodunnit`.
+    # Also includes a convenient on/off switch, `enabled_for_controller`.
     module Controller
       def self.included(base)
         before = [
@@ -102,8 +105,10 @@ module PaperTrail
       end
     end
   end
+end
 
-  if defined?(::ActionController)
-    ::ActiveSupport.on_load(:action_controller) { include PaperTrail::Rails::Controller }
+if defined?(::ActionController)
+  ::ActiveSupport.on_load(:action_controller) do
+    include ::PaperTrail::Rails::Controller
   end
 end

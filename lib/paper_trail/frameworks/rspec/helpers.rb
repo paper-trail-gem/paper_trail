@@ -1,6 +1,7 @@
 module PaperTrail
   module RSpec
     module Helpers
+      # Included in the RSpec configuration in `frameworks/rspec.rb`
       module InstanceMethods
         # enable versioning for specific blocks (at instance-level)
         def with_versioning
@@ -12,6 +13,7 @@ module PaperTrail
         end
       end
 
+      # Extended by the RSpec configuration in `frameworks/rspec.rb`
       module ClassMethods
         # enable versioning for specific blocks (at class-level)
         def with_versioning(&block)

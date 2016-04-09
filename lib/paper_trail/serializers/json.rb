@@ -2,6 +2,7 @@ require "active_support/json"
 
 module PaperTrail
   module Serializers
+    # An alternate serializer for, e.g. `versions.object`.
     module JSON
       extend self # makes all instance methods become module methods as well
 
