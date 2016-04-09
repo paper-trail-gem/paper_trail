@@ -1,14 +1,15 @@
 require "request_store"
-
-# Require files in lib/paper_trail, but not its subdirectories.
-Dir[File.join(File.dirname(__FILE__), "paper_trail", "*.rb")].each do |file|
-  require File.join("paper_trail", File.basename(file, ".rb"))
-end
-
-# Require serializers
-Dir[File.join(File.dirname(__FILE__), "paper_trail", "serializers", "*.rb")].each do |file|
-  require File.join("paper_trail", "serializers", File.basename(file, ".rb"))
-end
+require "paper_trail/attributes_serialization"
+require "paper_trail/cleaner"
+require "paper_trail/config"
+require "paper_trail/has_paper_trail"
+require "paper_trail/record_history"
+require "paper_trail/reifier"
+require "paper_trail/version_association_concern"
+require "paper_trail/version_concern"
+require "paper_trail/version_number"
+require "paper_trail/serializers/json"
+require "paper_trail/serializers/yaml"
 
 module PaperTrail
   extend PaperTrail::Cleaner
