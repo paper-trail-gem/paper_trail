@@ -155,6 +155,10 @@ module PaperTrail
       @config
     end
     alias configure config
+
+    def version
+      VERSION::STRING
+    end
   end
 end
 

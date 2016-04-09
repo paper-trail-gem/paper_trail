@@ -11,8 +11,4 @@ module PaperTrail
       STRING
     end
   end
-
-  def self.version
-    VERSION::STRING
-  end
 end
