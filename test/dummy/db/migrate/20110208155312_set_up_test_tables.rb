@@ -138,7 +138,7 @@ class SetUpTestTables < ActiveRecord::Migration
 
     create_table :authorships, force: true do |t|
       t.integer :book_id
-      t.integer :person_id
+      t.integer :author_id
     end
 
     create_table :people, force: true do |t|

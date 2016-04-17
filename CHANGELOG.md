@@ -31,6 +31,8 @@
 
 ### Fixed
 
+- [#777](https://github.com/airblade/paper_trail/issues/777) -
+  Support HMT associations with `:source` option.
 - [#731](https://github.com/airblade/paper_trail/pull/731) -
   Map enums to database values before storing in `object_changes` column.
 - [#715](https://github.com/airblade/paper_trail/issues/715) -

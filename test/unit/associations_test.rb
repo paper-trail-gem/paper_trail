@@ -523,7 +523,7 @@ class AssociationsTest < ActiveSupport::TestCase
             should "mark the newly associated-through for destruction" do
               assert @book_0.
                 authorships.
-                detect { |as| as.person.name == "author_1" }.
+                detect { |as| as.author.name == "author_1" }.
                 marked_for_destruction?
             end
           end
@@ -564,7 +564,7 @@ class AssociationsTest < ActiveSupport::TestCase
             should "mark the newly associated-through for destruction" do
               assert @book_0.
                 authorships.
-                detect { |as| as.person.name == "person_existing" }.
+                detect { |as| as.author.name == "person_existing" }.
                 marked_for_destruction?
             end
           end
