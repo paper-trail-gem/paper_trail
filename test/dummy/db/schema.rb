@@ -27,7 +27,7 @@ ActiveRecord::Schema.define(version: 20110208155312) do
 
   create_table "authorships", force: :cascade do |t|
     t.integer "book_id"
-    t.integer "person_id"
+    t.integer "author_id"
   end
 
   create_table "banana_versions", force: :cascade do |t|
