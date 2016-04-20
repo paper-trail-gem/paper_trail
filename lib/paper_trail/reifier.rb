@@ -255,7 +255,7 @@ module PaperTrail
             }
           else
             collection_keys = through_collection.map { |through_model|
-              through_model.send(assoc.association_foreign_key)
+              through_model.send(assoc.source_reflection.foreign_key)
             }
 
             version_id_subquery = assoc.klass.paper_trail_version_class.
