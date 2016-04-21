@@ -60,6 +60,14 @@ module PaperTrail
 
       private
 
+      # @api private
+      def each_enabled_association(associations)
+        associations.each do |assoc|
+          next unless assoc.klass.paper_trail_enabled_for_model?
+          yield assoc
+        end
+      end
+
       # Set all the attributes in this version on the model.
       def reify_attributes(model, version, attrs)
         enums = model.class.respond_to?(:defined_enums) ? model.class.defined_enums : {}
@@ -142,8 +150,8 @@ module PaperTrail
       # looking at when they made the change).
       def reify_has_ones(transaction_id, model, options = {})
         version_table_name = model.class.paper_trail_version_class.table_name
-        model.class.reflect_on_all_associations(:has_one).each do |assoc|
-          next unless assoc.klass.paper_trail_enabled_for_model?
+        associations = model.class.reflect_on_all_associations(:has_one)
+        each_enabled_association(associations) do |assoc|
           version = model.class.paper_trail_version_class.joins(:version_associations).
             where("version_associations.foreign_key_name = ?", assoc.foreign_key).
             where("version_associations.foreign_key_id = ?", model.id).
@@ -174,11 +182,8 @@ module PaperTrail
 
       def reify_belongs_tos(transaction_id, model, options = {})
         associations = model.class.reflect_on_all_associations(:belongs_to)
-
-        associations.each do |assoc|
-          next unless assoc.klass.paper_trail_enabled_for_model?
+        each_enabled_association(associations) do |assoc|
           collection_key = model.send(assoc.association_foreign_key)
-
           version = assoc.klass.paper_trail_version_class.
             where("item_type = ?", assoc.class_name).
             where("item_id = ?", collection_key).
@@ -212,8 +217,7 @@ module PaperTrail
       # another association.
       def reify_has_many_directly(transaction_id, associations, model, options = {})
         version_table_name = model.class.paper_trail_version_class.table_name
-        associations.each do |assoc|
-          next unless assoc.klass.paper_trail_enabled_for_model?
+        each_enabled_association(associations) do |assoc|
           version_id_subquery = PaperTrail::VersionAssociation.
             joins(model.class.version_association_name).
             select("MIN(version_id)").
@@ -234,9 +238,7 @@ module PaperTrail
       # This must be called after the direct has_manys have been reified
       # (reify_has_many_directly).
       def reify_has_many_through(transaction_id, associations, model, options = {})
-        associations.each do |assoc|
-          next unless assoc.klass.paper_trail_enabled_for_model?
-
+        each_enabled_association(associations) do |assoc|
           # Load the collection of through-models. For example, if `model` is a
           # Chapter, having many Paragraphs through Sections, then
           # `through_collection` will contain Sections.
