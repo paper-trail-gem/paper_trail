@@ -1,19 +1,14 @@
 # Remove these configuration records
 # one by one as the offenses are removed from the code base.
 
-# Offense count: 19
 Metrics/AbcSize:
-  Max: 46 # Goal: 15
+  Max: 43 # Goal: 15
 
-# Offense count: 6
 Metrics/CyclomaticComplexity:
-  Max: 13
+  Max: 13 # Goal: 6
 
-# Offense count: 2
-# Configuration parameters: CountComments.
 Metrics/ModuleLength:
   Max: 299
 
-# Offense count: 6
 Metrics/PerceivedComplexity:
-  Max: 16
+  Max: 16 # Goal: 7
