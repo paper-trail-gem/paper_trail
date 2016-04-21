@@ -68,6 +68,65 @@ module PaperTrail
         end
       end
 
+      # Examine the `source_reflection`, i.e. the "source" of `assoc` the
+      # `ThroughReflection`. The source can be a `BelongsToReflection`
+      # or a `HasManyReflection`.
+      #
+      # If the association is a has_many association again, then call
+      # reify_has_manys for each record in `through_collection`.
+      #
+      # @api private
+      def hmt_collection(through_collection, assoc, options, transaction_id)
+        if !assoc.source_reflection.belongs_to? && through_collection.present?
+          hmt_collection_through_has_many(
+            through_collection, assoc, options, transaction_id
+          )
+        else
+          hmt_collection_through_belongs_to(
+            through_collection, assoc, options, transaction_id
+          )
+        end
+      end
+
+      # @api private
+      def hmt_collection_through_has_many(through_collection, assoc, options, transaction_id)
+        through_collection.each do |through_model|
+          reify_has_manys(transaction_id, through_model, options)
+        end
+
+        # At this point, the "through" part of the association chain has
+        # been reified, but not the final, "target" part. To continue our
+        # example, `model.sections` (including `model.sections.paragraphs`)
+        # has been loaded. However, the final "target" part of the
+        # association, that is, `model.paragraphs`, has not been loaded. So,
+        # we do that now.
+        through_collection.flat_map { |through_model|
+          through_model.public_send(assoc.name.to_sym).to_a
+        }
+      end
+
+      # @api private
+      def hmt_collection_through_belongs_to(through_collection, assoc, options, transaction_id)
+        collection_keys = through_collection.map { |through_model|
+          through_model.send(assoc.source_reflection.foreign_key)
+        }
+        version_id_subquery = assoc.klass.paper_trail_version_class.
+          select("MIN(id)").
+          where("item_type = ?", assoc.class_name).
+          where("item_id IN (?)", collection_keys).
+          where(
+            "created_at >= ? OR transaction_id = ?",
+            options[:version_at],
+            transaction_id
+          ).
+          group("item_id").
+          to_sql
+        versions = versions_by_id(assoc.klass, version_id_subquery)
+        collection = Array.new assoc.klass.where(assoc.klass.primary_key => collection_keys)
+        prepare_array_for_has_many(collection, options, versions)
+        collection
+      end
+
       # Set all the attributes in this version on the model.
       def reify_attributes(model, version, attrs)
         enums = model.class.respond_to?(:defined_enums) ? model.class.defined_enums : {}
@@ -244,45 +303,12 @@ module PaperTrail
           # `through_collection` will contain Sections.
           through_collection = model.send(assoc.options[:through])
 
-          # Examine the `source_reflection`, i.e. the "source" of `assoc` the
-          # `ThroughReflection`. The source can be a `BelongsToReflection`
-          # or a `HasManyReflection`.
-          #
-          # If the association is a has_many association again, then call
-          # reify_has_manys for each record in `through_collection`.
-          if !assoc.source_reflection.belongs_to? && through_collection.present?
-            through_collection.each do |through_model|
-              reify_has_manys(transaction_id, through_model, options)
-            end
+          # Now, given the collection of "through" models (e.g. sections), load
+          # the collection of "target" models (e.g. paragraphs)
+          collection = hmt_collection(through_collection, assoc, options, transaction_id)
 
-            # At this point, the "through" part of the association chain has
-            # been reified, but not the final, "target" part. To continue our
-            # example, `model.sections` (including `model.sections.paragraphs`)
-            # has been loaded. However, the final "target" part of the
-            # association, that is, `model.paragraphs`, has not been loaded. So,
-            # we do that now.
-            collection = through_collection.flat_map { |through_model|
-              through_model.public_send(assoc.name.to_sym).to_a
-            }
-          else
-            collection_keys = through_collection.map { |through_model|
-              through_model.send(assoc.source_reflection.foreign_key)
-            }
-
-            version_id_subquery = assoc.klass.paper_trail_version_class.
-              select("MIN(id)").
-              where("item_type = ?", assoc.class_name).
-              where("item_id IN (?)", collection_keys).
-              where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
-              group("item_id").
-              to_sql
-            versions = versions_by_id(assoc.klass, version_id_subquery)
-            collection = Array.new assoc.klass.where(assoc.klass.primary_key => collection_keys)
-            prepare_array_for_has_many(collection, options, versions)
-          end
-
-          # To continue our example above, assign to `model.paragraphs` the
-          # `collection` (an array of `Paragraph`s).
+          # Finally, assign the `collection` of "target" models, e.g. to
+          # `model.paragraphs`.
           model.send(assoc.name).proxy_association.target = collection
         end
       end
