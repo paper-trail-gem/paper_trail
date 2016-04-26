@@ -321,22 +321,22 @@ module PaperTrail
       end
 
       def reify_has_and_belongs_to_many(transaction_id, model, options = {})
-        model.class.reflect_on_all_associations(:has_and_belongs_to_many).each do |a|
-          papertrail_enabled = a.klass.paper_trail_enabled_for_model?
+        model.class.reflect_on_all_associations(:has_and_belongs_to_many).each do |assoc|
+          papertrail_enabled = assoc.klass.paper_trail_enabled_for_model?
           next unless
-            model.class.paper_trail_save_join_tables.include?(a.name) ||
+            model.class.paper_trail_save_join_tables.include?(assoc.name) ||
                 papertrail_enabled
 
           version_ids = PaperTrail::VersionAssociation.
-            where("foreign_key_name = ?", a.name).
+            where("foreign_key_name = ?", assoc.name).
             where("version_id = ?", transaction_id).
             pluck(:foreign_key_id)
 
-          model.send(a.name).proxy_association.target =
+          model.send(assoc.name).proxy_association.target =
             version_ids.map do |id|
               if papertrail_enabled
-                version = a.klass.paper_trail_version_class.
-                  where("item_type = ?", a.klass.name).
+                version = assoc.klass.paper_trail_version_class.
+                  where("item_type = ?", assoc.klass.name).
                   where("item_id = ?", id).
                   where("created_at >= ? OR transaction_id = ?",
                     options[:version_at], transaction_id).
@@ -347,7 +347,7 @@ module PaperTrail
                                                    has_and_belongs_to_many: false))
                 end
               end
-              a.klass.where(a.klass.primary_key => id).first
+              assoc.klass.where(assoc.klass.primary_key => id).first
             end
         end
       end
