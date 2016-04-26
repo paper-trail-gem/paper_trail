@@ -22,10 +22,8 @@ module PaperTrail
         # class.
         if options[:dup] != true && version.item
           model = version.item
-          # Look for attributes that exist in the model and not in this
-          # version. These attributes should be set to nil.
           if options[:unversioned_attributes] == :nil
-            (model.attribute_names - attrs.keys).each { |k| attrs[k] = nil }
+            init_unversioned_attrs(attrs, model)
           end
         else
           klass = version_reification_class(version, attrs)
@@ -35,9 +33,7 @@ module PaperTrail
             model = klass.new
           elsif options[:unversioned_attributes] == :nil
             model = item_found
-            # Look for attributes that exist in the model and not in this
-            # version. These attributes should be set to nil.
-            (model.attribute_names - attrs.keys).each { |k| attrs[k] = nil }
+            init_unversioned_attrs(attrs, model)
           end
         end
 
@@ -129,6 +125,13 @@ module PaperTrail
         collection = Array.new assoc.klass.where(assoc.klass.primary_key => collection_keys)
         prepare_array_for_has_many(collection, options, versions)
         collection
+      end
+
+      # Look for attributes that exist in `model` and not in this version.
+      # These attributes should be set to nil. Modifies `attrs`.
+      # @api private
+      def init_unversioned_attrs(attrs, model)
+        (model.attribute_names - attrs.keys).each { |k| attrs[k] = nil }
       end
 
       # Given a HABTM association `assoc` and an `id`, return a version record
