@@ -194,7 +194,8 @@ Widget.paper_trail_enabled_for_model?
 widget.paper_trail_enabled_for_model?
 ```
 
-And a `PaperTrail::Version` instance has these methods:
+And a `PaperTrail::Version` instance (which is just an ordinary ActiveRecord 
+instance, with all the usual methods) adds these methods:
 
 ```ruby
 # Returns the item restored from this version.
