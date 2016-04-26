@@ -20,6 +20,8 @@
 
 ### Added
 
+- [#771](https://github.com/airblade/paper_trail/pull/771) -
+  Added support for has_and_belongs_to_many associations
 - [#741](https://github.com/airblade/paper_trail/issues/741) /
   [#681](https://github.com/airblade/paper_trail/pull/681)
   MySQL unicode support in migration generator

@@ -6,6 +6,7 @@ module PaperTrail
   module Model
     def self.included(base)
       base.send :extend, ClassMethods
+      base.send :attr_accessor, :paper_trail_habtm
     end
 
     # :nodoc:
@@ -46,6 +47,12 @@ module PaperTrail
       #   the instance was reified from. Default is `:version`.
       # - :save_changes - Whether or not to save changes to the object_changes
       #   column if it exists. Default is true
+      # - :join_tables - If the model has a has_and_belongs_to_many relation
+      #   with an unpapertrailed model, passing the name of the association to
+      #   the join_tables option will paper trail the join table but not save
+      #   the other model, allowing reification of the association but with the
+      #   other models latest state (if the other model is paper trailed, this
+      #   option does nothing)
       #
       def has_paper_trail(options = {})
         options[:on] ||= [:create, :update, :destroy]
@@ -57,6 +64,42 @@ module PaperTrail
         setup_model_for_paper_trail(options)
 
         setup_callbacks_from_options options[:on]
+
+        setup_callbacks_for_habtm options[:join_tables]
+      end
+
+      def update_for_callback(name, callback, model, assoc)
+        model.paper_trail_habtm ||= {}
+        model.paper_trail_habtm.reverse_merge!(name => { removed: [], added: [] })
+        case callback
+        when :before_add
+          model.paper_trail_habtm[name][:added] |= [assoc.id]
+          model.paper_trail_habtm[name][:removed] -= [assoc.id]
+        when :before_remove
+          model.paper_trail_habtm[name][:removed] |= [assoc.id]
+          model.paper_trail_habtm[name][:added] -= [assoc.id]
+        end
+      end
+
+      attr_reader :paper_trail_save_join_tables
+
+      def setup_callbacks_for_habtm(join_tables)
+        @paper_trail_save_join_tables = Array.wrap(join_tables)
+        # Adds callbacks to record changes to habtm associations such that on
+        # save the previous version of the association (if changed) can be
+        # interpreted
+        reflect_on_all_associations(:has_and_belongs_to_many).
+          reject { |a| paper_trail_options[:skip].include?(a.name.to_s) }.
+          each do |a|
+            added_callback = lambda do |*args|
+              update_for_callback(a.name, :before_add, args[-2], args.last)
+            end
+            removed_callback = lambda do |*args|
+              update_for_callback(a.name, :before_remove, args[-2], args.last)
+            end
+            send(:"before_add_for_#{a.name}").send(:<<, added_callback)
+            send(:"before_remove_for_#{a.name}").send(:<<, removed_callback)
+          end
       end
 
       def setup_model_for_paper_trail(options = {})
@@ -442,6 +485,11 @@ module PaperTrail
       # Saves associations if the join table for `VersionAssociation` exists.
       def save_associations(version)
         return unless PaperTrail.config.track_associations?
+        save_associations_belongs_to(version)
+        save_associations_has_and_belongs_to_many(version)
+      end
+
+      def save_associations_belongs_to(version)
         self.class.reflect_on_all_associations(:belongs_to).each do |assoc|
           assoc_version_args = {
             version_id: version.id,
@@ -459,6 +507,27 @@ module PaperTrail
 
           if assoc_version_args.key?(:foreign_key_id)
             PaperTrail::VersionAssociation.create(assoc_version_args)
+          end
+        end
+      end
+
+      def save_associations_has_and_belongs_to_many(version)
+        # Use the :added and :removed keys to extrapolate the HABTM associations
+        # to before any changes were made
+        self.class.reflect_on_all_associations(:has_and_belongs_to_many).each do |a|
+          next unless
+            self.class.paper_trail_save_join_tables.include?(a.name) ||
+                a.klass.paper_trail_enabled_for_model?
+          assoc_version_args = {
+            version_id: version.id,
+            foreign_key_name: a.name
+          }
+          assoc_ids =
+            send(a.name).to_a.map(&:id) +
+            (@paper_trail_habtm.try(:[], a.name).try(:[], :removed) || []) -
+            (@paper_trail_habtm.try(:[], a.name).try(:[], :added) || [])
+          assoc_ids.each do |id|
+            PaperTrail::VersionAssociation.create(assoc_version_args.merge(foreign_key_id: id))
           end
         end
       end

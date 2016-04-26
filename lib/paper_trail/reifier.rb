@@ -14,6 +14,7 @@ module PaperTrail
           has_one: false,
           has_many: false,
           belongs_to: false,
+          has_and_belongs_to_many: false,
           unversioned_attributes: :nil
         )
 
@@ -104,7 +105,8 @@ module PaperTrail
           elsif version.event == "create"
             options[:mark_for_destruction] ? record.tap(&:mark_for_destruction) : nil
           else
-            version.reify(options.merge(has_many: false, has_one: false, belongs_to: false))
+            version.reify(options.merge(has_many: false, has_one: false, belongs_to: false,
+                                        has_and_belongs_to_many: false))
           end
         end
 
@@ -113,7 +115,8 @@ module PaperTrail
         # associations.
         array.concat(
           versions.values.map { |v|
-            v.reify(options.merge(has_many: false, has_one: false, belongs_to: false))
+            v.reify(options.merge(has_many: false, has_one: false, belongs_to: false,
+                                  has_and_belongs_to_many: false))
           }
         )
 
@@ -128,6 +131,10 @@ module PaperTrail
         reify_belongs_tos version.transaction_id, model, options if options[:belongs_to]
 
         reify_has_manys version.transaction_id, model, options if options[:has_many]
+
+        if options[:has_and_belongs_to_many]
+          reify_has_and_belongs_to_many version.transaction_id, model, options
+        end
       end
 
       # Restore the `model`'s has_one associations as they were when this
@@ -154,7 +161,8 @@ module PaperTrail
               end
             end
           else
-            child = version.reify(options.merge(has_many: false, has_one: false, belongs_to: false))
+            child = version.reify(options.merge(has_many: false, has_one: false, belongs_to: false,
+                                                has_and_belongs_to_many: false))
             model.appear_as_new_record do
               without_persisting(child) do
                 model.send "#{assoc.name}=", child
@@ -181,7 +189,8 @@ module PaperTrail
                          assoc.klass.where(assoc.klass.primary_key => collection_key).first
                        else
                          version.reify(options.merge(has_many: false, has_one: false,
-                                                     belongs_to: false))
+                                                     belongs_to: false,
+                                                     has_and_belongs_to_many: false))
                        end
 
           model.send("#{assoc.name}=".to_sym, collection)
@@ -273,6 +282,38 @@ module PaperTrail
           # To continue our example above, assign to `model.paragraphs` the
           # `collection` (an array of `Paragraph`s).
           model.send(assoc.name).proxy_association.target = collection
+        end
+      end
+
+      def reify_has_and_belongs_to_many(transaction_id, model, options = {})
+        model.class.reflect_on_all_associations(:has_and_belongs_to_many).each do |a|
+          papertrail_enabled = a.klass.paper_trail_enabled_for_model?
+          next unless
+            model.class.paper_trail_save_join_tables.include?(a.name) ||
+                papertrail_enabled
+
+          version_ids = PaperTrail::VersionAssociation.
+            where("foreign_key_name = ?", a.name).
+            where("version_id = ?", transaction_id).
+            pluck(:foreign_key_id)
+
+          model.send(a.name).proxy_association.target =
+            version_ids.map do |id|
+              if papertrail_enabled
+                version = a.klass.paper_trail_version_class.
+                  where("item_type = ?", a.klass.name).
+                  where("item_id = ?", id).
+                  where("created_at >= ? OR transaction_id = ?",
+                    options[:version_at], transaction_id).
+                  order("id").limit(1).first
+                if version
+                  next version.reify(options.merge(has_many: false, has_one: false,
+                                                   belongs_to: false,
+                                                   has_and_belongs_to_many: false))
+                end
+              end
+              a.klass.where(a.klass.primary_key => id).first
+            end
         end
       end
 

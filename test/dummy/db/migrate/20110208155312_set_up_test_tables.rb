@@ -249,9 +249,27 @@ class SetUpTestTables < ActiveRecord::Migration
     create_table :citations, force: true do |t|
       t.integer :quotation_id
     end
+
+    create_table :foo_habtms, force: true do |t|
+      t.string :name
+    end
+
+    create_table :bar_habtms, force: true do |t|
+      t.string :name
+    end
+
+    create_table :bar_habtms_foo_habtms, force: true, id: false do |t|
+      t.integer :foo_habtm_id
+      t.integer :bar_habtm_id
+    end
+    add_index :bar_habtms_foo_habtms, [:foo_habtm_id]
+    add_index :bar_habtms_foo_habtms, [:bar_habtm_id]
   end
 
   def down
+    drop_table :bar_habtms_foo_habtms
+    drop_table :foo_habtms
+    drop_table :bar_habtms
     drop_table :citations
     drop_table :quotations
     drop_table :animals
