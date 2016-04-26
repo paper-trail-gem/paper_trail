@@ -36,7 +36,24 @@ module PaperTrail
 
     def track_associations?
       if @track_associations.nil?
-        PaperTrail::VersionAssociation.table_exists?
+        # Validate presence of database before validating
+        # table existence
+        begin
+          PaperTrail::VersionAssociation.table_exists?
+        rescue => error
+          case error.class.to_s
+          when "PG::ConnectionBad"
+            postgres_error_connection_handler(error)
+          when "ActiveRecord::ConnectionNotEstablished" # For Mysql2
+            false
+          when "SQLite3::CantOpenException"
+            sqlite_error_connection_handler(error)
+          when "ActiveRecord::NoDatabaseError"
+            false
+          else
+            raise error
+          end
+        end
       else
         @track_associations
       end
@@ -49,6 +66,16 @@ module PaperTrail
 
     def enabled=(enable)
       @mutex.synchronize { @enabled = enable }
+    end
+
+    private
+
+    def postgres_error_connection_handler(error)
+      error.message.include?("does not exist") ? false : raise(error)
+    end
+
+    def sqlite_error_connection_handler(error)
+      error.message.include?("unable to open database file") ? false : raise(error)
     end
   end
 end
