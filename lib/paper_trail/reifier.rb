@@ -6,18 +6,7 @@ module PaperTrail
       # See `VersionConcern#reify` for documentation.
       # @api private
       def reify(version, options)
-        options = options.dup
-
-        options.reverse_merge!(
-          version_at: version.created_at,
-          mark_for_destruction: false,
-          has_one: false,
-          has_many: false,
-          belongs_to: false,
-          has_and_belongs_to_many: false,
-          unversioned_attributes: :nil
-        )
-
+        options = apply_defaults_to(options, version)
         attrs = version.object_deserialized
 
         # Normally a polymorphic belongs_to relationship allows us to get the
@@ -33,10 +22,8 @@ module PaperTrail
         # class.
         if options[:dup] != true && version.item
           model = version.item
-          # Look for attributes that exist in the model and not in this
-          # version. These attributes should be set to nil.
           if options[:unversioned_attributes] == :nil
-            (model.attribute_names - attrs.keys).each { |k| attrs[k] = nil }
+            init_unversioned_attrs(attrs, model)
           end
         else
           klass = version_reification_class(version, attrs)
@@ -46,9 +33,7 @@ module PaperTrail
             model = klass.new
           elsif options[:unversioned_attributes] == :nil
             model = item_found
-            # Look for attributes that exist in the model and not in this
-            # version. These attributes should be set to nil.
-            (model.attribute_names - attrs.keys).each { |k| attrs[k] = nil }
+            init_unversioned_attrs(attrs, model)
           end
         end
 
@@ -59,6 +44,21 @@ module PaperTrail
       end
 
       private
+
+      # Given a hash of `options` for `.reify`, return a new hash with default
+      # values applied.
+      # @api private
+      def apply_defaults_to(options, version)
+        {
+          version_at: version.created_at,
+          mark_for_destruction: false,
+          has_one: false,
+          has_many: false,
+          belongs_to: false,
+          has_and_belongs_to_many: false,
+          unversioned_attributes: :nil
+        }.merge(options)
+      end
 
       # @api private
       def each_enabled_association(associations)
@@ -127,6 +127,40 @@ module PaperTrail
         collection
       end
 
+      # Look for attributes that exist in `model` and not in this version.
+      # These attributes should be set to nil. Modifies `attrs`.
+      # @api private
+      def init_unversioned_attrs(attrs, model)
+        (model.attribute_names - attrs.keys).each { |k| attrs[k] = nil }
+      end
+
+      # Given a HABTM association `assoc` and an `id`, return a version record
+      # from the point in time identified by `transaction_id` or `version_at`.
+      # @api private
+      def load_version_for_habtm(assoc, id, transaction_id, version_at)
+        assoc.klass.paper_trail_version_class.
+          where("item_type = ?", assoc.klass.name).
+          where("item_id = ?", id).
+          where("created_at >= ? OR transaction_id = ?", version_at, transaction_id).
+          order("id").
+          limit(1).
+          first
+      end
+
+      # Given a has-one association `assoc` on `model`, return the version
+      # record from the point in time identified by `transaction_id` or `version_at`.
+      # @api private
+      def load_version_for_has_one(assoc, model, transaction_id, version_at)
+        version_table_name = model.class.paper_trail_version_class.table_name
+        model.class.paper_trail_version_class.joins(:version_associations).
+          where("version_associations.foreign_key_name = ?", assoc.foreign_key).
+          where("version_associations.foreign_key_id = ?", model.id).
+          where("#{version_table_name}.item_type = ?", assoc.class_name).
+          where("created_at >= ? OR transaction_id = ?", version_at, transaction_id).
+          order("#{version_table_name}.id ASC").
+          first
+      end
+
       # Set all the attributes in this version on the model.
       def reify_attributes(model, version, attrs)
         enums = model.class.respond_to?(:defined_enums) ? model.class.defined_enums : {}
@@ -172,8 +206,14 @@ module PaperTrail
           elsif version.event == "create"
             options[:mark_for_destruction] ? record.tap(&:mark_for_destruction) : nil
           else
-            version.reify(options.merge(has_many: false, has_one: false, belongs_to: false,
-                                        has_and_belongs_to_many: false))
+            version.reify(
+              options.merge(
+                has_many: false,
+                has_one: false,
+                belongs_to: false,
+                has_and_belongs_to_many: false
+              )
+            )
           end
         end
 
@@ -182,8 +222,14 @@ module PaperTrail
         # associations.
         array.concat(
           versions.values.map { |v|
-            v.reify(options.merge(has_many: false, has_one: false, belongs_to: false,
-                                  has_and_belongs_to_many: false))
+            v.reify(
+              options.merge(
+                has_many: false,
+                has_one: false,
+                belongs_to: false,
+                has_and_belongs_to_many: false
+              )
+            )
           }
         )
 
@@ -208,16 +254,9 @@ module PaperTrail
       # version was superseded by the next (because that's what the user was
       # looking at when they made the change).
       def reify_has_ones(transaction_id, model, options = {})
-        version_table_name = model.class.paper_trail_version_class.table_name
         associations = model.class.reflect_on_all_associations(:has_one)
         each_enabled_association(associations) do |assoc|
-          version = model.class.paper_trail_version_class.joins(:version_associations).
-            where("version_associations.foreign_key_name = ?", assoc.foreign_key).
-            where("version_associations.foreign_key_id = ?", model.id).
-            where("#{version_table_name}.item_type = ?", assoc.class_name).
-            where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
-            order("#{version_table_name}.id ASC").
-            first
+          version = load_version_for_has_one(assoc, model, transaction_id, options[:version_at])
           next unless version
           if version.event == "create"
             if options[:mark_for_destruction]
@@ -228,8 +267,14 @@ module PaperTrail
               end
             end
           else
-            child = version.reify(options.merge(has_many: false, has_one: false, belongs_to: false,
-                                                has_and_belongs_to_many: false))
+            child = version.reify(
+              options.merge(
+                has_many: false,
+                has_one: false,
+                belongs_to: false,
+                has_and_belongs_to_many: false
+              )
+            )
             model.appear_as_new_record do
               without_persisting(child) do
                 model.send "#{assoc.name}=", child
@@ -252,9 +297,14 @@ module PaperTrail
           collection = if version.nil?
                          assoc.klass.where(assoc.klass.primary_key => collection_key).first
                        else
-                         version.reify(options.merge(has_many: false, has_one: false,
-                                                     belongs_to: false,
-                                                     has_and_belongs_to_many: false))
+                         version.reify(
+                           options.merge(
+                             has_many: false,
+                             has_one: false,
+                             belongs_to: false,
+                             has_and_belongs_to_many: false
+                           )
+                         )
                        end
 
           model.send("#{assoc.name}=".to_sym, collection)
@@ -314,33 +364,38 @@ module PaperTrail
       end
 
       def reify_has_and_belongs_to_many(transaction_id, model, options = {})
-        model.class.reflect_on_all_associations(:has_and_belongs_to_many).each do |a|
-          papertrail_enabled = a.klass.paper_trail_enabled_for_model?
+        model.class.reflect_on_all_associations(:has_and_belongs_to_many).each do |assoc|
+          papertrail_enabled = assoc.klass.paper_trail_enabled_for_model?
           next unless
-            model.class.paper_trail_save_join_tables.include?(a.name) ||
+            model.class.paper_trail_save_join_tables.include?(assoc.name) ||
                 papertrail_enabled
 
           version_ids = PaperTrail::VersionAssociation.
-            where("foreign_key_name = ?", a.name).
+            where("foreign_key_name = ?", assoc.name).
             where("version_id = ?", transaction_id).
             pluck(:foreign_key_id)
 
-          model.send(a.name).proxy_association.target =
+          model.send(assoc.name).proxy_association.target =
             version_ids.map do |id|
               if papertrail_enabled
-                version = a.klass.paper_trail_version_class.
-                  where("item_type = ?", a.klass.name).
-                  where("item_id = ?", id).
-                  where("created_at >= ? OR transaction_id = ?",
-                    options[:version_at], transaction_id).
-                  order("id").limit(1).first
+                version = load_version_for_habtm(
+                  assoc,
+                  id,
+                  transaction_id,
+                  options[:version_at]
+                )
                 if version
-                  next version.reify(options.merge(has_many: false, has_one: false,
-                                                   belongs_to: false,
-                                                   has_and_belongs_to_many: false))
+                  next version.reify(
+                    options.merge(
+                      has_many: false,
+                      has_one: false,
+                      belongs_to: false,
+                      has_and_belongs_to_many: false
+                    )
+                  )
                 end
               end
-              a.klass.where(a.klass.primary_key => id).first
+              assoc.klass.where(assoc.klass.primary_key => id).first
             end
         end
       end
