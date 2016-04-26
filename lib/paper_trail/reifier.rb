@@ -127,6 +127,19 @@ module PaperTrail
         collection
       end
 
+      # Given a HABTM association `assoc` and an `id`, return a version record
+      # from the point in time identified by `transaction_id` or `version_at`.
+      # @api private
+      def load_version_for_habtm(assoc, id, transaction_id, version_at)
+        assoc.klass.paper_trail_version_class.
+          where("item_type = ?", assoc.klass.name).
+          where("item_id = ?", id).
+          where("created_at >= ? OR transaction_id = ?", version_at, transaction_id).
+          order("id").
+          limit(1).
+          first
+      end
+
       # Given a has-one association `assoc` on `model`, return the version
       # record from the point in time identified by `transaction_id` or `version_at`.
       # @api private
@@ -335,12 +348,12 @@ module PaperTrail
           model.send(assoc.name).proxy_association.target =
             version_ids.map do |id|
               if papertrail_enabled
-                version = assoc.klass.paper_trail_version_class.
-                  where("item_type = ?", assoc.klass.name).
-                  where("item_id = ?", id).
-                  where("created_at >= ? OR transaction_id = ?",
-                    options[:version_at], transaction_id).
-                  order("id").limit(1).first
+                version = load_version_for_habtm(
+                  assoc,
+                  id,
+                  transaction_id,
+                  options[:version_at]
+                )
                 if version
                   next version.reify(options.merge(has_many: false, has_one: false,
                                                    belongs_to: false,
