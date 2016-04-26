@@ -46,6 +46,18 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.datetime "updated_at"
   end
 
+  create_table "bar_habtms", force: :cascade do |t|
+    t.string "name"
+  end
+
+  create_table "bar_habtms_foo_habtms", id: false, force: :cascade do |t|
+    t.integer "foo_habtm_id"
+    t.integer "bar_habtm_id"
+  end
+
+  add_index "bar_habtms_foo_habtms", ["bar_habtm_id"], name: "index_bar_habtms_foo_habtms_on_bar_habtm_id"
+  add_index "bar_habtms_foo_habtms", ["foo_habtm_id"], name: "index_bar_habtms_foo_habtms_on_foo_habtm_id"
+
   create_table "books", force: :cascade do |t|
     t.string "title"
   end
@@ -88,6 +100,10 @@ ActiveRecord::Schema.define(version: 20110208155312) do
   create_table "fluxors", force: :cascade do |t|
     t.integer "widget_id"
     t.string  "name"
+  end
+
+  create_table "foo_habtms", force: :cascade do |t|
+    t.string "name"
   end
 
   create_table "fruits", force: :cascade do |t|
