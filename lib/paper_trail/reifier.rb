@@ -60,6 +60,73 @@ module PaperTrail
 
       private
 
+      # @api private
+      def each_enabled_association(associations)
+        associations.each do |assoc|
+          next unless assoc.klass.paper_trail_enabled_for_model?
+          yield assoc
+        end
+      end
+
+      # Examine the `source_reflection`, i.e. the "source" of `assoc` the
+      # `ThroughReflection`. The source can be a `BelongsToReflection`
+      # or a `HasManyReflection`.
+      #
+      # If the association is a has_many association again, then call
+      # reify_has_manys for each record in `through_collection`.
+      #
+      # @api private
+      def hmt_collection(through_collection, assoc, options, transaction_id)
+        if !assoc.source_reflection.belongs_to? && through_collection.present?
+          hmt_collection_through_has_many(
+            through_collection, assoc, options, transaction_id
+          )
+        else
+          hmt_collection_through_belongs_to(
+            through_collection, assoc, options, transaction_id
+          )
+        end
+      end
+
+      # @api private
+      def hmt_collection_through_has_many(through_collection, assoc, options, transaction_id)
+        through_collection.each do |through_model|
+          reify_has_manys(transaction_id, through_model, options)
+        end
+
+        # At this point, the "through" part of the association chain has
+        # been reified, but not the final, "target" part. To continue our
+        # example, `model.sections` (including `model.sections.paragraphs`)
+        # has been loaded. However, the final "target" part of the
+        # association, that is, `model.paragraphs`, has not been loaded. So,
+        # we do that now.
+        through_collection.flat_map { |through_model|
+          through_model.public_send(assoc.name.to_sym).to_a
+        }
+      end
+
+      # @api private
+      def hmt_collection_through_belongs_to(through_collection, assoc, options, transaction_id)
+        collection_keys = through_collection.map { |through_model|
+          through_model.send(assoc.source_reflection.foreign_key)
+        }
+        version_id_subquery = assoc.klass.paper_trail_version_class.
+          select("MIN(id)").
+          where("item_type = ?", assoc.class_name).
+          where("item_id IN (?)", collection_keys).
+          where(
+            "created_at >= ? OR transaction_id = ?",
+            options[:version_at],
+            transaction_id
+          ).
+          group("item_id").
+          to_sql
+        versions = versions_by_id(assoc.klass, version_id_subquery)
+        collection = Array.new assoc.klass.where(assoc.klass.primary_key => collection_keys)
+        prepare_array_for_has_many(collection, options, versions)
+        collection
+      end
+
       # Set all the attributes in this version on the model.
       def reify_attributes(model, version, attrs)
         enums = model.class.respond_to?(:defined_enums) ? model.class.defined_enums : {}
@@ -142,8 +209,8 @@ module PaperTrail
       # looking at when they made the change).
       def reify_has_ones(transaction_id, model, options = {})
         version_table_name = model.class.paper_trail_version_class.table_name
-        model.class.reflect_on_all_associations(:has_one).each do |assoc|
-          next unless assoc.klass.paper_trail_enabled_for_model?
+        associations = model.class.reflect_on_all_associations(:has_one)
+        each_enabled_association(associations) do |assoc|
           version = model.class.paper_trail_version_class.joins(:version_associations).
             where("version_associations.foreign_key_name = ?", assoc.foreign_key).
             where("version_associations.foreign_key_id = ?", model.id).
@@ -174,11 +241,8 @@ module PaperTrail
 
       def reify_belongs_tos(transaction_id, model, options = {})
         associations = model.class.reflect_on_all_associations(:belongs_to)
-
-        associations.each do |assoc|
-          next unless assoc.klass.paper_trail_enabled_for_model?
+        each_enabled_association(associations) do |assoc|
           collection_key = model.send(assoc.association_foreign_key)
-
           version = assoc.klass.paper_trail_version_class.
             where("item_type = ?", assoc.class_name).
             where("item_id = ?", collection_key).
@@ -212,8 +276,7 @@ module PaperTrail
       # another association.
       def reify_has_many_directly(transaction_id, associations, model, options = {})
         version_table_name = model.class.paper_trail_version_class.table_name
-        associations.each do |assoc|
-          next unless assoc.klass.paper_trail_enabled_for_model?
+        each_enabled_association(associations) do |assoc|
           version_id_subquery = PaperTrail::VersionAssociation.
             joins(model.class.version_association_name).
             select("MIN(version_id)").
@@ -234,53 +297,18 @@ module PaperTrail
       # This must be called after the direct has_manys have been reified
       # (reify_has_many_directly).
       def reify_has_many_through(transaction_id, associations, model, options = {})
-        associations.each do |assoc|
-          next unless assoc.klass.paper_trail_enabled_for_model?
-
+        each_enabled_association(associations) do |assoc|
           # Load the collection of through-models. For example, if `model` is a
           # Chapter, having many Paragraphs through Sections, then
           # `through_collection` will contain Sections.
           through_collection = model.send(assoc.options[:through])
 
-          # Examine the `source_reflection`, i.e. the "source" of `assoc` the
-          # `ThroughReflection`. The source can be a `BelongsToReflection`
-          # or a `HasManyReflection`.
-          #
-          # If the association is a has_many association again, then call
-          # reify_has_manys for each record in `through_collection`.
-          if !assoc.source_reflection.belongs_to? && through_collection.present?
-            through_collection.each do |through_model|
-              reify_has_manys(transaction_id, through_model, options)
-            end
+          # Now, given the collection of "through" models (e.g. sections), load
+          # the collection of "target" models (e.g. paragraphs)
+          collection = hmt_collection(through_collection, assoc, options, transaction_id)
 
-            # At this point, the "through" part of the association chain has
-            # been reified, but not the final, "target" part. To continue our
-            # example, `model.sections` (including `model.sections.paragraphs`)
-            # has been loaded. However, the final "target" part of the
-            # association, that is, `model.paragraphs`, has not been loaded. So,
-            # we do that now.
-            collection = through_collection.flat_map { |through_model|
-              through_model.public_send(assoc.name.to_sym).to_a
-            }
-          else
-            collection_keys = through_collection.map { |through_model|
-              through_model.send(assoc.source_reflection.foreign_key)
-            }
-
-            version_id_subquery = assoc.klass.paper_trail_version_class.
-              select("MIN(id)").
-              where("item_type = ?", assoc.class_name).
-              where("item_id IN (?)", collection_keys).
-              where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
-              group("item_id").
-              to_sql
-            versions = versions_by_id(assoc.klass, version_id_subquery)
-            collection = Array.new assoc.klass.where(assoc.klass.primary_key => collection_keys)
-            prepare_array_for_has_many(collection, options, versions)
-          end
-
-          # To continue our example above, assign to `model.paragraphs` the
-          # `collection` (an array of `Paragraph`s).
+          # Finally, assign the `collection` of "target" models, e.g. to
+          # `model.paragraphs`.
           model.send(assoc.name).proxy_association.target = collection
         end
       end

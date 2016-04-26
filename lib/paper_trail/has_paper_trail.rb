@@ -54,6 +54,7 @@ module PaperTrail
       #   other models latest state (if the other model is paper trailed, this
       #   option does nothing)
       #
+      # @api public
       def has_paper_trail(options = {})
         options[:on] ||= [:create, :update, :destroy]
 
@@ -102,6 +103,9 @@ module PaperTrail
           end
       end
 
+      # Installs callbacks, associations, "class attributes", and more.
+      # For details of how "class attributes" work, see the activesupport docs.
+      # @api private
       def setup_model_for_paper_trail(options = {})
         # Lazily include the instance methods so we don't clutter up
         # any more ActiveRecord models than we have to.
@@ -117,18 +121,7 @@ module PaperTrail
         class_attribute :version_class_name
         self.version_class_name = options[:class_name] || "PaperTrail::Version"
 
-        class_attribute :paper_trail_options
-
-        self.paper_trail_options = options.dup
-
-        [:ignore, :skip, :only].each do |k|
-          paper_trail_options[k] = [paper_trail_options[k]].flatten.compact.map { |attr|
-            attr.is_a?(Hash) ? attr.stringify_keys : attr.to_s
-          }
-        end
-
-        paper_trail_options[:meta] ||= {}
-        paper_trail_options[:save_changes] = true if paper_trail_options[:save_changes].nil?
+        setup_paper_trail_options(options)
 
         class_attribute :versions_association_name
         self.versions_association_name = options[:versions] || :versions
@@ -151,6 +144,22 @@ module PaperTrail
         after_commit :reset_transaction_id
         after_rollback :reset_transaction_id
         after_rollback :clear_rolled_back_versions
+      end
+
+      # Given `options`, populates `paper_trail_options`.
+      # @api private
+      def setup_paper_trail_options(options)
+        class_attribute :paper_trail_options
+        self.paper_trail_options = options.dup
+        [:ignore, :skip, :only].each do |k|
+          paper_trail_options[k] = [paper_trail_options[k]].flatten.compact.map { |attr|
+            attr.is_a?(Hash) ? attr.stringify_keys : attr.to_s
+          }
+        end
+        paper_trail_options[:meta] ||= {}
+        if paper_trail_options[:save_changes].nil?
+          paper_trail_options[:save_changes] = true
+        end
       end
 
       def setup_callbacks_from_options(options_on = [])
