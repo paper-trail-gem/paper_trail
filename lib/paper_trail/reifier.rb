@@ -199,8 +199,14 @@ module PaperTrail
           elsif version.event == "create"
             options[:mark_for_destruction] ? record.tap(&:mark_for_destruction) : nil
           else
-            version.reify(options.merge(has_many: false, has_one: false, belongs_to: false,
-                                        has_and_belongs_to_many: false))
+            version.reify(
+              options.merge(
+                has_many: false,
+                has_one: false,
+                belongs_to: false,
+                has_and_belongs_to_many: false
+              )
+            )
           end
         end
 
@@ -209,8 +215,14 @@ module PaperTrail
         # associations.
         array.concat(
           versions.values.map { |v|
-            v.reify(options.merge(has_many: false, has_one: false, belongs_to: false,
-                                  has_and_belongs_to_many: false))
+            v.reify(
+              options.merge(
+                has_many: false,
+                has_one: false,
+                belongs_to: false,
+                has_and_belongs_to_many: false
+              )
+            )
           }
         )
 
@@ -248,8 +260,14 @@ module PaperTrail
               end
             end
           else
-            child = version.reify(options.merge(has_many: false, has_one: false, belongs_to: false,
-                                                has_and_belongs_to_many: false))
+            child = version.reify(
+              options.merge(
+                has_many: false,
+                has_one: false,
+                belongs_to: false,
+                has_and_belongs_to_many: false
+              )
+            )
             model.appear_as_new_record do
               without_persisting(child) do
                 model.send "#{assoc.name}=", child
@@ -272,9 +290,14 @@ module PaperTrail
           collection = if version.nil?
                          assoc.klass.where(assoc.klass.primary_key => collection_key).first
                        else
-                         version.reify(options.merge(has_many: false, has_one: false,
-                                                     belongs_to: false,
-                                                     has_and_belongs_to_many: false))
+                         version.reify(
+                           options.merge(
+                             has_many: false,
+                             has_one: false,
+                             belongs_to: false,
+                             has_and_belongs_to_many: false
+                           )
+                         )
                        end
 
           model.send("#{assoc.name}=".to_sym, collection)
@@ -355,9 +378,14 @@ module PaperTrail
                   options[:version_at]
                 )
                 if version
-                  next version.reify(options.merge(has_many: false, has_one: false,
-                                                   belongs_to: false,
-                                                   has_and_belongs_to_many: false))
+                  next version.reify(
+                    options.merge(
+                      has_many: false,
+                      has_one: false,
+                      belongs_to: false,
+                      has_and_belongs_to_many: false
+                    )
+                  )
                 end
               end
               assoc.klass.where(assoc.klass.primary_key => id).first
