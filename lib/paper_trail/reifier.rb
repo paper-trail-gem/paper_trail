@@ -6,18 +6,7 @@ module PaperTrail
       # See `VersionConcern#reify` for documentation.
       # @api private
       def reify(version, options)
-        options = options.dup
-
-        options.reverse_merge!(
-          version_at: version.created_at,
-          mark_for_destruction: false,
-          has_one: false,
-          has_many: false,
-          belongs_to: false,
-          has_and_belongs_to_many: false,
-          unversioned_attributes: :nil
-        )
-
+        options = apply_defaults_to(options, version)
         attrs = version.object_deserialized
 
         # Normally a polymorphic belongs_to relationship allows us to get the
@@ -59,6 +48,21 @@ module PaperTrail
       end
 
       private
+
+      # Given a hash of `options` for `.reify`, return a new hash with default
+      # values applied.
+      # @api private
+      def apply_defaults_to(options, version)
+        {
+          version_at: version.created_at,
+          mark_for_destruction: false,
+          has_one: false,
+          has_many: false,
+          belongs_to: false,
+          has_and_belongs_to_many: false,
+          unversioned_attributes: :nil
+        }.merge(options)
+      end
 
       # @api private
       def each_enabled_association(associations)
