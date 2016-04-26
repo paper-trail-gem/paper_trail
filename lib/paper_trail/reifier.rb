@@ -127,6 +127,20 @@ module PaperTrail
         collection
       end
 
+      # Given a has-one association `assoc` on `model`, return the version
+      # record from the point in time identified by `transaction_id` or `version_at`.
+      # @api private
+      def load_version_for_has_one(assoc, model, transaction_id, version_at)
+        version_table_name = model.class.paper_trail_version_class.table_name
+        model.class.paper_trail_version_class.joins(:version_associations).
+          where("version_associations.foreign_key_name = ?", assoc.foreign_key).
+          where("version_associations.foreign_key_id = ?", model.id).
+          where("#{version_table_name}.item_type = ?", assoc.class_name).
+          where("created_at >= ? OR transaction_id = ?", version_at, transaction_id).
+          order("#{version_table_name}.id ASC").
+          first
+      end
+
       # Set all the attributes in this version on the model.
       def reify_attributes(model, version, attrs)
         enums = model.class.respond_to?(:defined_enums) ? model.class.defined_enums : {}
@@ -208,16 +222,9 @@ module PaperTrail
       # version was superseded by the next (because that's what the user was
       # looking at when they made the change).
       def reify_has_ones(transaction_id, model, options = {})
-        version_table_name = model.class.paper_trail_version_class.table_name
         associations = model.class.reflect_on_all_associations(:has_one)
         each_enabled_association(associations) do |assoc|
-          version = model.class.paper_trail_version_class.joins(:version_associations).
-            where("version_associations.foreign_key_name = ?", assoc.foreign_key).
-            where("version_associations.foreign_key_id = ?", model.id).
-            where("#{version_table_name}.item_type = ?", assoc.class_name).
-            where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
-            order("#{version_table_name}.id ASC").
-            first
+          version = load_version_for_has_one(assoc, model, transaction_id, options[:version_at])
           next unless version
           if version.event == "create"
             if options[:mark_for_destruction]
