@@ -201,6 +201,13 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.string "type"
   end
 
+  create_table "vehicles", force: :cascade do |t|
+    t.string   "name",       null: false
+    t.string   "type",       null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "version_associations", force: :cascade do |t|
     t.integer "version_id"
     t.string  "foreign_key_name", null: false
@@ -211,12 +218,12 @@ ActiveRecord::Schema.define(version: 20110208155312) do
   add_index "version_associations", ["version_id"], name: "index_version_associations_on_version_id"
 
   create_table "versions", force: :cascade do |t|
-    t.string   "item_type",      null: false
-    t.integer  "item_id",        null: false
-    t.string   "event",          null: false
+    t.string   "item_type",                         null: false
+    t.integer  "item_id",                           null: false
+    t.string   "event",                             null: false
     t.string   "whodunnit"
-    t.text     "object"
-    t.text     "object_changes"
+    t.text     "object",         limit: 1073741823
+    t.text     "object_changes", limit: 1073741823
     t.integer  "transaction_id"
     t.datetime "created_at"
     t.integer  "answer"

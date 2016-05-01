@@ -9,6 +9,13 @@ class SetUpTestTables < ActiveRecord::Migration
   TEXT_BYTES = 1_073_741_823
 
   def up
+    # Classes: Vehicle, Car, Truck
+    create_table :vehicles, force: true do |t|
+      t.string :name, null: false
+      t.string :type, null: false
+      t.timestamps null: false
+    end
+
     create_table :skippers, force: true do |t|
       t.string     :name
       t.datetime   :another_timestamp

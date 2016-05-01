@@ -276,11 +276,32 @@ module PaperTrail
 
     # @api private
     def load_changeset
+      # First, deserialize the `object_changes` column.
       changes = HashWithIndifferentAccess.new(object_changes_deserialized)
-      item_type.constantize.unserialize_attribute_changes_for_paper_trail!(changes)
+
+      # The next step is, perhaps unfortunately, called "un-serialization",
+      # and appears to be responsible for custom attribute serializers. For an
+      # example of a custom attribute serializer, see
+      # `Person::TimeZoneSerializer` in the test suite.
+      #
+      # Is `item.class` good enough? Does it handle `inheritance_column`
+      # as well as `Reifier#version_reification_class`? We were using
+      # `item_type.constantize`, but that is problematic when the STI parent
+      # is not versioned. (See `Vehicle` and `Car` in the test suite).
+      #
+      # Note: `item` returns nil if `event` is "destroy".
+      unless item.nil?
+        item.class.unserialize_attribute_changes_for_paper_trail!(changes)
+      end
+
+      # Finally, return a Hash mapping each attribute name to
+      # a two-element array representing before and after.
       changes
     end
 
+    # If the `object_changes` column is a Postgres JSON column, then
+    # ActiveRecord will deserialize it for us. Otherwise, it's a string column
+    # and we must deserialize it ourselves.
     # @api private
     def object_changes_deserialized
       if self.class.object_changes_col_is_json?
