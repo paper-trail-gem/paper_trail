@@ -279,8 +279,6 @@ module PaperTrail
       changes = HashWithIndifferentAccess.new(object_changes_deserialized)
       item_type.constantize.unserialize_attribute_changes_for_paper_trail!(changes)
       changes
-    rescue # TODO: Rescue something specific
-      {}
     end
 
     # @api private
@@ -288,7 +286,11 @@ module PaperTrail
       if self.class.object_changes_col_is_json?
         object_changes
       else
-        PaperTrail.serializer.load(object_changes)
+        begin
+          PaperTrail.serializer.load(object_changes)
+        rescue # TODO: Rescue something specific
+          {}
+        end
       end
     end
 
