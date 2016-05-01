@@ -37,6 +37,9 @@
 
 - [#777](https://github.com/airblade/paper_trail/issues/777) -
   Support HMT associations with `:source` option.
+- [#738](https://github.com/airblade/paper_trail/issues/738) -
+  Rare bug where a non-versioned STI parent caused `changeset` to
+  return an empty hash.
 - [#731](https://github.com/airblade/paper_trail/pull/731) -
   Map enums to database values before storing in `object_changes` column.
 - [#715](https://github.com/airblade/paper_trail/issues/715) -
