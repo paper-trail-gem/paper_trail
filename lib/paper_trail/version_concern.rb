@@ -276,11 +276,23 @@ module PaperTrail
 
     # @api private
     def load_changeset
+      # First, deserialize the `object_changes` column.
       changes = HashWithIndifferentAccess.new(object_changes_deserialized)
+
+      # The next step is, perhaps unfortunately, called "un-serialization",
+      # and appears to be responsible for custom attribute serializers. For an
+      # example of a custom attribute serializer, see
+      # `Person::TimeZoneSerializer` in the test suite.
       item_type.constantize.unserialize_attribute_changes_for_paper_trail!(changes)
+
+      # Finally, return a Hash mapping each attribute name to
+      # a two-element array representing before and after.
       changes
     end
 
+    # If the `object_changes` column is a Postgres JSON column, then
+    # ActiveRecord will deserialize it for us. Otherwise, it's a string column
+    # and we must deserialize it ourselves.
     # @api private
     def object_changes_deserialized
       if self.class.object_changes_col_is_json?

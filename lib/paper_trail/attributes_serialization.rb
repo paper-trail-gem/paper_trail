@@ -151,6 +151,7 @@ module PaperTrail
 
       serializer = CastedAttributeSerializer.new(self)
       changes.clone.each do |key, change|
+        # `change` is an Array with two elements, representing before and after.
         changes[key] = Array(change).map do |value|
           serializer.send(serialization_method, key, value)
         end
