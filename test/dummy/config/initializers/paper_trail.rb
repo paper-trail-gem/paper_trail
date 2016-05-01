@@ -1,5 +1,4 @@
-# Turn on associations tracking when the test suite is run on Travis CI
-PaperTrail.config.track_associations = true if ENV["TRAVIS"]
+PaperTrail.config.track_associations = true
 
 module PaperTrail
   class Version < ActiveRecord::Base

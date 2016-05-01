@@ -34,9 +34,19 @@ module PaperTrail
       )
     end
 
+    # Previously, we checked `PaperTrail::VersionAssociation.table_exists?`
+    # here, but that proved to be problematic in situations when the database
+    # connection had not been established, or when the database does not exist
+    # yet (as with `rake db:create`).
     def track_associations?
       if @track_associations.nil?
-        PaperTrail::VersionAssociation.table_exists?
+        ActiveSupport::Deprecation.warn <<-EOS.strip_heredoc.gsub(/\s+/, " ")
+          PaperTrail.track_associations has not been set. As of PaperTrail 5, it
+          defaults to false. Tracking associations is an experimental feature so
+          we recommend setting PaperTrail.config.track_associations = false in
+          your config/initializers/paper_trail.rb
+        EOS
+        false
       else
         @track_associations
       end
