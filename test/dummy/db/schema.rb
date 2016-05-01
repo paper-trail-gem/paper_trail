@@ -201,6 +201,13 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.string "type"
   end
 
+  create_table "vehicles", force: :cascade do |t|
+    t.string   "name",       null: false
+    t.string   "type",       null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "version_associations", force: :cascade do |t|
     t.integer "version_id"
     t.string  "foreign_key_name", null: false

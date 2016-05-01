@@ -283,7 +283,16 @@ module PaperTrail
       # and appears to be responsible for custom attribute serializers. For an
       # example of a custom attribute serializer, see
       # `Person::TimeZoneSerializer` in the test suite.
-      item_type.constantize.unserialize_attribute_changes_for_paper_trail!(changes)
+      #
+      # Is `item.class` good enough? Does it handle `inheritance_column`
+      # as well as `Reifier#version_reification_class`? We were using
+      # `item_type.constantize`, but that is problematic when the STI parent
+      # is not versioned. (See `Vehicle` and `Car` in the test suite).
+      #
+      # Note: `item` returns nil if `event` is "destroy".
+      unless item.nil?
+        item.class.unserialize_attribute_changes_for_paper_trail!(changes)
+      end
 
       # Finally, return a Hash mapping each attribute name to
       # a two-element array representing before and after.

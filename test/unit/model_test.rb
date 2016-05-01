@@ -433,6 +433,10 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
             assert_equal 1, @reified_widget.fluxors.length
           end
 
+          should "have nil item for last version" do
+            assert_nil(@widget.versions.last.item)
+          end
+
           should "not have changes" do
             assert_equal({}, @widget.versions.last.changeset)
           end
