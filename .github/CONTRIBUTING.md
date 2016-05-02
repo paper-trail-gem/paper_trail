@@ -98,6 +98,7 @@ DB=postgres bundle exec rake
   - update any other references to version number
 1. Commit and tag with `git tag -a -m "v5.0.0" "v5.0.0"`
 1. `git push --tags origin master`
-1. `gem push paper_trail`
+1. `gem build paper_trail.gemspec`
+1. `gem push paper_trail-5.0.0.gem`
 
 [1]: https://github.com/airblade/paper_trail/blob/master/doc/bug_report_template.rb
