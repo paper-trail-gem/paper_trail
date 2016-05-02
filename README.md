@@ -10,7 +10,7 @@ has been destroyed.
 
 | Version        | Documentation |
 | -------------- | ------------- |
-| 5 (unreleased) | https://github.com/airblade/paper_trail/blob/master/README.md |
+| 5              | https://github.com/airblade/paper_trail/blob/master/README.md |
 | 4.1            | https://github.com/airblade/paper_trail/blob/4.1-stable/README.md |
 | 4.0            | https://github.com/airblade/paper_trail/blob/4.0-stable/README.md |
 | 3              | https://github.com/airblade/paper_trail/blob/3.0-stable/README.md |
@@ -48,7 +48,7 @@ has been destroyed.
 
 | paper_trail    | branch     | tags   | ruby     | activerecord |
 | -------------- | ---------- | ------ | -------- | ------------ |
-| 5 (unreleased) | master     | none   | >= 1.9.3 | >= 3.0, < 6  |
+| 5              | master     | v5.x   | >= 1.9.3 | >= 3.0, < 6  |
 | 4              | 4.0-stable | v4.x   | >= 1.8.7 | >= 3.0, < 6  |
 | 3              | 3.0-stable | v3.x   | >= 1.8.7 | >= 3.0, < 5  |
 | 2              | 2.7-stable | v2.x   | >= 1.8.7 | >= 3.0, < 4  |
@@ -194,7 +194,7 @@ Widget.paper_trail_enabled_for_model?
 widget.paper_trail_enabled_for_model?
 ```
 
-And a `PaperTrail::Version` instance (which is just an ordinary ActiveRecord 
+And a `PaperTrail::Version` instance (which is just an ordinary ActiveRecord
 instance, with all the usual methods) adds these methods:
 
 ```ruby
@@ -1397,7 +1397,7 @@ setting up your app with PaperTrail will look something like this:
 
 1. Add PaperTrail to your `Gemfile`.
 
-    `gem 'paper_trail', '~> 4.0.0'`
+    `gem 'paper_trail'`
 
 2. Generate a migration to add a `versions` table to your database.
 

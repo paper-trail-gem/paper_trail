@@ -88,4 +88,16 @@ cd ../..
 DB=postgres bundle exec rake
 ```
 
+### Releases
+
+1. Set the version in lib/paper_trail/version_number.rb
+  - Set PRE to nil unless it's a pre-release (beta, rc, etc.)
+1. In the changelog, replace "Unreleased" with the date.
+1. In the readme,
+  - remove "unreleased" from the doc versions table
+  - update any other references to version number
+1. Commit and tag with `git tag -a -m "v5.0.0" "v5.0.0"`
+1. `git push --tags origin master`
+1. `gem push paper_trail`
+
 [1]: https://github.com/airblade/paper_trail/blob/master/doc/bug_report_template.rb
