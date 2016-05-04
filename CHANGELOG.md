@@ -1,4 +1,4 @@
-## 5.0.1 (Unreleased)
+## 5.0.1 (2016-05-04)
 
 ### Breaking Changes
 
