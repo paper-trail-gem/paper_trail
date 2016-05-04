@@ -12,6 +12,9 @@
 
 - [#791](https://github.com/airblade/paper_trail/issues/791) -
   A rare issue in applications that override `warn`.
+- [#789](https://github.com/airblade/paper_trail/issues/789) -
+  A potentially common issue, in applications with initializers that use
+  versioned models.
 
 ## 5.0.0 (2016-05-02)
 
