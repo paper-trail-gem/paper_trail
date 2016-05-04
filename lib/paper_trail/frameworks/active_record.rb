@@ -2,7 +2,3 @@
 # since otherwise the model(s) will get loaded in via the `Rails::Engine`.
 require "paper_trail/frameworks/active_record/models/paper_trail/version_association"
 require "paper_trail/frameworks/active_record/models/paper_trail/version"
-
-ActiveSupport.on_load(:active_record) do
-  include PaperTrail::Model
-end
