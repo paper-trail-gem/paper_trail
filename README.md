@@ -984,28 +984,20 @@ then there is no need to use `attr_accessible`.
 
 ## Single Table Inheritance (STI)
 
-PaperTrail supports [Single Table Inheritance][39], but the base
-model must be versioned (must call `has_paper_trail`).
+PaperTrail supports [Single Table Inheritance][39], and even supports an
+un-versioned base model, as of 23ffbdc7e1.
 
 ```ruby
-# correct
 class Fruit < ActiveRecord::Base
-  has_paper_trail
-end
-class Banana < Fruit
-end
-
-# incorrect
-class Fruit < ActiveRecord::Base
+  # un-versioned base model
 end
 class Banana < Fruit
   has_paper_trail
 end
 ```
 
-In order to support [polymorphic associations][40], when PaperTrail inserts
-records in the the `versions` table, it saves the name of the base class in the
-`item_type` column, as required by ActiveRecord.
+However, there is a known issue when reifying [associations](#associations),
+see https://github.com/airblade/paper_trail/issues/594
 
 ## Custom Version Classes
 
