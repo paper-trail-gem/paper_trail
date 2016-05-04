@@ -38,6 +38,8 @@ has been destroyed.
   - [Finding Out Who Was Responsible For A Change](#finding-out-who-was-responsible-for-a-change)
   - [Associations](#associations)
   - [Storing metadata](#storing-metadata)
+- ActiveRecord
+  - [Single Table Inheritance](#single-table-tnheritance)
 - Extensibility
   - [Custom Version Classes](#custom-version-classes)
   - [Custom Serializer](#custom-serializer)
@@ -980,6 +982,31 @@ end
 If you're using [strong_parameters][18] instead of [protected_attributes][17]
 then there is no need to use `attr_accessible`.
 
+## Single Table Inheritance (STI)
+
+PaperTrail supports [Single Table Inheritance][39], but the base
+model must be versioned (must call `has_paper_trail`).
+
+```ruby
+# correct
+class Fruit < ActiveRecord::Base
+  has_paper_trail
+end
+class Banana < Fruit
+end
+
+# incorrect
+class Fruit < ActiveRecord::Base
+end
+class Banana < Fruit
+  has_paper_trail
+end
+```
+
+In order to support [polymorphic associations][40], when PaperTrail inserts
+records in the the `versions` table, it saves the name of the base class in the
+`item_type` column, as required by ActiveRecord.
+
 ## Custom Version Classes
 
 You can specify custom version subclasses with the `:class_name` option:
@@ -1554,3 +1581,5 @@ Released under the MIT licence.
 [36]: http://www.postgresql.org/docs/9.4/interactive/ddl.html
 [37]: https://github.com/ankit1910/paper_trail-globalid
 [38]: https://github.com/sferik/rails_admin
+[39]: http://api.rubyonrails.org/classes/ActiveRecord/Base.html#class-ActiveRecord::Base-label-Single+table+inheritance
+[40]: http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html#module-ActiveRecord::Associations::ClassMethods-label-Polymorphic+Associations
