@@ -1,3 +1,18 @@
+## 5.0.1 (Unreleased)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- [#791](https://github.com/airblade/paper_trail/issues/791) -
+  A rare issue in applications that override `warn`.
+
 ## 5.0.0 (2016-05-02)
 
 ### Breaking Changes

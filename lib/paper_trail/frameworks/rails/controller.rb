@@ -94,7 +94,7 @@ module PaperTrail
         user_present = user_for_paper_trail.present?
         whodunnit_blank = ::PaperTrail.whodunnit.blank?
         if enabled && user_present && whodunnit_blank && !@set_paper_trail_whodunnit_called
-          warn <<-EOS.strip_heredoc
+          ::Kernel.warn <<-EOS.strip_heredoc
             user_for_paper_trail is present, but whodunnit has not been set.
             PaperTrail no longer adds the set_paper_trail_whodunnit
             before_filter for you. Please add this before_filter to your
