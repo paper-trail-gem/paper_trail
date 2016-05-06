@@ -39,7 +39,7 @@ has been destroyed.
   - [Associations](#associations)
   - [Storing metadata](#storing-metadata)
 - ActiveRecord
-  - [Single Table Inheritance](#single-table-tnheritance)
+  - [Single Table Inheritance](#single-table-inheritance-sti)
 - Extensibility
   - [Custom Version Classes](#custom-version-classes)
   - [Custom Serializer](#custom-serializer)
