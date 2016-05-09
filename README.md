@@ -156,7 +156,7 @@ class Widget < ActiveRecord::Base
 end
 
 # Returns this widget's versions.  You can customise the name of the
-# association.
+# association, but overriding this method is not supported.
 widget.versions
 
 # Return the version this widget was reified from, or nil if it is live.
@@ -998,6 +998,29 @@ end
 
 However, there is a known issue when reifying [associations](#associations),
 see https://github.com/airblade/paper_trail/issues/594
+
+## Overriding the `versions` method
+
+Overriding the `versions` method is officially not supported, but you can
+change the name of that association. Because `versions` returns an
+`ActiveRecord::Relation` object, changes to that method will result in changes
+both to how records are retrieved _and_ how records are created.
+
+If you absolutely must override this method to maintain your object's API,
+you can do so safely by changing the name of the association.
+
+```ruby
+module News
+  class Post < ActiveRecord::Base
+    has_paper_trail class_name: 'Version', versions: :base_versions
+
+    def versions
+      types = ['Post', 'News::Post']
+      @versions ||= Version.where(item_id: id, item_type: types)
+    end
+  end
+end
+```
 
 ## Custom Version Classes
 
