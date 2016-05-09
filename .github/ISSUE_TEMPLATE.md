@@ -8,6 +8,6 @@ Please use our template
 when reporting bugs.
 
 For other questions, please see our contributing guide.
-(https://github.com/airblade/paper_trail/blob/master/.github/CONTRIBUTING.MD)
+(https://github.com/airblade/paper_trail/blob/master/.github/CONTRIBUTING.md)
 
 Thanks for your contribution!
