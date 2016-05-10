@@ -98,8 +98,8 @@ module PaperTrail
             user_for_paper_trail is present, but whodunnit has not been set.
             PaperTrail no longer adds the set_paper_trail_whodunnit
             before_filter for you. Please add this before_filter to your
-            ApplicationController to continue recording whodunnit. See the
-            PaperTrail readme for an example.
+            ApplicationController to continue recording whodunnit. For more
+            information, please see https://git.io/vrTsk
           EOS
         end
       end
