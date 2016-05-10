@@ -226,13 +226,11 @@ version.index
 # Returns the event that caused this version (create|update|destroy).
 version.event
 
-# Query versions objects by attributes.
+# Query the `versions.object` column (or `object_changes` column), by
+# attributes, using the SQL LIKE operator. Known issue: inconsistent results for
+# numeric values due to limitations of SQL wildcard matchers against the
+# serialized objects.
 PaperTrail::Version.where_object(attr1: val1, attr2: val2)
-
-# Query versions object_changes field by attributes (requires
-# `object_changes` column on versions table).
-# Also can't guarantee consistent query results for numeric values
-# due to limitations of SQL wildcard matchers against the serialized objects.
 PaperTrail::Version.where_object_changes(attr1: val1)
 ```
 

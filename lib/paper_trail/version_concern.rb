@@ -109,8 +109,10 @@ module PaperTrail
         end
       end
 
+      # Query the `versions.objects` column using the SQL LIKE operator.
       # Performs an attribute search on the serialized object by invoking the
       # identically-named method in the serializer being used.
+      # @api public
       def where_object(args = {})
         raise ArgumentError, "expected to receive a Hash" unless args.is_a?(Hash)
 
@@ -135,6 +137,9 @@ module PaperTrail
         end
       end
 
+      # Query the `versions.object_changes` column by attributes, using the
+      # SQL LIKE operator.
+      # @api public
       def where_object_changes(args = {})
         raise ArgumentError, "expected to receive a Hash" unless args.is_a?(Hash)
 
