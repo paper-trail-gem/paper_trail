@@ -42,6 +42,7 @@ has been destroyed.
 - [5. ActiveRecord](#5-activerecord)
   - [5.a. Single Table Inheritance](#5a-single-table-inheritance-sti)
   - [5.b. Configuring the `versions` Association](#5b-configuring-the-versions-association)
+  - [5.c. Generators](#5c-generators)
 - [6. Extensibility](#6-extensibility)
   - [6.a. Custom Version Classes](#6a-custom-version-classes)
   - [6.b. Custom Serializer](#6b-custom-serializer)
@@ -74,7 +75,8 @@ has been destroyed.
     ```
 
     If using [rails_admin][38], you must enable the experimental
-    [Associations](#associations) feature.
+    [Associations](#associations) feature. For more information on this
+    generator, see [section 5.c. Generators](#5c-generators).
 
 1. Add `has_paper_trail` to the models you want to track.
 
@@ -1024,6 +1026,31 @@ Post.new.versions # => NoMethodError
 
 Overriding (instead of configuring) the `versions` method is not supported.
 Overriding associations is not recommended in general.
+
+### 5.c. Generators
+
+PaperTrail has one generator, `paper_trail:install`. It writes, but does not
+run, a migration file. This migration adds (at least) the `versions` table. The
+most up-to-date documentation for this generator can be found by running `rails
+generate paper_trail:install --help`, but a copy is included here for
+convenience.
+
+```
+Usage:
+  rails generate paper_trail:install [options]
+
+Options:
+  [--with-changes], [--no-with-changes]            # Store changeset (diff) with each version
+  [--with-associations], [--no-with-associations]  # Store transactional IDs to support association restoration
+
+Runtime options:
+  -f, [--force]                    # Overwrite files that already exist
+  -p, [--pretend], [--no-pretend]  # Run but do not make any changes
+  -q, [--quiet], [--no-quiet]      # Suppress status output
+  -s, [--skip], [--no-skip]        # Skip files that already exist
+
+Generates (but does not run) a migration to add a versions table.
+```
 
 ## 6. Extensibility
 
