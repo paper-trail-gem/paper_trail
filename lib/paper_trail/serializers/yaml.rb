@@ -14,14 +14,14 @@ module PaperTrail
         ::YAML.dump object
       end
 
-      # Returns a SQL condition to be used to match the given field and value
-      # in the serialized object
+      # Returns a SQL LIKE condition to be used to match the given field and
+      # value in the serialized object.
       def where_object_condition(arel_field, field, value)
         arel_field.matches("%\n#{field}: #{value}\n%")
       end
 
-      # Returns a SQL condition to be used to match the given field and value
-      # in the serialized object_changes
+      # Returns a SQL LIKE condition to be used to match the given field and
+      # value in the serialized `object_changes`.
       def where_object_changes_condition(arel_field, field, value)
         # Need to check first (before) and secondary (after) fields
         m1 = nil
