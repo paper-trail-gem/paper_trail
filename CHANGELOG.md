@@ -1,3 +1,17 @@
+## 5.0.2 (Unreleased)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- Minor improvements to documentation
+
 ## 5.0.1 (2016-05-04)
 
 ### Breaking Changes
