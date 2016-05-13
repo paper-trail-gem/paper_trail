@@ -28,7 +28,8 @@ describe PaperTrail::VERSION do
 
       it "should join the numbers into a period separated string" do
         expect(subject::STRING).to eq(
-          [subject::MAJOR, subject::MINOR, subject::TINY, subject::PRE].compact.join("."))
+          [subject::MAJOR, subject::MINOR, subject::TINY, subject::PRE].compact.join(".")
+        )
       end
     end
   end

@@ -40,7 +40,9 @@ class JSONTest < ActiveSupport::TestCase
     context "when value is a string" do
       should "construct correct WHERE query" do
         matches = PaperTrail::Serializers::JSON.where_object_condition(
-          PaperTrail::Version.arel_table[:object], :arg1, "Val 1")
+          PaperTrail::Version.arel_table[:object], :arg1,
+          "Val 1"
+        )
 
         assert matches.instance_of?(Arel::Nodes::Matches)
         if Arel::VERSION >= "6"
@@ -54,7 +56,10 @@ class JSONTest < ActiveSupport::TestCase
     context "when value is `null`" do
       should "construct correct WHERE query" do
         matches = PaperTrail::Serializers::JSON.where_object_condition(
-          PaperTrail::Version.arel_table[:object], :arg1, nil)
+          PaperTrail::Version.arel_table[:object],
+          :arg1,
+          nil
+        )
 
         assert matches.instance_of?(Arel::Nodes::Matches)
         if Arel::VERSION >= "6"
@@ -68,7 +73,10 @@ class JSONTest < ActiveSupport::TestCase
     context "when value is a number" do
       should "construct correct WHERE query" do
         grouping = PaperTrail::Serializers::JSON.where_object_condition(
-          PaperTrail::Version.arel_table[:object], :arg1, -3.5)
+          PaperTrail::Version.arel_table[:object],
+          :arg1,
+          -3.5
+        )
 
         assert grouping.instance_of?(Arel::Nodes::Grouping)
         matches = grouping.select { |v| v.instance_of?(Arel::Nodes::Matches) }
