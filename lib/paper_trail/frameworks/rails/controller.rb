@@ -96,10 +96,10 @@ module PaperTrail
         if enabled && user_present && whodunnit_blank && !@set_paper_trail_whodunnit_called
           ::Kernel.warn <<-EOS.strip_heredoc
             user_for_paper_trail is present, but whodunnit has not been set.
-            PaperTrail no longer adds the set_paper_trail_whodunnit
-            before_filter for you. Please add this before_filter to your
-            ApplicationController to continue recording whodunnit. For more
-            information, please see https://git.io/vrTsk
+            PaperTrail no longer adds the set_paper_trail_whodunnit callback for
+            you. To continue recording whodunnit, please add this before_action
+            callback to your ApplicationController . For more information,
+            please see https://git.io/vrTsk
           EOS
         end
       end
