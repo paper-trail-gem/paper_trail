@@ -9,7 +9,7 @@ After upgrading to PaperTrail 5, you see this warning:
 ## You want to track whodunnit
 
 Add the set_paper_trail_whodunnit before_filter to your ApplicationController.
-See the PaperTrail readme for an example (https://git.io/vrTYG).
+See the PaperTrail readme for an example (https://git.io/vrsbt).
 
 ## You don't want to track whodunnit
 
