@@ -121,7 +121,8 @@ describe Widget, type: :model do
     describe "sort order" do
       it "should sort by the timestamp order from the `VersionConcern`" do
         expect(widget.versions.to_sql).to eq(
-          widget.versions.reorder(PaperTrail::Version.timestamp_sort_order).to_sql)
+          widget.versions.reorder(PaperTrail::Version.timestamp_sort_order).to_sql
+        )
       end
     end
   end
