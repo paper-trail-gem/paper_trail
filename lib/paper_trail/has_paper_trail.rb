@@ -567,8 +567,16 @@ module PaperTrail
       end
 
       def attributes_before_change
-        changed = changed_attributes.select { |k, _v| self.class.column_names.include?(k) }
-        attributes.merge(changed)
+        enums = respond_to?(:defined_enums) ? defined_enums : {}
+        attributes.tap do |prev|
+          changed = changed_attributes.select { |k, _v|
+            self.class.column_names.include?(k)
+          }
+          changed.each do |attr, before|
+            before = enums[attr][before] if enums[attr]
+            prev[attr] = before
+          end
+        end
       end
 
       # Returns hash of attributes (with appropriate attributes serialized),

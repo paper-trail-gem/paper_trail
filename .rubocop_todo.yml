@@ -8,7 +8,7 @@ Metrics/CyclomaticComplexity:
   Max: 13 # Goal: 6
 
 Metrics/ModuleLength:
-  Max: 299
+  Max: 307
 
 Metrics/PerceivedComplexity:
   Max: 16 # Goal: 7
