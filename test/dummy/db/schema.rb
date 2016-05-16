@@ -162,7 +162,9 @@ ActiveRecord::Schema.define(version: 20110208155312) do
   add_index "post_versions", ["item_type", "item_id"], name: "index_post_versions_on_item_type_and_item_id"
 
   create_table "post_with_statuses", force: :cascade do |t|
-    t.integer "status"
+    t.integer  "status"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "posts", force: :cascade do |t|

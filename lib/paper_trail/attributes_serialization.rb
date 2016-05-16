@@ -78,7 +78,9 @@ module PaperTrail
       # `NoOpAttribute` and `SerializedAttribute`.
       class CastedAttributeSerializer < AbstractSerializer
         def serialize(attr, val)
-          val = defined_enums[attr][val] if defined_enums[attr]
+          if defined_enums[attr].present? && val.is_a?(::String)
+            val = defined_enums[attr][val]
+          end
           apply_serialization(:type_cast_for_database, attr, val)
         end
 
@@ -94,6 +96,10 @@ module PaperTrail
 
         private
 
+        # Returns a Hash that maps column names to hashes, which in turn
+        # map strings to integers. For example, the PostWithStatus model
+        # in our test suite has the following:
+        # {"status"=>{"draft"=>0, "published"=>1, "archived"=>2}}
         def defined_enums
           @defined_enums ||= (@klass.respond_to?(:defined_enums) ? @klass.defined_enums : {})
         end
