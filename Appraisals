@@ -26,15 +26,11 @@ appraise "ar4" do
 end
 
 appraise "ar5" do
-  gem "activerecord", "5.0.0.beta1"
-  gem "activemodel", "5.0.0.beta1"
-  gem "actionpack", "5.0.0.beta1"
-  gem "railties", "5.0.0.beta1"
-  gem "rspec-rails", github: "rspec/rspec-rails"
-  gem "rspec-core", github: "rspec/rspec-core"
-  gem "rspec-expectations", github: "rspec/rspec-expectations"
-  gem "rspec-mocks", github: "rspec/rspec-mocks"
-  gem "rspec-support", github: "rspec/rspec-support"
+  gem "activerecord", "5.0.0.beta3"
+  gem "activemodel", "5.0.0.beta3"
+  gem "actionpack", "5.0.0.beta3"
+  gem "railties", "5.0.0.beta3"
+  gem "rspec-rails", "3.5.0.beta3"
   gem 'rails-controller-testing'
   # Sinatra stable conflicts with AR5's rack dependency
   gem 'sinatra', github: 'sinatra/sinatra'
