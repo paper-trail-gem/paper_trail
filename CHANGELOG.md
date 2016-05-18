@@ -11,6 +11,8 @@
 
 ### Fixed
 
+- [#812](https://github.com/airblade/paper_trail/pull/812) -
+  Issue with saving HABTM associated objects using accepts_nested_attributes_for
 - Improvements to documentation
 
 ## 5.0.1 (2016-05-04)

@@ -535,7 +535,7 @@ module PaperTrail
             self.class.paper_trail_save_join_tables.include?(a.name) ||
                 a.klass.paper_trail_enabled_for_model?
           assoc_version_args = {
-            version_id: version.id,
+            version_id: version.transaction_id,
             foreign_key_name: a.name
           }
           assoc_ids =
