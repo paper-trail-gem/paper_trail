@@ -375,9 +375,7 @@ module PaperTrail
           if pt_record_object_changes? && changed_notably?
             data[:object_changes] = pt_recordable_object_changes
           end
-          if self.class.paper_trail_version_class.column_names.include?("transaction_id")
-            data[:transaction_id] = PaperTrail.transaction_id
-          end
+          add_transaction_id_to(data)
           version = send(self.class.versions_association_name).create! merge_metadata(data)
           update_transaction_id(version)
           save_associations(version)
@@ -397,12 +395,14 @@ module PaperTrail
           if pt_record_object_changes?
             data[:object_changes] = pt_recordable_object_changes
           end
-          if self.class.paper_trail_version_class.column_names.include?("transaction_id")
-            data[:transaction_id] = PaperTrail.transaction_id
-          end
+          add_transaction_id_to(data)
           version = send(self.class.versions_association_name).create merge_metadata(data)
-          update_transaction_id(version)
-          save_associations(version)
+          if version.errors.any?
+            log_version_errors(version, :update)
+          else
+            update_transaction_id(version)
+            save_associations(version)
+          end
         end
       end
 
@@ -478,14 +478,16 @@ module PaperTrail
             object: pt_recordable_object,
             whodunnit: PaperTrail.whodunnit
           }
-          if self.class.paper_trail_version_class.column_names.include?("transaction_id")
-            data[:transaction_id] = PaperTrail.transaction_id
-          end
+          add_transaction_id_to(data)
           version = self.class.paper_trail_version_class.create(merge_metadata(data))
-          send("#{self.class.version_association_name}=", version)
-          send(self.class.versions_association_name).send :load_target
-          update_transaction_id(version)
-          save_associations(version)
+          if version.errors.any?
+            log_version_errors(version, :destroy)
+          else
+            send("#{self.class.version_association_name}=", version)
+            send(self.class.versions_association_name).send :load_target
+            update_transaction_id(version)
+            save_associations(version)
+          end
         end
       end
 
@@ -638,6 +640,11 @@ module PaperTrail
         (if_condition.blank? || if_condition.call(self)) && !unless_condition.try(:call, self)
       end
 
+      def add_transaction_id_to(data)
+        return unless self.class.paper_trail_version_class.column_names.include?("transaction_id")
+        data[:transaction_id] = PaperTrail.transaction_id
+      end
+
       # @api private
       def update_transaction_id(version)
         return unless self.class.paper_trail_version_class.column_names.include?("transaction_id")
@@ -646,6 +653,13 @@ module PaperTrail
           version.transaction_id = version.id
           version.save
         end
+      end
+
+      def log_version_errors(version, action)
+        version.logger.warn(
+          "Unable to create version for #{action} of #{self.class.name}##{id}: " +
+          version.errors.full_messages.join(", ")
+        )
       end
     end
   end
