@@ -36,4 +36,20 @@ class PaperTrailTest < ActiveSupport::TestCase
     versions_for_widget = PaperTrail::Version.with_item_keys("Widget", widget.id)
     assert_equal 2, versions_for_widget.length
   end
+
+  context "destroy" do
+    setup do
+      @widget = Widget.create
+      association = @widget.send(@widget.class.versions_association_name)
+      association.define_singleton_method(:load_target) do
+        raise "#{association.class}#load_traget was called"
+      end
+    end
+
+    should 'not call PaperTrail::Version::ActiveRecord_Associations_CollectionProxy#load_target' do
+      assert_nothing_raised do
+        @widget.destroy
+      end
+    end
+  end
 end
