@@ -375,9 +375,7 @@ module PaperTrail
           if pt_record_object_changes? && changed_notably?
             data[:object_changes] = pt_recordable_object_changes
           end
-          if self.class.paper_trail_version_class.column_names.include?("transaction_id")
-            data[:transaction_id] = PaperTrail.transaction_id
-          end
+          add_transaction_id_to(data)
           version = send(self.class.versions_association_name).create! merge_metadata(data)
           update_transaction_id(version)
           save_associations(version)
@@ -397,9 +395,7 @@ module PaperTrail
           if pt_record_object_changes?
             data[:object_changes] = pt_recordable_object_changes
           end
-          if self.class.paper_trail_version_class.column_names.include?("transaction_id")
-            data[:transaction_id] = PaperTrail.transaction_id
-          end
+          add_transaction_id_to(data)
           version = send(self.class.versions_association_name).create merge_metadata(data)
           update_transaction_id(version)
           save_associations(version)
@@ -478,9 +474,7 @@ module PaperTrail
             object: pt_recordable_object,
             whodunnit: PaperTrail.whodunnit
           }
-          if self.class.paper_trail_version_class.column_names.include?("transaction_id")
-            data[:transaction_id] = PaperTrail.transaction_id
-          end
+          add_transaction_id_to(data)
           version = self.class.paper_trail_version_class.create(merge_metadata(data))
           send("#{self.class.version_association_name}=", version)
           send(self.class.versions_association_name).send :load_target
@@ -636,6 +630,11 @@ module PaperTrail
         if_condition = paper_trail_options[:if]
         unless_condition = paper_trail_options[:unless]
         (if_condition.blank? || if_condition.call(self)) && !unless_condition.try(:call, self)
+      end
+
+      def add_transaction_id_to(data)
+        return unless self.class.paper_trail_version_class.column_names.include?("transaction_id")
+        data[:transaction_id] = PaperTrail.transaction_id
       end
 
       # @api private
