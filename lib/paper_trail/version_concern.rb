@@ -1,4 +1,5 @@
 require "active_support/concern"
+require "paper_trail/attribute_serializers/object_changes_attribute"
 
 module PaperTrail
   # Originally, PaperTrail did not provide this module, and all of this
@@ -284,7 +285,7 @@ module PaperTrail
       # First, deserialize the `object_changes` column.
       changes = HashWithIndifferentAccess.new(object_changes_deserialized)
 
-      # The next step is, perhaps unfortunately, called "un-serialization",
+      # The next step is, perhaps unfortunately, called "de-serialization",
       # and appears to be responsible for custom attribute serializers. For an
       # example of a custom attribute serializer, see
       # `Person::TimeZoneSerializer` in the test suite.
@@ -296,7 +297,9 @@ module PaperTrail
       #
       # Note: `item` returns nil if `event` is "destroy".
       unless item.nil?
-        item.class.unserialize_attribute_changes_for_paper_trail!(changes)
+        AttributeSerializers::ObjectChangesAttribute.
+          new(item.class).
+          deserialize(changes)
       end
 
       # Finally, return a Hash mapping each attribute name to

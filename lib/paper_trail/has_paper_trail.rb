@@ -1,5 +1,7 @@
 require "active_support/core_ext/object" # provides the `try` method
-require "paper_trail/attributes_serialization"
+require "paper_trail/attribute_serializers/legacy_active_record_shim"
+require "paper_trail/attribute_serializers/object_attribute"
+require "paper_trail/attribute_serializers/object_changes_attribute"
 
 module PaperTrail
   # Extensions to `ActiveRecord::Base`.  See `frameworks/active_record.rb`.
@@ -110,7 +112,10 @@ module PaperTrail
         # Lazily include the instance methods so we don't clutter up
         # any more ActiveRecord models than we have to.
         send :include, InstanceMethods
-        send :extend, AttributesSerialization
+
+        if ::ActiveRecord::VERSION::STRING < "4.2"
+          send :extend, AttributeSerializers::LegacyActiveRecordShim
+        end
 
         class_attribute :version_association_name
         self.version_association_name = options[:version] || :version
@@ -444,7 +449,9 @@ module PaperTrail
 
       def changes_for_paper_trail
         notable_changes = changes.delete_if { |k, _v| !notably_changed.include?(k) }
-        self.class.serialize_attribute_changes_for_paper_trail!(notable_changes)
+        AttributeSerializers::ObjectChangesAttribute.
+          new(self.class).
+          serialize(notable_changes)
         notable_changes.to_hash
       end
 
@@ -577,7 +584,7 @@ module PaperTrail
       # ommitting attributes to be skipped.
       def object_attrs_for_paper_trail
         attrs = attributes_before_change.except(*paper_trail_options[:skip])
-        self.class.serialize_attributes_for_paper_trail!(attrs)
+        AttributeSerializers::ObjectAttribute.new(self.class).serialize(attrs)
         attrs
       end
 
