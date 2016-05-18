@@ -29,6 +29,8 @@
 - [#789](https://github.com/airblade/paper_trail/issues/789) -
   A potentially common issue, in applications with initializers that use
   versioned models.
+- [#812](https://github.com/airblade/paper_trail/pull/812) -
+  Issue with saving HABTM associated objects using accepts_nested_attributes_for
 
 ## 5.0.0 (2016-05-02)
 

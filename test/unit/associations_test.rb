@@ -988,5 +988,29 @@ class AssociationsTest < ActiveSupport::TestCase
         end
       end
     end
+
+    context "updated via nested attributes" do
+      setup do
+        @foo = FooHabtm.create(
+          name: "foo",
+          bar_habtms_attributes: [{ name: "bar" }]
+        )
+        Timecop.travel 1.second.since
+        @foo.update_attributes(
+          name: "foo2",
+          bar_habtms_attributes: [{ id: @foo.bar_habtms.first.id, name: "bar2" }]
+        )
+
+        @reified = @foo.versions.last.reify(has_and_belongs_to_many: true)
+      end
+
+      should "see the associated object as it was at the time" do
+        assert_equal "bar", @reified.bar_habtms.first.name
+      end
+
+      should "not persist changes to the live object" do
+        assert_not_equal @reified.bar_habtms.first.name, @foo.reload.bar_habtms.first.name
+      end
+    end
   end
 end
