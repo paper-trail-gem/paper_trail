@@ -1,4 +1,4 @@
-## 5.0.2 (Unreleased)
+## 5.1.0 (Unreleased)
 
 ### Breaking Changes
 
@@ -6,11 +6,12 @@
 
 ### Added
 
-- None
+- [#809](https://github.com/airblade/paper_trail/pull/809) -
+  Print warning if version cannot be saved.
 
 ### Fixed
 
-- Minor improvements to documentation
+- Improvements to documentation
 
 ## 5.0.1 (2016-05-04)
 
