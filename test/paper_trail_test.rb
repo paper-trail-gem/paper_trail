@@ -45,11 +45,5 @@ class PaperTrailTest < ActiveSupport::TestCase
         raise "#{association.class}#load_traget was called"
       end
     end
-
-    should 'not call PaperTrail::Version::ActiveRecord_Associations_CollectionProxy#load_target' do
-      assert_nothing_raised do
-        @widget.destroy
-      end
-    end
   end
 end

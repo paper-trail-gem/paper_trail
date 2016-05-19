@@ -483,6 +483,7 @@ module PaperTrail
           end
           version = self.class.paper_trail_version_class.create(merge_metadata(data))
           send("#{self.class.version_association_name}=", version)
+          send(self.class.versions_association_name).reset
           update_transaction_id(version)
           save_associations(version)
         end

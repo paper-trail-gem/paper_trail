@@ -37,6 +37,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "pry-nav", "~> 0.2.4"
   s.add_development_dependency "rubocop", "~> 0.40.0"
   s.add_development_dependency "timecop", "~> 0.8.0"
+  s.add_development_dependency "bullet", "~>5.0.0"
 
   if defined?(JRUBY_VERSION)
     s.add_development_dependency "activerecord-jdbcsqlite3-adapter", "~> 1.3.15"

@@ -1,5 +1,6 @@
 require "test_helper"
 require "time_travel_helper"
+require "bullet"
 
 class AssociationsTest < ActiveSupport::TestCase
   CHAPTER_NAMES = [
@@ -25,6 +26,31 @@ class AssociationsTest < ActiveSupport::TestCase
       self.use_transactional_fixtures = false
     end
     setup { DatabaseCleaner.start }
+  end
+
+  skip_bullet = -> { @skip_bullet = true }
+
+  def before_setup
+    unless @skip_bullet
+      Bullet.enable = true
+      Bullet.counter_cache_enable = false
+      Bullet.raise = true
+      Bullet.start_request
+    end
+    super if defined?(super)
+  end
+
+  def after_teardown
+    super if defined?(super)
+    return if @skip_bullet
+    if Bullet.warnings.present?
+      warnings = Bullet.warnings.map { |_k, warning| warning }.
+        flatten.map(&:body_with_caller).
+        join("\n-----\n\n")
+      flunk(warnings)
+    end
+    Bullet.end_request
+    Bullet.enable = false
   end
 
   teardown do
@@ -314,6 +340,19 @@ class AssociationsTest < ActiveSupport::TestCase
         end
       end
     end
+
+    context "destroying associated records by dependent: :destroy" do
+      setup do
+        @other_customer = Customer.create name: "customer_for_deletion"
+        5.times { @other_customer.orders.create! order_date: Date.today }
+      end
+
+      should "not process N+1 query" do
+        assert_nothing_raised do
+          @other_customer.destroy
+        end
+      end
+    end
   end
 
   context "has_many through associations" do
@@ -520,7 +559,7 @@ class AssociationsTest < ActiveSupport::TestCase
                 marked_for_destruction?
             end
 
-            should "mark the newly associated-through for destruction" do
+            should "mark the newly associated-through for destruction", before: skip_bullet do
               assert @book_0.
                 authorships.
                 detect { |as| as.author.name == "author_1" }.
@@ -561,7 +600,7 @@ class AssociationsTest < ActiveSupport::TestCase
                 marked_for_destruction?
             end
 
-            should "mark the newly associated-through for destruction" do
+            should "mark the newly associated-through for destruction", before: skip_bullet do
               assert @book_0.
                 authorships.
                 detect { |as| as.author.name == "person_existing" }.
