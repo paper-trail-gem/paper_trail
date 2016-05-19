@@ -491,7 +491,7 @@ module PaperTrail
             log_version_errors(version, :destroy)
           else
             send("#{self.class.version_association_name}=", version)
-            send(self.class.versions_association_name).send :load_target
+            send(self.class.versions_association_name).reset
             update_transaction_id(version)
             save_associations(version)
           end
