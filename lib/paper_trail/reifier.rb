@@ -1,3 +1,5 @@
+require "paper_trail/attribute_serializers/object_attribute"
+
 module PaperTrail
   # Given a version record and some options, builds a new model object.
   # @api private
@@ -164,10 +166,9 @@ module PaperTrail
       # Set all the attributes in this version on the model.
       def reify_attributes(model, version, attrs)
         enums = model.class.respond_to?(:defined_enums) ? model.class.defined_enums : {}
-        model.class.unserialize_attributes_for_paper_trail! attrs
-
+        AttributeSerializers::ObjectAttribute.new(model.class).deserialize(attrs)
         attrs.each do |k, v|
-          # `unserialize_attributes_for_paper_trail!` will return the mapped enum value
+          # `ObjectAttribute#deserialize` will return the mapped enum value
           # and in Rails < 5, the []= uses the integer type caster from the column
           # definition (in general) and thus will turn a (usually) string to 0 instead
           # of the correct value
