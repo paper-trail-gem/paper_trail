@@ -96,7 +96,8 @@ DB=postgres bundle exec rake
 1. In the readme,
   - remove "unreleased" from the doc versions table
   - update any other references to version number
-1. Commit and tag with `git tag -a -m "v5.0.0" "v5.0.0"`
+1. Commit
+1. Tag with `git tag -a -m "v5.0.0" "v5.0.0"`
 1. `git push --tags origin master`
 1. `gem build paper_trail.gemspec`
 1. `gem push paper_trail-5.0.0.gem`
