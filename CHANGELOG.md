@@ -13,6 +13,8 @@
 
 - [#812](https://github.com/airblade/paper_trail/pull/812) -
   Issue with saving HABTM associated objects using accepts_nested_attributes_for
+- [#811](https://github.com/airblade/paper_trail/pull/811) -
+  Avoid unnecessary query in #record_destroy
 - Improvements to documentation
 
 ## 5.0.1 (2016-05-04)
