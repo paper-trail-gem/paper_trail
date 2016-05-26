@@ -17,7 +17,7 @@ class CreateVersions < ActiveRecord::Migration
 
   def change
     create_table :versions, versions_table_options do |t|
-      t.string   :item_type, null: false
+      t.string   :item_type, item_type_options
       t.integer  :item_id,   null: false
       t.string   :event,     null: false
       t.string   :whodunnit
@@ -43,6 +43,18 @@ class CreateVersions < ActiveRecord::Migration
 
   private
 
+  # MySQL 5.6 utf8mb4 limit is 191 chars for keys used in indexes.
+  # See https://github.com/airblade/paper_trail/issues/651
+  def item_type_options
+    opt = { null: false }
+    opt[:limit] = 191 if mysql?
+    opt
+  end
+
+  def mysql?
+    MYSQL_ADAPTERS.include?(connection.class.name)
+  end
+
   # Even modern versions of MySQL still use `latin1` as the default character
   # encoding. Many users are not aware of this, and run into trouble when they
   # try to use PaperTrail in apps that otherwise tend to use UTF-8. Postgres, by
@@ -59,7 +71,7 @@ class CreateVersions < ActiveRecord::Migration
   # - https://dev.mysql.com/doc/refman/5.5/en/charset-unicode-utf8mb4.html
   #
   def versions_table_options
-    if MYSQL_ADAPTERS.include?(connection.class.name)
+    if mysql?
       { options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci" }
     else
       {}
