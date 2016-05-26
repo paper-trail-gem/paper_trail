@@ -38,7 +38,7 @@ class SetUpTestTables < ActiveRecord::Migration
     end
 
     create_table :versions, versions_table_options do |t|
-      t.string   :item_type, null: false
+      t.string   :item_type, item_type_options
       t.integer  :item_id,   null: false
       t.string   :event,     null: false
       t.string   :whodunnit
@@ -323,11 +323,21 @@ class SetUpTestTables < ActiveRecord::Migration
 
   private
 
+  def item_type_options
+    opt = { null: false }
+    opt[:limit] = 191 if mysql?
+    opt
+  end
+
+  def mysql?
+    MYSQL_ADAPTERS.include?(connection.class.name)
+  end
+
   def versions_table_options
-    opts = { force: true }
-    if MYSQL_ADAPTERS.include?(connection.class.name)
-      opts[:options] = "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci"
+    if mysql?
+      { options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci" }
+    else
+      {}
     end
-    opts
   end
 end

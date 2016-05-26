@@ -1,4 +1,4 @@
-## 5.?.? (Unreleased)
+## 5.1.1 (Unreleased)
 
 ### Breaking Changes
 
@@ -10,7 +10,8 @@
 
 ### Fixed
 
-- None
+- [#651](https://github.com/airblade/paper_trail/issues/651) -
+  Bug with installing PT on MySQL <= 5.6
 
 ## 5.1.0 (2016-05-20)
 
