@@ -12,6 +12,7 @@ pkg/*
 .bundle
 .rbenv-version
 Gemfile.lock
+gemfiles/*.lock
 vendor/*
 .idea
 .rvmrc

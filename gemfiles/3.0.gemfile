@@ -1,7 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'activerecord', '~> 3.0'
-gem 'i18n', '~> 0.4.1'
+gem 'activerecord', '3.2.22.2'
 gem 'request_store', '~> 1.1.0'
 
 # actionpack 3 depends on rack-cache ~> 1.2, but bundler seems to ignore that.
@@ -15,15 +14,11 @@ group :development, :test do
   gem 'shoulda', '~> 3.5'
   gem 'ffaker',  '<= 1.31.0'
 
-  # Testing of Rails
-  gem 'railties', '~> 3.0'
-
   # Testing of Sinatra
   gem 'sinatra', '~> 1.1.4'
-  gem 'rack-test', '~> 0.5.7'
 
   # RSpec testing
-  gem 'rspec-rails', '~> 3.1.0'
+  gem 'rspec-rails', '~> 3.4.2'
   gem 'generator_spec'
 
   # To do proper transactional testing with ActiveSupport::TestCase on MySQL
