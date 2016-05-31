@@ -27,7 +27,7 @@ before_script:
 
 gemfile:
   - Gemfile
-  - gemfiles/3.0.gemfile
+  - gemfiles/ar3.gemfile
 
 matrix:
   fast_finish: true
