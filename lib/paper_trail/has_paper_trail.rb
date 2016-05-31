@@ -120,9 +120,18 @@ module PaperTrail
           fail ArgumentError, 'recording order can only be "after" or "before"'
         end
 
-        send "#{recording_order}_destroy",
-             :record_destroy,
-             :if => :save_version?
+        if recording_order.to_s == 'after' and
+          Gem::Version.new(ActiveRecord::VERSION::STRING).release >= Gem::Version.new("5")
+          if ::ActiveRecord::Base.belongs_to_required_by_default
+            ::ActiveSupport::Deprecation.warn(
+              "paper_trail_on_destroy(:after) is incompatible with ActiveRecord " +
+                "belongs_to_required_by_default and has no effect. Please use :before " +
+                "or disable belongs_to_required_by_default."
+            )
+          end
+        end
+
+        send "#{recording_order}_destroy", :record_destroy, :if => :save_version?
 
         return if paper_trail_options[:on].include?(:destroy)
         paper_trail_options[:on] << :destroy

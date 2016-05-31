@@ -1,3 +1,11 @@
+## 4.2.0 (Unreleased)
+
+### Added
+
+- [#808](https://github.com/airblade/paper_trail/pull/808) -
+  Warn when destroy callback is set to :after with ActiveRecord 5
+  option `belongs_to_required_by_default` set to `true`.
+
 ## 4.1.0
 
 ### Breaking Changes
