@@ -10,6 +10,8 @@
 
 ### Fixed
 
+- [#813](https://github.com/airblade/paper_trail/pull/813) -
+  Fix warning for paper_trail_on_destroy(:after) for pre-releases of AR 5
 - [#651](https://github.com/airblade/paper_trail/issues/651) -
   Bug with installing PT on MySQL <= 5.6
 
