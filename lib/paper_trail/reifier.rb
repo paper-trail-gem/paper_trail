@@ -124,7 +124,11 @@ module PaperTrail
           group("item_id").
           to_sql
         versions = versions_by_id(assoc.klass, version_id_subquery)
-        collection = Array.new assoc.klass.where(assoc.klass.primary_key => collection_keys)
+
+        ar_collection = assoc.klass.where(assoc.klass.primary_key => collection_keys)
+        ar_collection = ar_collection.order(assoc.options[:order]) if assoc.options[:order].present?
+
+        collection = Array.new ar_collection
         prepare_array_for_has_many(collection, options, versions)
         collection
       end
