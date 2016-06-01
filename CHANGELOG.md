@@ -122,6 +122,22 @@
 - [#584](https://github.com/airblade/paper_trail/issues/584) -
   Fixed deprecation warning for Active Record after_callback / after_commit
 
+## 4.2.0 (2016-05-31)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- [#808](https://github.com/airblade/paper_trail/pull/808) -
+  Warn when destroy callback is set to :after with ActiveRecord 5
+  option `belongs_to_required_by_default` set to `true`.
+
+### Fixed
+
+- None
+
 ## 4.1.0 (2016-01-30)
 
 ### Breaking Changes
