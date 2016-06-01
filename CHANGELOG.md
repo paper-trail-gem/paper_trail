@@ -1,4 +1,8 @@
-## 4.2.0 (Unreleased)
+## 4.2.0 (2016-05-31)
+
+### Breaking Changes
+
+- None
 
 ### Added
 
@@ -6,7 +10,11 @@
   Warn when destroy callback is set to :after with ActiveRecord 5
   option `belongs_to_required_by_default` set to `true`.
 
-## 4.1.0
+### Fixed
+
+- None
+
+## 4.1.0 (2016-01-30)
 
 ### Breaking Changes
 

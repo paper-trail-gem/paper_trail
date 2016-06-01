@@ -10,8 +10,7 @@ has been destroyed.
 
 | Version        | Documentation |
 | -------------- | ------------- |
-| 4.1            | https://github.com/airblade/paper_trail/blob/4.1-stable/README.md |
-| 4.0            | https://github.com/airblade/paper_trail/blob/4.0-stable/README.md |
+| 4              | https://github.com/airblade/paper_trail/blob/4-stable/README.md   |
 | 3              | https://github.com/airblade/paper_trail/blob/3.0-stable/README.md |
 | 2              | https://github.com/airblade/paper_trail/blob/2.7-stable/README.md |
 | 1              | https://github.com/airblade/paper_trail/blob/rails2/README.md |
@@ -48,7 +47,7 @@ has been destroyed.
 
 | paper_trail | branch     | tags   | ruby     | activerecord |
 | ----------- | ---------- | ------ | -------- | ------------ |
-| 4           | master     | v4.x   | >= 1.8.7 | >= 3.0, < 6  |
+| 4           | 4-stable   | v4.x   | >= 1.8.7 | >= 3.0, < 6  |
 | 3           | 3.0-stable | v3.x   | >= 1.8.7 | >= 3.0, < 5  |
 | 2           | 2.7-stable | v2.x   | >= 1.8.7 | >= 3.0, < 4  |
 | 1           | rails2     | v1.x   | >= 1.8.7 | >= 2.3, < 3  |
@@ -57,7 +56,7 @@ has been destroyed.
 
 1. Add PaperTrail to your `Gemfile`.
 
-    `gem 'paper_trail', '~> 4.1.0'`
+    `gem 'paper_trail', '~> 4.2.0'`
 
 1. Add a `versions` table to your database.
 
@@ -1378,7 +1377,7 @@ setting up your app with PaperTrail will look something like this:
 
 1. Add PaperTrail to your `Gemfile`.
 
-    `gem 'paper_trail', '~> 4.1.0'`
+    `gem 'paper_trail', '~> 4.2.0'`
 
 2. Generate a migration to add a `versions` table to your database.
 
