@@ -170,35 +170,35 @@ widget.version
 
 # Returns true if this widget is the current, live one; or false if it is from
 # a previous version.
-widget.live?
+widget.paper_trail.live?
 
 # Returns who put the widget into its current state.
-widget.paper_trail_originator
+widget.paper_trail.originator
 
 # Returns the widget (not a version) as it looked at the given timestamp.
-widget.version_at(timestamp)
+widget.paper_trail.version_at(timestamp)
 
 # Returns the widget (not a version) as it was most recently.
-widget.previous_version
+widget.paper_trail.previous_version
 
 # Returns the widget (not a version) as it became next.
-widget.next_version
+widget.paper_trail.next_version
 
 # Generates a version for a `touch` event (`widget.touch` does NOT generate a
 # version)
-widget.touch_with_version
+widget.paper_trail.touch_with_version
 
 # Turn PaperTrail off for all widgets.
-Widget.paper_trail_off!
+Widget.paper_trail.disable
 
 # Turn PaperTrail on for all widgets.
-Widget.paper_trail_on!
+Widget.paper_trail.enable
 
 # Is PaperTrail enabled for Widget, the class?
-Widget.paper_trail_enabled_for_model?
+Widget.paper_trail.enabled?
 
 # Is PaperTrail enabled for widget, the instance?
-widget.paper_trail_enabled_for_model?
+widget.paper_trail.enabled_for_model?
 ```
 
 And a `PaperTrail::Version` instance (which is just an ordinary ActiveRecord
@@ -301,13 +301,13 @@ class Article < ActiveRecord::Base
   has_paper_trail :on => []
 
   # Add callbacks in the order you need.
-  paper_trail_on_destroy    # add destroy callback
-  paper_trail_on_update     # etc.
-  paper_trail_on_create
+  paper_trail.on_destroy    # add destroy callback
+  paper_trail.on_update     # etc.
+  paper_trail.on_create
 end
 ```
 
-The `paper_trail_on_destroy` method can be further configured to happen
+The `paper_trail.on_destroy` method can be further configured to happen
 `:before` or `:after` the destroy event. In PaperTrail 4, the default is
 `:after`. In PaperTrail 5, the default will be `:before`, to support
 ActiveRecord 5. (see https://github.com/airblade/paper_trail/pull/683)
@@ -353,7 +353,7 @@ a.update_attributes :title => 'My Title', :rating => 3
 a.versions.length                         # 1
 a.update_attributes :title => 'Greeting', :content => 'Hello'
 a.versions.length                         # 2
-a.previous_version.title                  # 'My Title'
+a.paper_trail.previous_version.title      # 'My Title'
 ```
 
 Or, you can specify a list of all attributes you care about:
@@ -373,7 +373,7 @@ a.update_attributes :title => 'My Title'
 a.versions.length                         # 2
 a.update_attributes :content => 'Hello'
 a.versions.length                         # 2
-a.previous_version.content                # nil
+a.paper_trail.previous_version.content    # nil
 ```
 
 The `:ignore` and `:only` options can also accept `Hash` arguments, where the :
@@ -396,10 +396,10 @@ a.update_attributes :title => 'My Title'
 a.versions.length                         # 3
 a.update_attributes :content => 'Hai'
 a.versions.length                         # 3
-a.previous_version.content                # "Hello"
+a.paper_trail.previous_version.content    # "Hello"
 a.update_attributes :title => 'Dif Title'
 a.versions.length                         # 4
-a.previous_version.content                # "Hai"
+a.paper_trail.previous_version.content    # "Hai"
 ```
 
 Passing both `:ignore` and `:only` options will result in the article being
@@ -454,8 +454,8 @@ end
 #### Per Class
 
 ```ruby
-Widget.paper_trail_off!
-Widget.paper_trail_on!
+Widget.paper_trail.disable
+Widget.paper_trail.enable
 ```
 
 #### Per Method
@@ -464,13 +464,13 @@ You can call a method without creating a new version using `without_versioning`.
  It takes either a method name as a symbol:
 
 ```ruby
-@widget.without_versioning :destroy
+@widget.paper_trail.without_versioning :destroy
 ```
 
 Or a block:
 
 ```ruby
-@widget.without_versioning do
+@widget.paper_trail.without_versioning do
   @widget.update_attributes :name => 'Ford'
 end
 ```
@@ -497,15 +497,15 @@ PaperTrail makes reverting to a previous version easy:
 widget = Widget.find 42
 widget.update_attributes :name => 'Blah blah'
 # Time passes....
-widget = widget.previous_version  # the widget as it was before the update
-widget.save                       # reverted
+widget = widget.paper_trail.previous_version  # the widget as it was before the update
+widget.save                                   # reverted
 ```
 
 Alternatively you can find the version at a given time:
 
 ```ruby
-widget = widget.version_at(1.day.ago)  # the widget as it was one day ago
-widget.save                            # reverted
+widget = widget.paper_trail.version_at(1.day.ago)  # the widget as it was one day ago
+widget.save                                        # reverted
 ```
 
 Note `version_at` gives you the object, not a version, so you don't need to call
@@ -518,7 +518,7 @@ widget = Widget.find 42
 widget.destroy
 # Time passes....
 widget = PaperTrail::Version.find(153).reify  # the widget as it was before destruction
-widget.save                         # the widget lives!
+widget.save                                   # the widget lives!
 ```
 
 You could even use PaperTrail to implement an undo system, [Ryan Bates has!][3]
@@ -533,11 +533,11 @@ was/became.  Note that these methods reify the item for you.
 
 ```ruby
 live_widget = Widget.find 42
-live_widget.versions.length           # 4 for example
-widget = live_widget.previous_version # => widget == live_widget.versions.last.reify
-widget = widget.previous_version      # => widget == live_widget.versions[-2].reify
-widget = widget.next_version          # => widget == live_widget.versions.last.reify
-widget.next_version                   # live_widget
+live_widget.versions.length                       # 4, for example
+widget = live_widget.paper_trail.previous_version # => widget == live_widget.versions.last.reify
+widget = widget.paper_trail.previous_version      # => widget == live_widget.versions[-2].reify
+widget = widget.paper_trail.next_version          # => widget == live_widget.versions.last.reify
+widget.paper_trail.next_version                   # live_widget
 ```
 
 If instead you have a particular `version` of an item you can navigate to the
@@ -571,7 +571,7 @@ it came instead from a previous version -- with `live?`:
 ```ruby
 widget = Widget.find 42
 widget.live?                        # true
-widget = widget.previous_version
+widget = widget.paper_trail.previous_version
 widget.live?                        # false
 ```
 
@@ -728,10 +728,10 @@ like it does, call `paper_trail_originator` on the object.
 widget = Widget.find 153                    # assume widget has 0 versions
 PaperTrail.whodunnit = 'Alice'
 widget.update_attributes :name => 'Yankee'
-widget.paper_trail_originator               # 'Alice'
+widget.paper_trail.originator               # 'Alice'
 PaperTrail.whodunnit = 'Bob'
 widget.update_attributes :name => 'Zulu'
-widget.paper_trail_originator               # 'Bob'
+widget.paper_trail.originator               # 'Bob'
 first_version, last_version = widget.versions.first, widget.versions.last
 first_version.whodunnit                     # 'Alice'
 first_version.paper_trail_originator        # nil
@@ -1068,7 +1068,9 @@ class Post < ActiveRecord::Base
 end
 ```
 
-Unlike ActiveRecord's `class_name`, you'll have to supply the complete module path to the class (e.g. `Foo::BarVersion` if your class is inside the module `Foo`).
+Unlike ActiveRecord's `class_name`, you'll have to supply the complete module
+path to the class (e.g. `Foo::BarVersion` if your class is inside the module
+`Foo`).
 
 #### Advantages
 

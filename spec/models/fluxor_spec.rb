@@ -7,12 +7,10 @@ describe Fluxor, type: :model do
 
   describe "Methods" do
     describe "Class" do
-      subject { Fluxor }
-
-      describe "#paper_trail_enabled_for_model?" do
-        it { is_expected.to respond_to(:paper_trail_enabled_for_model?) }
-
-        it { expect(subject.paper_trail_enabled_for_model?).to be false }
+      describe ".paper_trail.enabled?" do
+        it "returns false" do
+          expect(Fluxor.paper_trail.enabled?).to eq(false)
+        end
       end
     end
   end

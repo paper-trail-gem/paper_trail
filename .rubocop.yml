@@ -17,10 +17,6 @@ Metrics/AbcSize:
   Exclude:
     - 'test/dummy/db/migrate/*'
 
-Metrics/ClassLength:
-  Exclude:
-    - test/**/*
-
 # The Ruby Style Guide recommends to "Limit lines to 80 characters."
 # (https://github.com/bbatsov/ruby-style-guide#80-character-limits)
 # but 100 is also reasonable.

@@ -32,7 +32,7 @@ module PaperTrail
       end
 
       def object_col_is_json?
-        @model_class.paper_trail_version_class.object_col_is_json?
+        @model_class.paper_trail.version_class.object_col_is_json?
       end
     end
   end

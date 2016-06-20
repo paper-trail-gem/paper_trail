@@ -16,6 +16,11 @@ module PaperTrail
   extend PaperTrail::Cleaner
 
   class << self
+    # @api private
+    def clear_transaction_id
+      self.transaction_id = nil
+    end
+
     # Switches PaperTrail on or off.
     # @api public
     def enabled=(value)

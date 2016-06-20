@@ -17,27 +17,27 @@ end
 
 class BeforeDestroyModifier < CallbackModifier
   has_paper_trail on: []
-  paper_trail_on_destroy :before
+  paper_trail.on_destroy :before
 end
 
 class AfterDestroyModifier < CallbackModifier
   has_paper_trail on: []
-  paper_trail_on_destroy :after
+  paper_trail.on_destroy :after
 end
 
 class NoArgDestroyModifier < CallbackModifier
   has_paper_trail on: []
-  paper_trail_on_destroy
+  paper_trail.on_destroy
 end
 
 class UpdateModifier < CallbackModifier
   has_paper_trail on: []
-  paper_trail_on_update
+  paper_trail.on_update
 end
 
 class CreateModifier < CallbackModifier
   has_paper_trail on: []
-  paper_trail_on_create
+  paper_trail.on_create
 end
 
 class DefaultModifier < CallbackModifier

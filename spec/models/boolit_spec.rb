@@ -28,7 +28,7 @@ describe Boolit, type: :model do
       end
 
       it "should still be able to be reified and persisted" do
-        expect { subject.previous_version.save! }.to_not raise_error
+        expect { subject.paper_trail.previous_version.save! }.to_not raise_error
       end
 
       context "with `nil` attributes on the live instance" do
@@ -40,7 +40,7 @@ describe Boolit, type: :model do
         after { PaperTrail.serializer = PaperTrail::Serializers::YAML }
 
         it "should not overwrite that attribute during the reification process" do
-          expect(subject.previous_version.name).to be_nil
+          expect(subject.paper_trail.previous_version.name).to be_nil
         end
       end
     end

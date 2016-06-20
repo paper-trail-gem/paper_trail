@@ -10,7 +10,7 @@ describe PostWithStatus, type: :model do
       it "should stash the enum value properly in versions" do
         post.published!
         post.archived!
-        expect(post.previous_version.published?).to be true
+        expect(post.paper_trail.previous_version.published?).to be true
       end
 
       context "storing enum object_changes" do

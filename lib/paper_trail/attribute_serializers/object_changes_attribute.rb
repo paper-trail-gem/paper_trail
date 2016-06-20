@@ -35,7 +35,7 @@ module PaperTrail
       end
 
       def object_changes_col_is_json?
-        @item_class.paper_trail_version_class.object_changes_col_is_json?
+        @item_class.paper_trail.version_class.object_changes_col_is_json?
       end
     end
   end
