@@ -170,23 +170,23 @@ widget.version
 
 # Returns true if this widget is the current, live one; or false if it is from
 # a previous version.
-widget.paper_trail.live?
+widget.live?
 
 # Returns who put the widget into its current state.
-widget.paper_trail.originator
+widget.paper_trail_originator
 
 # Returns the widget (not a version) as it looked at the given timestamp.
-widget.paper_trail.version_at(timestamp)
+widget.version_at(timestamp)
 
 # Returns the widget (not a version) as it was most recently.
-widget.paper_trail.previous_version
+widget.previous_version
 
 # Returns the widget (not a version) as it became next.
-widget.paper_trail.next_version
+widget.next_version
 
 # Generates a version for a `touch` event (`widget.touch` does NOT generate a
 # version)
-widget.paper_trail.touch_with_version
+widget.touch_with_version
 
 # Turn PaperTrail off for all widgets.
 Widget.paper_trail.disable
