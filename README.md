@@ -10,11 +10,12 @@ has been destroyed.
 
 | Version        | Documentation |
 | -------------- | ------------- |
-| 5              | https://github.com/airblade/paper_trail/blob/master/README.md     |
-| 4              | https://github.com/airblade/paper_trail/blob/4-stable/README.md   |
-| 3              | https://github.com/airblade/paper_trail/blob/3.0-stable/README.md |
-| 2              | https://github.com/airblade/paper_trail/blob/2.7-stable/README.md |
-| 1              | https://github.com/airblade/paper_trail/blob/rails2/README.md     |
+| Unreleased     | https://github.com/airblade/paper_trail/blob/master/README.md |
+| 5.1.1          | https://github.com/airblade/paper_trail/blob/v5.1.1/README.md |
+| 4.2.0          | https://github.com/airblade/paper_trail/blob/v4.2.0/README.md |
+| 3.0.9          | https://github.com/airblade/paper_trail/blob/v3.0.9/README.md |
+| 2.7.2          | https://github.com/airblade/paper_trail/blob/v2.7.2/README.md |
+| 1.6.5          | https://github.com/airblade/paper_trail/blob/v1.6.5/README.md |
 
 ## Table of Contents
 
