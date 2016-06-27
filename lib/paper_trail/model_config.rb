@@ -179,14 +179,16 @@ module PaperTrail
 
     def update_habtm_state(name, callback, model, assoc)
       model.paper_trail_habtm ||= {}
-      model.paper_trail_habtm.reverse_merge!(name => { removed: [], added: [] })
+      model.paper_trail_habtm[name] ||= { removed: [], added: [] }
+      state = model.paper_trail_habtm[name]
+      assoc_id = assoc.id
       case callback
       when :before_add
-        model.paper_trail_habtm[name][:added] |= [assoc.id]
-        model.paper_trail_habtm[name][:removed] -= [assoc.id]
+        state[:added] |= [assoc_id]
+        state[:removed] -= [assoc_id]
       when :before_remove
-        model.paper_trail_habtm[name][:removed] |= [assoc.id]
-        model.paper_trail_habtm[name][:added] -= [assoc.id]
+        state[:removed] |= [assoc_id]
+        state[:added] -= [assoc_id]
       else
         raise "Invalid callback: #{callback}"
       end
