@@ -1,4 +1,22 @@
-## 5.2.0 (Unreleased)
+## ?.?.? (Unreleased)
+
+### Breaking Changes
+
+- None
+
+### Deprecated
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- None
+
+## 5.2.0 (2016-06-27)
 
 ### Breaking Changes
 
