@@ -140,7 +140,7 @@ describe Widget, type: :model do
 
   describe "Methods" do
     describe "Instance", versioning: true do
-      describe '#paper_trail.originator' do
+      describe "#paper_trail.originator" do
         describe "return value" do
           let(:orig_name) { FFaker::Name.name }
           let(:new_name) { FFaker::Name.name }
@@ -192,7 +192,7 @@ describe Widget, type: :model do
         end
       end
 
-      describe '#version_at' do
+      describe "#version_at" do
         context "Timestamp argument is AFTER object has been destroyed" do
           it "should return `nil`" do
             widget.update_attribute(:name, "foobar")
@@ -202,7 +202,7 @@ describe Widget, type: :model do
         end
       end
 
-      describe '#whodunnit' do
+      describe "#whodunnit" do
         it { is_expected.to respond_to(:whodunnit) }
 
         context "no block given" do
@@ -250,7 +250,7 @@ describe Widget, type: :model do
         end
       end
 
-      describe '#touch_with_version' do
+      describe "#touch_with_version" do
         it "creates a version" do
           count = widget.versions.size
           # Travel 1 second because MySQL lacks sub-second resolution

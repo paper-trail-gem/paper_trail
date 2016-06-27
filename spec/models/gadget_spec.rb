@@ -25,7 +25,7 @@ describe Gadget, type: :model do
   describe "Methods" do
     describe "Instance", versioning: true do
       describe "private" do
-        describe '#changed_notably?' do
+        describe "#changed_notably?" do
           subject { Gadget.new(created_at: Time.now) }
 
           context "create events" do

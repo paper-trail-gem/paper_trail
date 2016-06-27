@@ -14,19 +14,19 @@ describe JoinedVersion, type: :model, versioning: true do
     describe "VersionConcern::ClassMethods" do
       before { widget } # persist a widget
 
-      describe '#subsequent' do
+      describe "#subsequent" do
         it "shouldn't error out when there is a default_scope that joins" do
           JoinedVersion.subsequent(version).first
         end
       end
 
-      describe '#preceding' do
+      describe "#preceding" do
         it "shouldn't error out when there is a default scope that joins" do
           JoinedVersion.preceding(version).first
         end
       end
 
-      describe '#between' do
+      describe "#between" do
         it "shouldn't error out when there is a default scope that joins" do
           JoinedVersion.between(Time.now, 1.minute.from_now).first
         end
@@ -35,7 +35,7 @@ describe JoinedVersion, type: :model, versioning: true do
   end
 
   describe "Methods" do
-    describe '#index' do
+    describe "#index" do
       it { is_expected.to respond_to(:index) }
 
       it "shouldn't error out when there is a default scope that joins" do
