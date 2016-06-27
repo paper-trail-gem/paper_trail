@@ -94,6 +94,11 @@ module PaperTrail
         ::ActiveRecord::Base.belongs_to_required_by_default
     end
 
+    def habtm_assocs_not_skipped
+      @model_class.reflect_on_all_associations(:has_and_belongs_to_many).
+        reject { |a| @model_class.paper_trail_options[:skip].include?(a.name.to_s) }
+    end
+
     def setup_associations(options)
       @model_class.class_attribute :version_association_name
       @model_class.version_association_name = options[:version] || :version
@@ -133,23 +138,24 @@ module PaperTrail
       @model_class.send :attr_accessor, :paper_trail_habtm
       @model_class.class_attribute :paper_trail_save_join_tables
       @model_class.paper_trail_save_join_tables = Array.wrap(join_tables)
-      @model_class.reflect_on_all_associations(:has_and_belongs_to_many).
-        reject { |a| @model_class.paper_trail_options[:skip].include?(a.name.to_s) }.
-        each { |a|
-          added_callback = lambda do |*args|
-            update_habtm_state(a.name, :before_add, args[-2], args.last)
-          end
-          removed_callback = lambda do |*args|
-            update_habtm_state(a.name, :before_remove, args[-2], args.last)
-          end
-          @model_class.send(:"before_add_for_#{a.name}").send(:<<, added_callback)
-          @model_class.send(:"before_remove_for_#{a.name}").send(:<<, removed_callback)
-        }
+      habtm_assocs_not_skipped.each(&method(:setup_habtm_change_callbacks))
     end
 
     def setup_callbacks_from_options(options_on = [])
       options_on.each do |event|
         public_send("on_#{event}")
+      end
+    end
+
+    def setup_habtm_change_callbacks(assoc)
+      assoc_name = assoc.name
+      %w(add remove).each do |verb|
+        @model_class.send(:"before_#{verb}_for_#{assoc_name}").send(
+          :<<,
+          lambda do |*args|
+            update_habtm_state(assoc_name, :"before_#{verb}", args[-2], args.last)
+          end
+        )
       end
     end
 
@@ -179,14 +185,16 @@ module PaperTrail
 
     def update_habtm_state(name, callback, model, assoc)
       model.paper_trail_habtm ||= {}
-      model.paper_trail_habtm.reverse_merge!(name => { removed: [], added: [] })
+      model.paper_trail_habtm[name] ||= { removed: [], added: [] }
+      state = model.paper_trail_habtm[name]
+      assoc_id = assoc.id
       case callback
       when :before_add
-        model.paper_trail_habtm[name][:added] |= [assoc.id]
-        model.paper_trail_habtm[name][:removed] -= [assoc.id]
+        state[:added] |= [assoc_id]
+        state[:removed] -= [assoc_id]
       when :before_remove
-        model.paper_trail_habtm[name][:removed] |= [assoc.id]
-        model.paper_trail_habtm[name][:added] -= [assoc.id]
+        state[:removed] |= [assoc_id]
+        state[:added] -= [assoc_id]
       else
         raise "Invalid callback: #{callback}"
       end
