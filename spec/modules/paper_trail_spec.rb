@@ -1,7 +1,7 @@
 require "rails_helper"
 
 describe PaperTrail, type: :module, versioning: true do
-  describe '#config' do
+  describe "#config" do
     it { is_expected.to respond_to(:config) }
 
     it "should allow for config values to be set" do
@@ -17,7 +17,7 @@ describe PaperTrail, type: :module, versioning: true do
     end
   end
 
-  describe '#configure' do
+  describe "#configure" do
     it { is_expected.to respond_to(:configure) }
 
     it "should be an alias for the `config` method" do

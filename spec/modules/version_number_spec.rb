@@ -36,7 +36,7 @@ describe PaperTrail::VERSION do
 end
 
 describe PaperTrail do
-  describe '#version' do
+  describe "#version" do
     it { is_expected.to respond_to(:version) }
     it { expect(subject.version).to eq(PaperTrail::VERSION::STRING) }
   end

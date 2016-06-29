@@ -11,7 +11,7 @@ if JsonVersion.table_exists?
 
     describe "Methods" do
       describe "Class" do
-        describe '#where_object' do
+        describe "#where_object" do
           it { expect(JsonVersion).to respond_to(:where_object) }
 
           it "escapes values" do
@@ -50,7 +50,7 @@ if JsonVersion.table_exists?
           end
         end
 
-        describe '#where_object_changes' do
+        describe "#where_object_changes" do
           it { expect(JsonVersion).to respond_to(:where_object_changes) }
 
           it "escapes values" do

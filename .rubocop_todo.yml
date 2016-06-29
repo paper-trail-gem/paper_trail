@@ -5,15 +5,15 @@ Metrics/AbcSize:
   Max: 30 # Goal: 15
 
 Metrics/ClassLength:
-  Max: 400
+  Max: 327
   Exclude:
     - test/**/*
 
 Metrics/CyclomaticComplexity:
-  Max: 13 # Goal: 6
+  Max: 8 # Goal: 6
 
 Metrics/ModuleLength:
   Max: 317
 
 Metrics/PerceivedComplexity:
-  Max: 16 # Goal: 7
+  Max: 10 # Goal: 7

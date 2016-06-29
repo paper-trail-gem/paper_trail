@@ -943,7 +943,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
   context "A reified item" do
     setup do
       widget = Widget.create name: "Bob"
-      %w( Tom Dick Jane ).each { |name| widget.update_attributes name: name }
+      %w(Tom Dick Jane).each { |name| widget.update_attributes name: name }
       @version = widget.versions.last
       @widget = @version.reify
     end
@@ -972,7 +972,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     context "with versions" do
       setup do
         @widget.save
-        %w( Tom Dick Jane ).each { |name| @widget.update_attributes name: name }
+        %w(Tom Dick Jane).each { |name| @widget.update_attributes name: name }
       end
 
       should "have a previous version" do
@@ -1405,7 +1405,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
   context "A reified item with a column -version- and custom version_method" do
     setup do
       widget = LegacyWidget.create(name: "foo", version: 2)
-      %w( bar baz ).each { |name| widget.update_attributes name: name }
+      %w(bar baz).each { |name| widget.update_attributes name: name }
       @version = widget.versions.last
       @widget = @version.reify
     end

@@ -45,7 +45,7 @@ describe PaperTrail::Version, type: :model do
     describe "Instance" do
       subject { PaperTrail::Version.new }
 
-      describe '#paper_trail_originator' do
+      describe "#paper_trail_originator" do
         it { is_expected.to respond_to(:paper_trail_originator) }
 
         context "No previous versions" do
@@ -89,7 +89,7 @@ describe PaperTrail::Version, type: :model do
         end
       end
 
-      describe '#terminator' do
+      describe "#terminator" do
         let(:attributes) { { whodunnit: FFaker::Name.first_name } }
         subject { PaperTrail::Version.new attributes }
 
@@ -100,7 +100,7 @@ describe PaperTrail::Version, type: :model do
         end
       end
 
-      describe '#version_author' do
+      describe "#version_author" do
         it { is_expected.to respond_to(:version_author) }
 
         it "should be an alias for the `terminator` method" do
@@ -140,7 +140,7 @@ describe PaperTrail::Version, type: :model do
             end
           end
 
-          describe '#where_object' do
+          describe "#where_object" do
             it { expect(PaperTrail::Version).to respond_to(:where_object) }
 
             context "invalid arguments" do
@@ -205,7 +205,7 @@ describe PaperTrail::Version, type: :model do
             end
           end
 
-          describe '#where_object_changes' do
+          describe "#where_object_changes" do
             context "invalid arguments" do
               it "should raise an error" do
                 expect {
