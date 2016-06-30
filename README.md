@@ -87,7 +87,7 @@ has been destroyed.
     ```
 
 1. If your controllers have a `current_user` method, you can easily [track who
-is responsible for changes](#finding-out-who-was-responsible-for-a-change)
+is responsible for changes](#4a-finding-out-who-was-responsible-for-a-change)
 by adding a controller callback.
 
     ```ruby
@@ -431,7 +431,7 @@ Turn PaperTrail off for all threads in a `ruby` process.
 PaperTrail.enabled = false
 ```
 
-This is commonly used to speed up tests. See [Testing](#testing) below.
+This is commonly used to speed up tests. See [Testing](#7-testing) below.
 
 There is also a rails config option that does the same thing.
 
@@ -1498,7 +1498,7 @@ end
   [Thibault](http://samurails.com/about-me/), 29th September 2014
 * [Versioning with PaperTrail](http://www.sitepoint.com/versioning-papertrail),
   [Ilya Bodrov](http://www.sitepoint.com/author/ibodrov), 10th April 2014
-* [Using PaperTrail to track stack traces](http://rubyrailsexpert.com/?p=36),
+* [Using PaperTrail to track stack traces](http://web.archive.org/web/20141120233916/http://rubyrailsexpert.com/?p=36),
   T James Corcoran's blog, 1st October 2013.
 * [RailsCast #255 - Undo with PaperTrail](http://railscasts.com/episodes/255-undo-with-paper-trail),
   28th February 2011.
