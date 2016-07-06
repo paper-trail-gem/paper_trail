@@ -1,19 +1,14 @@
 # Use this template to report PaperTrail bugs.
-# It is based on the ActiveRecord template.
-# https://github.com/rails/rails/blob/master/guides/bug_report_templates/active_record_gem.rb
-begin
-  require "bundler/inline"
-rescue LoadError => e
-  $stderr.puts "Bundler version 1.10 or later is required. Please update your Bundler"
-  raise e
-end
+# Please include only the minimum code necessary to reproduce your issue.
+require "bundler/inline"
 
+# STEP ONE: What versions are you using?
 gemfile(true) do
-  ruby "2.2.3"
+  ruby "2.3.1"
   source "https://rubygems.org"
-  gem "activerecord", "4.2.0"
-  gem "minitest", "5.8.3"
-  gem "paper_trail", "4.0.0", require: false
+  gem "activerecord", "5.0.0"
+  gem "minitest", "5.9.0"
+  gem "paper_trail", "5.2.0", require: false
   gem "sqlite3"
 end
 
@@ -21,13 +16,15 @@ require "active_record"
 require "minitest/autorun"
 require "logger"
 ActiveRecord::Base.establish_connection(adapter: "sqlite3", database: ":memory:")
-ActiveRecord::Base.logger = Logger.new(STDOUT)
-
+ActiveRecord::Base.logger = nil
 ActiveRecord::Schema.define do
+
+  # STEP TWO: Define your tables here.
   create_table :users, force: true do |t|
     t.text :first_name, null: false
     t.timestamps null: false
   end
+
   create_table :versions do |t|
     t.string :item_type, null: false
     t.integer :item_id, null: false
@@ -50,18 +47,20 @@ ActiveRecord::Schema.define do
   add_index :version_associations, [:foreign_key_name, :foreign_key_id],
     name: "index_version_associations_on_foreign_key"
 end
+ActiveRecord::Base.logger = Logger.new(STDOUT)
+require "paper_trail/config"
 
-# Require `paper_trail.rb` after the `version_associations` table
-# exists so that PT will track associations.
+# STEP THREE: Configure PaperTrail as you would in your initializer
+PaperTrail::Config.instance.track_associations = true
+
 require "paper_trail"
 
-# Include your models here. Please only include the minimum code necessary to
-# reproduce your issue.
+# STEP FOUR: Define your AR models here.
 class User < ActiveRecord::Base
   has_paper_trail
 end
 
-# Please write a test that demonstrates your issue by failing.
+# STEP FIVE: Please write a test that demonstrates your issue.
 class BugTest < ActiveSupport::TestCase
   def test_1
     assert_difference(-> { PaperTrail::Version.count }, +1) {
