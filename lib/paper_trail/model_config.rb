@@ -127,7 +127,7 @@ module PaperTrail
           @model_class.versions_association_name,
           class_name: @model_class.version_class_name,
           as: :item,
-          order: @model_class.paper_trail_version_class.timestamp_sort_order
+          order: @model_class.paper_trail.version_class.timestamp_sort_order
         )
       end
     end
