@@ -17,3 +17,6 @@ Metrics/ModuleLength:
 
 Metrics/PerceivedComplexity:
   Max: 10 # Goal: 7
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
