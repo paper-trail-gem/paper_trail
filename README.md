@@ -269,7 +269,7 @@ end
 other callbacks in your model, their order relative to those installed by
 PaperTrail may matter, so be aware of any potential interactions.
 
-You may also have the `PaperTrail::Version` model save a custom string in it's
+You may also have the `PaperTrail::Version` model save a custom string in its
 `event` field instead of the typical `create`, `update`, `destroy`. PaperTrail
 supplies a custom accessor method called `paper_trail_event`, which it will
 attempt to use to fill the `event` field before falling back on one of the
