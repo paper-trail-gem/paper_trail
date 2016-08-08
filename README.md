@@ -38,6 +38,7 @@ has been destroyed.
 - [4. Saving More Information About Versions](#4-saving-more-information-about-versions)
   - [4.a. Finding Out Who Was Responsible For A Change](#4a-finding-out-who-was-responsible-for-a-change)
   - [4.b. Associations](#4b-associations)
+    - [4.b.1. Known Issues](#4b1-known-issues)
   - [4.c. Storing metadata](#4c-storing-metadata)
 - [5. ActiveRecord](#5-activerecord)
   - [5.a. Single Table Inheritance](#5a-single-table-inheritance-sti)
@@ -749,7 +750,8 @@ string, please try the [paper_trail-globalid][37] gem.
 
 ### 4.b. Associations
 
-**Experimental feature**, see caveats below.
+**Experimental feature**, not recommended for production. See known issues
+below.
 
 PaperTrail can restore three types of associations: Has-One, Has-Many, and
 Has-Many-Through. In order to do this, you will need to create a
@@ -840,11 +842,17 @@ widget_0.save!
 widget.reload.wotsit                             # nil
 ```
 
-**Caveats:**
+#### 4.b.1. Known Issues
 
-1. Not compatible with [transactional tests][34], aka. transactional fixtures.
-   This is a known issue [#542](https://github.com/airblade/paper_trail/issues/542)
-   that we'd like to solve.
+Associations are an **experimental feature** and have the following known
+issues, in order of descending importance.
+
+1. PaperTrail only reifies the first level of associations.
+1. [#542](https://github.com/airblade/paper_trail/issues/542) -
+   Not compatible with [transactional tests][34], aka. transactional fixtures.
+1. [#841](https://github.com/airblade/paper_trail/issues/841) -
+   Without a workaround, reified records cannot be persisted if their associated
+   records have been deleted.
 1. Requires database timestamp columns with fractional second precision.
    - Sqlite and postgres timestamps have fractional second precision by default.
    [MySQL timestamps do not][35]. Furthermore, MySQL 5.5 and earlier do not
@@ -853,11 +861,9 @@ widget.reload.wotsit                             # nil
    rails until ActiveRecord 4.2 (https://github.com/rails/rails/pull/14359).
 1. PaperTrail can't restore an association properly if the association record
    can be updated to replace its parent model (by replacing the foreign key)
-1. Currently PaperTrail only supports a single `version_associations` table. The
-   implication is that you can only use a single table to store the versions for
+1. Currently PaperTrail only supports a single `version_associations` table.
+   Therefore, you can only use a single table to store the versions for
    all related models. Sorry for those who use multiple version tables.
-1. PaperTrail only reifies the first level of associations, i.e., it does not
-   reify any associations of its associations, and so on.
 1. PaperTrail relies on the callbacks on the association model (and the :through
    association model for Has-Many-Through associations) to record the versions
    and the relationship between the versions. If the association is changed
