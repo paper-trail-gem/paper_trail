@@ -6,10 +6,13 @@ inherit_from: .rubocop_todo.yml
 # - Alphabetize cops
 # - Only include permanent config; temporary goes in .rubocop_todo.yml
 
-# We do not control `schema.rb`. Exclude it from all cops.
 AllCops:
   Exclude:
-    - test/dummy/db/schema.rb
+    - gemfiles/vendor/bundle/**/* # This dir only shows up on travis ¯\_(ツ)_/¯
+    - test/dummy/db/schema.rb # Generated, out of our control
+
+  # Set to lowest supported version
+  TargetRubyVersion: 1.9
 
 # Migrations often contain long up/down methods, and extracting smaller methods
 # from these is of questionable value.

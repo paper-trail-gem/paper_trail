@@ -18,6 +18,8 @@ Please use our [bug report template][1].
 
 ## Development
 
+Install gems with `bundle exec appraisal install`.
+
 Testing is a little awkward because the test suite:
 
 1. Supports three major versions of rails: 3, 4, 5

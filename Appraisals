@@ -26,12 +26,13 @@ appraise "ar4" do
 end
 
 appraise "ar5" do
-  gem "activerecord", "5.0.0.rc2"
-  gem "activemodel", "5.0.0.rc2"
-  gem "actionpack", "5.0.0.rc2"
-  gem "railties", "5.0.0.rc2"
-  gem "rspec-rails", "3.5.0.beta4"
+  gem "activerecord", "~> 5.0.0"
+  gem "rspec-rails", "~> 3.5.1"
   gem 'rails-controller-testing'
-  # Sinatra stable conflicts with AR5's rack dependency
-  gem 'sinatra', github: 'sinatra/sinatra'
+
+  # Sinatra stable conflicts with AR5's rack dependency. Sinatra master requires
+  # rack-protection master. Specify exact `ref` so it doesn't break in the future.
+  # Hopefully there'll be a sinatra 2.0 release soon.
+  gem 'sinatra', github: 'sinatra/sinatra', ref: "a7483f48b0a18ba792e642a"
+  gem "rack-protection", github: "sinatra/rack-protection", ref: "7e723a74763bb83989d12"
 end
