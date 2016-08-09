@@ -18,7 +18,6 @@ require "logger"
 ActiveRecord::Base.establish_connection(adapter: "sqlite3", database: ":memory:")
 ActiveRecord::Base.logger = nil
 ActiveRecord::Schema.define do
-
   # STEP TWO: Define your tables here.
   create_table :users, force: true do |t|
     t.text :first_name, null: false
