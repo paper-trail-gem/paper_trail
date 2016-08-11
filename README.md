@@ -1,6 +1,6 @@
 # PaperTrail
 
-[![Build Status][4]][5] [![Dependency Status][6]][7]
+[![Build Status][4]][5] [![Dependency Status][6]][7] [![Security][41]][42]
 
 Track changes to your models, for auditing or versioning. See how a model looked
 at any stage in its lifecycle, revert it to any version, or restore it after it
@@ -1622,3 +1622,5 @@ Released under the MIT licence.
 [38]: https://github.com/sferik/rails_admin
 [39]: http://api.rubyonrails.org/classes/ActiveRecord/Base.html#class-ActiveRecord::Base-label-Single+table+inheritance
 [40]: http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html#module-ActiveRecord::Associations::ClassMethods-label-Polymorphic+Associations
+[41]: https://hakiri.io/github/airblade/paper_trail/master.svg
+[42]: https://hakiri.io/github/airblade/paper_trail/master
