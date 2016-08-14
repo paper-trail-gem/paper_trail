@@ -34,8 +34,13 @@ module PaperTrail
         end
 
         def serialize(attr, val)
-          val = defined_enums[attr][val] if defined_enums[attr]
-          @klass.type_for_attribute(attr).type_cast_for_database(val)
+          castable_val = val
+          if defined_enums[attr]
+            # `attr` is an enum. Find the number that corresponds to `val`. If `val` is
+            # a number already, there won't be a corresponding entry, just use `val`.
+            castable_val = defined_enums[attr][val] || val
+          end
+          @klass.type_for_attribute(attr).type_cast_for_database(castable_val)
         end
 
         def deserialize(attr, val)
@@ -49,6 +54,8 @@ module PaperTrail
 
         private
 
+        # ActiveRecord::Enum was added in AR 4.1
+        # http://edgeguides.rubyonrails.org/4_1_release_notes.html#active-record-enums
         def defined_enums
           @defined_enums ||= (@klass.respond_to?(:defined_enums) ? @klass.defined_enums : {})
         end
