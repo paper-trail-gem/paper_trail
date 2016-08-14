@@ -173,6 +173,7 @@ class SetUpTestTables < ActiveRecord::Migration
 
     create_table :post_with_statuses, force: true do |t|
       t.integer :status
+      t.timestamps null: false
     end
 
     create_table :animals, force: true do |t|
