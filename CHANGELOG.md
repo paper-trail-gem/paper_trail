@@ -14,7 +14,9 @@
 
 ### Fixed
 
-- None
+- [#798](https://github.com/airblade/paper_trail/issues/798) -
+  Fix a rare bug with serialization of enums in rails 4.2 only when
+  using `touch_with_version`.
 
 ## 5.2.0 (2016-06-27)
 
