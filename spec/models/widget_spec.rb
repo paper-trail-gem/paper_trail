@@ -140,6 +140,23 @@ describe Widget, type: :model do
 
   describe "Methods" do
     describe "Instance", versioning: true do
+      describe "#create" do
+        it "creates a version record" do
+          wordget = Widget.create
+          assert_equal 1, wordget.versions.length
+        end
+      end
+
+      describe "#destroy" do
+        it "creates a version record" do
+          widget = Widget.create
+          assert_equal 1, widget.versions.length
+          widget.destroy
+          versions_for_widget = PaperTrail::Version.with_item_keys("Widget", widget.id)
+          assert_equal 2, versions_for_widget.length
+        end
+      end
+
       describe "#paper_trail.originator" do
         describe "return value" do
           let(:orig_name) { FFaker::Name.name }
@@ -267,6 +284,15 @@ describe Widget, type: :model do
             widget.paper_trail.touch_with_version
           end
           expect(widget.updated_at).to be > time_was
+        end
+      end
+
+      describe "#update" do
+        it "creates a version record" do
+          widget = Widget.create
+          assert_equal 1, widget.versions.length
+          widget.update_attributes(name: "Bugle")
+          assert_equal 2, widget.versions.length
         end
       end
     end

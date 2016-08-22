@@ -6,13 +6,6 @@ describe PaperTrail::Version, type: :model do
   end
 
   describe "Attributes" do
-    it { is_expected.to have_db_column(:item_type).of_type(:string) }
-    it { is_expected.to have_db_column(:item_id).of_type(:integer) }
-    it { is_expected.to have_db_column(:event).of_type(:string) }
-    it { is_expected.to have_db_column(:whodunnit).of_type(:string) }
-    it { is_expected.to have_db_column(:object).of_type(:text) }
-    it { is_expected.to have_db_column(:created_at).of_type(:datetime) }
-
     describe "object_changes column", versioning: true do
       let(:widget) { Widget.create!(name: "Dashboard") }
       let(:value) { widget.versions.last.object_changes }
@@ -35,10 +28,6 @@ describe PaperTrail::Version, type: :model do
         after(:all) { PaperTrail.serializer = PaperTrail::Serializers::YAML }
       end
     end
-  end
-
-  describe "Indexes" do
-    it { is_expected.to have_db_index([:item_type, :item_id]) }
   end
 
   describe "Methods" do

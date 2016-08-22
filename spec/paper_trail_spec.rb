@@ -1,6 +1,17 @@
 require "rails_helper"
 
 describe PaperTrail do
+  context "when enabled" do
+    it "affects all threads" do
+      Thread.new { PaperTrail.enabled = false }.join
+      assert_equal false, PaperTrail.enabled?
+    end
+
+    after do
+      PaperTrail.enabled = true
+    end
+  end
+
   context "default" do
     it "should have versioning off by default" do
       expect(PaperTrail).not_to be_enabled
