@@ -519,8 +519,8 @@ Undeleting is just as simple:
 widget = Widget.find 42
 widget.destroy
 # Time passes....
-widget = PaperTrail::Version.find(153).reify  # the widget as it was before destruction
-widget.save                                   # the widget lives!
+widget = PaperTrail::Version.find_by(item_id: 42, item_type: 'Widget', event: 'destroy').reify # the widget as it was before destruction
+widget.save # the widget lives!
 ```
 
 You could even use PaperTrail to implement an undo system, [Ryan Bates has!][3]
