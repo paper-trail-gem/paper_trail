@@ -155,6 +155,24 @@ describe Widget, type: :model do
           versions_for_widget = PaperTrail::Version.with_item_keys("Widget", widget.id)
           assert_equal 2, versions_for_widget.length
         end
+
+        it "can have multiple destruction records" do
+          versions = lambda { |widget|
+            # Workaround for AR 3. When we drop AR 3 support, we can simply use
+            # the `widget.versions` association, instead of `with_item_keys`.
+            PaperTrail::Version.with_item_keys("Widget", widget.id)
+          }
+          widget = Widget.create
+          assert_equal 1, widget.versions.length
+          widget.destroy
+          assert_equal 2, versions.call(widget).length
+          widget = widget.version.reify
+          widget.save
+          assert_equal 3, versions.call(widget).length
+          widget.destroy
+          assert_equal 4, versions.call(widget).length
+          assert_equal 2, versions.call(widget).where(event: "destroy").length
+        end
       end
 
       describe "#paper_trail.originator" do

@@ -516,11 +516,12 @@ Note `version_at` gives you the object, not a version, so you don't need to call
 Undeleting is just as simple:
 
 ```ruby
-widget = Widget.find 42
+widget = Widget.find(42)
 widget.destroy
 # Time passes....
-widget = PaperTrail::Version.find(153).reify  # the widget as it was before destruction
-widget.save                                   # the widget lives!
+versions = widget.versions    # versions ordered by versions.created_at, ascending
+widget = versions.last.reify  # the widget as it was before destruction
+widget.save                   # the widget lives!
 ```
 
 You could even use PaperTrail to implement an undo system, [Ryan Bates has!][3]
