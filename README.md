@@ -1455,7 +1455,11 @@ require 'paper_trail/frameworks/rspec'
 ## 8. Sinatra
 
 To configure PaperTrail for usage with [Sinatra][12], your `Sinatra`
-app must be using `ActiveRecord` 3 or 4. It is also recommended to use the
+app must be using `ActiveRecord` 3 or 4. There is no released version of sinatra yet
+that is compatible with AR 5. We expect sinatra 2.0 to support AR 5, but it will have
+breaking changes that will require changes to PaperTrail.
+
+It is also recommended to use the
 [Sinatra ActiveRecord Extension][13] or something similar for managing your
 applications `ActiveRecord` connection in a manner similar to the way `Rails`
 does. If using the aforementioned `Sinatra ActiveRecord Extension`, steps for

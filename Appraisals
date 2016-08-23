@@ -11,6 +11,7 @@ appraise "ar3" do
   gem "activerecord", "~> 3.2.22"
   gem "i18n", "~> 0.6.11"
   gem "request_store", "~> 1.1.0"
+  gem "sinatra", "~> 1.4.6"
 
   group :development, :test do
     gem 'railties', '~> 3.2.22'
@@ -23,6 +24,7 @@ end
 
 appraise "ar4" do
   gem "activerecord", "~> 4.2"
+  gem "sinatra", "~> 1.4.6"
 end
 
 appraise "ar5" do
@@ -30,9 +32,7 @@ appraise "ar5" do
   gem "rspec-rails", "~> 3.5.1"
   gem 'rails-controller-testing'
 
-  # Sinatra stable conflicts with AR5's rack dependency. Sinatra master requires
-  # rack-protection master. Specify exact `ref` so it doesn't break in the future.
-  # Hopefully there'll be a sinatra 2.0 release soon.
-  gem 'sinatra', github: 'sinatra/sinatra', ref: "a7483f48b0a18ba792e642a"
-  gem "rack-protection", github: "sinatra/rack-protection", ref: "7e723a74763bb83989d12"
+  # The AR5 version of PaperTrail is not compatible with sinatra 2 yet.
+  # Contributions welcome.
+  # gem "sinatra", "2.0.0.beta2"
 end
