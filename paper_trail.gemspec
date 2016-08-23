@@ -3,7 +3,7 @@ require "paper_trail/version_number"
 
 Gem::Specification.new do |s|
   s.name = "paper_trail"
-  s.version = PaperTrail::VERSION::STRING
+  s.version = PaperTrail::VERSION::STRING.dup # The `dup` is for ruby 1.9.3
   s.platform = Gem::Platform::RUBY
   s.summary = "Track changes to your models' data. Good for auditing or versioning."
   s.description = s.summary
