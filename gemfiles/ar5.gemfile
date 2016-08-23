@@ -5,7 +5,5 @@ source "https://rubygems.org"
 gem "activerecord", "~> 5.0.0"
 gem "rspec-rails", "~> 3.5.1"
 gem "rails-controller-testing"
-gem "sinatra", :github => "sinatra/sinatra"
-gem "rack-protection", :github => "sinatra/rack-protection"
 
 gemspec :path => "../"

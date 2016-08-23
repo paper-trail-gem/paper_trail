@@ -1,11 +1,4 @@
-# Our ActiveRecord 5 gemfile (see `Appraisals`) must use `rack 2.0.0.alpha`
-# which renames several files that sinatra 1 depended on. Until there is
-# a released version of sinatra that supports `rack 2.0.0.alpha`, we
-# must exclude sinatra from our test suite. This is done in two files:
-#
-# - test/functional/sinatra_test.rb
-# - test/functional/modular_sinatra_test.rb
-#
+# PaperTrail is not compatible with sinatra 2 yet. Contributions welcome.
 if Gem::Version.new(Rack.release) < Gem::Version.new("2.0.0.alpha")
   require "test_helper"
   require "sinatra/base"
