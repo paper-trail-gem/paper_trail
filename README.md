@@ -50,7 +50,6 @@ has been destroyed.
 - [7. Testing](#7-testing)
 - [8. Sinatra](#8-sinatra)
 - [9. Configuration](#9-configuration)
-- [10. Upgrading](#10-upgrading)
 
 ## 1. Introduction
 
@@ -1540,22 +1539,6 @@ Additionally, the following options exist on `PaperTrail` itself:
 | option                  | default         | more information |
 | ----------------------- | --------------- | ---------------- |
 | `enabled`               | `true`          | [2.d. Turning PaperTrail Off](#2d-turning-papertrail-off) |
-
-## 10. Upgrading
-
-Most important: **please review the [CHANGELOG](CHANGELOG.md) and pay careful attention to any breaking changes.**
-
-Additionally, the following sections may be helpful:
-
-### Tracking Associations
-
-Version 5 introduced a deprecation warning if you do not explicitly set a value for `PaperTrail.config.track_associations`.
-
-If you are upgrading from version 4 and are *already* tracking associations, make sure you set `PaperTrail.config.track_associations = true` (see [configuration](#9-configuration))
-
-If you are upgrading from version 3 or 4 and *want* to track associations, see [4.b. Associations](#4b-associations).
-
-If you are upgrading from version 3 or 4 and do *not* want to track associations, make sure you set `PaperTrail.config.track_associations = false` (see [configuration](#9-configuration))
 
 ## Articles
 
