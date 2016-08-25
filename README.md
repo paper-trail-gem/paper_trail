@@ -49,6 +49,8 @@ has been destroyed.
   - [6.b. Custom Serializer](#6b-custom-serializer)
 - [7. Testing](#7-testing)
 - [8. Sinatra](#8-sinatra)
+- [9. Configuration](#9-configuration)
+- [10. Upgrading](#10-upgrading)
 
 ## 1. Introduction
 
@@ -68,7 +70,7 @@ has been destroyed.
 
     `gem 'paper_trail'`
 
-1. Add a `versions` table to your database.
+1. Add a `versions` table to your database and an initializer file for configuration:
 
     ```
     bundle exec rails generate paper_trail:install
@@ -755,16 +757,27 @@ string, please try the [paper_trail-globalid][37] gem.
 below.
 
 PaperTrail can restore three types of associations: Has-One, Has-Many, and
-Has-Many-Through. In order to do this, you will need to create a
-`version_associations` table, either at installation time with the `rails
-generate paper_trail:install --with-associations` option or manually. PaperTrail
-will store in that table additional information to correlate versions of the
-association and versions of the model when the associated record is changed.
-When reifying the model, PaperTrail can use this table, together with the
-`transaction_id` to find the correct version of the association and reify it.
-The `transaction_id` is a unique id for version records created in the same
-transaction. It is used to associate the version of the model and the version of
-the association that are created in the same transaction.
+Has-Many-Through. In order to do this, you will need two things:
+
+  1. A `version_associations` table
+  2. Set `PaperTrail.config.track_associations = true`.
+
+This will be done for you automatically if you install PaperTrail with the
+`--with_associations` option
+(e.g. `rails generate paper_trail:install --with-associations`)
+
+If you want to add this functionality after the initial installation, you will
+need to create the `version_associations` table manually, and you will need to
+ensure that `PaperTrail.config.track_associations = true`
+(see [configuration](#9-configuration))
+
+PaperTrail will store in the `version_associations` table additional information
+to correlate versions of the association and versions of the model when the
+associated record is changed. When reifying the model, PaperTrail can use this
+table, together with the `transaction_id` to find the correct version of the
+association and reify it. The `transaction_id` is a unique id for version records
+created in the same transaction. It is used to associate the version of the model
+and the version of the association that are created in the same transaction.
 
 To restore Has-One associations as they were at the time, pass option `:has_one
 => true` to `reify`. To restore Has-Many and Has-Many-Through associations, use
@@ -1037,7 +1050,8 @@ Overriding associations is not recommended in general.
 ### 5.c. Generators
 
 PaperTrail has one generator, `paper_trail:install`. It writes, but does not
-run, a migration file. This migration adds (at least) the `versions` table. The
+run, a migration file.  It also creates a PaperTrail configuration intializer.
+The migration adds (at least) the `versions` table. The
 most up-to-date documentation for this generator can be found by running `rails
 generate paper_trail:install --help`, but a copy is included here for
 convenience.
@@ -1056,7 +1070,7 @@ Runtime options:
   -q, [--quiet], [--no-quiet]      # Suppress status output
   -s, [--skip], [--no-skip]        # Skip files that already exist
 
-Generates (but does not run) a migration to add a versions table.
+Generates (but does not run) a migration to add a versions table.  Also generates an initializer file for configuring PaperTrail
 ```
 
 ## 6. Extensibility
@@ -1502,6 +1516,46 @@ class BlehApp < Sinatra::Base
   register PaperTrail::Sinatra
 end
 ```
+
+## 9. Configuration
+
+PaperTrail has some app-wide configuration options. You typically
+configure these options in a Rails initializer or an environment
+configuration file.
+
+```ruby
+# config/initializers/paper_trail.rb
+PaperTrail.config.track_associations = false
+```
+
+The following options exist on `PaperTrail.config`:
+
+| option                  | default           | more information |
+| ----------------------- | ----------------- | ---------------- |
+| `track_assocations`     | `false`           | [4.b. Associations](#4b-associations)
+| `version_limit`         | `nil` (no limit)  | [2.e. Limiting the Number of Versions Created](#2e-limiting-the-number-of-versions-created)
+
+Additionally, the following options exist on `PaperTrail` itself:
+
+| option                  | default         | more information |
+| ----------------------- | --------------- | ---------------- |
+| `enabled`               | `true`          | [2.d. Turning PaperTrail Off](#2d-turning-papertrail-off) |
+
+## 10. Upgrading
+
+Most important: **please review the [CHANGELOG](CHANGELOG.md) and pay careful attention to any breaking changes.**
+
+Additionally, the following sections may be helpful:
+
+### Tracking Associations
+
+Version 5 introduced a deprecation warning if you do not explicitly set a value for `PaperTrail.config.track_associations`.
+
+If you are upgrading from version 4 and are *already* tracking associations, make sure you set `PaperTrail.config.track_associations = true` (see [configuration](#9-configuration))
+
+If you are upgrading from version 3 or 4 and *want* to track associations, see [4.b. Associations](#4b-associations).
+
+If you are upgrading from version 3 or 4 and do *not* want to track associations, make sure you set `PaperTrail.config.track_associations = false` (see [configuration](#9-configuration))
 
 ## Articles
 
