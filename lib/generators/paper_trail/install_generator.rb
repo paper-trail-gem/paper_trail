@@ -20,7 +20,8 @@ module PaperTrail
       desc: "Store transactional IDs to support association restoration"
     )
 
-    desc "Generates (but does not run) a migration to add a versions table."
+    desc "Generates (but does not run) a migration to add a versions table." \
+         "  Also generates an initializer file for configuring PaperTrail"
 
     def create_migration_file
       add_paper_trail_migration("create_versions")
@@ -29,6 +30,13 @@ module PaperTrail
         add_paper_trail_migration("create_version_associations")
         add_paper_trail_migration("add_transaction_id_column_to_versions")
       end
+    end
+
+    def create_initializer
+      create_file(
+        "config/initializers/paper_trail.rb",
+        "PaperTrail.config.track_associations = #{!!options.with_associations?}"
+      )
     end
 
     def self.next_migration_number(dirname)

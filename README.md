@@ -24,6 +24,7 @@ has been destroyed.
   - [1.b. Installation](#1b-installation)
   - [1.c. Basic Usage](#1c-basic-usage)
   - [1.d. API Summary](#1d-api-summary)
+  - [1.e. Configuration](#1e-configuration)
 - [2. Limiting What is Versioned, and When](#2-limiting-what-is-versioned-and-when)
   - [2.a. Choosing Lifecycle Events To Monitor](#2a-choosing-lifecycle-events-to-monitor)
   - [2.b. Choosing When To Save New Versions](#2b-choosing-when-to-save-new-versions)
@@ -68,7 +69,7 @@ has been destroyed.
 
     `gem 'paper_trail'`
 
-1. Add a `versions` table to your database.
+1. Add a `versions` table to your database and an initializer file for configuration:
 
     ```
     bundle exec rails generate paper_trail:install
@@ -252,6 +253,18 @@ user_for_paper_trail
 # PaperTrail to store alongside any changes that occur.
 info_for_paper_trail
 ```
+
+### 1.e. Configuration
+
+Many aspects of PaperTrail are configurable for individual models; typically
+this is achieved by passing options to the `has_paper_trail` method within
+a given model.
+
+Some aspects of PaperTrail are configured globally for all models. These
+settings are assigned directly on the `PaperTrail.config` object.
+A common place to put these settings is in a Rails initializer file
+such as `config/initializers/paper_trail.rb` or in an environment-specific
+configuration file such as `config/environments/test.rb`.
 
 ## 2. Limiting What is Versioned, and When
 
@@ -755,16 +768,26 @@ string, please try the [paper_trail-globalid][37] gem.
 below.
 
 PaperTrail can restore three types of associations: Has-One, Has-Many, and
-Has-Many-Through. In order to do this, you will need to create a
-`version_associations` table, either at installation time with the `rails
-generate paper_trail:install --with-associations` option or manually. PaperTrail
-will store in that table additional information to correlate versions of the
-association and versions of the model when the associated record is changed.
-When reifying the model, PaperTrail can use this table, together with the
-`transaction_id` to find the correct version of the association and reify it.
-The `transaction_id` is a unique id for version records created in the same
-transaction. It is used to associate the version of the model and the version of
-the association that are created in the same transaction.
+Has-Many-Through. In order to do this, you will need to do two things:
+
+1. Create a `version_associations` table
+2. Set `PaperTrail.config.track_associations = true` (e.g. in an initializer)
+
+Both will be done for you automatically if you install PaperTrail with the
+`--with_associations` option
+(e.g. `rails generate paper_trail:install --with-associations`)
+
+If you want to add this functionality after the initial installation, you will
+need to create the `version_associations` table manually, and you will need to
+ensure that `PaperTrail.config.track_associations = true` is set.
+
+PaperTrail will store in the `version_associations` table additional information
+to correlate versions of the association and versions of the model when the
+associated record is changed. When reifying the model, PaperTrail can use this
+table, together with the `transaction_id` to find the correct version of the
+association and reify it. The `transaction_id` is a unique id for version records
+created in the same transaction. It is used to associate the version of the model
+and the version of the association that are created in the same transaction.
 
 To restore Has-One associations as they were at the time, pass option `:has_one
 => true` to `reify`. To restore Has-Many and Has-Many-Through associations, use
@@ -1037,7 +1060,8 @@ Overriding associations is not recommended in general.
 ### 5.c. Generators
 
 PaperTrail has one generator, `paper_trail:install`. It writes, but does not
-run, a migration file. This migration adds (at least) the `versions` table. The
+run, a migration file.  It also creates a PaperTrail configuration intializer.
+The migration adds (at least) the `versions` table. The
 most up-to-date documentation for this generator can be found by running `rails
 generate paper_trail:install --help`, but a copy is included here for
 convenience.
@@ -1056,7 +1080,7 @@ Runtime options:
   -q, [--quiet], [--no-quiet]      # Suppress status output
   -s, [--skip], [--no-skip]        # Skip files that already exist
 
-Generates (but does not run) a migration to add a versions table.
+Generates (but does not run) a migration to add a versions table.  Also generates an initializer file for configuring PaperTrail
 ```
 
 ## 6. Extensibility
