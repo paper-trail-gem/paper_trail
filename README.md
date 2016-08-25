@@ -24,6 +24,7 @@ has been destroyed.
   - [1.b. Installation](#1b-installation)
   - [1.c. Basic Usage](#1c-basic-usage)
   - [1.d. API Summary](#1d-api-summary)
+  - [1.e. Configuration](#1e-configuration)
 - [2. Limiting What is Versioned, and When](#2-limiting-what-is-versioned-and-when)
   - [2.a. Choosing Lifecycle Events To Monitor](#2a-choosing-lifecycle-events-to-monitor)
   - [2.b. Choosing When To Save New Versions](#2b-choosing-when-to-save-new-versions)
@@ -49,7 +50,6 @@ has been destroyed.
   - [6.b. Custom Serializer](#6b-custom-serializer)
 - [7. Testing](#7-testing)
 - [8. Sinatra](#8-sinatra)
-- [9. Configuration](#9-configuration)
 
 ## 1. Introduction
 
@@ -253,6 +253,18 @@ user_for_paper_trail
 # PaperTrail to store alongside any changes that occur.
 info_for_paper_trail
 ```
+
+### 1.e. Configuration
+
+Many aspects of PaperTrail are configurable for individual models; typically
+this is achieved by passing options to the `has_paper_trail` method within
+a given model.
+
+Some aspects of PaperTrail are configured globally for all models. These
+settings are assigned directly on the `PaperTrail.config` object.
+A common place to put these settings is in a Rails initializer file
+such as `config/initializers/paper_trail.rb` or in an environment-specific
+configuration file such as `config/environments/test.rb`.
 
 ## 2. Limiting What is Versioned, and When
 
@@ -756,19 +768,18 @@ string, please try the [paper_trail-globalid][37] gem.
 below.
 
 PaperTrail can restore three types of associations: Has-One, Has-Many, and
-Has-Many-Through. In order to do this, you will need two things:
+Has-Many-Through. In order to do this, you will need to do two things:
 
-  1. A `version_associations` table
-  2. Set `PaperTrail.config.track_associations = true`.
+1. Create a `version_associations` table
+2. Set `PaperTrail.config.track_associations = true` (e.g. in an initializer)
 
-This will be done for you automatically if you install PaperTrail with the
+Both will be done for you automatically if you install PaperTrail with the
 `--with_associations` option
 (e.g. `rails generate paper_trail:install --with-associations`)
 
 If you want to add this functionality after the initial installation, you will
 need to create the `version_associations` table manually, and you will need to
-ensure that `PaperTrail.config.track_associations = true`
-(see [configuration](#9-configuration))
+ensure that `PaperTrail.config.track_associations = true` is set.
 
 PaperTrail will store in the `version_associations` table additional information
 to correlate versions of the association and versions of the model when the
@@ -1515,30 +1526,6 @@ class BlehApp < Sinatra::Base
   register PaperTrail::Sinatra
 end
 ```
-
-## 9. Configuration
-
-PaperTrail has some app-wide configuration options. You typically
-configure these options in a Rails initializer or an environment
-configuration file.
-
-```ruby
-# config/initializers/paper_trail.rb
-PaperTrail.config.track_associations = false
-```
-
-The following options exist on `PaperTrail.config`:
-
-| option                  | default           | more information |
-| ----------------------- | ----------------- | ---------------- |
-| `track_assocations`     | `false`           | [4.b. Associations](#4b-associations)
-| `version_limit`         | `nil` (no limit)  | [2.e. Limiting the Number of Versions Created](#2e-limiting-the-number-of-versions-created)
-
-Additionally, the following options exist on `PaperTrail` itself:
-
-| option                  | default         | more information |
-| ----------------------- | --------------- | ---------------- |
-| `enabled`               | `true`          | [2.d. Turning PaperTrail Off](#2d-turning-papertrail-off) |
 
 ## Articles
 
