@@ -14,6 +14,8 @@
 
 ### Fixed
 
+- [#857](https://github.com/airblade/paper_trail/pull/857) -
+  Fix deserialization of enums written by PT 4.
 - [#798](https://github.com/airblade/paper_trail/issues/798) -
   Fix a rare bug with serialization of enums in rails 4.2 only when
   using `touch_with_version`.

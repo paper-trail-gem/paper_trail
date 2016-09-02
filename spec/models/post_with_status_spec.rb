@@ -5,12 +5,22 @@ require "rails_helper"
 describe PostWithStatus, type: :model do
   if defined?(ActiveRecord::Enum)
     with_versioning do
-      let(:post) { PostWithStatus.create!(status: "draft") }
+      let(:post) { described_class.create!(status: "draft") }
 
       it "should stash the enum value properly in versions" do
         post.published!
         post.archived!
         expect(post.paper_trail.previous_version.published?).to be true
+      end
+
+      it "can read enums in version records written by PT 4" do
+        post = described_class.create(status: "draft")
+        post.published!
+        version = post.versions.last
+        # Simulate behavior PT 4, which used to save the string version of
+        # enums to `object_changes`
+        version.update(object_changes: "---\nid:\n- \n- 1\nstatus:\n- draft\n- published\n")
+        assert_equal %w(draft published), version.changeset["status"]
       end
 
       context "storing enum object_changes" do
