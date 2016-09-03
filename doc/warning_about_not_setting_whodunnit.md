@@ -3,12 +3,12 @@
 After upgrading to PaperTrail 5, you see this warning:
 
 > user_for_paper_trail is present, but whodunnit has not been set. PaperTrail no
-> longer adds the set_paper_trail_whodunnit before_filter for you. Please add this
-> before_filter to your ApplicationController to continue recording whodunnit.
+> longer adds the set_paper_trail_whodunnit before_action for you. Please add this
+> before_action to your ApplicationController to continue recording whodunnit.
 
 ## You want to track whodunnit
 
-Add the set_paper_trail_whodunnit before_filter to your ApplicationController.
+Add the set_paper_trail_whodunnit before_action to your ApplicationController.
 See the PaperTrail readme for an example (https://git.io/vrsbt).
 
 ## You don't want to track whodunnit

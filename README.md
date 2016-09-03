@@ -94,7 +94,7 @@ by adding a controller callback.
 
     ```ruby
     class ApplicationController
-      before_filter :set_paper_trail_whodunnit
+      before_action :set_paper_trail_whodunnit
     end
     ```
 
@@ -691,12 +691,12 @@ widget.versions.last.whodunnit              # Andy Stewart
 ```
 
 If your controller has a `current_user` method, PaperTrail provides a
-`before_filter` that will assign `current_user.id` to `PaperTrail.whodunnit`.
-You can add this `before_filter` to your `ApplicationController`.
+`before_action` that will assign `current_user.id` to `PaperTrail.whodunnit`.
+You can add this `before_action` to your `ApplicationController`.
 
 ```ruby
 class ApplicationController
-  before_filter :set_paper_trail_whodunnit
+  before_action :set_paper_trail_whodunnit
 end
 ```
 
