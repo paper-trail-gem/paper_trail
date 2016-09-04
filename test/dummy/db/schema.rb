@@ -250,12 +250,11 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.text     "a_text"
     t.integer  "an_integer"
     t.float    "a_float"
-    t.decimal  "a_decimal",          precision: 6, scale: 4
+    t.decimal  "a_decimal",  precision: 6, scale: 4
     t.datetime "a_datetime"
     t.time     "a_time"
     t.date     "a_date"
     t.boolean  "a_boolean"
-    t.string   "sacrificial_column"
     t.string   "type"
     t.datetime "created_at"
     t.datetime "updated_at"

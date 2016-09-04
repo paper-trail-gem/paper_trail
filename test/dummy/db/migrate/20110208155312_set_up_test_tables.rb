@@ -32,7 +32,6 @@ class SetUpTestTables < ActiveRecord::Migration
       t.time      :a_time
       t.date      :a_date
       t.boolean   :a_boolean
-      t.string    :sacrificial_column
       t.string    :type
       t.timestamps null: true
     end

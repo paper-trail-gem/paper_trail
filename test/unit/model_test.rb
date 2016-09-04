@@ -520,7 +520,6 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         change_schema
         Widget.connection.schema_cache.clear!
         Widget.reset_column_information
-        assert_raise(NoMethodError) { Widget.new.sacrificial_column }
         @last = @widget.versions.last
       end
 
