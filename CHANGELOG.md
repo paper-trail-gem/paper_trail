@@ -129,8 +129,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 - [#556](https://github.com/airblade/paper_trail/pull/556) /
   [#301](https://github.com/airblade/paper_trail/issues/301) -
   If you are tracking who is responsible for changes with `whodunnit`, be aware
-  that PaperTrail no longer adds the `set_paper_trail_whodunnit` before_filter
-  for you. Please add this before_filter to your ApplicationController to
+  that PaperTrail no longer adds the `set_paper_trail_whodunnit` before_action
+  for you. Please add this before_action to your ApplicationController to
   continue recording whodunnit. See the readme for an example.
 - [#683](https://github.com/airblade/paper_trail/pull/683) /
   [#682](https://github.com/airblade/paper_trail/issues/682) -
