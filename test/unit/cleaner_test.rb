@@ -148,41 +148,4 @@ class PaperTrailCleanerTest < ActiveSupport::TestCase
       end
     end
   end # clean_versions! method
-
-  context "Custom timestamp field" do
-    setup do
-      change_schema
-      populate_db!
-      # now mess with the timestamps
-      @animals.each do |animal|
-        animal.versions.reverse.each_with_index do |version, index|
-          version.update_attribute(:custom_created_at, Time.now.utc + index.days)
-        end
-      end
-      PaperTrail.timestamp_field = :custom_created_at
-      @animals.map { |a| a.versions.reload } # reload the `versions` association for each animal
-    end
-
-    teardown do
-      PaperTrail.timestamp_field = :created_at
-      restore_schema
-    end
-
-    should "Baseline" do
-      assert_equal 9, PaperTrail::Version.count
-      @animals.each do |animal|
-        assert_equal 3, animal.versions.size
-        animal.versions.each_cons(2) do |a, b|
-          assert_equal a.created_at.to_date, b.created_at.to_date
-          assert_not_equal a.custom_created_at.to_date, b.custom_created_at.to_date
-        end
-      end
-    end
-
-    should "group by `PaperTrail.timestamp_field` when seperating the versions by date to clean" do
-      assert_equal 9, PaperTrail::Version.count
-      PaperTrail.clean_versions!
-      assert_equal 9, PaperTrail::Version.count
-    end
-  end
 end

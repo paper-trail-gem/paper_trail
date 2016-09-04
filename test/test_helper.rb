@@ -88,19 +88,6 @@ module ActiveSupport
   end
 end
 
-#
-# Helpers
-#
-
-def change_schema
-  ActiveRecord::Migration.verbose = false
-  ActiveRecord::Schema.define do
-    add_column :versions, :custom_created_at, :datetime
-  end
-  ActiveRecord::Migration.verbose = true
-  reset_version_class_column_info!
-end
-
 # Wrap args in a hash to support the ActionController::TestCase and
 # ActionDispatch::Integration HTTP request method switch to keyword args
 # (see https://github.com/rails/rails/blob/master/actionpack/CHANGELOG.md)
@@ -110,18 +97,4 @@ def params_wrapper(args)
   else
     args
   end
-end
-
-def reset_version_class_column_info!
-  PaperTrail::Version.connection.schema_cache.clear!
-  PaperTrail::Version.reset_column_information
-end
-
-def restore_schema
-  ActiveRecord::Migration.verbose = false
-  ActiveRecord::Schema.define do
-    remove_column :versions, :custom_created_at
-  end
-  ActiveRecord::Migration.verbose = true
-  reset_version_class_column_info!
 end

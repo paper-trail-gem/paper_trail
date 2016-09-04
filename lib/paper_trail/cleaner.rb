@@ -52,7 +52,7 @@ module PaperTrail
     # versions.
     # @api private
     def group_versions_by_date(versions)
-      versions.group_by { |v| v.send(PaperTrail.timestamp_field).to_date }
+      versions.group_by { |v| v.created_at.to_date }
     end
   end
 end

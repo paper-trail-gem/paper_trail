@@ -170,7 +170,7 @@ module PaperTrail
         whodunnit: PaperTrail.whodunnit
       }
       if @record.respond_to?(:updated_at)
-        data[PaperTrail.timestamp_field] = @record.updated_at
+        data[:created_at] = @record.updated_at
       end
       if record_object_changes? && changed_notably?
         data[:object_changes] = recordable_object_changes
@@ -220,7 +220,7 @@ module PaperTrail
           whodunnit: PaperTrail.whodunnit
         }
         if @record.respond_to?(:updated_at)
-          data[PaperTrail.timestamp_field] = @record.updated_at
+          data[:created_at] = @record.updated_at
         end
         if record_object_changes?
           data[:object_changes] = recordable_object_changes
@@ -376,9 +376,7 @@ module PaperTrail
     # Returns the objects (not Versions) as they were between the given times.
     def versions_between(start_time, end_time)
       versions = send(@record.class.versions_association_name).between(start_time, end_time)
-      versions.collect { |version|
-        version_at(version.send(PaperTrail.timestamp_field))
-      }
+      versions.collect { |version| version_at(version.created_at) }
     end
 
     # Executes the given method or block without creating a new version.

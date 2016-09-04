@@ -517,14 +517,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
     context "after a column is removed from the record's schema" do
       setup do
-        change_schema
-        Widget.connection.schema_cache.clear!
-        Widget.reset_column_information
         @last = @widget.versions.last
-      end
-
-      teardown do
-        restore_schema
       end
 
       should "reify previous version" do

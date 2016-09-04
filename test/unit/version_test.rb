@@ -3,15 +3,8 @@ require "test_helper"
 module PaperTrail
   class VersionTest < ActiveSupport::TestCase
     setup do
-      change_schema
       @animal = Animal.create
       assert Version.creates.present?
-    end
-
-    teardown do
-      restore_schema
-      Animal.connection.schema_cache.clear!
-      Animal.reset_column_information
     end
 
     context ".creates" do
