@@ -26,7 +26,7 @@ module PaperTrail
         @versions.select(primary_key).order(primary_key.asc)
       else
         @versions.
-          select([timestamp, primary_key]).
+          select([table[:created_at], primary_key]).
           order(@version_class.timestamp_sort_order)
       end
     end
@@ -44,14 +44,6 @@ module PaperTrail
     # @api private
     def table
       @version_class.arel_table
-    end
-
-    # @return - Arel::Attribute - Attribute representing the timestamp column
-    #   of the version table, usually named `created_at` (the rails convention)
-    #   but not always.
-    # @api private
-    def timestamp
-      table[PaperTrail.timestamp_field]
     end
   end
 end

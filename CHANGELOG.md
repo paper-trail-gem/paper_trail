@@ -7,7 +7,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Breaking Changes
 
-- None
+- `timestamp_field=` removed without replacement. It is no longer configurable. The
+  timestamp field in the `versions` table must now be named `created_at`.
 
 ### Deprecated
 

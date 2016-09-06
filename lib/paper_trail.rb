@@ -72,14 +72,12 @@ module PaperTrail
 
     # Set the field which records when a version was created.
     # @api public
-    def timestamp_field=(field_name)
-      PaperTrail.config.timestamp_field = field_name
-    end
-
-    # Returns the field which records when a version was created.
-    # @api public
-    def timestamp_field
-      PaperTrail.config.timestamp_field
+    def timestamp_field=(_field_name)
+      raise(
+        "PaperTrail.timestamp_field= has been removed, without replacement. " \
+          "It is no longer configurable. The timestamp field in the versions table " \
+          "must now be named created_at."
+      )
     end
 
     # Sets who is responsible for any changes that occur. You would normally use

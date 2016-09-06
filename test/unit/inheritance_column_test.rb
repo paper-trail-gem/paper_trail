@@ -27,14 +27,12 @@ class InheritanceColumnTest < ActiveSupport::TestCase
 
       # For some reason `@dog.versions` doesn't include the final `destroy` version.
       # Neither do `@dog.versions.scoped` nor `@dog.versions(true)` nor `@dog.versions.reload`.
-      dog_versions = PaperTrail::Version.where(item_id: @dog.id).
-        order(PaperTrail.timestamp_field)
+      dog_versions = PaperTrail::Version.where(item_id: @dog.id).order(:created_at)
       assert_equal 4, dog_versions.count
       assert_nil dog_versions.first.reify
       assert_equal %w(NilClass Dog Dog Dog), dog_versions.map { |v| v.reify.class.name }
 
-      cat_versions = PaperTrail::Version.where(item_id: @cat.id).
-        order(PaperTrail.timestamp_field)
+      cat_versions = PaperTrail::Version.where(item_id: @cat.id).order(:created_at)
       assert_equal 4, cat_versions.count
       assert_nil cat_versions.first.reify
       assert_equal %w(NilClass Cat Cat Cat), cat_versions.map { |v| v.reify.class.name }
