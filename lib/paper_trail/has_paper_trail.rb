@@ -127,6 +127,20 @@ module PaperTrail
         ::PaperTrail::RecordTrail.new(self)
       end
 
+      def dependent_versions(class_name, foreign_key)
+        children = []
+        PaperTrail::Version.where(:item_type=>class_name).where("created_at >= ?", self.created_at).each do |m|
+          child = m.reify
+          if child.present?
+            # check the child's belongs_to to make sure it is a child
+            if child.send(foreign_key) == self.id
+              children << child
+            end
+          end
+        end
+        children
+      end
+
       # @deprecated
       def live?
         self.class.paper_trail_deprecate "live?"
