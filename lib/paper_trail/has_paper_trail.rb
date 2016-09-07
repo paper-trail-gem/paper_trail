@@ -129,13 +129,12 @@ module PaperTrail
 
       def dependent_versions(class_name, foreign_key)
         children = []
-        PaperTrail::Version.where(item_type: class_name).where("created_at >= ?", created_at).each do |m|
+        versions = PaperTrail::Version.where(item_type: class_name)
+        versions.where("created_at >= ?", created_at).each do |m|
           child = m.reify
           next unless child.present?
           # check the child's belongs_to to make sure it is a child
-          if child.send(foreign_key) == id
-            children << child
-          end
+          children << child if child.try(foreign_key) == id
         end
         children
       end
