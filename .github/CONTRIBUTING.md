@@ -102,7 +102,7 @@ DB=postgres bundle exec rake
   - Update version number(s) in the documentation links table
 1. Commit
 1. git tag -a -m "v5.0.0" "v5.0.0" # or whatever number
-1. git push --tags origin master
+1. git push --tags origin 5-stable # or whatever branch
 1. gem build paper_trail.gemspec
 1. gem push paper_trail-5.0.0.gem
 
