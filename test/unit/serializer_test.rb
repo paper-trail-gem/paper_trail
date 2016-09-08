@@ -2,12 +2,16 @@ require "test_helper"
 require "custom_json_serializer"
 
 class SerializerTest < ActiveSupport::TestCase
+  setup do
+    # Clean up after test/unit/model_test.rb
+    Fluxor.reset_callbacks :create
+    Fluxor.reset_callbacks :update
+    Fluxor.reset_callbacks :destroy
+    Fluxor.instance_eval "has_paper_trail"
+  end
+
   context "YAML Serializer" do
     setup do
-      Fluxor.instance_eval <<-END
-        has_paper_trail
-      END
-
       @fluxor = Fluxor.create name: "Some text."
 
       # this is exactly what PaperTrail serializes
@@ -33,10 +37,6 @@ class SerializerTest < ActiveSupport::TestCase
       PaperTrail.configure do |config|
         config.serializer = PaperTrail::Serializers::JSON
       end
-
-      Fluxor.instance_eval <<-END
-        has_paper_trail
-      END
 
       @fluxor = Fluxor.create name: "Some text."
 
@@ -76,10 +76,6 @@ class SerializerTest < ActiveSupport::TestCase
       PaperTrail.configure do |config|
         config.serializer = CustomJsonSerializer
       end
-
-      Fluxor.instance_eval <<-END
-        has_paper_trail
-      END
 
       @fluxor = Fluxor.create
 
