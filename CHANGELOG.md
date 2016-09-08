@@ -19,6 +19,24 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
+## 5.2.2 (2016-09-08)
+
+### Breaking Changes
+
+- None
+
+### Deprecated
+
+- [#863](https://github.com/airblade/paper_trail/pull/863)
+  PaperTrail.timestamp_field= deprecated without replacement.
+  See [#861](https://github.com/airblade/paper_trail/pull/861) for discussion.
+
+### Added
+
+- None
+
+### Fixed
+
 ## 5.2.1 (2016-09-02)
 
 ### Breaking Changes
