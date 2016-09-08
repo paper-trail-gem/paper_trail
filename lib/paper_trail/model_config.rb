@@ -31,7 +31,9 @@ module PaperTrail
 
     # Adds a callback that records a version after a "create" event.
     def on_create
-      @model_class.after_create :record_create, if: ->(m) { m.paper_trail.save_version? }
+      @model_class.after_create { |r|
+        r.paper_trail.record_create if r.paper_trail.save_version?
+      }
       return if @model_class.paper_trail_options[:on].include?(:create)
       @model_class.paper_trail_options[:on] << :create
     end
@@ -46,8 +48,10 @@ module PaperTrail
         ::ActiveSupport::Deprecation.warn(E_CANNOT_RECORD_AFTER_DESTROY)
       end
 
-      @model_class.send "#{recording_order}_destroy", :record_destroy,
-        if: ->(m) { m.paper_trail.save_version? }
+      @model_class.send(
+        "#{recording_order}_destroy",
+        ->(r) { r.paper_trail.record_destroy if r.paper_trail.save_version? }
+      )
 
       return if @model_class.paper_trail_options[:on].include?(:destroy)
       @model_class.paper_trail_options[:on] << :destroy
@@ -55,9 +59,15 @@ module PaperTrail
 
     # Adds a callback that records a version after an "update" event.
     def on_update
-      @model_class.before_save :reset_timestamp_attrs_for_update_if_needed!, on: :update
-      @model_class.after_update :record_update, if: ->(m) { m.paper_trail.save_version? }
-      @model_class.after_update :clear_version_instance!
+      @model_class.before_save(on: :update) { |r|
+        r.paper_trail.reset_timestamp_attrs_for_update_if_needed
+      }
+      @model_class.after_update { |r|
+        r.paper_trail.record_update(nil) if r.paper_trail.save_version?
+      }
+      @model_class.after_update { |r|
+        r.paper_trail.clear_version_instance
+      }
       return if @model_class.paper_trail_options[:on].include?(:update)
       @model_class.paper_trail_options[:on] << :update
     end

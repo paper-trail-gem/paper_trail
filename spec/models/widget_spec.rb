@@ -238,8 +238,6 @@ describe Widget, type: :model do
       end
 
       describe "#whodunnit" do
-        it { is_expected.to respond_to(:whodunnit) }
-
         context "no block given" do
           it "should raise an error" do
             expect {
