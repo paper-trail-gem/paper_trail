@@ -72,12 +72,19 @@ module PaperTrail
 
     # Set the field which records when a version was created.
     # @api public
+    # @deprecated
     def timestamp_field=(field_name)
+      ::ActiveSupport::Deprecation.warn(
+        "PaperTrail.timestamp_field= is deprecated without replacement." \
+          "See https://github.com/airblade/paper_trail/pull/861 for discussion",
+        caller(1)
+      )
       PaperTrail.config.timestamp_field = field_name
     end
 
     # Returns the field which records when a version was created.
     # @api public
+    # @deprecated
     def timestamp_field
       PaperTrail.config.timestamp_field
     end

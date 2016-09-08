@@ -6,7 +6,8 @@ module PaperTrail
   # configuration can be found in `paper_trail.rb`, others in `controller.rb`.
   class Config
     include Singleton
-    attr_accessor :timestamp_field, :serializer, :version_limit
+    attr_accessor :serializer, :version_limit
+    attr_reader :timestamp_field # deprecated
     attr_writer :track_associations
 
     def initialize
@@ -32,6 +33,18 @@ module PaperTrail
         "PaperTrail.config.serialized_attributes= is deprecated without " +
           "replacement and no longer has any effect."
       )
+    end
+
+    # Set the field which records when a version was created.
+    # @api public
+    # @deprecated
+    def timestamp_field=(field_name)
+      ::ActiveSupport::Deprecation.warn(
+        "PaperTrail.config.timestamp_field= is deprecated without replacement." \
+          "See https://github.com/airblade/paper_trail/pull/861 for discussion",
+        caller(1)
+      )
+      @timestamp_field = field_name
     end
 
     # Previously, we checked `PaperTrail::VersionAssociation.table_exists?`
