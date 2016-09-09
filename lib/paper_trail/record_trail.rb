@@ -360,7 +360,7 @@ module PaperTrail
       attributes.each { |column|
         @record.send(:write_attribute, column, current_time)
       }
-      @record.record_update(true) unless will_record_after_update?
+      record_update(true) unless will_record_after_update?
       @record.save!(validate: false)
     end
 
