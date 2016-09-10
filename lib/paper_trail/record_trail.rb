@@ -407,6 +407,13 @@ module PaperTrail
       PaperTrail.whodunnit = current_whodunnit
     end
 
+    def dependent_versions(class_name, foreign_key)
+     PaperTrail::Version.where(item_type: class_name).
+      subsequent(@record.created_at, true).map(&:reify).compact.select do |obj|
+        obj.try(foreign_key) == @record.id
+      end
+    end
+    
     private
 
     def add_transaction_id_to(data)
