@@ -11,6 +11,8 @@ describe CustomPrimaryKeyRecord, type: :model do
       expect(version).to be_a(CustomPrimaryKeyRecordVersion)
       version_from_db = CustomPrimaryKeyRecordVersion.last
       expect(version_from_db.reify).to be_a(CustomPrimaryKeyRecord)
+      custom_primary_key_record.destroy
+      expect(CustomPrimaryKeyRecordVersion.last.reify).to be_a(CustomPrimaryKeyRecord)
     end
   end
 end
