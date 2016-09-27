@@ -42,7 +42,10 @@ Gem::Specification.new do |s|
     s.add_development_dependency "activerecord-jdbcmysql-adapter", "~> 1.3.15"
   else
     s.add_development_dependency "sqlite3", "~> 1.2"
-    s.add_development_dependency "pg", "~> 0.17"
+
+    # pg 0.19 requires ruby >= 2.0.0, but we still test against ruby 1.9.3,
+    # for now ..
+    s.add_development_dependency "pg", [">= 0.17", "< 0.19"]
 
     # activerecord >= 4.2.5 may use mysql2 >= 0.4
     s.add_development_dependency "mysql2", "~> 0.4.2"
