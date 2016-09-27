@@ -40,7 +40,7 @@ module PaperTrail
     def track_associations?
       if @track_associations.nil?
         ActiveSupport::Deprecation.warn <<-EOS.strip_heredoc.gsub(/\s+/, " ")
-          PaperTrail.track_associations has not been set. As of PaperTrail 5, it
+          PaperTrail.config.track_associations has not been set. As of PaperTrail 5, it
           defaults to false. Tracking associations is an experimental feature so
           we recommend setting PaperTrail.config.track_associations = false in
           your config/initializers/paper_trail.rb
