@@ -273,7 +273,8 @@ class SetUpTestTables < ActiveRecord::Migration
     add_index :bar_habtms_foo_habtms, [:bar_habtm_id]
 
     # custom_primary_key_records use a uuid column (string)
-    create_table :custom_primary_key_records, primary_key: "uuid", id: :string, force: true do |t|
+    create_table :custom_primary_key_records, id: false, force: true do |t|
+      t.column :uuid, :string, primary_key: true
       t.string :name
       t.timestamps null: true
     end
