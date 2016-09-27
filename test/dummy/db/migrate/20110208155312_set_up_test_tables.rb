@@ -287,7 +287,7 @@ class SetUpTestTables < ActiveRecord::Migration
       t.text     :object
       t.datetime :created_at
     end
-    add_index :custom_primary_key_record_versions, [:item_type, :item_id]
+    add_index :custom_primary_key_record_versions, [:item_type, :item_id], name: "idx_cust_pk_item"
   end
 
   def down
