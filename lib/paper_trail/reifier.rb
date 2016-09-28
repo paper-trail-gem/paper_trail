@@ -31,7 +31,8 @@ module PaperTrail
           klass = version_reification_class(version, attrs)
           # The `dup` option always returns a new object, otherwise we should
           # attempt to look for the item outside of default scope(s).
-          if options[:dup] || (item_found = klass.unscoped.find_by_id(version.item_id)).nil?
+          find_cond = { klass.primary_key => version.item_id }
+          if options[:dup] || (item_found = klass.unscoped.where(find_cond).first).nil?
             model = klass.new
           elsif options[:unversioned_attributes] == :nil
             model = item_found
