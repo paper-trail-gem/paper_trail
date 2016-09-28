@@ -271,6 +271,24 @@ class SetUpTestTables < ActiveRecord::Migration
     end
     add_index :bar_habtms_foo_habtms, [:foo_habtm_id]
     add_index :bar_habtms_foo_habtms, [:bar_habtm_id]
+
+    # custom_primary_key_records use a uuid column (string)
+    create_table :custom_primary_key_records, id: false, force: true do |t|
+      t.column :uuid, :string, primary_key: true
+      t.string :name
+      t.timestamps null: true
+    end
+
+    # and custom_primary_key_record_versions stores the uuid in item_id, a string
+    create_table :custom_primary_key_record_versions, force: true do |t|
+      t.string   :item_type, null: false
+      t.string   :item_id,   null: false
+      t.string   :event,     null: false
+      t.string   :whodunnit
+      t.text     :object
+      t.datetime :created_at
+    end
+    add_index :custom_primary_key_record_versions, [:item_type, :item_id], name: "idx_cust_pk_item"
   end
 
   def down

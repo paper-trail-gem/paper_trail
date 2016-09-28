@@ -19,6 +19,9 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
+- [#868](https://github.com/airblade/paper_trail/pull/868)
+  Fix usage of find_by_id when primary key is not id, affecting reifying certain records.
+
 ## 5.2.2 (2016-09-08)
 
 ### Breaking Changes

@@ -80,6 +80,24 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.integer "quotation_id"
   end
 
+  create_table "custom_primary_key_record_versions", force: :cascade do |t|
+    t.string   "item_type",  null: false
+    t.string   "item_id",    null: false
+    t.string   "event",      null: false
+    t.string   "whodunnit"
+    t.text     "object"
+    t.datetime "created_at"
+  end
+
+  add_index "custom_primary_key_record_versions", ["item_type", "item_id"], name: "idx_cust_pk_item"
+
+  create_table "custom_primary_key_records", id: false, force: :cascade do |t|
+    t.string   "uuid"
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "customers", force: :cascade do |t|
     t.string "name"
   end
