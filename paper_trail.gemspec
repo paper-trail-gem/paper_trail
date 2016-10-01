@@ -43,9 +43,12 @@ Gem::Specification.new do |s|
   else
     s.add_development_dependency "sqlite3", "~> 1.2"
 
-    # pg 0.19 requires ruby >= 2.0.0, but we still test against ruby 1.9.3,
-    # for now ..
-    s.add_development_dependency "pg", [">= 0.17", "< 0.19"]
+    # pg 0.19 requires ruby >= 2.0.0
+    if ::Gem.ruby_version >= ::Gem::Version.new("2.0.0")
+      s.add_development_dependency "pg", "~> 0.19.0"
+    else
+      s.add_development_dependency "pg", [">= 0.17", "< 0.19"]
+    end
 
     # activerecord >= 4.2.5 may use mysql2 >= 0.4
     s.add_development_dependency "mysql2", "~> 0.4.2"
