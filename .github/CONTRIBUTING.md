@@ -47,7 +47,7 @@ RAILS_ENV=bar bundle exec rake db:setup
 cd ../..
 
 # Run tests
-DB=sqlite bundle exec rake
+DB=sqlite bundle exec appraisal ar5 rake
 ```
 
 Run tests with mysql:
@@ -65,7 +65,7 @@ RAILS_ENV=bar bundle exec rake db:setup
 cd ../..
 
 # Run tests
-DB=mysql bundle exec rake
+DB=mysql bundle exec appraisal ar5 rake
 ```
 
 Run tests with postgres:
@@ -78,16 +78,14 @@ DB=postgres bundle exec rake prepare
 # If this is the first test run ever, create databases.
 # Unlike mysql, use create/migrate instead of setup.
 cd test/dummy
-DB=postgres RAILS_ENV=test bundle exec rake db:create
-DB=postgres RAILS_ENV=test bundle exec rake db:migrate
-DB=postgres RAILS_ENV=foo bundle exec rake db:create
-DB=postgres RAILS_ENV=foo bundle exec rake db:migrate
-DB=postgres RAILS_ENV=bar bundle exec rake db:create
-DB=postgres RAILS_ENV=bar bundle exec rake db:migrate
+DB=postgres RAILS_ENV=test bundle exec rake db:drop db:create db:migrate
+DB=postgres RAILS_ENV=foo bundle exec rake db:drop db:create db:migrate
+DB=postgres RAILS_ENV=bar bundle exec rake db:drop db:create db:migrate
 cd ../..
 
 # Run tests
 DB=postgres bundle exec rake
+DB=postgres bundle exec appraisal ar5 rake
 ```
 
 ### Releases
