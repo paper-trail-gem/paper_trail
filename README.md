@@ -1061,7 +1061,7 @@ Overriding associations is not recommended in general.
 ### 5.c. Generators
 
 PaperTrail has one generator, `paper_trail:install`. It writes, but does not
-run, a migration file.  It also creates a PaperTrail configuration intializer.
+run, a migration file.  It also creates a PaperTrail configuration initializer.
 The migration adds (at least) the `versions` table. The
 most up-to-date documentation for this generator can be found by running `rails
 generate paper_trail:install --help`, but a copy is included here for
