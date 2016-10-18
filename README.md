@@ -49,6 +49,11 @@ has been destroyed.
   - [6.a. Custom Version Classes](#6a-custom-version-classes)
   - [6.b. Custom Serializer](#6b-custom-serializer)
 - [7. Testing](#7-testing)
+  - [7.a Minitest](#7a-minitest)
+  - [7.b RSpec](#7b-rspec)
+  - [7.c Cucumber](#7c-cucumber)
+  - [7.d Spork](#7d-spork)
+  - [7.e Zeus or Spring](#7e-zeus-or-spring)
 - [8. Sinatra](#8-sinatra)
 
 ## 1. Introduction
@@ -1389,21 +1394,20 @@ end
 It is also possible to do assertions on the versions using `have_a_version_with`
 matcher
 
-```
- describe '`have_a_version_with` matcher' do
-    before do
-      widget.update_attributes!(:name => 'Leonard', :an_integer => 1 )
-      widget.update_attributes!(:name => 'Tom')
-      widget.update_attributes!(:name => 'Bob')
-    end
-
-    it "is possible to do assertions on versions" do
-       expect(widget).to have_a_version_with :name => 'Leonard', :an_integer => 1
-       expect(widget).to have_a_version_with :an_integer => 1
-       expect(widget).to have_a_version_with :name => 'Tom'
-    end
+```ruby
+describe '`have_a_version_with` matcher' do
+  before do
+    widget.update_attributes!(:name => 'Leonard', :an_integer => 1 )
+    widget.update_attributes!(:name => 'Tom')
+    widget.update_attributes!(:name => 'Bob')
   end
 
+  it "is possible to do assertions on versions" do
+    expect(widget).to have_a_version_with :name => 'Leonard', :an_integer => 1
+    expect(widget).to have_a_version_with :an_integer => 1
+    expect(widget).to have_a_version_with :name => 'Tom'
+  end
+end
 ```
 
 ### 7.c. Cucumber
