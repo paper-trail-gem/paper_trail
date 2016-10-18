@@ -1397,15 +1397,15 @@ matcher
 ```ruby
 describe '`have_a_version_with` matcher' do
   before do
-    widget.update_attributes!(:name => 'Leonard', :an_integer => 1 )
-    widget.update_attributes!(:name => 'Tom')
-    widget.update_attributes!(:name => 'Bob')
+    widget.update_attributes!(name: 'Leonard', an_integer: 1)
+    widget.update_attributes!(name: 'Tom')
+    widget.update_attributes!(name: 'Bob')
   end
 
   it "is possible to do assertions on versions" do
-    expect(widget).to have_a_version_with :name => 'Leonard', :an_integer => 1
-    expect(widget).to have_a_version_with :an_integer => 1
-    expect(widget).to have_a_version_with :name => 'Tom'
+    expect(widget).to have_a_version_with name: 'Leonard', an_integer: 1
+    expect(widget).to have_a_version_with an_integer: 1
+    expect(widget).to have_a_version_with name: 'Tom'
   end
 end
 ```
