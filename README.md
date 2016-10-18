@@ -1392,7 +1392,8 @@ end
 ```
 
 It is also possible to do assertions on the versions using `have_a_version_with`
-matcher
+and `have_a_version_with_changes` matchers. For more examples, see the
+[Widget spec](https://github.com/airblade/paper_trail/blob/master/spec/models/widget_spec.rb)
 
 ```ruby
 describe '`have_a_version_with` matcher' do

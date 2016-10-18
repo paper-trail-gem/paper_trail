@@ -18,7 +18,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
-- None
+- [#881](https://github.com/airblade/paper_trail/pull/881) - Add RSpec matcher
+  `have_a_version_with_changes` for easier testing.
 
 ### Fixed
 

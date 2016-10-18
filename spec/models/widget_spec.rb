@@ -21,6 +21,20 @@ describe Widget, type: :model do
     end
   end
 
+  describe "`have_a_version_with_changes` matcher", versioning: true do
+    before do
+      widget.update_attributes!(name: "Leonard", an_integer: 2)
+      widget.update_attributes!(name: "Tom")
+      widget.update_attributes!(name: "Bob")
+    end
+
+    it "is possible to do assertions on versions" do
+      expect(widget).to have_a_version_with_changes name: "Leonard", an_integer: 2
+      expect(widget).to have_a_version_with_changes an_integer: 2
+      expect(widget).to have_a_version_with_changes name: "Tom"
+    end
+  end
+
   describe "versioning option" do
     context "enabled", versioning: true do
       it "should enable versioning" do
