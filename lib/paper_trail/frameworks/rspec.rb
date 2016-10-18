@@ -27,3 +27,8 @@ RSpec::Matchers.define :have_a_version_with do |attributes|
   # check if the model has a version with the specified attributes
   match { |actual| actual.versions.where_object(attributes).any? }
 end
+
+RSpec::Matchers.define :have_a_version_with_changes do |attributes|
+  # check if the model has a version changes with the specified attributes
+  match { |actual| actual.versions.where_object_changes(attributes).any? }
+end
