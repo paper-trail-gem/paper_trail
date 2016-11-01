@@ -1391,9 +1391,7 @@ describe Widget do
 end
 ```
 
-It is also possible to do assertions on the versions using `have_a_version_with`
-and `have_a_version_with_changes` matchers. For more examples, see the
-[Widget spec](https://github.com/airblade/paper_trail/blob/master/spec/models/widget_spec.rb)
+It is also possible to do assertions on the versions using `have_a_version_with` matcher.
 
 ```ruby
 describe '`have_a_version_with` matcher' do
@@ -1403,13 +1401,33 @@ describe '`have_a_version_with` matcher' do
     widget.update_attributes!(name: 'Bob')
   end
 
-  it "is possible to do assertions on versions" do
+  it "is possible to do assertions on version attributes" do
     expect(widget).to have_a_version_with name: 'Leonard', an_integer: 1
     expect(widget).to have_a_version_with an_integer: 1
     expect(widget).to have_a_version_with name: 'Tom'
   end
 end
 ```
+There is also a `have_a_version_with_changes` matcher. This is only usable if your versions table [has an `object_changes` column for storing changesets](#3c-diffing-versions).
+
+```ruby
+describe '`have_a_version_with_changes` matcher' do
+  before do
+    widget.update_attributes!(name: 'Leonard', an_integer: 1)
+    widget.update_attributes!(name: 'Tom')
+    widget.update_attributes!(name: 'Bob')
+  end
+
+  it "is possible to do assertions on version changes" do
+    expect(widget).to have_a_version_with name: 'Leonard', an_integer: 2
+    expect(widget).to have_a_version_with an_integer: 2
+    expect(widget).to have_a_version_with name: 'Bob'
+  end
+end
+```
+
+For more examples of the RSpec matchers, see the
+[Widget spec](https://github.com/airblade/paper_trail/blob/master/spec/models/widget_spec.rb)
 
 ### 7.c. Cucumber
 

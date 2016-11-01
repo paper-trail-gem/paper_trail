@@ -14,7 +14,7 @@ describe Widget, type: :model do
       widget.update_attributes!(name: "Bob")
     end
 
-    it "is possible to do assertions on versions" do
+    it "is possible to do assertions on version attributes" do
       expect(widget).to have_a_version_with name: "Leonard", an_integer: 1
       expect(widget).to have_a_version_with an_integer: 1
       expect(widget).to have_a_version_with name: "Tom"
@@ -28,10 +28,11 @@ describe Widget, type: :model do
       widget.update_attributes!(name: "Bob")
     end
 
-    it "is possible to do assertions on versions" do
+    it "is possible to do assertions on version changes" do
       expect(widget).to have_a_version_with_changes name: "Leonard", an_integer: 2
       expect(widget).to have_a_version_with_changes an_integer: 2
       expect(widget).to have_a_version_with_changes name: "Tom"
+      expect(widget).to have_a_version_with_changes name: "Bob"
     end
   end
 
