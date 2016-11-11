@@ -143,7 +143,7 @@ module PaperTrail
     end
 
     # Adds callbacks to record changes to habtm associations such that on save
-    # the previous version of the association (if changed) can be interpreted.
+    # the previous version of the association (if changed) can be reconstructed.
     def setup_callbacks_for_habtm(join_tables)
       @model_class.send :attr_accessor, :paper_trail_habtm
       @model_class.class_attribute :paper_trail_save_join_tables
