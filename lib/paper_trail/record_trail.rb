@@ -315,9 +315,7 @@ module PaperTrail
     # `VersionAssociation` records for each of the associated records.
     def save_associations_habtm(version)
       @record.class.reflect_on_all_associations(:has_and_belongs_to_many).each do |a|
-        next unless
-          @record.class.paper_trail_save_join_tables.include?(a.name) ||
-              a.klass.paper_trail.enabled?
+        next unless save_habtm_association?(a)
         habtm_assoc_ids(a).each do |id|
           PaperTrail::VersionAssociation.create(
             version_id: version.transaction_id,
@@ -426,6 +424,13 @@ module PaperTrail
         "Unable to create version for #{action} of #{@record.class.name}##{id}: " +
           version.errors.full_messages.join(", ")
       )
+    end
+
+    # Returns true if the given HABTM association should be saved.
+    # @api private
+    def save_habtm_association?(assoc)
+      @record.class.paper_trail_save_join_tables.include?(assoc.name) ||
+        assoc.klass.paper_trail.enabled?
     end
 
     # Returns true if `save` will cause `record_update`
