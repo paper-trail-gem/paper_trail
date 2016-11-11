@@ -4,16 +4,8 @@
 Metrics/AbcSize:
   Max: 30 # Goal: 15
 
-Metrics/ClassLength:
-  Max: 327
-  Exclude:
-    - test/**/*
-
 Metrics/CyclomaticComplexity:
   Max: 8 # Goal: 6
-
-Metrics/ModuleLength:
-  Max: 317
 
 Metrics/PerceivedComplexity:
   Max: 10 # Goal: 7

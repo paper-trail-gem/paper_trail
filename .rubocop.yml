@@ -20,6 +20,10 @@ Metrics/AbcSize:
   Exclude:
     - 'test/dummy/db/migrate/*'
 
+# Not a useful metric compared to, e.g. `AbcSize`.
+Metrics/ClassLength:
+  Enabled: false
+
 # The Ruby Style Guide recommends to "Limit lines to 80 characters."
 # (https://github.com/bbatsov/ruby-style-guide#80-character-limits)
 # but 100 is also reasonable.
@@ -30,6 +34,10 @@ Metrics/LineLength:
 # It's common to have very long methods (> 50 lines) which are quite simple. For
 # example, a method that returns a long string with only a few interpolations.
 Metrics/MethodLength:
+  Enabled: false
+
+# Not a useful metric compared to, e.g. `AbcSize`.
+Metrics/ModuleLength:
   Enabled: false
 
 Style/AlignParameters:
