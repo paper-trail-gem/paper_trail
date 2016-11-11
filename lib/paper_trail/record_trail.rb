@@ -309,19 +309,21 @@ module PaperTrail
       end
     end
 
+    # When a record is created, updated, or destroyed, we determine what the
+    # HABTM associations looked like before any changes were made, by using
+    # the `paper_trail_habtm` data structure. Then, we create
+    # `VersionAssociation` records for each of the associated records.
     def save_associations_habtm(version)
-      # Use the :added and :removed keys to extrapolate the HABTM associations
-      # to before any changes were made
       @record.class.reflect_on_all_associations(:has_and_belongs_to_many).each do |a|
         next unless
           @record.class.paper_trail_save_join_tables.include?(a.name) ||
               a.klass.paper_trail.enabled?
-        assoc_version_args = {
-          version_id: version.transaction_id,
-          foreign_key_name: a.name
-        }
         habtm_assoc_ids(a).each do |id|
-          PaperTrail::VersionAssociation.create(assoc_version_args.merge(foreign_key_id: id))
+          PaperTrail::VersionAssociation.create(
+            version_id: version.transaction_id,
+            foreign_key_name: a.name,
+            foreign_key_id: id
+          )
         end
       end
     end
