@@ -320,11 +320,7 @@ module PaperTrail
           version_id: version.transaction_id,
           foreign_key_name: a.name
         }
-        assoc_ids =
-          @record.send(a.name).to_a.map(&:id) +
-          (@record.paper_trail_habtm.try(:[], a.name).try(:[], :removed) || []) -
-          (@record.paper_trail_habtm.try(:[], a.name).try(:[], :added) || [])
-        assoc_ids.each do |id|
+        habtm_assoc_ids(a).each do |id|
           PaperTrail::VersionAssociation.create(assoc_version_args.merge(foreign_key_id: id))
         end
       end
@@ -412,6 +408,15 @@ module PaperTrail
     def add_transaction_id_to(data)
       return unless @record.class.paper_trail.version_class.column_names.include?("transaction_id")
       data[:transaction_id] = PaperTrail.transaction_id
+    end
+
+    # Given a HABTM association, returns an array of ids.
+    # @api private
+    def habtm_assoc_ids(habtm_assoc)
+      current = @record.send(habtm_assoc.name).to_a.map(&:id) # TODO: `pluck` would use less memory
+      removed = @record.paper_trail_habtm.try(:[], habtm_assoc.name).try(:[], :removed) || []
+      added = @record.paper_trail_habtm.try(:[], habtm_assoc.name).try(:[], :added) || []
+      current + removed - added
     end
 
     def log_version_errors(version, action)
