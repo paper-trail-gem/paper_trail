@@ -421,7 +421,8 @@ module PaperTrail
 
     def log_version_errors(version, action)
       version.logger.warn(
-        "Unable to create version for #{action} of #{@record.class.name}##{id}: " +
+        "Unable to create version for #{action} of #{@record.class.name}#" +
+          "#{@record.id}: " +
           version.errors.full_messages.join(", ")
       )
     end
