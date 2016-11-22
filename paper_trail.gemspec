@@ -20,7 +20,11 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = ">= 1.3.6"
   s.required_ruby_version = ">= 1.9.3"
 
-  s.add_dependency "activerecord", [">= 3.0", "< 6.0"]
+  # Rails 5.1 will deprecate the current behavior of AR::Dirty
+  # (https://github.com/rails/rails/pull/25337) which is pretty important
+  # to PT. I haven't found good instructions yet on how to upgrade, but
+  # Sean Griffin described it as easy, on his podcast (http://bikeshed.fm/87).
+  s.add_dependency "activerecord", [">= 3.0", "< 5.1"]
   s.add_dependency "request_store", "~> 1.1"
 
   s.add_development_dependency "appraisal", "~> 2.1"
