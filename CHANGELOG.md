@@ -7,9 +7,10 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Breaking Changes
 
-- The model methods deprecated in 5.2.0 have been removed. Use paper_trail.x
-  instead of x.
-- `timestamp_field=` removed without replacement. It is no longer configurable. The
+- [#864](https://github.com/airblade/paper_trail/pull/864) - The model methods
+  deprecated in 5.2.0 have been removed. Use `paper_trail.x` instead of `x`.
+- [#861](https://github.com/airblade/paper_trail/pull/861) - `timestamp_field=`
+  removed without replacement. It is no longer configurable. The
   timestamp field in the `versions` table must now be named `created_at`.
 
 ### Deprecated
