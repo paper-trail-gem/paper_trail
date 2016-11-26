@@ -19,6 +19,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
+- [#889](https://github.com/airblade/paper_trail/pull/889) -
+  Fix warning message in instances when a version can't be persisted due to validation errors.
 - [#868](https://github.com/airblade/paper_trail/pull/868)
   Fix usage of find_by_id when primary key is not id, affecting reifying certain records.
 
@@ -30,7 +32,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Deprecated
 
-- [#863](https://github.com/airblade/paper_trail/pull/863)
+- [#863](https://github.com/airblade/paper_trail/pull/863) -
   PaperTrail.timestamp_field= deprecated without replacement.
   See [#861](https://github.com/airblade/paper_trail/pull/861) for discussion.
 
@@ -407,7 +409,7 @@ candidates.
 ## 3.0.5
 
   - [#401](https://github.com/airblade/paper_trail/issues/401) / [#406](https://github.com/airblade/paper_trail/issues/406) -
-    `PaperTrail::Version` class is not loaded via a `Rails::Engine`, even when the gem is used with in Rails. This feature has
+    `PaperTrail::Version` class is not loaded via a `Rails::Engine`, even when the gem is used within Rails. This feature has
     will be re-introduced in version `4.0`.
   - [#398](https://github.com/airblade/paper_trail/pull/398) - Only require the `RSpec` helper if `RSpec::Core` is required.
 
