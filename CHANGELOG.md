@@ -24,6 +24,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
+- [#889](https://github.com/airblade/paper_trail/pull/889) -
+  Fix warning message in instances when a version can't be persisted due to validation errors.
 - [#868](https://github.com/airblade/paper_trail/pull/868) -
   Fix usage of find_by_id when primary key is not id, affecting reifying certain records.
 
