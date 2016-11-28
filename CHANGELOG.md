@@ -5,6 +5,10 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ## Unreleased
 
+Now with less model pollution! About 40 methods that were polluting your models'
+namespaces have been removed, reducing the chances of a name conflict with your
+methods.
+
 ### Breaking Changes
 
 - [#864](https://github.com/airblade/paper_trail/pull/864) - The model methods
