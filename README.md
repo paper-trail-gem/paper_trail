@@ -726,14 +726,12 @@ the `whodunnit` value for an operation inside a block like this:
 
 ```ruby
 PaperTrail.whodunnit = 'Andy Stewart'
-widget.whodunnit('Lucas Souza') do
+widget.paper_trail.whodunnit('Lucas Souza') do
   widget.update_attributes :name => 'Wibble'
 end
 widget.versions.last.whodunnit              # Lucas Souza
 widget.update_attributes :name => 'Clair'
 widget.versions.last.whodunnit              # Andy Stewart
-widget.whodunnit('Ben Atkins') { |w| w.update_attributes :name => 'Beth' } # this syntax also works
-widget.versions.last.whodunnit              # Ben Atkins
 ```
 
 A version's `whodunnit` records who changed the object causing the `version` to
