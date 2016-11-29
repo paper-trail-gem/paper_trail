@@ -97,7 +97,7 @@ module PaperTrail
     end
 
     # @api private
-    def merge_metadata(data)
+    def add_metadata_to(data)
       # First we merge the model-level metadata in `meta`.
       @record.paper_trail_options[:meta].each do |k, v|
         data[k] =
@@ -119,7 +119,9 @@ module PaperTrail
       end
 
       # Second we merge any extra data from the controller (if available).
-      data.merge(PaperTrail.controller_info || {})
+      data.merge!(PaperTrail.controller_info) if PaperTrail.controller_info
+
+      data
     end
 
     # Returns the object (not a Version) as it became next.
@@ -185,7 +187,8 @@ module PaperTrail
         data[:object_changes] = recordable_object_changes
       end
       add_transaction_id_to(data)
-      merge_metadata(data)
+      add_metadata_to(data)
+      data
     end
 
     def record_destroy
@@ -213,7 +216,8 @@ module PaperTrail
         whodunnit: PaperTrail.whodunnit
       }
       add_transaction_id_to(data)
-      merge_metadata(data)
+      add_metadata_to(data)
+      data
     end
 
     # Returns a boolean indicating whether to store serialized version diffs
@@ -252,7 +256,8 @@ module PaperTrail
         data[:object_changes] = recordable_object_changes
       end
       add_transaction_id_to(data)
-      merge_metadata(data)
+      add_metadata_to(data)
+      data
     end
 
     # Returns an object which can be assigned to the `object` attribute of a
