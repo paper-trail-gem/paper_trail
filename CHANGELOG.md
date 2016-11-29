@@ -3,7 +3,7 @@
 This project follows [semver 2.0.0](http://semver.org/spec/v2.0.0.html) and the
 recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
-## 5.2.3
+## 5.2.3 (2016-11-29)
 
 ### Breaking Changes
 
