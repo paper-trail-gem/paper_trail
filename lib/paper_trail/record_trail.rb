@@ -165,6 +165,15 @@ module PaperTrail
 
     def record_create
       return unless enabled?
+      versions_assoc = @record.send(@record.class.versions_association_name)
+      version = versions_assoc.create! data_for_create
+      update_transaction_id(version)
+      save_associations(version)
+    end
+
+    # Returns data for record create
+    # @api private
+    def data_for_create
       data = {
         event: @record.paper_trail_event || "create",
         whodunnit: PaperTrail.whodunnit
@@ -176,23 +185,12 @@ module PaperTrail
         data[:object_changes] = recordable_object_changes
       end
       add_transaction_id_to(data)
-      versions_assoc = @record.send(@record.class.versions_association_name)
-      version = versions_assoc.create! merge_metadata(data)
-      update_transaction_id(version)
-      save_associations(version)
+      merge_metadata(data)
     end
 
     def record_destroy
       if enabled? && !@record.new_record?
-        data = {
-          item_id: @record.id,
-          item_type: @record.class.base_class.name,
-          event: @record.paper_trail_event || "destroy",
-          object: recordable_object,
-          whodunnit: PaperTrail.whodunnit
-        }
-        add_transaction_id_to(data)
-        version = @record.class.paper_trail.version_class.create(merge_metadata(data))
+        version = @record.class.paper_trail.version_class.create(data_for_destroy)
         if version.errors.any?
           log_version_errors(version, :destroy)
         else
@@ -202,6 +200,20 @@ module PaperTrail
           save_associations(version)
         end
       end
+    end
+
+    # Returns data for record destroy
+    # @api private
+    def data_for_destroy
+      data = {
+        item_id: @record.id,
+        item_type: @record.class.base_class.name,
+        event: @record.paper_trail_event || "destroy",
+        object: recordable_object,
+        whodunnit: PaperTrail.whodunnit
+      }
+      add_transaction_id_to(data)
+      merge_metadata(data)
     end
 
     # Returns a boolean indicating whether to store serialized version diffs
@@ -214,20 +226,8 @@ module PaperTrail
 
     def record_update(force)
       if enabled? && (force || changed_notably?)
-        data = {
-          event: @record.paper_trail_event || "update",
-          object: recordable_object,
-          whodunnit: PaperTrail.whodunnit
-        }
-        if @record.respond_to?(:updated_at)
-          data[:created_at] = @record.updated_at
-        end
-        if record_object_changes?
-          data[:object_changes] = recordable_object_changes
-        end
-        add_transaction_id_to(data)
         versions_assoc = @record.send(@record.class.versions_association_name)
-        version = versions_assoc.create(merge_metadata(data))
+        version = versions_assoc.create(data_for_update)
         if version.errors.any?
           log_version_errors(version, :update)
         else
@@ -235,6 +235,24 @@ module PaperTrail
           save_associations(version)
         end
       end
+    end
+
+    # Returns data for record update
+    # @api private
+    def data_for_update
+      data = {
+        event: @record.paper_trail_event || "update",
+        object: recordable_object,
+        whodunnit: PaperTrail.whodunnit
+      }
+      if @record.respond_to?(:updated_at)
+        data[:created_at] = @record.updated_at
+      end
+      if record_object_changes?
+        data[:object_changes] = recordable_object_changes
+      end
+      add_transaction_id_to(data)
+      merge_metadata(data)
     end
 
     # Returns an object which can be assigned to the `object` attribute of a
