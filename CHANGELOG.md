@@ -28,10 +28,29 @@ methods.
 
 ### Fixed
 
+- None
+
+## 5.2.3 (2016-11-29)
+
+### Breaking Changes
+
+- None
+
+### Deprecated
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
 - [#889](https://github.com/airblade/paper_trail/pull/889) -
   Fix warning message in instances when a version can't be persisted due to validation errors.
-- [#868](https://github.com/airblade/paper_trail/pull/868) -
+- [#868](https://github.com/airblade/paper_trail/pull/868)
   Fix usage of find_by_id when primary key is not id, affecting reifying certain records.
+
 
 ## 5.2.2 (2016-09-08)
 

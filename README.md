@@ -11,7 +11,7 @@ has been destroyed.
 | Version        | Documentation |
 | -------------- | ------------- |
 | Unreleased     | https://github.com/airblade/paper_trail/blob/master/README.md |
-| 5.2.2          | https://github.com/airblade/paper_trail/blob/v5.2.2/README.md |
+| 5.2.3          | https://github.com/airblade/paper_trail/blob/v5.2.3/README.md |
 | 4.2.0          | https://github.com/airblade/paper_trail/blob/v4.2.0/README.md |
 | 3.0.9          | https://github.com/airblade/paper_trail/blob/v3.0.9/README.md |
 | 2.7.2          | https://github.com/airblade/paper_trail/blob/v2.7.2/README.md |
