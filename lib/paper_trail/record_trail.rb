@@ -23,13 +23,13 @@ module PaperTrail
     end
 
     def attributes_before_change
-      @record.attributes.map do |k, v|
+      Hash[@record.attributes.map do |k, v|
         if @record.class.column_names.include?(k)
           [k, attribute_in_previous_version(k)]
         else
           [k, v]
         end
-      end.to_h
+      end]
     end
 
     def changed_and_not_ignored
