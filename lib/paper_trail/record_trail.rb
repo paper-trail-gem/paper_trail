@@ -3,24 +3,33 @@ module PaperTrail
   class RecordTrail
     def initialize(record)
       @record = record
+      @in_after_callback = false
     end
 
     # Utility method for reifying. Anything executed inside the block will
     # appear like a new record.
-    def appear_as_new_record
+    def appear_as_unpersisted
       @record.instance_eval {
         alias :old_new_record? :new_record?
         alias :new_record? :present?
+        alias :old_persisted? :persisted?
+        alias :persisted? :nil?
       }
       yield
-      @record.instance_eval { alias :new_record? :old_new_record? }
+      @record.instance_eval {
+        alias :new_record? :old_new_record?
+        alias :persisted? :old_persisted?
+      }
     end
 
     def attributes_before_change
-      changed = @record.changed_attributes.select { |k, _v|
-        @record.class.column_names.include?(k)
-      }
-      @record.attributes.merge(changed)
+      @record.attributes.map do |k, v|
+        if @record.class.column_names.include?(k)
+          [k, attribute_in_previous_version(k)]
+        else
+          [k, v]
+        end
+      end.to_h
     end
 
     def changed_and_not_ignored
@@ -34,7 +43,7 @@ module PaperTrail
           }
       end
       skip = @record.paper_trail_options[:skip]
-      @record.changed - ignore - skip
+      changed_in_latest_version - ignore - skip
     end
 
     # Invoked after rollbacks to ensure versions records are not created for
@@ -65,7 +74,7 @@ module PaperTrail
 
     # @api private
     def changes
-      notable_changes = @record.changes.delete_if { |k, _v|
+      notable_changes = changes_in_latest_version.delete_if { |k, _v|
         !notably_changed.include?(k)
       }
       AttributeSerializers::ObjectChangesAttribute.
@@ -87,7 +96,7 @@ module PaperTrail
     # changed.
     def ignored_attr_has_changed?
       ignored = @record.paper_trail_options[:ignore] + @record.paper_trail_options[:skip]
-      ignored.any? && (@record.changed & ignored).any?
+      ignored.any? && (changed_in_latest_version & ignored).any?
     end
 
     # Returns true if this instance is the current, live one;
@@ -107,9 +116,9 @@ module PaperTrail
             # If it is an attribute that is changing in an existing object,
             # be sure to grab the current version.
             if @record.has_attribute?(v) &&
-                @record.send("#{v}_changed?".to_sym) &&
+                attribute_changed_in_latest_version?(v) &&
                 data[:event] != "create"
-              @record.send("#{v}_was".to_sym)
+              attribute_in_previous_version(v)
             else
               @record.send(v)
             end
@@ -164,11 +173,14 @@ module PaperTrail
     end
 
     def record_create
+      @in_after_callback = true
       return unless enabled?
       versions_assoc = @record.send(@record.class.versions_association_name)
       version = versions_assoc.create! data_for_create
       update_transaction_id(version)
       save_associations(version)
+    ensure
+      @in_after_callback = false
     end
 
     # Returns data for record create
@@ -225,6 +237,7 @@ module PaperTrail
     end
 
     def record_update(force)
+      @in_after_callback = true
       if enabled? && (force || changed_notably?)
         versions_assoc = @record.send(@record.class.versions_association_name)
         version = versions_assoc.create(data_for_update)
@@ -235,6 +248,8 @@ module PaperTrail
           save_associations(version)
         end
       end
+    ensure
+      @in_after_callback = false
     end
 
     # Returns data for record update
@@ -473,6 +488,42 @@ module PaperTrail
 
     def versions
       @record.public_send(@record.class.versions_association_name)
+    end
+
+    def attribute_in_previous_version(attr_name)
+      if @in_after_callback && rails_51?
+        @record.attribute_before_last_save(attr_name.to_s)
+      else
+        @record.attribute_was(attr_name.to_s)
+      end
+    end
+
+    def changed_in_latest_version
+      if @in_after_callback && rails_51?
+        @record.saved_changes.keys
+      else
+        @record.changed
+      end
+    end
+
+    def changes_in_latest_version
+      if @in_after_callback && rails_51?
+        @record.saved_changes
+      else
+        @record.changes
+      end
+    end
+
+    def attribute_changed_in_latest_version?(attr_name)
+      if @in_after_callback && rails_51?
+        @record.saved_change_to_attribute?(attr_name.to_s)
+      else
+        @record.attribute_changed?(attr_name.to_s)
+      end
+    end
+
+    def rails_51?
+      ActiveRecord::VERSION::MAJOR >= 5 && ActiveRecord::VERSION::MINOR >= 1
     end
   end
 end
