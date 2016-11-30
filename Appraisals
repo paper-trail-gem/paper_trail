@@ -36,3 +36,9 @@ appraise "ar5" do
   # Contributions welcome.
   # gem "sinatra", "2.0.0.beta2"
 end
+
+appraise "ar_master" do
+  gem "rails", github: "rails/rails"
+  gem "rspec-rails", "~> 3.5.1"
+  gem "rails-controller-testing"
+end

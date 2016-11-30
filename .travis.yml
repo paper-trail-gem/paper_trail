@@ -28,6 +28,7 @@ gemfile:
   - gemfiles/ar3.gemfile
   - gemfiles/ar4.gemfile
   - gemfiles/ar5.gemfile
+  - gemfiles/ar_master.gemfile
 
 matrix:
   fast_finish: true
@@ -36,6 +37,8 @@ matrix:
       rvm: 1.9.3
     - gemfile: gemfiles/ar5.gemfile
       rvm: jruby-19mode
+  allow_failures:
+    - gemfile: gemfiles/ar_master.gemfile
 
 addons:
   postgresql: "9.4"
