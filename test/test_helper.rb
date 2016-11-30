@@ -98,3 +98,28 @@ def params_wrapper(args)
     args
   end
 end
+
+module CleanupCallbacks
+  def cleanup_callbacks(target, type)
+    original_callbacks = nil
+
+    setup do
+      if ActiveRecord::VERSION::MAJOR > 3
+        original_callbacks = target.send(:get_callbacks, type).deep_dup
+      else
+        # While this defeats the purpose of targeted callback
+        # cleanup, callbacks were incredibly difficult to modify
+        # prior to Rails 4, and Rails internal callbacks were only
+        # used for autosaving associations in Rails 3. Our tests
+        # don't care whether a Fluxor's widget is autosaved.
+        target.reset_callbacks(type)
+      end
+    end
+
+    teardown do
+      if original_callbacks
+        target.send(:set_callbacks, type, original_callbacks)
+      end
+    end
+  end
+end
