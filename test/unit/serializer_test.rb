@@ -2,11 +2,14 @@ require "test_helper"
 require "custom_json_serializer"
 
 class SerializerTest < ActiveSupport::TestCase
+  extend CleanupCallbacks
+
+  cleanup_callbacks(Fluxor, :create)
+  cleanup_callbacks(Fluxor, :update)
+  cleanup_callbacks(Fluxor, :destroy)
+  cleanup_callbacks(Fluxor, :save)
+
   setup do
-    # Clean up after test/unit/model_test.rb
-    Fluxor.reset_callbacks :create
-    Fluxor.reset_callbacks :update
-    Fluxor.reset_callbacks :destroy
     Fluxor.instance_eval "has_paper_trail"
   end
 
