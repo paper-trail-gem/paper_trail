@@ -25,17 +25,16 @@ before_script:
   - sh -c "if [ \"$DB\" = 'postgres' ]; then psql -c 'create database paper_trail_foo;'  -U postgres; fi"
 
 gemfile:
-  - gemfiles/ar3.gemfile
-  - gemfiles/ar4.gemfile
-  - gemfiles/ar5.gemfile
+  - gemfiles/ar_4.2.gemfile
+  - gemfiles/ar_5.0.gemfile
   - gemfiles/ar_master.gemfile
 
 matrix:
   fast_finish: true
   exclude:
-    - gemfile: gemfiles/ar5.gemfile
+    - gemfile: gemfiles/ar_5.0.gemfile
       rvm: 1.9.3
-    - gemfile: gemfiles/ar5.gemfile
+    - gemfile: gemfiles/ar_5.0.gemfile
       rvm: jruby-19mode
   allow_failures:
     - gemfile: gemfiles/ar_master.gemfile
