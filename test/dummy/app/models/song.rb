@@ -12,7 +12,7 @@ class Song < ActiveRecord::Base
   end
 
   if ActiveRecord::VERSION::MAJOR >= 5
-    attribute :name
+    attribute :name, :string
   else
     attr_accessor :name
 
