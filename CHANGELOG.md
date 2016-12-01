@@ -70,6 +70,8 @@ methods.
 
 ### Fixed
 
+- None
+
 ## 5.2.1 (2016-09-02)
 
 ### Breaking Changes
