@@ -22,17 +22,11 @@ Install gems with `bundle exec appraisal install`.
 
 Testing is a little awkward because the test suite:
 
-1. Supports three major versions of rails: 3, 4, 5
+1. Supports multiple versions of rails
 1. Contains a "dummy" rails app with three databases (test, foo, and bar)
 1. Supports three different RDBMS': sqlite, mysql, and postgres
 
-Test against rails 3:
-
-```
-bundle exec appraisal ar3 rake
-```
-
-Run tests with sqlite:
+### Run tests with sqlite
 
 ```
 # Create the appropriate database config. file
@@ -47,10 +41,10 @@ RAILS_ENV=bar bundle exec rake db:setup
 cd ../..
 
 # Run tests
-DB=sqlite bundle exec appraisal ar5 rake
+DB=sqlite bundle exec appraisal ar-5.0 rake
 ```
 
-Run tests with mysql:
+### Run tests with mysql
 
 ```
 # Create the appropriate database config. file
@@ -65,10 +59,10 @@ RAILS_ENV=bar bundle exec rake db:setup
 cd ../..
 
 # Run tests
-DB=mysql bundle exec appraisal ar5 rake
+DB=mysql bundle exec appraisal ar-5.0 rake
 ```
 
-Run tests with postgres:
+### Run tests with postgres
 
 ```
 # Create the appropriate database config. file
@@ -85,10 +79,10 @@ cd ../..
 
 # Run tests
 DB=postgres bundle exec rake
-DB=postgres bundle exec appraisal ar5 rake
+DB=postgres bundle exec appraisal ar-5.0 rake
 ```
 
-### Releases
+## Releases
 
 1. Set the version in lib/paper_trail/version_number.rb
   - Set PRE to nil unless it's a pre-release (beta, rc, etc.)

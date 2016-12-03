@@ -3,7 +3,7 @@
 This project follows [semver 2.0.0](http://semver.org/spec/v2.0.0.html) and the
 recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
-## Unreleased
+## 6.0.0 (Unreleased)
 
 Now with less model pollution! About 40 methods that were polluting your models'
 namespaces have been removed, reducing the chances of a name conflict with your
@@ -11,6 +11,7 @@ methods.
 
 ### Breaking Changes
 
+- Dropped support for rails 3
 - [#864](https://github.com/airblade/paper_trail/pull/864) - The model methods
   deprecated in 5.2.0 have been removed. Use `paper_trail.x` instead of `x`.
 - [#861](https://github.com/airblade/paper_trail/pull/861) - `timestamp_field=`
@@ -23,6 +24,7 @@ methods.
 
 ### Added
 
+- Support for rails 5.1
 - [#881](https://github.com/airblade/paper_trail/pull/881) - Add RSpec matcher
   `have_a_version_with_changes` for easier testing.
 
