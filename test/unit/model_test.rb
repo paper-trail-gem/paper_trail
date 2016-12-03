@@ -137,7 +137,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         end
 
         should "have removed the skipped attributes when saving the previous version" do
-          assert_equal nil, PaperTrail.serializer.load(@old_article.object)["file_upload"]
+          assert_nil PaperTrail.serializer.load(@old_article.object)["file_upload"]
         end
 
         should "have kept the non-skipped attributes in the previous version" do
