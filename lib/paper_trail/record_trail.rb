@@ -8,6 +8,17 @@ module PaperTrail
 
     # Utility method for reifying. Anything executed inside the block will
     # appear like a new record.
+    #
+    # > .. as best as I can tell, the purpose of
+    # > appear_as_new_record was to attempt to prevent the callbacks in
+    # > AutosaveAssociation (which is the module responsible for persisting
+    # > foreign key changes earlier than most people want most of the time
+    # > because backwards compatibility or the maintainer hates himself or
+    # > something) from running. By also stubbing out persisted? we can
+    # > actually prevent those. A more stable option might be to use suppress
+    # > instead, similar to the other branch in reify_has_one.
+    # > -Sean Griffin (https://github.com/airblade/paper_trail/pull/899)
+    #
     def appear_as_new_record
       @record.instance_eval {
         alias :old_new_record? :new_record?
