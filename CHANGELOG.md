@@ -5,13 +5,14 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ## 6.0.0 (Unreleased)
 
-Now with less model pollution! About 40 methods that were polluting your models'
-namespaces have been removed, reducing the chances of a name conflict with your
-methods.
+Now with rails 5.1 support, and less model pollution! About 40 methods that were
+polluting your models' namespaces have been removed, reducing the chances of a
+name conflict with your methods.
 
 ### Breaking Changes
 
-- Dropped support for rails 3
+- [#898](https://github.com/airblade/paper_trail/pull/898) - Dropped support
+  for rails 3
 - [#864](https://github.com/airblade/paper_trail/pull/864) - The model methods
   deprecated in 5.2.0 have been removed. Use `paper_trail.x` instead of `x`.
 - [#861](https://github.com/airblade/paper_trail/pull/861) - `timestamp_field=`
@@ -24,7 +25,8 @@ methods.
 
 ### Added
 
-- Support for rails 5.1
+- [#900](https://github.com/airblade/paper_trail/pull/900/files) -
+  Support for rails 5.1
 - [#881](https://github.com/airblade/paper_trail/pull/881) - Add RSpec matcher
   `have_a_version_with_changes` for easier testing.
 
