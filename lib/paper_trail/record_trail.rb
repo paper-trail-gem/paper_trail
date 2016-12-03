@@ -8,7 +8,7 @@ module PaperTrail
 
     # Utility method for reifying. Anything executed inside the block will
     # appear like a new record.
-    def appear_as_unpersisted
+    def appear_as_new_record
       @record.instance_eval {
         alias :old_new_record? :new_record?
         alias :new_record? :present?
