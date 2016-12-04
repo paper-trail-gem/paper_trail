@@ -678,39 +678,22 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     end
   end
 
-  context "Timestamps" do
-    setup do
-      @wotsit = Wotsit.create! name: "wotsit"
-    end
+  test "update_attributes! records timestamps" do
+    wotsit = Wotsit.create! name: "wotsit"
+    wotsit.update_attributes! name: "changed"
+    reified = wotsit.versions.last.reify
+    assert_not_nil reified.created_at
+    assert_not_nil reified.updated_at
+  end
 
-    should "record timestamps" do
-      @wotsit.update_attributes! name: "changed"
-      assert_not_nil @wotsit.versions.last.reify.created_at
-      assert_not_nil @wotsit.versions.last.reify.updated_at
-    end
-
-    # Tests that it doesn't try to write created_on as an attribute just because
-    # a created_on method exists.
-    #
-    # - Deprecation warning in Rails 3.2
-    # - ActiveModel::MissingAttributeError in Rails 4
-    #
-    # In rails 5, `capture` is deprecated in favor of `capture_io`.
-    #
-    should "not generate warning" do
-      assert_update_raises_nothing = lambda {
-        assert_nothing_raised {
-          @wotsit.update_attributes! name: "changed"
-        }
-      }
-      warnings =
-        if respond_to?(:capture_io)
-          capture_io { assert_update_raises_nothing.call }.last
-        else
-          capture(:stderr) { assert_update_raises_nothing.call }
-        end
-      assert_equal "", warnings
-    end
+  # Tests that it doesn't try to write created_on as an attribute just because
+  # a created_on method exists.
+  #
+  # - ActiveModel::MissingAttributeError in Rails 4
+  #
+  test "update_attributes! does not raise error" do
+    wotsit = Wotsit.create! name: "name1"
+    assert_nothing_raised { wotsit.update_attributes! name: "name2" }
   end
 
   context "A subclass" do

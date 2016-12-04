@@ -45,6 +45,7 @@ has been destroyed.
   - [5.a. Single Table Inheritance](#5a-single-table-inheritance-sti)
   - [5.b. Configuring the `versions` Association](#5b-configuring-the-versions-association)
   - [5.c. Generators](#5c-generators)
+  - [5.d. Protected Attributes](#5d-protected-attributes)
 - [6. Extensibility](#6-extensibility)
   - [6.a. Custom Version Classes](#6a-custom-version-classes)
   - [6.b. Custom Serializer](#6b-custom-serializer)
@@ -1008,30 +1009,12 @@ class ApplicationController
 end
 ```
 
-#### Protected Attributes and Metadata
-
-If you are using rails 3 or the [protected_attributes][17] gem you must declare
-your metadata columns to be `attr_accessible`.
-
-```ruby
-# app/models/paper_trail/version.rb
-module PaperTrail
-  class Version < ActiveRecord::Base
-    include PaperTrail::VersionConcern
-    attr_accessible :author_id, :word_count, :answer
-  end
-end
-```
-
-If you're using [strong_parameters][18] instead of [protected_attributes][17]
-then there is no need to use `attr_accessible`.
-
 ## 5. ActiveRecord
 
 ### 5.a. Single Table Inheritance (STI)
 
 PaperTrail supports [Single Table Inheritance][39], and even supports an
-un-versioned base model, as of 23ffbdc7e1.
+un-versioned base model, as of `23ffbdc7e1`.
 
 ```ruby
 class Fruit < ActiveRecord::Base
@@ -1086,6 +1069,12 @@ Runtime options:
 
 Generates (but does not run) a migration to add a versions table.  Also generates an initializer file for configuring PaperTrail
 ```
+
+### 5.d. Protected Attributes
+
+As of version 6, PT no longer supports rails 3 or the [protected_attributes][17]
+gem. If you are still using them, you may use PT 5 or lower. We recommend
+upgrading to [strong_parameters][18] as soon as possible.
 
 ## 6. Extensibility
 

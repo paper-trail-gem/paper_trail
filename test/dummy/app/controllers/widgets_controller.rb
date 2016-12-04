@@ -23,10 +23,6 @@ class WidgetsController < ApplicationController
   private
 
   def widget_params
-    if PaperTrail.active_record_protected_attributes?
-      params[:widget]
-    else
-      params[:widget].permit!
-    end
+    params[:widget].permit!
   end
 end

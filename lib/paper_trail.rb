@@ -121,15 +121,6 @@ module PaperTrail
       PaperTrail.config.serializer
     end
 
-    # Returns a boolean indicating whether "protected attibutes" should be
-    # configured, e.g. attr_accessible, mass_assignment_sanitizer,
-    # whitelist_attributes, etc.
-    # @api public
-    def active_record_protected_attributes?
-      @active_record_protected_attributes ||= ::ActiveRecord::VERSION::MAJOR < 4 ||
-        !!defined?(ProtectedAttributes)
-    end
-
     # @api public
     def transaction?
       ::ActiveRecord::Base.connection.open_transactions > 0
@@ -164,17 +155,6 @@ module PaperTrail
     def version
       VERSION::STRING
     end
-  end
-end
-
-# If available, ensure that the `protected_attributes` gem is loaded
-# before the `Version` class.
-unless PaperTrail.active_record_protected_attributes?
-  PaperTrail.send(:remove_instance_variable, :@active_record_protected_attributes)
-  begin
-    require "protected_attributes"
-  rescue LoadError # rubocop:disable Lint/HandleExceptions
-    # In case `protected_attributes` gem is not available.
   end
 end
 

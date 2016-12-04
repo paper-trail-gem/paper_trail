@@ -21,22 +21,7 @@ module PaperTrail
       end
 
       validates_presence_of :event
-
-      if PaperTrail.active_record_protected_attributes?
-        attr_accessible(
-          :item_type,
-          :item_id,
-          :event,
-          :whodunnit,
-          :object,
-          :object_changes,
-          :transaction_id,
-          :created_at
-        )
-      end
-
       after_create :enforce_version_limit!
-
       scope :within_transaction, ->(id) { where transaction_id: id }
     end
 
@@ -225,9 +210,7 @@ module PaperTrail
     #
     def reify(options = {})
       return nil if object.nil?
-      without_identity_map do
-        ::PaperTrail::Reifier.reify(self, options)
-      end
+      ::PaperTrail::Reifier.reify(self, options)
     end
 
     # Returns what changed in this version of the item.
@@ -320,17 +303,6 @@ module PaperTrail
         rescue # TODO: Rescue something specific
           {}
         end
-      end
-    end
-
-    # In Rails 3.1+, calling reify on a previous version confuses the
-    # IdentityMap, if enabled. This prevents insertion into the map.
-    # @api private
-    def without_identity_map(&block)
-      if defined?(::ActiveRecord::IdentityMap) && ::ActiveRecord::IdentityMap.respond_to?(:without)
-        ::ActiveRecord::IdentityMap.without(&block)
-      else
-        yield
       end
     end
 
