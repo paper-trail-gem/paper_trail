@@ -9,7 +9,6 @@ module PaperTrail
           :set_paper_trail_enabled_for_controller,
           :set_paper_trail_controller_info
         )
-        controller.after_action :warn_about_not_setting_whodunnit
       end
 
       protected
@@ -77,24 +76,14 @@ module PaperTrail
         ::PaperTrail.controller_info = info_for_paper_trail if ::PaperTrail.enabled_for_controller?
       end
 
+      # We have removed this warning. We no longer add it as a callback.
+      # However, some people use `skip_after_action :warn_about_not_setting_whodunnit`,
+      # so removing this method would be a breaking change. We can remove it
+      # in the next major version.
       def warn_about_not_setting_whodunnit
-        return unless ::PaperTrail.enabled_for_controller?
-
-        user_present = user_for_paper_trail.present?
-        whodunnit_blank = ::PaperTrail.whodunnit.blank?
-        if user_present && whodunnit_blank && !@set_paper_trail_whodunnit_called
-          source_file_location = self.class.instance_methods(false).map { |m|
-            self.class.instance_method(m).source_location.first
-          }.uniq.first
-          ::Kernel.warn <<-EOS.strip_heredoc
-            #{source_file_location}:
-            user_for_paper_trail is present, but whodunnit has not been set.
-            PaperTrail no longer adds the set_paper_trail_whodunnit callback for
-            you. To continue recording whodunnit, please add this before_action
-            callback to your ApplicationController. For more information,
-            please see https://git.io/vrTsk
-          EOS
-        end
+        ::ActiveSupport::Deprecation.warn(
+          "warn_about_not_setting_whodunnit is a no-op and is deprecated."
+        )
       end
     end
   end
