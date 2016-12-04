@@ -3,7 +3,21 @@
 This project follows [semver 2.0.0](http://semver.org/spec/v2.0.0.html) and the
 recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
-## 6.0.0 (Unreleased)
+## Unreleased
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- None
+
+## 6.0.0 (2016-12-03)
 
 Now with rails 5.1 support, and less model pollution! About 40 methods that were
 polluting your models' namespaces have been removed, reducing the chances of a
