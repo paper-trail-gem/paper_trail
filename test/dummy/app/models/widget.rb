@@ -1,16 +1,8 @@
 class Widget < ActiveRecord::Base
+  EXCLUDED_NAME = "Biglet".freeze
   has_paper_trail
   has_one :wotsit
+  has_many :fluxors, -> { order(:name) }
   has_many :whatchamajiggers, as: :owner
-
-  EXCLUDED_NAME = "Biglet".freeze
-
   validates :name, exclusion: { in: [EXCLUDED_NAME] }
-
-  # `has_many` syntax for specifying order uses a lambda in Rails 4
-  if ::ActiveRecord::VERSION::MAJOR >= 4
-    has_many :fluxors, -> { order(:name) }
-  else
-    has_many :fluxors, order: :name
-  end
 end

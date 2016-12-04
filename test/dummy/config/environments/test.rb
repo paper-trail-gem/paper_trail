@@ -41,11 +41,6 @@ Dummy::Application.configure do
   # ActionMailer::Base.deliveries array.
   # config.action_mailer.delivery_method = :test
 
-  # Raise exception on mass assignment protection for Active Record models
-  if ::PaperTrail.active_record_protected_attributes?
-    config.active_record.mass_assignment_sanitizer = :strict
-  end
-
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
 end

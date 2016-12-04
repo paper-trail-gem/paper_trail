@@ -11,10 +11,6 @@ class ArticlesController < ApplicationController
   private
 
   def article_params
-    if PaperTrail.active_record_protected_attributes?
-      params[:article]
-    else
-      params.require(:article).permit!
-    end
+    params.require(:article).permit!
   end
 end
