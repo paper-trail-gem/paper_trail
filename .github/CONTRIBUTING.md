@@ -89,9 +89,9 @@ DB=postgres bundle exec appraisal ar-5.0 rake
 1. In the changelog,
   - Replace "Unreleased" with the date in iso-8601 format
   - Add a new "Unreleased" section
-1. In the readme,
-  - Update any other references to version number, including
-  - Update version number(s) in the documentation links table
+1. In the readme, update references to version number, including
+  - documentation links table
+  - compatability table
 1. Commit
 1. git tag -a -m "v5.0.0" "v5.0.0" # or whatever number
 1. git push --tags origin 5-stable # or whatever branch

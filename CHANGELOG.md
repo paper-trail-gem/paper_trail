@@ -17,6 +17,21 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 - None
 
+## 6.0.1 (2016-12-04)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- Remove rails 3 features that are no longer supported, most notably,
+  `protected_attributes`.
+
 ## 6.0.0 (2016-12-03)
 
 Now with rails 5.1 support, and less model pollution! About 40 methods that were
