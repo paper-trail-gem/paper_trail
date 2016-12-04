@@ -5,8 +5,12 @@ Gem::Specification.new do |s|
   s.name = "paper_trail"
   s.version = PaperTrail::VERSION::STRING.dup # The `dup` is for ruby 1.9.3
   s.platform = Gem::Platform::RUBY
-  s.summary = "Track changes to your models' data. Good for auditing or versioning."
-  s.description = s.summary
+  s.summary = "Track changes to your models."
+  s.description = <<-EOS
+Track changes to your models, for auditing or versioning. See how a model looked
+at any stage in its lifecycle, revert it to any version, or restore it after it
+has been destroyed.
+  EOS
   s.homepage = "https://github.com/airblade/paper_trail"
   s.authors = ["Andy Stewart", "Ben Atkins"]
   s.email = "batkinz@gmail.com"
