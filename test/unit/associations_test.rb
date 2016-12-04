@@ -785,7 +785,7 @@ class AssociationsTest < ActiveSupport::TestCase
           setup { @wotsit_0 = @wotsit.versions.last.reify(belongs_to: true) }
 
           should "see the associated as it was at the time" do
-            assert_equal nil, @wotsit_0.widget
+            assert_nil @wotsit_0.widget
           end
 
           should "not persist changes to the live association" do

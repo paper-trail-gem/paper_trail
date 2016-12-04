@@ -1,6 +1,8 @@
 module PaperTrail
   # Represents the "paper trail" for a single record.
   class RecordTrail
+    RAILS_GTE_5_1 = ::ActiveRecord::VERSION::MAJOR >= 5 && ::ActiveRecord::VERSION::MINOR >= 1
+
     def initialize(record)
       @record = record
       @in_after_callback = false
@@ -8,7 +10,18 @@ module PaperTrail
 
     # Utility method for reifying. Anything executed inside the block will
     # appear like a new record.
-    def appear_as_unpersisted
+    #
+    # > .. as best as I can tell, the purpose of
+    # > appear_as_new_record was to attempt to prevent the callbacks in
+    # > AutosaveAssociation (which is the module responsible for persisting
+    # > foreign key changes earlier than most people want most of the time
+    # > because backwards compatibility or the maintainer hates himself or
+    # > something) from running. By also stubbing out persisted? we can
+    # > actually prevent those. A more stable option might be to use suppress
+    # > instead, similar to the other branch in reify_has_one.
+    # > -Sean Griffin (https://github.com/airblade/paper_trail/pull/899)
+    #
+    def appear_as_new_record
       @record.instance_eval {
         alias :old_new_record? :new_record?
         alias :new_record? :present?
@@ -491,7 +504,7 @@ module PaperTrail
     end
 
     def attribute_in_previous_version(attr_name)
-      if @in_after_callback && rails_51?
+      if @in_after_callback && RAILS_GTE_5_1
         @record.attribute_before_last_save(attr_name.to_s)
       else
         @record.attribute_was(attr_name.to_s)
@@ -499,7 +512,7 @@ module PaperTrail
     end
 
     def changed_in_latest_version
-      if @in_after_callback && rails_51?
+      if @in_after_callback && RAILS_GTE_5_1
         @record.saved_changes.keys
       else
         @record.changed
@@ -507,7 +520,7 @@ module PaperTrail
     end
 
     def changes_in_latest_version
-      if @in_after_callback && rails_51?
+      if @in_after_callback && RAILS_GTE_5_1
         @record.saved_changes
       else
         @record.changes
@@ -515,15 +528,11 @@ module PaperTrail
     end
 
     def attribute_changed_in_latest_version?(attr_name)
-      if @in_after_callback && rails_51?
+      if @in_after_callback && RAILS_GTE_5_1
         @record.saved_change_to_attribute?(attr_name.to_s)
       else
         @record.attribute_changed?(attr_name.to_s)
       end
-    end
-
-    def rails_51?
-      ActiveRecord::VERSION::MAJOR >= 5 && ActiveRecord::VERSION::MINOR >= 1
     end
   end
 end
