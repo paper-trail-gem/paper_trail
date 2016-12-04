@@ -456,6 +456,42 @@ module PaperTrail
       data[:transaction_id] = PaperTrail.transaction_id
     end
 
+    # @api private
+    def attribute_changed_in_latest_version?(attr_name)
+      if @in_after_callback && RAILS_GTE_5_1
+        @record.saved_change_to_attribute?(attr_name.to_s)
+      else
+        @record.attribute_changed?(attr_name.to_s)
+      end
+    end
+
+    # @api private
+    def attribute_in_previous_version(attr_name)
+      if @in_after_callback && RAILS_GTE_5_1
+        @record.attribute_before_last_save(attr_name.to_s)
+      else
+        @record.attribute_was(attr_name.to_s)
+      end
+    end
+
+    # @api private
+    def changed_in_latest_version
+      if @in_after_callback && RAILS_GTE_5_1
+        @record.saved_changes.keys
+      else
+        @record.changed
+      end
+    end
+
+    # @api private
+    def changes_in_latest_version
+      if @in_after_callback && RAILS_GTE_5_1
+        @record.saved_changes
+      else
+        @record.changes
+      end
+    end
+
     # Given a HABTM association, returns an array of ids.
     # @api private
     def habtm_assoc_ids(habtm_assoc)
@@ -501,38 +537,6 @@ module PaperTrail
 
     def versions
       @record.public_send(@record.class.versions_association_name)
-    end
-
-    def attribute_in_previous_version(attr_name)
-      if @in_after_callback && RAILS_GTE_5_1
-        @record.attribute_before_last_save(attr_name.to_s)
-      else
-        @record.attribute_was(attr_name.to_s)
-      end
-    end
-
-    def changed_in_latest_version
-      if @in_after_callback && RAILS_GTE_5_1
-        @record.saved_changes.keys
-      else
-        @record.changed
-      end
-    end
-
-    def changes_in_latest_version
-      if @in_after_callback && RAILS_GTE_5_1
-        @record.saved_changes
-      else
-        @record.changes
-      end
-    end
-
-    def attribute_changed_in_latest_version?(attr_name)
-      if @in_after_callback && RAILS_GTE_5_1
-        @record.saved_change_to_attribute?(attr_name.to_s)
-      else
-        @record.attribute_changed?(attr_name.to_s)
-      end
     end
   end
 end
