@@ -179,7 +179,7 @@ module PaperTrail
             model[k.to_sym] = v
           elsif model.respond_to?("#{k}=")
             model.send("#{k}=", v)
-          else
+          elsif version.logger
             version.logger.warn(
               "Attribute #{k} does not exist on #{version.item_type} (Version id: #{version.id})."
             )
