@@ -41,7 +41,16 @@ has been destroyed.
   s.add_development_dependency "generator_spec", "~> 0.9.3"
   s.add_development_dependency "database_cleaner", "~> 1.2"
   s.add_development_dependency "pry-nav", "~> 0.2.4"
+
+  # We cannot upgrade rubocop until we drop support for ruby 1.9.3.
+  # Rubocop 0.42 requires ruby >= 2.0. We could add a conditional, as we do
+  # below for rack and pg, but that means our config files (e.g. `.rubocop.yml`
+  # would have to simultaneously be valid in two different versions of rubocop.
+  # That is currently possible, but probably won't be in the future, and is
+  # not worth the effort.) Because of pain points like this, I think we'll
+  # have to drop support for ruby 1.9.3 soon.
   s.add_development_dependency "rubocop", "~> 0.41.1"
+
   s.add_development_dependency "timecop", "~> 0.8.0"
 
   if ::Gem.ruby_version < ::Gem::Version.new("2.0.0")
