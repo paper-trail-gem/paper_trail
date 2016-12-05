@@ -505,7 +505,7 @@ module PaperTrail
       version.logger.warn(
         "Unable to create version for #{action} of #{@record.class.name}" +
           "##{@record.id}: " + version.errors.full_messages.join(", ")
-      )
+      ) if version.logger
     end
 
     # Returns true if the given HABTM association should be saved.
