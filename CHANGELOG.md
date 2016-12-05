@@ -15,7 +15,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- None
+- [#905](https://github.com/airblade/paper_trail/pull/905) - Only invoke
+  `logger.warn` if `logger` instance exists
 
 ## 6.0.1 (2016-12-04)
 
