@@ -44,6 +44,10 @@ has been destroyed.
   s.add_development_dependency "rubocop", "~> 0.41.1"
   s.add_development_dependency "timecop", "~> 0.8.0"
 
+  if ::Gem.ruby_version < ::Gem::Version.new("2.0.0")
+    s.add_development_dependency "rack", "< 2"
+  end
+
   if defined?(JRUBY_VERSION)
     s.add_development_dependency "activerecord-jdbcsqlite3-adapter", "~> 1.3.15"
     s.add_development_dependency "activerecord-jdbcpostgresql-adapter", "~> 1.3.15"
