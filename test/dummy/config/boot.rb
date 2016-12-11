@@ -1,16 +1,17 @@
 require "rubygems"
 
-# Set ENV['BUNDLE_GEMFILE'] as follows:
+# We normally use the root project Gemfile (and gemspec), but when we run rake
+# locally (not on travis) in this dummy app, we set the BUNDLE_GEMFILE env.
+# variable. The project Gemfile/gemspec allows AR 4.0, which is a problem
+# because this dummy app uses `enum` in some of its models, and `enum` was
+# introduced in AR 4.1. So, when we run rake here, we use:
 #
-# Our test dummy app uses `enum`, so it must use AR >= 4.1. However, we want our
-# gemspec to support AR >= 4.0. For local test runs, using our root Gemfile
-# would be problematic here. For TravisCI it seems to be fine. Maybe Travis
-# overwrites the root Gemfile?
-if ENV.key?("BUNDLE_GEMFILE")
-  # This is a local test run, and we are running rake tasks in this dummy app,
-  # and we can't use the project's root Gemfile for the reasons given above.
-  puts "Booting PT test dummy app: Using BUNDLE_GEMFILE: #{ENV.fetch('BUNDLE_GEMFILE')}"
-else
+#     BUNDLE_GEMFILE=../../gemfiles/ar_4.2.gemfile bundle exec rake
+#
+# Once we drop support for AR 4.0 and 4.1 this will be less of a problem, but
+# we should keep the ability to specify BUNDLE_GEMFILE because the same
+# situation could come up in the future.
+unless ENV.key?("BUNDLE_GEMFILE")
   gemfile = File.expand_path("../../../../Gemfile", __FILE__)
   if File.exist?(gemfile)
     puts "Booting PT test dummy app: Using gemfile: #{gemfile}"
