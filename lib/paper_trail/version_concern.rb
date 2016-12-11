@@ -171,7 +171,7 @@ module PaperTrail
         if columns_hash["object_changes"].type == :jsonb
           args.each { |field, value| args[field] = [value] }
           where("object_changes @> ?", args.to_json)
-        elsif columns_hash["object"].type == :json
+        elsif columns_hash["object_changes"].type == :json
           predicates = []
           values = []
           args.each do |field, value|
