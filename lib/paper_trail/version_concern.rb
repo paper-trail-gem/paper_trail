@@ -1,5 +1,6 @@
 require "active_support/concern"
 require "paper_trail/attribute_serializers/object_changes_attribute"
+require "paper_trail/queries/versions/where_object_changes"
 
 module PaperTrail
   # Originally, PaperTrail did not provide this module, and all of this
@@ -167,29 +168,7 @@ module PaperTrail
       # @api public
       def where_object_changes(args = {})
         raise ArgumentError, "expected to receive a Hash" unless args.is_a?(Hash)
-
-        if columns_hash["object_changes"].type == :jsonb
-          args.each { |field, value| args[field] = [value] }
-          where("object_changes @> ?", args.to_json)
-        elsif columns_hash["object_changes"].type == :json
-          predicates = []
-          values = []
-          args.each do |field, value|
-            predicates.push(
-              "((object_changes->>? ILIKE ?) OR (object_changes->>? ILIKE ?))"
-            )
-            values.concat([field, "[#{value.to_json},%", field, "[%,#{value.to_json}]%"])
-          end
-          sql = predicates.join(" and ")
-          where(sql, *values)
-        else
-          arel_field = arel_table[:object_changes]
-          where_conditions = args.map { |field, value|
-            PaperTrail.serializer.where_object_changes_condition(arel_field, field, value)
-          }
-          where_conditions = where_conditions.reduce { |a, e| a.and(e) }
-          where(where_conditions)
-        end
+        Queries::Versions::WhereObjectChanges.new(self, args).execute
       end
 
       def primary_key_is_int?
