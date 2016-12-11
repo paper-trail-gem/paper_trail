@@ -28,43 +28,73 @@ Testing is a little awkward because the test suite:
 1. Contains a "dummy" rails app with three databases (test, foo, and bar)
 1. Supports three different RDBMS': sqlite, mysql, and postgres
 
-### Run tests with sqlite
+### Test sqlite, AR 4.2
 
 ```
 # Create the appropriate database config. file
 rm test/dummy/config/database.yml
 DB=sqlite bundle exec rake prepare
 
-# If this is the first test run ever, create databases
+# If this is the first test run ever, create databases.
+# We can't use `appraisal` inside the test dummy, so we must set `BUNDLE_GEMFILE`.
+# See test/dummy/config/boot.rb for a complete explanation.
 cd test/dummy
+export BUNDLE_GEMFILE=../../gemfiles/ar_4.2.gemfile
 RAILS_ENV=test bundle exec rake db:setup
 RAILS_ENV=foo bundle exec rake db:setup
 RAILS_ENV=bar bundle exec rake db:setup
+unset BUNDLE_GEMFILE
+cd ../..
+
+# Run tests
+DB=sqlite bundle exec appraisal ar-4.2 rake
+```
+
+### Test sqlite, AR 5
+
+```
+# Create the appropriate database config. file
+rm test/dummy/config/database.yml
+DB=sqlite bundle exec rake prepare
+
+# If this is the first test run ever, create databases.
+# We can't use `appraisal` inside the test dummy, so we must set `BUNDLE_GEMFILE`.
+# See test/dummy/config/boot.rb for a complete explanation.
+cd test/dummy
+export BUNDLE_GEMFILE=../../gemfiles/ar_5.0.gemfile
+RAILS_ENV=test bundle exec rake db:environment:set db:setup
+RAILS_ENV=foo bundle exec rake db:environment:set db:setup
+RAILS_ENV=bar bundle exec rake db:environment:set db:setup
+unset BUNDLE_GEMFILE
 cd ../..
 
 # Run tests
 DB=sqlite bundle exec appraisal ar-5.0 rake
 ```
 
-### Run tests with mysql
+### Test mysql, AR 5
 
 ```
 # Create the appropriate database config. file
 rm test/dummy/config/database.yml
 DB=mysql bundle exec rake prepare
 
-# If this is the first test run ever, create databases
+# If this is the first test run ever, create databases.
+# We can't use `appraisal` inside the test dummy, so we must set `BUNDLE_GEMFILE`.
+# See test/dummy/config/boot.rb for a complete explanation.
 cd test/dummy
-RAILS_ENV=test bundle exec rake db:setup
-RAILS_ENV=foo bundle exec rake db:setup
-RAILS_ENV=bar bundle exec rake db:setup
+export BUNDLE_GEMFILE=../../gemfiles/ar_5.0.gemfile
+RAILS_ENV=test bundle exec rake db:environment:set db:setup
+RAILS_ENV=foo bundle exec rake db:environment:set db:setup
+RAILS_ENV=bar bundle exec rake db:environment:set db:setup
+unset BUNDLE_GEMFILE
 cd ../..
 
 # Run tests
 DB=mysql bundle exec appraisal ar-5.0 rake
 ```
 
-### Run tests with postgres
+### Test postgres, AR 5
 
 ```
 # Create the appropriate database config. file
@@ -73,10 +103,14 @@ DB=postgres bundle exec rake prepare
 
 # If this is the first test run ever, create databases.
 # Unlike mysql, use create/migrate instead of setup.
+# We can't use `appraisal` inside the test dummy, so we must set `BUNDLE_GEMFILE`.
+# See test/dummy/config/boot.rb for a complete explanation.
 cd test/dummy
+export BUNDLE_GEMFILE=../../gemfiles/ar_5.0.gemfile
 DB=postgres RAILS_ENV=test bundle exec rake db:drop db:create db:migrate
 DB=postgres RAILS_ENV=foo bundle exec rake db:drop db:create db:migrate
 DB=postgres RAILS_ENV=bar bundle exec rake db:drop db:create db:migrate
+unset BUNDLE_GEMFILE
 cd ../..
 
 # Run tests

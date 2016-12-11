@@ -95,9 +95,25 @@ module PaperTrail
         end
       end
 
-      # Query the `versions.objects` column using the SQL LIKE operator.
-      # Performs an attribute search on the serialized object by invoking the
-      # identically-named method in the serializer being used.
+      # Given a hash of attributes like `name: 'Joan'`, query the
+      # `versions.objects` column.
+      #
+      # ```
+      # SELECT "versions".*
+      # FROM "versions"
+      # WHERE ("versions"."object" LIKE '%
+      # name: Joan
+      # %')
+      # ```
+      #
+      # This is useful for finding versions where a given attribute had a given
+      # value. Imagine, in the example above, that Joan had changed her name
+      # and we wanted to find the versions before that change.
+      #
+      # Based on the data type of the `object` column, the appropriate SQL
+      # operator is used. For example, a text column will use `like`, and a
+      # jsonb column will use `@>`.
+      #
       # @api public
       def where_object(args = {})
         raise ArgumentError, "expected to receive a Hash" unless args.is_a?(Hash)
@@ -123,8 +139,31 @@ module PaperTrail
         end
       end
 
-      # Query the `versions.object_changes` column by attributes, using the
-      # SQL LIKE operator.
+      # Given a hash of attributes like `name: 'Joan'`, query the
+      # `versions.objects_changes` column.
+      #
+      # ```
+      # SELECT "versions".*
+      # FROM "versions"
+      # WHERE .. ("versions"."object_changes" LIKE '%
+      # name:
+      # - Joan
+      # %' OR "versions"."object_changes" LIKE '%
+      # name:
+      # -%
+      # - Joan
+      # %')
+      # ```
+      #
+      # This is useful for finding versions immediately before and after a given
+      # attribute had a given value. Imagine, in the example above, that someone
+      # changed their name to Joan and we wanted to find the versions
+      # immediately before and after that change.
+      #
+      # Based on the data type of the `object` column, the appropriate SQL
+      # operator is used. For example, a text column will use `like`, and a
+      # jsonb column will use `@>`.
+      #
       # @api public
       def where_object_changes(args = {})
         raise ArgumentError, "expected to receive a Hash" unless args.is_a?(Hash)
