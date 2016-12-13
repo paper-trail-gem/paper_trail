@@ -10,36 +10,7 @@ module PaperTrail
       def reify(version, options)
         options = apply_defaults_to(options, version)
         attrs = version.object_deserialized
-
-        # Normally a polymorphic belongs_to relationship allows us to get the
-        # object we belong to by calling, in this case, `item`.  However this
-        # returns nil if `item` has been destroyed, and we need to be able to
-        # retrieve destroyed objects.
-        #
-        # In this situation we constantize the `item_type` to get hold of the
-        # class...except when the stored object's attributes include a `type`
-        # key.  If this is the case, the object we belong to is using single
-        # table inheritance and the `item_type` will be the base class, not the
-        # actual subclass. If `type` is present but empty, the class is the base
-        # class.
-        if options[:dup] != true && version.item
-          model = version.item
-          if options[:unversioned_attributes] == :nil
-            init_unversioned_attrs(attrs, model)
-          end
-        else
-          klass = version_reification_class(version, attrs)
-          # The `dup` option always returns a new object, otherwise we should
-          # attempt to look for the item outside of default scope(s).
-          find_cond = { klass.primary_key => version.item_id }
-          if options[:dup] || (item_found = klass.unscoped.where(find_cond).first).nil?
-            model = klass.new
-          elsif options[:unversioned_attributes] == :nil
-            model = item_found
-            init_unversioned_attrs(attrs, model)
-          end
-        end
-
+        model = init_model(attrs, options, version)
         reify_attributes(model, version, attrs)
         model.send "#{model.class.version_association_name}=", version
         reify_associations(model, options, version)
@@ -69,6 +40,43 @@ module PaperTrail
           next unless assoc.klass.paper_trail.enabled?
           yield assoc
         end
+      end
+
+      # Initialize a model object suitable for reifying `version` into. Does
+      # not perform reification, merely instantiates the appropriate model
+      # class and, if specified by `options[:unversioned_attributes]`, sets
+      # unversioned attributes to `nil`.
+      #
+      # Normally a polymorphic belongs_to relationship allows us to get the
+      # object we belong to by calling, in this case, `item`.  However this
+      # returns nil if `item` has been destroyed, and we need to be able to
+      # retrieve destroyed objects.
+      #
+      # In this situation we constantize the `item_type` to get hold of the
+      # class...except when the stored object's attributes include a `type`
+      # key.  If this is the case, the object we belong to is using single
+      # table inheritance (STI) and the `item_type` will be the base class,
+      # not the actual subclass. If `type` is present but empty, the class is
+      # the base class.
+      def init_model(attrs, options, version)
+        if options[:dup] != true && version.item
+          model = version.item
+          if options[:unversioned_attributes] == :nil
+            init_unversioned_attrs(attrs, model)
+          end
+        else
+          klass = version_reification_class(version, attrs)
+          # The `dup` option always returns a new object, otherwise we should
+          # attempt to look for the item outside of default scope(s).
+          find_cond = { klass.primary_key => version.item_id }
+          if options[:dup] || (item_found = klass.unscoped.where(find_cond).first).nil?
+            model = klass.new
+          elsif options[:unversioned_attributes] == :nil
+            model = item_found
+            init_unversioned_attrs(attrs, model)
+          end
+        end
+        model
       end
 
       # Examine the `source_reflection`, i.e. the "source" of `assoc` the
@@ -243,12 +251,12 @@ module PaperTrail
       def reify_associations(model, options, version)
         reify_has_ones version.transaction_id, model, options if options[:has_one]
 
-        reify_belongs_tos version.transaction_id, model, options if options[:belongs_to]
+        reify_belongs_to_associations version.transaction_id, model, options if options[:belongs_to]
 
         reify_has_manys version.transaction_id, model, options if options[:has_many]
 
         if options[:has_and_belongs_to_many]
-          reify_has_and_belongs_to_many version.transaction_id, model, options
+          reify_habtm_associations version.transaction_id, model, options
         end
       end
 
@@ -286,30 +294,38 @@ module PaperTrail
         end
       end
 
-      def reify_belongs_tos(transaction_id, model, options = {})
+      # Reify a single `belongs_to` association of `model`.
+      # @api private
+      def reify_belongs_to_association(assoc, model, options, transaction_id)
+        collection_key = model.send(assoc.association_foreign_key)
+        version = assoc.klass.paper_trail.version_class.
+          where("item_type = ?", assoc.class_name).
+          where("item_id = ?", collection_key).
+          where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
+          order("id").limit(1).first
+
+        collection = if version.nil?
+                       assoc.klass.where(assoc.klass.primary_key => collection_key).first
+                     else
+                       version.reify(
+                         options.merge(
+                           has_many: false,
+                           has_one: false,
+                           belongs_to: false,
+                           has_and_belongs_to_many: false
+                         )
+                       )
+                     end
+
+        model.send("#{assoc.name}=".to_sym, collection)
+      end
+
+      # Reify all `belongs_to` associations of `model`.
+      # @api private
+      def reify_belongs_to_associations(transaction_id, model, options = {})
         associations = model.class.reflect_on_all_associations(:belongs_to)
         each_enabled_association(associations) do |assoc|
-          collection_key = model.send(assoc.association_foreign_key)
-          version = assoc.klass.paper_trail.version_class.
-            where("item_type = ?", assoc.class_name).
-            where("item_id = ?", collection_key).
-            where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
-            order("id").limit(1).first
-
-          collection = if version.nil?
-                         assoc.klass.where(assoc.klass.primary_key => collection_key).first
-                       else
-                         version.reify(
-                           options.merge(
-                             has_many: false,
-                             has_one: false,
-                             belongs_to: false,
-                             has_and_belongs_to_many: false
-                           )
-                         )
-                       end
-
-          model.send("#{assoc.name}=".to_sym, collection)
+          reify_belongs_to_association(assoc, model, options, transaction_id)
         end
       end
 
@@ -377,40 +393,47 @@ module PaperTrail
         end
       end
 
-      def reify_has_and_belongs_to_many(transaction_id, model, options = {})
+      # Reify a single HABTM association of `model`.
+      # @api private
+      def reify_habtm_association(assoc, model, options, papertrail_enabled, transaction_id)
+        version_ids = PaperTrail::VersionAssociation.
+          where("foreign_key_name = ?", assoc.name).
+          where("version_id = ?", transaction_id).
+          pluck(:foreign_key_id)
+
+        model.send(assoc.name).proxy_association.target =
+          version_ids.map do |id|
+            if papertrail_enabled
+              version = load_version_for_habtm(
+                assoc,
+                id,
+                transaction_id,
+                options[:version_at]
+              )
+              if version
+                next version.reify(
+                  options.merge(
+                    has_many: false,
+                    has_one: false,
+                    belongs_to: false,
+                    has_and_belongs_to_many: false
+                  )
+                )
+              end
+            end
+            assoc.klass.where(assoc.klass.primary_key => id).first
+          end
+      end
+
+      # Reify all HABTM associations of `model`.
+      # @api private
+      def reify_habtm_associations(transaction_id, model, options = {})
         model.class.reflect_on_all_associations(:has_and_belongs_to_many).each do |assoc|
           papertrail_enabled = assoc.klass.paper_trail.enabled?
           next unless
             model.class.paper_trail_save_join_tables.include?(assoc.name) ||
                 papertrail_enabled
-
-          version_ids = PaperTrail::VersionAssociation.
-            where("foreign_key_name = ?", assoc.name).
-            where("version_id = ?", transaction_id).
-            pluck(:foreign_key_id)
-
-          model.send(assoc.name).proxy_association.target =
-            version_ids.map do |id|
-              if papertrail_enabled
-                version = load_version_for_habtm(
-                  assoc,
-                  id,
-                  transaction_id,
-                  options[:version_at]
-                )
-                if version
-                  next version.reify(
-                    options.merge(
-                      has_many: false,
-                      has_one: false,
-                      belongs_to: false,
-                      has_and_belongs_to_many: false
-                    )
-                  )
-                end
-              end
-              assoc.klass.where(assoc.klass.primary_key => id).first
-            end
+          reify_habtm_association(assoc, model, options, papertrail_enabled, transaction_id)
         end
       end
 

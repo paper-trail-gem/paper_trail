@@ -2,7 +2,7 @@
 # one by one as the offenses are removed from the code base.
 
 Metrics/AbcSize:
-  Max: 28 # Goal: 15
+  Max: 27 # Goal: 15
 
 Metrics/CyclomaticComplexity:
   Max: 8 # Goal: 6
