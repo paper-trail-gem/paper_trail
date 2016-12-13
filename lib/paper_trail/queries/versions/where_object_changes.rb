@@ -1,13 +1,15 @@
 module PaperTrail
   module Queries
     module Versions
+      # For public API documentation, see `where_object` in
+      # `paper_trail/version_concern.rb`.
       # @api private
       class WhereObjectChanges
         # - version_model_class - The class that VersionConcern was mixed into.
         # - attributes - A `Hash` of attributes and values. See the public API
         #   documentation for details.
         # @api private
-        def initialize(version_model_class, attributes = {})
+        def initialize(version_model_class, attributes)
           @version_model_class = version_model_class
 
           # Currently, this `deep_dup` is necessary because the `jsonb` branch
