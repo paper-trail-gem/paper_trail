@@ -320,48 +320,60 @@ module PaperTrail
         assoc_has_many_through, assoc_has_many_directly =
           model.class.reflect_on_all_associations(:has_many).
             partition { |assoc| assoc.options[:through] }
-        reify_has_many_directly(transaction_id, assoc_has_many_directly, model, options)
-        reify_has_many_through(transaction_id, assoc_has_many_through, model, options)
+        reify_has_many_associations(transaction_id, assoc_has_many_directly, model, options)
+        reify_has_many_through_associations(transaction_id, assoc_has_many_through, model, options)
       end
 
-      # Restore the `model`'s has_many associations not associated through
-      # another association.
-      def reify_has_many_directly(transaction_id, associations, model, options = {})
+      # Reify a single, direct (not `through`) `has_many` association of `model`.
+      # @api private
+      def reify_has_many_association(assoc, model, options, transaction_id, version_table_name)
+        version_id_subquery = PaperTrail::VersionAssociation.
+          joins(model.class.version_association_name).
+          select("MIN(version_id)").
+          where("foreign_key_name = ?", assoc.foreign_key).
+          where("foreign_key_id = ?", model.id).
+          where("#{version_table_name}.item_type = ?", assoc.class_name).
+          where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
+          group("item_id").
+          to_sql
+        versions = versions_by_id(model.class, version_id_subquery)
+        collection = Array.new model.send(assoc.name).reload # to avoid cache
+        prepare_array_for_has_many(collection, options, versions)
+        model.send(assoc.name).proxy_association.target = collection
+      end
+
+      # Reify all direct (not `through`) `has_many` associations of `model`.
+      # @api private
+      def reify_has_many_associations(transaction_id, associations, model, options = {})
         version_table_name = model.class.paper_trail.version_class.table_name
         each_enabled_association(associations) do |assoc|
-          version_id_subquery = PaperTrail::VersionAssociation.
-            joins(model.class.version_association_name).
-            select("MIN(version_id)").
-            where("foreign_key_name = ?", assoc.foreign_key).
-            where("foreign_key_id = ?", model.id).
-            where("#{version_table_name}.item_type = ?", assoc.class_name).
-            where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
-            group("item_id").
-            to_sql
-          versions = versions_by_id(model.class, version_id_subquery)
-          collection = Array.new model.send(assoc.name).reload # to avoid cache
-          prepare_array_for_has_many(collection, options, versions)
-          model.send(assoc.name).proxy_association.target = collection
+          reify_has_many_association(assoc, model, options, transaction_id, version_table_name)
         end
       end
 
-      # Restore the `model`'s has_many associations through another association.
-      # This must be called after the direct has_manys have been reified
-      # (reify_has_many_directly).
-      def reify_has_many_through(transaction_id, associations, model, options = {})
+      # Reify a single HMT association of `model`.
+      # @api private
+      def reify_has_many_through_association(assoc, model, options, transaction_id)
+        # Load the collection of through-models. For example, if `model` is a
+        # Chapter, having many Paragraphs through Sections, then
+        # `through_collection` will contain Sections.
+        through_collection = model.send(assoc.options[:through])
+
+        # Now, given the collection of "through" models (e.g. sections), load
+        # the collection of "target" models (e.g. paragraphs)
+        collection = hmt_collection(through_collection, assoc, options, transaction_id)
+
+        # Finally, assign the `collection` of "target" models, e.g. to
+        # `model.paragraphs`.
+        model.send(assoc.name).proxy_association.target = collection
+      end
+
+      # Reify all HMT associations of `model`. This must be called after the
+      # direct (non-`through`) has_manys have been reified.
+      # @api private
+      def reify_has_many_through_associations(transaction_id, associations, model, options = {})
         each_enabled_association(associations) do |assoc|
-          # Load the collection of through-models. For example, if `model` is a
-          # Chapter, having many Paragraphs through Sections, then
-          # `through_collection` will contain Sections.
-          through_collection = model.send(assoc.options[:through])
-
-          # Now, given the collection of "through" models (e.g. sections), load
-          # the collection of "target" models (e.g. paragraphs)
-          collection = hmt_collection(through_collection, assoc, options, transaction_id)
-
-          # Finally, assign the `collection` of "target" models, e.g. to
-          # `model.paragraphs`.
-          model.send(assoc.name).proxy_association.target = collection
+          reify_has_many_through_association(assoc, model, options, transaction_id)
         end
       end
 

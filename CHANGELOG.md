@@ -15,6 +15,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
+- `88e513f` - Surprise argument modification bug in `where_object_changes`
+- `c7efd62` - Column type-detection bug in `where_object_changes`
 - [#905](https://github.com/airblade/paper_trail/pull/905) - Only invoke
   `logger.warn` if `logger` instance exists
 
