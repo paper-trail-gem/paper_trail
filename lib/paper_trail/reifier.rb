@@ -243,7 +243,7 @@ module PaperTrail
       def reify_associations(model, options, version)
         reify_has_ones version.transaction_id, model, options if options[:has_one]
 
-        reify_belongs_tos version.transaction_id, model, options if options[:belongs_to]
+        reify_belongs_to_associations version.transaction_id, model, options if options[:belongs_to]
 
         reify_has_manys version.transaction_id, model, options if options[:has_many]
 
@@ -286,30 +286,38 @@ module PaperTrail
         end
       end
 
-      def reify_belongs_tos(transaction_id, model, options = {})
+      # Reify a single `belongs_to` association of `model`.
+      # @api private
+      def reify_belongs_to_association(assoc, model, options, transaction_id)
+        collection_key = model.send(assoc.association_foreign_key)
+        version = assoc.klass.paper_trail.version_class.
+          where("item_type = ?", assoc.class_name).
+          where("item_id = ?", collection_key).
+          where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
+          order("id").limit(1).first
+
+        collection = if version.nil?
+                       assoc.klass.where(assoc.klass.primary_key => collection_key).first
+                     else
+                       version.reify(
+                         options.merge(
+                           has_many: false,
+                           has_one: false,
+                           belongs_to: false,
+                           has_and_belongs_to_many: false
+                         )
+                       )
+                     end
+
+        model.send("#{assoc.name}=".to_sym, collection)
+      end
+
+      # Reify all `belongs_to` associations of `model`.
+      # @api private
+      def reify_belongs_to_associations(transaction_id, model, options = {})
         associations = model.class.reflect_on_all_associations(:belongs_to)
         each_enabled_association(associations) do |assoc|
-          collection_key = model.send(assoc.association_foreign_key)
-          version = assoc.klass.paper_trail.version_class.
-            where("item_type = ?", assoc.class_name).
-            where("item_id = ?", collection_key).
-            where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
-            order("id").limit(1).first
-
-          collection = if version.nil?
-                         assoc.klass.where(assoc.klass.primary_key => collection_key).first
-                       else
-                         version.reify(
-                           options.merge(
-                             has_many: false,
-                             has_one: false,
-                             belongs_to: false,
-                             has_and_belongs_to_many: false
-                           )
-                         )
-                       end
-
-          model.send("#{assoc.name}=".to_sym, collection)
+          reify_belongs_to_association(assoc, model, options, transaction_id)
         end
       end
 
