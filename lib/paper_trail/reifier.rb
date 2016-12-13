@@ -10,36 +10,7 @@ module PaperTrail
       def reify(version, options)
         options = apply_defaults_to(options, version)
         attrs = version.object_deserialized
-
-        # Normally a polymorphic belongs_to relationship allows us to get the
-        # object we belong to by calling, in this case, `item`.  However this
-        # returns nil if `item` has been destroyed, and we need to be able to
-        # retrieve destroyed objects.
-        #
-        # In this situation we constantize the `item_type` to get hold of the
-        # class...except when the stored object's attributes include a `type`
-        # key.  If this is the case, the object we belong to is using single
-        # table inheritance and the `item_type` will be the base class, not the
-        # actual subclass. If `type` is present but empty, the class is the base
-        # class.
-        if options[:dup] != true && version.item
-          model = version.item
-          if options[:unversioned_attributes] == :nil
-            init_unversioned_attrs(attrs, model)
-          end
-        else
-          klass = version_reification_class(version, attrs)
-          # The `dup` option always returns a new object, otherwise we should
-          # attempt to look for the item outside of default scope(s).
-          find_cond = { klass.primary_key => version.item_id }
-          if options[:dup] || (item_found = klass.unscoped.where(find_cond).first).nil?
-            model = klass.new
-          elsif options[:unversioned_attributes] == :nil
-            model = item_found
-            init_unversioned_attrs(attrs, model)
-          end
-        end
-
+        model = init_model(attrs, options, version)
         reify_attributes(model, version, attrs)
         model.send "#{model.class.version_association_name}=", version
         reify_associations(model, options, version)
@@ -69,6 +40,43 @@ module PaperTrail
           next unless assoc.klass.paper_trail.enabled?
           yield assoc
         end
+      end
+
+      # Initialize a model object suitable for reifying `version` into. Does
+      # not perform reification, merely instantiates the appropriate model
+      # class and, if specified by `options[:unversioned_attributes]`, sets
+      # unversioned attributes to `nil`.
+      #
+      # Normally a polymorphic belongs_to relationship allows us to get the
+      # object we belong to by calling, in this case, `item`.  However this
+      # returns nil if `item` has been destroyed, and we need to be able to
+      # retrieve destroyed objects.
+      #
+      # In this situation we constantize the `item_type` to get hold of the
+      # class...except when the stored object's attributes include a `type`
+      # key.  If this is the case, the object we belong to is using single
+      # table inheritance (STI) and the `item_type` will be the base class,
+      # not the actual subclass. If `type` is present but empty, the class is
+      # the base class.
+      def init_model(attrs, options, version)
+        if options[:dup] != true && version.item
+          model = version.item
+          if options[:unversioned_attributes] == :nil
+            init_unversioned_attrs(attrs, model)
+          end
+        else
+          klass = version_reification_class(version, attrs)
+          # The `dup` option always returns a new object, otherwise we should
+          # attempt to look for the item outside of default scope(s).
+          find_cond = { klass.primary_key => version.item_id }
+          if options[:dup] || (item_found = klass.unscoped.where(find_cond).first).nil?
+            model = klass.new
+          elsif options[:unversioned_attributes] == :nil
+            model = item_found
+            init_unversioned_attrs(attrs, model)
+          end
+        end
+        model
       end
 
       # Examine the `source_reflection`, i.e. the "source" of `assoc` the
