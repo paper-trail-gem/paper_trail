@@ -1,5 +1,6 @@
 require "active_support/concern"
 require "paper_trail/attribute_serializers/object_changes_attribute"
+require "paper_trail/queries/versions/where_object"
 require "paper_trail/queries/versions/where_object_changes"
 
 module PaperTrail
@@ -118,26 +119,7 @@ module PaperTrail
       # @api public
       def where_object(args = {})
         raise ArgumentError, "expected to receive a Hash" unless args.is_a?(Hash)
-
-        if columns_hash["object"].type == :jsonb
-          where("object @> ?", args.to_json)
-        elsif columns_hash["object"].type == :json
-          predicates = []
-          values = []
-          args.each do |field, value|
-            predicates.push "object->>? = ?"
-            values.concat([field, value.to_s])
-          end
-          sql = predicates.join(" and ")
-          where(sql, *values)
-        else
-          arel_field = arel_table[:object]
-          where_conditions = args.map { |field, value|
-            PaperTrail.serializer.where_object_condition(arel_field, field, value)
-          }
-          where_conditions = where_conditions.reduce { |a, e| a.and(e) }
-          where(where_conditions)
-        end
+        Queries::Versions::WhereObject.new(self, args).execute
       end
 
       # Given a hash of attributes like `name: 'Joan'`, query the
