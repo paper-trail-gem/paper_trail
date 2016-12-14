@@ -145,6 +145,35 @@ module PaperTrail
         (model.attribute_names - attrs.keys).each { |k| attrs[k] = nil }
       end
 
+      # Given a `belongs_to` association and a `version`, return a record that
+      # can be assigned in order to reify that association.
+      # @api private
+      def load_record_for_bt_association(assoc, id, options, version)
+        if version.nil?
+          assoc.klass.where(assoc.klass.primary_key => id).first
+        else
+          version.reify(
+            options.merge(
+              has_many: false,
+              has_one: false,
+              belongs_to: false,
+              has_and_belongs_to_many: false
+            )
+          )
+        end
+      end
+
+      # Given a `belongs_to` association and an `id`, return a version record
+      # from the point in time identified by `transaction_id` or `version_at`.
+      # @api private
+      def load_version_for_bt_association(assoc, id, transaction_id, version_at)
+        assoc.klass.paper_trail.version_class.
+          where("item_type = ?", assoc.class_name).
+          where("item_id = ?", id).
+          where("created_at >= ? OR transaction_id = ?", version_at, transaction_id).
+          order("id").limit(1).first
+      end
+
       # Given a HABTM association `assoc` and an `id`, return a version record
       # from the point in time identified by `transaction_id` or `version_at`.
       # @api private
@@ -170,6 +199,22 @@ module PaperTrail
           where("created_at >= ? OR transaction_id = ?", version_at, transaction_id).
           order("#{version_table_name}.id ASC").
           first
+      end
+
+      # Given a `has_many` association on `model`, return the version records
+      # from the point in time identified by `tx_id` or `version_at`.
+      # @api private
+      def load_versions_for_hm_association(assoc, model, version_table, tx_id, version_at)
+        version_id_subquery = ::PaperTrail::VersionAssociation.
+          joins(model.class.version_association_name).
+          select("MIN(version_id)").
+          where("foreign_key_name = ?", assoc.foreign_key).
+          where("foreign_key_id = ?", model.id).
+          where("#{version_table}.item_type = ?", assoc.class_name).
+          where("created_at >= ? OR transaction_id = ?", version_at, tx_id).
+          group("item_id").
+          to_sql
+        versions_by_id(model.class, version_id_subquery)
       end
 
       # Set all the attributes in this version on the model.
@@ -248,76 +293,70 @@ module PaperTrail
         nil
       end
 
+      # @api private
       def reify_associations(model, options, version)
-        reify_has_ones version.transaction_id, model, options if options[:has_one]
-
-        reify_belongs_to_associations version.transaction_id, model, options if options[:belongs_to]
-
-        reify_has_manys version.transaction_id, model, options if options[:has_many]
-
+        if options[:has_one]
+          reify_has_one_associations(version.transaction_id, model, options)
+        end
+        if options[:belongs_to]
+          reify_belongs_to_associations(version.transaction_id, model, options)
+        end
+        if options[:has_many]
+          reify_has_manys(version.transaction_id, model, options)
+        end
         if options[:has_and_belongs_to_many]
           reify_habtm_associations version.transaction_id, model, options
+        end
+      end
+
+      # Reify a single `has_one` association of `model`.
+      # @api private
+      def reify_has_one_association(assoc, model, options, transaction_id)
+        version = load_version_for_has_one(assoc, model, transaction_id, options[:version_at])
+        return unless version
+        if version.event == "create"
+          if options[:mark_for_destruction]
+            model.send(assoc.name).mark_for_destruction if model.send(assoc.name, true)
+          else
+            model.paper_trail.appear_as_new_record do
+              model.send "#{assoc.name}=", nil
+            end
+          end
+        else
+          child = version.reify(
+            options.merge(
+              has_many: false,
+              has_one: false,
+              belongs_to: false,
+              has_and_belongs_to_many: false
+            )
+          )
+          model.paper_trail.appear_as_new_record do
+            without_persisting(child) do
+              model.send "#{assoc.name}=", child
+            end
+          end
         end
       end
 
       # Restore the `model`'s has_one associations as they were when this
       # version was superseded by the next (because that's what the user was
       # looking at when they made the change).
-      def reify_has_ones(transaction_id, model, options = {})
+      # @api private
+      def reify_has_one_associations(transaction_id, model, options = {})
         associations = model.class.reflect_on_all_associations(:has_one)
         each_enabled_association(associations) do |assoc|
-          version = load_version_for_has_one(assoc, model, transaction_id, options[:version_at])
-          next unless version
-          if version.event == "create"
-            if options[:mark_for_destruction]
-              model.send(assoc.name).mark_for_destruction if model.send(assoc.name, true)
-            else
-              model.paper_trail.appear_as_new_record do
-                model.send "#{assoc.name}=", nil
-              end
-            end
-          else
-            child = version.reify(
-              options.merge(
-                has_many: false,
-                has_one: false,
-                belongs_to: false,
-                has_and_belongs_to_many: false
-              )
-            )
-            model.paper_trail.appear_as_new_record do
-              without_persisting(child) do
-                model.send "#{assoc.name}=", child
-              end
-            end
-          end
+          reify_has_one_association(assoc, model, options, transaction_id)
         end
       end
 
       # Reify a single `belongs_to` association of `model`.
       # @api private
       def reify_belongs_to_association(assoc, model, options, transaction_id)
-        collection_key = model.send(assoc.association_foreign_key)
-        version = assoc.klass.paper_trail.version_class.
-          where("item_type = ?", assoc.class_name).
-          where("item_id = ?", collection_key).
-          where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
-          order("id").limit(1).first
-
-        collection = if version.nil?
-                       assoc.klass.where(assoc.klass.primary_key => collection_key).first
-                     else
-                       version.reify(
-                         options.merge(
-                           has_many: false,
-                           has_one: false,
-                           belongs_to: false,
-                           has_and_belongs_to_many: false
-                         )
-                       )
-                     end
-
-        model.send("#{assoc.name}=".to_sym, collection)
+        id = model.send(assoc.association_foreign_key)
+        version = load_version_for_bt_association(assoc, id, transaction_id, options[:version_at])
+        record = load_record_for_bt_association(assoc, id, options, version)
+        model.send("#{assoc.name}=".to_sym, record)
       end
 
       # Reify all `belongs_to` associations of `model`.
@@ -343,16 +382,13 @@ module PaperTrail
       # Reify a single, direct (not `through`) `has_many` association of `model`.
       # @api private
       def reify_has_many_association(assoc, model, options, transaction_id, version_table_name)
-        version_id_subquery = PaperTrail::VersionAssociation.
-          joins(model.class.version_association_name).
-          select("MIN(version_id)").
-          where("foreign_key_name = ?", assoc.foreign_key).
-          where("foreign_key_id = ?", model.id).
-          where("#{version_table_name}.item_type = ?", assoc.class_name).
-          where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
-          group("item_id").
-          to_sql
-        versions = versions_by_id(model.class, version_id_subquery)
+        versions = load_versions_for_hm_association(
+          assoc,
+          model,
+          version_table_name,
+          transaction_id,
+          options[:version_at]
+        )
         collection = Array.new model.send(assoc.name).reload # to avoid cache
         prepare_array_for_has_many(collection, options, versions)
         model.send(assoc.name).proxy_association.target = collection
