@@ -124,22 +124,12 @@ module PaperTrail
 
       @model_class.send :attr_accessor, :paper_trail_event
 
-      # In rails 4, the `has_many` syntax for specifying order uses a lambda.
-      if ::ActiveRecord::VERSION::MAJOR >= 4
-        @model_class.has_many(
-          @model_class.versions_association_name,
-          -> { order(model.timestamp_sort_order) },
-          class_name: @model_class.version_class_name,
-          as: :item
-        )
-      else
-        @model_class.has_many(
-          @model_class.versions_association_name,
-          class_name: @model_class.version_class_name,
-          as: :item,
-          order: @model_class.paper_trail.version_class.timestamp_sort_order
-        )
-      end
+      @model_class.has_many(
+        @model_class.versions_association_name,
+        -> { order(model.timestamp_sort_order) },
+        class_name: @model_class.version_class_name,
+        as: :item
+      )
     end
 
     # Adds callbacks to record changes to habtm associations such that on save
