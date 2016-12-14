@@ -15,10 +15,29 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
+- None
+
+## 6.0.2 (2016-12-13)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
 - `88e513f` - Surprise argument modification bug in `where_object_changes`
 - `c7efd62` - Column type-detection bug in `where_object_changes`
 - [#905](https://github.com/airblade/paper_trail/pull/905) - Only invoke
   `logger.warn` if `logger` instance exists
+
+### Code Quality
+
+- Improve Metrics/AbcSize from 30 to 22
+- Improve Metrics/PerceivedComplexity from 10 to 9
 
 ## 6.0.1 (2016-12-04)
 
