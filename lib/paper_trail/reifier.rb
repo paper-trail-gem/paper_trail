@@ -248,49 +248,60 @@ module PaperTrail
         nil
       end
 
+      # @api private
       def reify_associations(model, options, version)
-        reify_has_ones version.transaction_id, model, options if options[:has_one]
-
-        reify_belongs_to_associations version.transaction_id, model, options if options[:belongs_to]
-
-        reify_has_manys version.transaction_id, model, options if options[:has_many]
-
+        if options[:has_one]
+          reify_has_one_associations(version.transaction_id, model, options)
+        end
+        if options[:belongs_to]
+          reify_belongs_to_associations(version.transaction_id, model, options)
+        end
+        if options[:has_many]
+          reify_has_manys(version.transaction_id, model, options)
+        end
         if options[:has_and_belongs_to_many]
           reify_habtm_associations version.transaction_id, model, options
+        end
+      end
+
+      # Reify a single `has_one` association of `model`.
+      # @api private
+      def reify_has_one_association(assoc, model, options, transaction_id)
+        version = load_version_for_has_one(assoc, model, transaction_id, options[:version_at])
+        return unless version
+        if version.event == "create"
+          if options[:mark_for_destruction]
+            model.send(assoc.name).mark_for_destruction if model.send(assoc.name, true)
+          else
+            model.paper_trail.appear_as_new_record do
+              model.send "#{assoc.name}=", nil
+            end
+          end
+        else
+          child = version.reify(
+            options.merge(
+              has_many: false,
+              has_one: false,
+              belongs_to: false,
+              has_and_belongs_to_many: false
+            )
+          )
+          model.paper_trail.appear_as_new_record do
+            without_persisting(child) do
+              model.send "#{assoc.name}=", child
+            end
+          end
         end
       end
 
       # Restore the `model`'s has_one associations as they were when this
       # version was superseded by the next (because that's what the user was
       # looking at when they made the change).
-      def reify_has_ones(transaction_id, model, options = {})
+      # @api private
+      def reify_has_one_associations(transaction_id, model, options = {})
         associations = model.class.reflect_on_all_associations(:has_one)
         each_enabled_association(associations) do |assoc|
-          version = load_version_for_has_one(assoc, model, transaction_id, options[:version_at])
-          next unless version
-          if version.event == "create"
-            if options[:mark_for_destruction]
-              model.send(assoc.name).mark_for_destruction if model.send(assoc.name, true)
-            else
-              model.paper_trail.appear_as_new_record do
-                model.send "#{assoc.name}=", nil
-              end
-            end
-          else
-            child = version.reify(
-              options.merge(
-                has_many: false,
-                has_one: false,
-                belongs_to: false,
-                has_and_belongs_to_many: false
-              )
-            )
-            model.paper_trail.appear_as_new_record do
-              without_persisting(child) do
-                model.send "#{assoc.name}=", child
-              end
-            end
-          end
+          reify_has_one_association(assoc, model, options, transaction_id)
         end
       end
 
