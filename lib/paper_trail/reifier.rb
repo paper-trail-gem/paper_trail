@@ -201,6 +201,22 @@ module PaperTrail
           first
       end
 
+      # Given a `has_many` association on `model`, return the version records
+      # from the point in time identified by `tx_id` or `version_at`.
+      # @api private
+      def load_versions_for_hm_association(assoc, model, version_table, tx_id, version_at)
+        version_id_subquery = ::PaperTrail::VersionAssociation.
+          joins(model.class.version_association_name).
+          select("MIN(version_id)").
+          where("foreign_key_name = ?", assoc.foreign_key).
+          where("foreign_key_id = ?", model.id).
+          where("#{version_table}.item_type = ?", assoc.class_name).
+          where("created_at >= ? OR transaction_id = ?", version_at, tx_id).
+          group("item_id").
+          to_sql
+        versions_by_id(model.class, version_id_subquery)
+      end
+
       # Set all the attributes in this version on the model.
       def reify_attributes(model, version, attrs)
         enums = model.class.respond_to?(:defined_enums) ? model.class.defined_enums : {}
@@ -366,16 +382,13 @@ module PaperTrail
       # Reify a single, direct (not `through`) `has_many` association of `model`.
       # @api private
       def reify_has_many_association(assoc, model, options, transaction_id, version_table_name)
-        version_id_subquery = PaperTrail::VersionAssociation.
-          joins(model.class.version_association_name).
-          select("MIN(version_id)").
-          where("foreign_key_name = ?", assoc.foreign_key).
-          where("foreign_key_id = ?", model.id).
-          where("#{version_table_name}.item_type = ?", assoc.class_name).
-          where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
-          group("item_id").
-          to_sql
-        versions = versions_by_id(model.class, version_id_subquery)
+        versions = load_versions_for_hm_association(
+          assoc,
+          model,
+          version_table_name,
+          transaction_id,
+          options[:version_at]
+        )
         collection = Array.new model.send(assoc.name).reload # to avoid cache
         prepare_array_for_has_many(collection, options, versions)
         model.send(assoc.name).proxy_association.target = collection
