@@ -145,6 +145,17 @@ module PaperTrail
         (model.attribute_names - attrs.keys).each { |k| attrs[k] = nil }
       end
 
+      # Given a `belongs_to` association and an `id`, return a version record
+      # from the point in time identified by `transaction_id` or `version_at`.
+      # @api private
+      def load_version_for_bt_association(assoc, id, transaction_id, version_at)
+        assoc.klass.paper_trail.version_class.
+          where("item_type = ?", assoc.class_name).
+          where("item_id = ?", id).
+          where("created_at >= ? OR transaction_id = ?", version_at, transaction_id).
+          order("id").limit(1).first
+      end
+
       # Given a HABTM association `assoc` and an `id`, return a version record
       # from the point in time identified by `transaction_id` or `version_at`.
       # @api private
@@ -308,15 +319,10 @@ module PaperTrail
       # Reify a single `belongs_to` association of `model`.
       # @api private
       def reify_belongs_to_association(assoc, model, options, transaction_id)
-        collection_key = model.send(assoc.association_foreign_key)
-        version = assoc.klass.paper_trail.version_class.
-          where("item_type = ?", assoc.class_name).
-          where("item_id = ?", collection_key).
-          where("created_at >= ? OR transaction_id = ?", options[:version_at], transaction_id).
-          order("id").limit(1).first
-
+        id = model.send(assoc.association_foreign_key)
+        version = load_version_for_bt_association(assoc, id, transaction_id, options[:version_at])
         collection = if version.nil?
-                       assoc.klass.where(assoc.klass.primary_key => collection_key).first
+                       assoc.klass.where(assoc.klass.primary_key => id).first
                      else
                        version.reify(
                          options.merge(
