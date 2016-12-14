@@ -346,29 +346,15 @@ module PaperTrail
     # Saves associations if the join table for `VersionAssociation` exists.
     def save_associations(version)
       return unless PaperTrail.config.track_associations?
-      save_associations_belongs_to(version)
-      save_associations_habtm(version)
+      save_bt_associations(version)
+      save_habtm_associations(version)
     end
 
-    def save_associations_belongs_to(version)
+    # Save all `belongs_to` associations.
+    # @api private
+    def save_bt_associations(version)
       @record.class.reflect_on_all_associations(:belongs_to).each do |assoc|
-        assoc_version_args = {
-          version_id: version.id,
-          foreign_key_name: assoc.foreign_key
-        }
-
-        if assoc.options[:polymorphic]
-          associated_record = @record.send(assoc.name) if @record.send(assoc.foreign_type)
-          if associated_record && associated_record.class.paper_trail.enabled?
-            assoc_version_args[:foreign_key_id] = associated_record.id
-          end
-        elsif assoc.klass.paper_trail.enabled?
-          assoc_version_args[:foreign_key_id] = @record.send(assoc.foreign_key)
-        end
-
-        if assoc_version_args.key?(:foreign_key_id)
-          PaperTrail::VersionAssociation.create(assoc_version_args)
-        end
+        save_bt_association(assoc, version)
       end
     end
 
@@ -376,7 +362,8 @@ module PaperTrail
     # HABTM associations looked like before any changes were made, by using
     # the `paper_trail_habtm` data structure. Then, we create
     # `VersionAssociation` records for each of the associated records.
-    def save_associations_habtm(version)
+    # @api private
+    def save_habtm_associations(version)
       @record.class.reflect_on_all_associations(:has_and_belongs_to_many).each do |a|
         next unless save_habtm_association?(a)
         habtm_assoc_ids(a).each do |id|
@@ -523,6 +510,28 @@ module PaperTrail
         "Unable to create version for #{action} of #{@record.class.name}" +
           "##{@record.id}: " + version.errors.full_messages.join(", ")
       )
+    end
+
+    # Save a single `belongs_to` association.
+    # @api private
+    def save_bt_association(assoc, version)
+      assoc_version_args = {
+        version_id: version.id,
+        foreign_key_name: assoc.foreign_key
+      }
+
+      if assoc.options[:polymorphic]
+        associated_record = @record.send(assoc.name) if @record.send(assoc.foreign_type)
+        if associated_record && associated_record.class.paper_trail.enabled?
+          assoc_version_args[:foreign_key_id] = associated_record.id
+        end
+      elsif assoc.klass.paper_trail.enabled?
+        assoc_version_args[:foreign_key_id] = @record.send(assoc.foreign_key)
+      end
+
+      if assoc_version_args.key?(:foreign_key_id)
+        PaperTrail::VersionAssociation.create(assoc_version_args)
+      end
     end
 
     # Returns true if the given HABTM association should be saved.
