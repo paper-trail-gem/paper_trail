@@ -145,6 +145,24 @@ module PaperTrail
         (model.attribute_names - attrs.keys).each { |k| attrs[k] = nil }
       end
 
+      # Given a `belongs_to` association and a `version`, return a record that
+      # can be assigned in order to reify that association.
+      # @api private
+      def load_record_for_bt_association(assoc, id, options, version)
+        if version.nil?
+          assoc.klass.where(assoc.klass.primary_key => id).first
+        else
+          version.reify(
+            options.merge(
+              has_many: false,
+              has_one: false,
+              belongs_to: false,
+              has_and_belongs_to_many: false
+            )
+          )
+        end
+      end
+
       # Given a `belongs_to` association and an `id`, return a version record
       # from the point in time identified by `transaction_id` or `version_at`.
       # @api private
@@ -321,20 +339,8 @@ module PaperTrail
       def reify_belongs_to_association(assoc, model, options, transaction_id)
         id = model.send(assoc.association_foreign_key)
         version = load_version_for_bt_association(assoc, id, transaction_id, options[:version_at])
-        collection = if version.nil?
-                       assoc.klass.where(assoc.klass.primary_key => id).first
-                     else
-                       version.reify(
-                         options.merge(
-                           has_many: false,
-                           has_one: false,
-                           belongs_to: false,
-                           has_and_belongs_to_many: false
-                         )
-                       )
-                     end
-
-        model.send("#{assoc.name}=".to_sym, collection)
+        record = load_record_for_bt_association(assoc, id, options, version)
+        model.send("#{assoc.name}=".to_sym, record)
       end
 
       # Reify all `belongs_to` associations of `model`.
