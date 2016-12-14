@@ -117,23 +117,12 @@ module PaperTrail
       end
 
       # @api private
-      def hmt_collection_through_belongs_to(through_collection, assoc, options, transaction_id)
-        collection_keys = through_collection.map { |through_model|
+      def hmt_collection_through_belongs_to(through_collection, assoc, options, tx_id)
+        ids = through_collection.map { |through_model|
           through_model.send(assoc.source_reflection.foreign_key)
         }
-        version_id_subquery = assoc.klass.paper_trail.version_class.
-          select("MIN(id)").
-          where("item_type = ?", assoc.class_name).
-          where("item_id IN (?)", collection_keys).
-          where(
-            "created_at >= ? OR transaction_id = ?",
-            options[:version_at],
-            transaction_id
-          ).
-          group("item_id").
-          to_sql
-        versions = versions_by_id(assoc.klass, version_id_subquery)
-        collection = Array.new assoc.klass.where(assoc.klass.primary_key => collection_keys)
+        versions = load_versions_for_hmt_association(assoc, ids, tx_id, options[:version_at])
+        collection = Array.new assoc.klass.where(assoc.klass.primary_key => ids)
         prepare_array_for_has_many(collection, options, versions)
         collection
       end
@@ -215,6 +204,25 @@ module PaperTrail
           group("item_id").
           to_sql
         versions_by_id(model.class, version_id_subquery)
+      end
+
+      # Given a `has_many(through:)` association and an array of `ids`, return
+      # the version records from the point in time identified by `tx_id` or
+      # `version_at`.
+      # @api private
+      def load_versions_for_hmt_association(assoc, ids, tx_id, version_at)
+        version_id_subquery = assoc.klass.paper_trail.version_class.
+          select("MIN(id)").
+          where("item_type = ?", assoc.class_name).
+          where("item_id IN (?)", ids).
+          where(
+            "created_at >= ? OR transaction_id = ?",
+            version_at,
+            tx_id
+          ).
+          group("item_id").
+          to_sql
+        versions_by_id(assoc.klass, version_id_subquery)
       end
 
       # Set all the attributes in this version on the model.
