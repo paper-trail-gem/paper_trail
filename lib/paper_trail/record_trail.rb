@@ -118,30 +118,47 @@ module PaperTrail
       source_version.nil?
     end
 
+    # Updates `data` from the model's `meta` option and from `controller_info`.
     # @api private
-    def merge_metadata(data)
-      # First we merge the model-level metadata in `meta`.
-      @record.paper_trail_options[:meta].each do |k, v|
-        data[k] =
-          if v.respond_to?(:call)
-            v.call(@record)
-          elsif v.is_a?(Symbol) && @record.respond_to?(v, true)
-            # If it is an attribute that is changing in an existing object,
-            # be sure to grab the current version.
-            if @record.has_attribute?(v) &&
-                attribute_changed_in_latest_version?(v) &&
-                data[:event] != "create"
-              attribute_in_previous_version(v)
-            else
-              @record.send(v)
-            end
-          else
-            v
-          end
-      end
+    def merge_metadata_into(data)
+      merge_metadata_from_model_into(data)
+      merge_metadata_from_controller_into(data)
+    end
 
-      # Second we merge any extra data from the controller (if available).
+    # Updates `data` from `controller_info`.
+    # @api private
+    def merge_metadata_from_controller_into(data)
       data.merge(PaperTrail.controller_info || {})
+    end
+
+    # Updates `data` from the model's `meta` option.
+    # @api private
+    def merge_metadata_from_model_into(data)
+      @record.paper_trail_options[:meta].each do |k, v|
+        data[k] = model_metadatum(v, data[:event])
+      end
+    end
+
+    # Given a `value` from the model's `meta` option, returns an object to be
+    # persisted. The `value` can be a simple scalar value, but it can also
+    # be a symbol that names a model method, or even a Proc.
+    # @api private
+    def model_metadatum(value, event)
+      if value.respond_to?(:call)
+        value.call(@record)
+      elsif value.is_a?(Symbol) && @record.respond_to?(value, true)
+        # If it is an attribute that is changing in an existing object,
+        # be sure to grab the current version.
+        if event != "create" &&
+            @record.has_attribute?(value) &&
+            attribute_changed_in_latest_version?(value)
+          attribute_in_previous_version(value)
+        else
+          @record.send(value)
+        end
+      else
+        value
+      end
     end
 
     # Returns the object (not a Version) as it became next.
@@ -210,7 +227,7 @@ module PaperTrail
         data[:object_changes] = recordable_object_changes
       end
       add_transaction_id_to(data)
-      merge_metadata(data)
+      merge_metadata_into(data)
     end
 
     def record_destroy
@@ -238,7 +255,7 @@ module PaperTrail
         whodunnit: PaperTrail.whodunnit
       }
       add_transaction_id_to(data)
-      merge_metadata(data)
+      merge_metadata_into(data)
     end
 
     # Returns a boolean indicating whether to store serialized version diffs
@@ -280,7 +297,7 @@ module PaperTrail
         data[:object_changes] = recordable_object_changes
       end
       add_transaction_id_to(data)
-      merge_metadata(data)
+      merge_metadata_into(data)
     end
 
     # Returns an object which can be assigned to the `object` attribute of a
@@ -329,29 +346,15 @@ module PaperTrail
     # Saves associations if the join table for `VersionAssociation` exists.
     def save_associations(version)
       return unless PaperTrail.config.track_associations?
-      save_associations_belongs_to(version)
-      save_associations_habtm(version)
+      save_bt_associations(version)
+      save_habtm_associations(version)
     end
 
-    def save_associations_belongs_to(version)
+    # Save all `belongs_to` associations.
+    # @api private
+    def save_bt_associations(version)
       @record.class.reflect_on_all_associations(:belongs_to).each do |assoc|
-        assoc_version_args = {
-          version_id: version.id,
-          foreign_key_name: assoc.foreign_key
-        }
-
-        if assoc.options[:polymorphic]
-          associated_record = @record.send(assoc.name) if @record.send(assoc.foreign_type)
-          if associated_record && associated_record.class.paper_trail.enabled?
-            assoc_version_args[:foreign_key_id] = associated_record.id
-          end
-        elsif assoc.klass.paper_trail.enabled?
-          assoc_version_args[:foreign_key_id] = @record.send(assoc.foreign_key)
-        end
-
-        if assoc_version_args.key?(:foreign_key_id)
-          PaperTrail::VersionAssociation.create(assoc_version_args)
-        end
+        save_bt_association(assoc, version)
       end
     end
 
@@ -359,7 +362,8 @@ module PaperTrail
     # HABTM associations looked like before any changes were made, by using
     # the `paper_trail_habtm` data structure. Then, we create
     # `VersionAssociation` records for each of the associated records.
-    def save_associations_habtm(version)
+    # @api private
+    def save_habtm_associations(version)
       @record.class.reflect_on_all_associations(:has_and_belongs_to_many).each do |a|
         next unless save_habtm_association?(a)
         habtm_assoc_ids(a).each do |id|
@@ -506,6 +510,28 @@ module PaperTrail
         "Unable to create version for #{action} of #{@record.class.name}" +
           "##{@record.id}: " + version.errors.full_messages.join(", ")
       )
+    end
+
+    # Save a single `belongs_to` association.
+    # @api private
+    def save_bt_association(assoc, version)
+      assoc_version_args = {
+        version_id: version.id,
+        foreign_key_name: assoc.foreign_key
+      }
+
+      if assoc.options[:polymorphic]
+        associated_record = @record.send(assoc.name) if @record.send(assoc.foreign_type)
+        if associated_record && associated_record.class.paper_trail.enabled?
+          assoc_version_args[:foreign_key_id] = associated_record.id
+        end
+      elsif assoc.klass.paper_trail.enabled?
+        assoc_version_args[:foreign_key_id] = @record.send(assoc.foreign_key)
+      end
+
+      if assoc_version_args.key?(:foreign_key_id)
+        PaperTrail::VersionAssociation.create(assoc_version_args)
+      end
     end
 
     # Returns true if the given HABTM association should be saved.
