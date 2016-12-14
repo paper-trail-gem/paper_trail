@@ -118,30 +118,47 @@ module PaperTrail
       source_version.nil?
     end
 
+    # Updates `data` from the model's `meta` option and from `controller_info`.
     # @api private
-    def merge_metadata(data)
-      # First we merge the model-level metadata in `meta`.
-      @record.paper_trail_options[:meta].each do |k, v|
-        data[k] =
-          if v.respond_to?(:call)
-            v.call(@record)
-          elsif v.is_a?(Symbol) && @record.respond_to?(v, true)
-            # If it is an attribute that is changing in an existing object,
-            # be sure to grab the current version.
-            if @record.has_attribute?(v) &&
-                attribute_changed_in_latest_version?(v) &&
-                data[:event] != "create"
-              attribute_in_previous_version(v)
-            else
-              @record.send(v)
-            end
-          else
-            v
-          end
-      end
+    def merge_metadata_into(data)
+      merge_metadata_from_model_into(data)
+      merge_metadata_from_controller_into(data)
+    end
 
-      # Second we merge any extra data from the controller (if available).
+    # Updates `data` from `controller_info`.
+    # @api private
+    def merge_metadata_from_controller_into(data)
       data.merge(PaperTrail.controller_info || {})
+    end
+
+    # Updates `data` from the model's `meta` option.
+    # @api private
+    def merge_metadata_from_model_into(data)
+      @record.paper_trail_options[:meta].each do |k, v|
+        data[k] = model_metadatum(v, data[:event])
+      end
+    end
+
+    # Given a `value` from the model's `meta` option, returns an object to be
+    # persisted. The `value` can be a simple scalar value, but it can also
+    # be a symbol that names a model method, or even a Proc.
+    # @api private
+    def model_metadatum(value, event)
+      if value.respond_to?(:call)
+        value.call(@record)
+      elsif value.is_a?(Symbol) && @record.respond_to?(value, true)
+        # If it is an attribute that is changing in an existing object,
+        # be sure to grab the current version.
+        if event != "create" &&
+            @record.has_attribute?(value) &&
+            attribute_changed_in_latest_version?(value)
+          attribute_in_previous_version(value)
+        else
+          @record.send(value)
+        end
+      else
+        value
+      end
     end
 
     # Returns the object (not a Version) as it became next.
@@ -210,7 +227,7 @@ module PaperTrail
         data[:object_changes] = recordable_object_changes
       end
       add_transaction_id_to(data)
-      merge_metadata(data)
+      merge_metadata_into(data)
     end
 
     def record_destroy
@@ -238,7 +255,7 @@ module PaperTrail
         whodunnit: PaperTrail.whodunnit
       }
       add_transaction_id_to(data)
-      merge_metadata(data)
+      merge_metadata_into(data)
     end
 
     # Returns a boolean indicating whether to store serialized version diffs
@@ -280,7 +297,7 @@ module PaperTrail
         data[:object_changes] = recordable_object_changes
       end
       add_transaction_id_to(data)
-      merge_metadata(data)
+      merge_metadata_into(data)
     end
 
     # Returns an object which can be assigned to the `object` attribute of a

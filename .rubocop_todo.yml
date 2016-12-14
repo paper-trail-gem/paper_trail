@@ -8,7 +8,7 @@ Metrics/CyclomaticComplexity:
   Max: 8 # Goal: 6
 
 Metrics/PerceivedComplexity:
-  Max: 10 # Goal: 7
+  Max: 9 # Goal: 7
 
 Style/FrozenStringLiteralComment:
   Enabled: false
