@@ -1,6 +1,7 @@
 require "paper_trail/attribute_serializers/object_attribute"
 require "paper_trail/reifiers/belongs_to"
 require "paper_trail/reifiers/has_many"
+require "paper_trail/reifiers/has_many_through"
 require "paper_trail/reifiers/has_one"
 
 module PaperTrail
@@ -18,6 +19,18 @@ module PaperTrail
         model.send "#{model.class.version_association_name}=", version
         reify_associations(model, options, version)
         model
+      end
+
+      # Restore the `model`'s has_many associations as they were at version_at
+      # timestamp We lookup the first child versions after version_at timestamp or
+      # in same transaction.
+      # @api private
+      def reify_has_manys(transaction_id, model, options = {})
+        assoc_has_many_through, assoc_has_many_directly =
+          model.class.reflect_on_all_associations(:has_many).
+            partition { |assoc| assoc.options[:through] }
+        reify_has_many_associations(transaction_id, assoc_has_many_directly, model, options)
+        reify_has_many_through_associations(transaction_id, assoc_has_many_through, model, options)
       end
 
       private
@@ -82,54 +95,6 @@ module PaperTrail
         model
       end
 
-      # Examine the `source_reflection`, i.e. the "source" of `assoc` the
-      # `ThroughReflection`. The source can be a `BelongsToReflection`
-      # or a `HasManyReflection`.
-      #
-      # If the association is a has_many association again, then call
-      # reify_has_manys for each record in `through_collection`.
-      #
-      # @api private
-      def hmt_collection(through_collection, assoc, options, transaction_id)
-        if !assoc.source_reflection.belongs_to? && through_collection.present?
-          hmt_collection_through_has_many(
-            through_collection, assoc, options, transaction_id
-          )
-        else
-          hmt_collection_through_belongs_to(
-            through_collection, assoc, options, transaction_id
-          )
-        end
-      end
-
-      # @api private
-      def hmt_collection_through_has_many(through_collection, assoc, options, transaction_id)
-        through_collection.each do |through_model|
-          reify_has_manys(transaction_id, through_model, options)
-        end
-
-        # At this point, the "through" part of the association chain has
-        # been reified, but not the final, "target" part. To continue our
-        # example, `model.sections` (including `model.sections.paragraphs`)
-        # has been loaded. However, the final "target" part of the
-        # association, that is, `model.paragraphs`, has not been loaded. So,
-        # we do that now.
-        through_collection.flat_map { |through_model|
-          through_model.public_send(assoc.name.to_sym).to_a
-        }
-      end
-
-      # @api private
-      def hmt_collection_through_belongs_to(through_collection, assoc, options, tx_id)
-        ids = through_collection.map { |through_model|
-          through_model.send(assoc.source_reflection.foreign_key)
-        }
-        versions = load_versions_for_hmt_association(assoc, ids, tx_id, options[:version_at])
-        collection = Array.new assoc.klass.where(assoc.klass.primary_key => ids)
-        Reifiers::HasMany.prepare_array(collection, options, versions)
-        collection
-      end
-
       # Look for attributes that exist in `model` and not in this version.
       # These attributes should be set to nil. Modifies `attrs`.
       # @api private
@@ -148,25 +113,6 @@ module PaperTrail
           order("id").
           limit(1).
           first
-      end
-
-      # Given a `has_many(through:)` association and an array of `ids`, return
-      # the version records from the point in time identified by `tx_id` or
-      # `version_at`.
-      # @api private
-      def load_versions_for_hmt_association(assoc, ids, tx_id, version_at)
-        version_id_subquery = assoc.klass.paper_trail.version_class.
-          select("MIN(id)").
-          where("item_type = ?", assoc.class_name).
-          where("item_id IN (?)", ids).
-          where(
-            "created_at >= ? OR transaction_id = ?",
-            version_at,
-            tx_id
-          ).
-          group("item_id").
-          to_sql
-        Reifiers::HasMany.versions_by_id(assoc.klass, version_id_subquery)
       end
 
       # Reify onto `model` an attribute named `k` with value `v` from `version`.
@@ -236,17 +182,6 @@ module PaperTrail
         end
       end
 
-      # Restore the `model`'s has_many associations as they were at version_at
-      # timestamp We lookup the first child versions after version_at timestamp or
-      # in same transaction.
-      def reify_has_manys(transaction_id, model, options = {})
-        assoc_has_many_through, assoc_has_many_directly =
-          model.class.reflect_on_all_associations(:has_many).
-            partition { |assoc| assoc.options[:through] }
-        reify_has_many_associations(transaction_id, assoc_has_many_directly, model, options)
-        reify_has_many_through_associations(transaction_id, assoc_has_many_through, model, options)
-      end
-
       # Reify all direct (not `through`) `has_many` associations of `model`.
       # @api private
       def reify_has_many_associations(transaction_id, associations, model, options = {})
@@ -256,29 +191,12 @@ module PaperTrail
         end
       end
 
-      # Reify a single HMT association of `model`.
-      # @api private
-      def reify_has_many_through_association(assoc, model, options, transaction_id)
-        # Load the collection of through-models. For example, if `model` is a
-        # Chapter, having many Paragraphs through Sections, then
-        # `through_collection` will contain Sections.
-        through_collection = model.send(assoc.options[:through])
-
-        # Now, given the collection of "through" models (e.g. sections), load
-        # the collection of "target" models (e.g. paragraphs)
-        collection = hmt_collection(through_collection, assoc, options, transaction_id)
-
-        # Finally, assign the `collection` of "target" models, e.g. to
-        # `model.paragraphs`.
-        model.send(assoc.name).proxy_association.target = collection
-      end
-
       # Reify all HMT associations of `model`. This must be called after the
       # direct (non-`through`) has_manys have been reified.
       # @api private
       def reify_has_many_through_associations(transaction_id, associations, model, options = {})
         each_enabled_association(associations) do |assoc|
-          reify_has_many_through_association(assoc, model, options, transaction_id)
+          Reifiers::HasManyThrough.reify(assoc, model, options, transaction_id)
         end
       end
 
