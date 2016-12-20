@@ -1,4 +1,5 @@
 require "paper_trail/attribute_serializers/object_attribute"
+require "paper_trail/reifiers/has_one"
 
 module PaperTrail
   # Given a version record and some options, builds a new model object.
@@ -176,20 +177,6 @@ module PaperTrail
           first
       end
 
-      # Given a has-one association `assoc` on `model`, return the version
-      # record from the point in time identified by `transaction_id` or `version_at`.
-      # @api private
-      def load_version_for_has_one(assoc, model, transaction_id, version_at)
-        version_table_name = model.class.paper_trail.version_class.table_name
-        model.class.paper_trail.version_class.joins(:version_associations).
-          where("version_associations.foreign_key_name = ?", assoc.foreign_key).
-          where("version_associations.foreign_key_id = ?", model.id).
-          where("#{version_table_name}.item_type = ?", assoc.class_name).
-          where("created_at >= ? OR transaction_id = ?", version_at, transaction_id).
-          order("#{version_table_name}.id ASC").
-          first
-      end
-
       # Given a `has_many` association on `model`, return the version records
       # from the point in time identified by `tx_id` or `version_at`.
       # @api private
@@ -325,36 +312,6 @@ module PaperTrail
         end
       end
 
-      # Reify a single `has_one` association of `model`.
-      # @api private
-      def reify_has_one_association(assoc, model, options, transaction_id)
-        version = load_version_for_has_one(assoc, model, transaction_id, options[:version_at])
-        return unless version
-        if version.event == "create"
-          if options[:mark_for_destruction]
-            model.send(assoc.name).mark_for_destruction if model.send(assoc.name, true)
-          else
-            model.paper_trail.appear_as_new_record do
-              model.send "#{assoc.name}=", nil
-            end
-          end
-        else
-          child = version.reify(
-            options.merge(
-              has_many: false,
-              has_one: false,
-              belongs_to: false,
-              has_and_belongs_to_many: false
-            )
-          )
-          model.paper_trail.appear_as_new_record do
-            without_persisting(child) do
-              model.send "#{assoc.name}=", child
-            end
-          end
-        end
-      end
-
       # Restore the `model`'s has_one associations as they were when this
       # version was superseded by the next (because that's what the user was
       # looking at when they made the change).
@@ -362,7 +319,7 @@ module PaperTrail
       def reify_has_one_associations(transaction_id, model, options = {})
         associations = model.class.reflect_on_all_associations(:has_one)
         each_enabled_association(associations) do |assoc|
-          reify_has_one_association(assoc, model, options, transaction_id)
+          Reifiers::HasOne.reify(assoc, model, options, transaction_id)
         end
       end
 
@@ -520,18 +477,6 @@ module PaperTrail
           paper_trail.version_class.
           where("id IN (#{version_id_subquery})").
           inject({}) { |a, e| a.merge!(e.item_id => e) }
-      end
-
-      # Temporarily suppress #save so we can reassociate with the reified
-      # master of a has_one relationship. Since ActiveRecord 5 the related
-      # object is saved when it is assigned to the association. ActiveRecord
-      # 5 also happens to be the first version that provides #suppress.
-      def without_persisting(record)
-        if record.class.respond_to? :suppress
-          record.class.suppress { yield }
-        else
-          yield
-        end
       end
     end
   end
