@@ -225,26 +225,34 @@ module PaperTrail
         versions_by_id(assoc.klass, version_id_subquery)
       end
 
-      # Set all the attributes in this version on the model.
-      def reify_attributes(model, version, attrs)
+      # Reify onto `model` an attribute named `k` with value `v` from `version`.
+      #
+      # `ObjectAttribute#deserialize` will return the mapped enum value and in
+      # Rails < 5, the []= uses the integer type caster from the column
+      # definition (in general) and thus will turn a (usually) string to 0
+      # instead of the correct value.
+      #
+      # @api private
+      def reify_attribute(k, v, model, version)
         enums = model.class.respond_to?(:defined_enums) ? model.class.defined_enums : {}
+        is_enum_without_type_caster = ::ActiveRecord::VERSION::MAJOR < 5 && enums.key?(k)
+        if model.has_attribute?(k) && !is_enum_without_type_caster
+          model[k.to_sym] = v
+        elsif model.respond_to?("#{k}=")
+          model.send("#{k}=", v)
+        elsif version.logger
+          version.logger.warn(
+            "Attribute #{k} does not exist on #{version.item_type} (Version id: #{version.id})."
+          )
+        end
+      end
+
+      # Reify onto `model` all the attributes of `version`.
+      # @api private
+      def reify_attributes(model, version, attrs)
         AttributeSerializers::ObjectAttribute.new(model.class).deserialize(attrs)
         attrs.each do |k, v|
-          # `ObjectAttribute#deserialize` will return the mapped enum value
-          # and in Rails < 5, the []= uses the integer type caster from the column
-          # definition (in general) and thus will turn a (usually) string to 0 instead
-          # of the correct value
-          is_enum_without_type_caster = ::ActiveRecord::VERSION::MAJOR < 5 && enums.key?(k)
-
-          if model.has_attribute?(k) && !is_enum_without_type_caster
-            model[k.to_sym] = v
-          elsif model.respond_to?("#{k}=")
-            model.send("#{k}=", v)
-          elsif version.logger
-            version.logger.warn(
-              "Attribute #{k} does not exist on #{version.item_type} (Version id: #{version.id})."
-            )
-          end
+          reify_attribute(k, v, model, version)
         end
       end
 
