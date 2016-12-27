@@ -510,8 +510,14 @@ does not apply to `create` events.
 ```ruby
 # Limit: 4 versions per record (3 most recent, plus a `create` event)
 PaperTrail.config.version_limit = 3
+
 # Remove the limit
 PaperTrail.config.version_limit = nil
+
+# Set a per-model version limit
+class Widget < ActiveRecord::Base
+  has_paper_trail :version_limit => 10
+end
 ```
 
 ## 3. Working With Versions

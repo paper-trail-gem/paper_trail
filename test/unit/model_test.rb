@@ -1496,4 +1496,19 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       assert_equal 3, @widget.versions.size
     end
   end
+
+  context "per-model version_limit" do
+    setup do
+      Fluxor.instance_eval <<-END
+        has_paper_trail :version_limit => 3
+      END
+      @fluxor = Fluxor.create! name: "Foo"
+      6.times { @fluxor.update_attribute(:name, FFaker::Lorem.word) }
+    end
+
+    should "limit the number of versions to 4 (3 plus the created at event)" do
+      assert_equal "create", @fluxor.versions.first.event
+      assert_equal 4, @fluxor.versions.size
+    end
+  end
 end
