@@ -498,6 +498,9 @@ Or a block:
 end
 ```
 
+_Note_: `without_versioning` disables PaperTrail for the model
+(e.g. `Widget`), not just for the instance (e.g. `@widget`).
+
 ### 2.e. Limiting the Number of Versions Created
 
 Configure `version_limit` to cap the number of versions saved per record. This
