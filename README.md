@@ -498,7 +498,7 @@ Or a block:
 end
 ```
 
-_Note_: `without_versioning` disables PaperTrail for the model
+PaperTrail is disabled for the whole model
 (e.g. `Widget`), not just for the instance (e.g. `@widget`).
 
 ### 2.e. Limiting the Number of Versions Created
