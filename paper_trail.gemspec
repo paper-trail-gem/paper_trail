@@ -3,7 +3,7 @@ require "paper_trail/version_number"
 
 Gem::Specification.new do |s|
   s.name = "paper_trail"
-  s.version = PaperTrail::VERSION::STRING.dup # The `dup` is for ruby 1.9.3
+  s.version = PaperTrail::VERSION::STRING
   s.platform = Gem::Platform::RUBY
   s.summary = "Track changes to your models."
   s.description = <<-EOS
@@ -22,7 +22,7 @@ has been destroyed.
   s.require_paths = ["lib"]
 
   s.required_rubygems_version = ">= 1.3.6"
-  s.required_ruby_version = ">= 1.9.3"
+  s.required_ruby_version = ">= 2.1.0"
 
   # Rails does not follow semver, makes breaking changes in minor versions.
   s.add_dependency "activerecord", [">= 4.0", "< 5.2"]
@@ -41,37 +41,9 @@ has been destroyed.
   s.add_development_dependency "generator_spec", "~> 0.9.3"
   s.add_development_dependency "database_cleaner", "~> 1.2"
   s.add_development_dependency "pry-nav", "~> 0.2.4"
-
-  # We cannot upgrade rubocop until we drop support for ruby 1.9.3.
-  # Rubocop 0.42 requires ruby >= 2.0. We could add a conditional, as we do
-  # below for rack and pg, but that means our config files (e.g. `.rubocop.yml`
-  # would have to simultaneously be valid in two different versions of rubocop.
-  # That is currently possible, but probably won't be in the future, and is
-  # not worth the effort.) Because of pain points like this, I think we'll
-  # have to drop support for ruby 1.9.3 soon.
   s.add_development_dependency "rubocop", "~> 0.41.1"
-
   s.add_development_dependency "timecop", "~> 0.8.0"
-
-  if ::Gem.ruby_version < ::Gem::Version.new("2.0.0")
-    s.add_development_dependency "rack", "< 2"
-  end
-
-  if defined?(JRUBY_VERSION)
-    s.add_development_dependency "activerecord-jdbcsqlite3-adapter", "~> 1.3.15"
-    s.add_development_dependency "activerecord-jdbcpostgresql-adapter", "~> 1.3.15"
-    s.add_development_dependency "activerecord-jdbcmysql-adapter", "~> 1.3.15"
-  else
-    s.add_development_dependency "sqlite3", "~> 1.2"
-
-    # pg 0.19 requires ruby >= 2.0.0
-    if ::Gem.ruby_version >= ::Gem::Version.new("2.0.0")
-      s.add_development_dependency "pg", "~> 0.19.0"
-    else
-      s.add_development_dependency "pg", [">= 0.17", "< 0.19"]
-    end
-
-    # activerecord >= 4.2.5 may use mysql2 >= 0.4
-    s.add_development_dependency "mysql2", "~> 0.4.2"
-  end
+  s.add_development_dependency "sqlite3", "~> 1.2"
+  s.add_development_dependency "pg", "~> 0.19.0"
+  s.add_development_dependency "mysql2", "~> 0.4.2"
 end

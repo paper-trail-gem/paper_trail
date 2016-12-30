@@ -7,7 +7,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Breaking Changes
 
-- None
+- Drop support for ruby 1.9.3, whose EOL was 2015-02-23
+- Drop support for ruby 2.0.0, whose EOL was 2016-02-24
 
 ### Added
 

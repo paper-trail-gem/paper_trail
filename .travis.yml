@@ -2,8 +2,7 @@ language: ruby
 cache: bundler
 rvm:
   - 2.3.1
-  - 1.9.3
-  - jruby-19mode
+  - 2.1.10
 env:
   global:
     - TRAVIS=true
@@ -33,9 +32,7 @@ matrix:
   fast_finish: true
   exclude:
     - gemfile: gemfiles/ar_5.0.gemfile
-      rvm: 1.9.3
-    - gemfile: gemfiles/ar_5.0.gemfile
-      rvm: jruby-19mode
+      rvm: 2.1.10
   allow_failures:
     - gemfile: gemfiles/ar_master.gemfile
 
