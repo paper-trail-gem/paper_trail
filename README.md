@@ -549,7 +549,7 @@ widget = versions.last.reify  # the widget as it was before destruction
 widget.save                   # the widget lives!
 ```
 
-You could even use PaperTrail to implement an undo system, [Ryan Bates has!][3]
+You could even use PaperTrail to implement an undo system; [Ryan Bates has!][3]
 
 If your model uses [optimistic locking][1] don't forget to [increment your
 `lock_version`][2] before saving or you'll get a `StaleObjectError`.
