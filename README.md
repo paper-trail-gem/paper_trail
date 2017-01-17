@@ -1195,7 +1195,7 @@ there's no automatic way to migrate your data. The first (slow) option is to
 loop over every record and parse it in Ruby, then write to a temporary column:
 
 ```ruby
-add_column :versions, :object, :new_object, :jsonb # or :json
+add_column :versions, :new_object, :jsonb # or :json
 
 PaperTrail::Version.reset_column_information
 PaperTrail::Version.find_each do |version|
