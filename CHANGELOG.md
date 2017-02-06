@@ -16,7 +16,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- None
+- [#925](https://github.com/airblade/paper_trail/pull/925) - Update RSpec
+  matchers to work with custom version association names
 
 ## 6.0.2 (2016-12-13)
 
