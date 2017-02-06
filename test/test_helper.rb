@@ -99,7 +99,9 @@ def params_wrapper(args)
   end
 end
 
+# Deprecated
 module CleanupCallbacks
+  # Deprecated
   def cleanup_callbacks(target, type)
     original_callbacks = nil
 
