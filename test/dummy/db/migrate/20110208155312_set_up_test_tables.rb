@@ -9,6 +9,22 @@ class SetUpTestTables < ActiveRecord::Migration
   TEXT_BYTES = 1_073_741_823
 
   def up
+    create_table :on_create, force: true do |t|
+      t.string :name, null: false
+    end
+
+    create_table :on_destroy, force: true do |t|
+      t.string :name, null: false
+    end
+
+    create_table :on_empty_array, force: true do |t|
+      t.string :name, null: false
+    end
+
+    create_table :on_update, force: true do |t|
+      t.string :name, null: false
+    end
+
     # Classes: Vehicle, Car, Truck
     create_table :vehicles, force: true do |t|
       t.string :name, null: false
@@ -292,51 +308,8 @@ class SetUpTestTables < ActiveRecord::Migration
   end
 
   def down
-    drop_table :bar_habtms_foo_habtms
-    drop_table :foo_habtms
-    drop_table :bar_habtms
-    drop_table :citations
-    drop_table :quotations
-    drop_table :animals
-    drop_table :skippers
-    drop_table :not_on_updates
-    drop_table :posts
-    drop_table :songs
-    drop_table :editors
-    drop_table :editorships
-    drop_table :people
-    drop_table :authorships
-    drop_table :books
-    drop_table :articles
-    drop_table :whatchamajiggers
-    drop_table :fluxors
-    drop_table :wotsits
-    remove_index :post_versions, column: [:item_type, :item_id]
-    drop_table :post_versions
-    remove_index :versions, column: [:item_type, :item_id]
-    drop_table :versions
-    if JsonVersion.table_exists?
-      remove_index :json_versions, column: [:item_type, :item_id]
-      drop_table :json_versions
-    end
-    drop_table :widgets
-    drop_table :documents
-    drop_table :legacy_widgets
-    drop_table :things
-    drop_table :translations
-    drop_table :gadgets
-    drop_table :customers
-    drop_table :orders
-    drop_table :line_items
-    drop_table :fruits
-    drop_table :boolits
-    drop_table :chapters
-    drop_table :sections
-    drop_table :paragraphs
-    remove_index :version_associations, column: [:version_id]
-    remove_index :version_associations, name: "index_version_associations_on_foreign_key"
-    drop_table :version_associations
-    drop_table :callback_modifiers
+    # Not actually irreversible, but there is no need to maintain this method.
+    raise ActiveRecord::IrreversibleMigration
   end
 
   private

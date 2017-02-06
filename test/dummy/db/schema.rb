@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -37,9 +36,8 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.string   "whodunnit"
     t.text     "object"
     t.datetime "created_at"
+    t.index ["item_type", "item_id"], name: "index_banana_versions_on_item_type_and_item_id"
   end
-
-  add_index "banana_versions", ["item_type", "item_id"], name: "index_banana_versions_on_item_type_and_item_id"
 
   create_table "bananas", force: :cascade do |t|
     t.datetime "created_at"
@@ -53,10 +51,9 @@ ActiveRecord::Schema.define(version: 20110208155312) do
   create_table "bar_habtms_foo_habtms", id: false, force: :cascade do |t|
     t.integer "foo_habtm_id"
     t.integer "bar_habtm_id"
+    t.index ["bar_habtm_id"], name: "index_bar_habtms_foo_habtms_on_bar_habtm_id"
+    t.index ["foo_habtm_id"], name: "index_bar_habtms_foo_habtms_on_foo_habtm_id"
   end
-
-  add_index "bar_habtms_foo_habtms", ["bar_habtm_id"], name: "index_bar_habtms_foo_habtms_on_bar_habtm_id"
-  add_index "bar_habtms_foo_habtms", ["foo_habtm_id"], name: "index_bar_habtms_foo_habtms_on_foo_habtm_id"
 
   create_table "books", force: :cascade do |t|
     t.string "title"
@@ -87,15 +84,14 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.string   "whodunnit"
     t.text     "object"
     t.datetime "created_at"
+    t.index ["item_type", "item_id"], name: "idx_cust_pk_item"
   end
 
-  add_index "custom_primary_key_record_versions", ["item_type", "item_id"], name: "idx_cust_pk_item"
-
-  create_table "custom_primary_key_records", id: false, force: :cascade do |t|
-    t.string   "uuid"
+  create_table "custom_primary_key_records", primary_key: "uuid", id: :string, force: :cascade do |t|
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["uuid"], name: "sqlite_autoindex_custom_primary_key_records_1", unique: true
   end
 
   create_table "customers", force: :cascade do |t|
@@ -151,6 +147,22 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.datetime "updated_at"
   end
 
+  create_table "on_create", force: :cascade do |t|
+    t.string "name", null: false
+  end
+
+  create_table "on_destroy", force: :cascade do |t|
+    t.string "name", null: false
+  end
+
+  create_table "on_empty_array", force: :cascade do |t|
+    t.string "name", null: false
+  end
+
+  create_table "on_update", force: :cascade do |t|
+    t.string "name", null: false
+  end
+
   create_table "orders", force: :cascade do |t|
     t.integer "customer_id"
     t.string  "order_date"
@@ -175,9 +187,8 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.datetime "created_at"
     t.string   "ip"
     t.string   "user_agent"
+    t.index ["item_type", "item_id"], name: "index_post_versions_on_item_type_and_item_id"
   end
-
-  add_index "post_versions", ["item_type", "item_id"], name: "index_post_versions_on_item_type_and_item_id"
 
   create_table "post_with_statuses", force: :cascade do |t|
     t.integer  "status"
@@ -232,10 +243,9 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.integer "version_id"
     t.string  "foreign_key_name", null: false
     t.integer "foreign_key_id"
+    t.index ["foreign_key_name", "foreign_key_id"], name: "index_version_associations_on_foreign_key"
+    t.index ["version_id"], name: "index_version_associations_on_version_id"
   end
-
-  add_index "version_associations", ["foreign_key_name", "foreign_key_id"], name: "index_version_associations_on_foreign_key"
-  add_index "version_associations", ["version_id"], name: "index_version_associations_on_version_id"
 
   create_table "versions", force: :cascade do |t|
     t.string   "item_type",                         null: false
@@ -253,9 +263,8 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.string   "title"
     t.string   "ip"
     t.string   "user_agent"
+    t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
-
-  add_index "versions", ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
 
   create_table "whatchamajiggers", force: :cascade do |t|
     t.string  "owner_type"

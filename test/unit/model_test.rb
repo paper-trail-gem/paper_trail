@@ -2,8 +2,6 @@ require "test_helper"
 require "time_travel_helper"
 
 class HasPaperTrailModelTest < ActiveSupport::TestCase
-  extend CleanupCallbacks
-
   context "A record with defined 'only' and 'ignore' attributes" do
     setup { @article = Article.create }
 
@@ -1269,114 +1267,62 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
   context "The `on` option" do
     context "on create" do
-      cleanup_callbacks(Fluxor, :create)
-      cleanup_callbacks(Fluxor, :update)
-      cleanup_callbacks(Fluxor, :destroy)
-      cleanup_callbacks(Fluxor, :save)
-
-      setup do
-        Fluxor.instance_eval <<-END
-          has_paper_trail :on => [:create]
-        END
-        @fluxor = Fluxor.create
-        @fluxor.update_attributes name: "blah"
-        @fluxor.destroy
-      end
-
       should "only have a version for the create event" do
-        assert_equal 1, @fluxor.versions.length
-        assert_equal "create", @fluxor.versions.last.event
+        record = ::On::Create.create(name: "Alice")
+        record.update_attributes name: "blah"
+        record.destroy
+        assert_equal 1, record.versions.length
+        assert_equal "create", record.versions.last.event
       end
     end
 
     context "on update" do
-      cleanup_callbacks(Fluxor, :create)
-      cleanup_callbacks(Fluxor, :update)
-      cleanup_callbacks(Fluxor, :destroy)
-      cleanup_callbacks(Fluxor, :save)
-
-      setup do
-        Fluxor.instance_eval <<-END
-          has_paper_trail :on => [:update]
-        END
-        @fluxor = Fluxor.create
-        @fluxor.update_attributes name: "blah"
-        @fluxor.destroy
-      end
-
       should "only have a version for the update event" do
-        assert_equal 1, @fluxor.versions.length
-        assert_equal "update", @fluxor.versions.last.event
+        record = ::On::Update.create(name: "Alice")
+        record.update_attributes name: "blah"
+        record.destroy
+        assert_equal 1, record.versions.length
+        assert_equal "update", record.versions.last.event
       end
     end
 
     context "on destroy" do
-      cleanup_callbacks(Fluxor, :create)
-      cleanup_callbacks(Fluxor, :update)
-      cleanup_callbacks(Fluxor, :destroy)
-      cleanup_callbacks(Fluxor, :save)
-
-      setup do
-        Fluxor.instance_eval <<-END
-          has_paper_trail :on => [:destroy]
-        END
-        @fluxor = Fluxor.create
-        @fluxor.update_attributes name: "blah"
-        @fluxor.destroy
-      end
-
       should "only have a version for the destroy event" do
-        assert_equal 1, @fluxor.versions.length
-        assert_equal "destroy", @fluxor.versions.last.event
+        record = ::On::Destroy.create(name: "Alice")
+        record.update_attributes name: "blah"
+        record.destroy
+        assert_equal 1, record.versions.length
+        assert_equal "destroy", record.versions.last.event
       end
     end
 
     context "on []" do
-      cleanup_callbacks(Fluxor, :create)
-      cleanup_callbacks(Fluxor, :update)
-      cleanup_callbacks(Fluxor, :destroy)
-      cleanup_callbacks(Fluxor, :save)
-
       setup do
-        Fluxor.instance_eval <<-END
-          has_paper_trail :on => []
-        END
-        @fluxor = Fluxor.create
-        @fluxor.update_attributes name: "blah"
+        @record = ::On::EmptyArray.create(name: "Alice")
+        @record.update_attributes name: "blah"
       end
 
       teardown do
-        @fluxor.destroy
+        @record.destroy
       end
 
       should "not have any versions" do
-        assert_equal 0, @fluxor.versions.length
+        assert_equal 0, @record.versions.length
       end
 
       should "still respond to touch_with_version" do
-        @fluxor.paper_trail.touch_with_version
-        assert_equal 1, @fluxor.versions.length
+        @record.paper_trail.touch_with_version
+        assert_equal 1, @record.versions.length
       end
     end
 
     context "allows a symbol to be passed" do
-      cleanup_callbacks(Fluxor, :create)
-      cleanup_callbacks(Fluxor, :update)
-      cleanup_callbacks(Fluxor, :destroy)
-      cleanup_callbacks(Fluxor, :save)
-
-      setup do
-        Fluxor.instance_eval <<-END
-          has_paper_trail :on => :create
-        END
-        @fluxor = Fluxor.create
-        @fluxor.update_attributes name: "blah"
-        @fluxor.destroy
-      end
-
       should "only have a version for hte create event" do
-        assert_equal 1, @fluxor.versions.length
-        assert_equal "create", @fluxor.versions.last.event
+        record = ::On::Create.create(name: "Alice")
+        record.update_attributes name: "blah"
+        record.destroy
+        assert_equal 1, record.versions.length
+        assert_equal "create", record.versions.last.event
       end
     end
   end
@@ -1419,65 +1365,38 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
 
   context "custom events" do
     context "on create" do
-      cleanup_callbacks(Fluxor, :create)
-      cleanup_callbacks(Fluxor, :update)
-      cleanup_callbacks(Fluxor, :destroy)
-      cleanup_callbacks(Fluxor, :save)
-
-      setup do
-        Fluxor.instance_eval <<-END
-          has_paper_trail :on => [:create]
-        END
-        @fluxor = Fluxor.new.tap { |model| model.paper_trail_event = "created" }
-        @fluxor.update_attributes name: "blah"
-        @fluxor.destroy
-      end
-
       should "only have a version for the created event" do
-        assert_equal 1, @fluxor.versions.length
-        assert_equal "created", @fluxor.versions.last.event
+        record = ::On::Create.new.tap { |model|
+          model.paper_trail_event = "created"
+        }
+        record.update_attributes name: "blah"
+        record.destroy
+        assert_equal 1, record.versions.length
+        assert_equal "created", record.versions.last.event
       end
     end
 
     context "on update" do
-      cleanup_callbacks(Fluxor, :create)
-      cleanup_callbacks(Fluxor, :update)
-      cleanup_callbacks(Fluxor, :destroy)
-      cleanup_callbacks(Fluxor, :save)
-
-      setup do
-        Fluxor.instance_eval <<-END
-          has_paper_trail :on => [:update]
-        END
-        @fluxor = Fluxor.create.tap { |model| model.paper_trail_event = "name_updated" }
-        @fluxor.update_attributes name: "blah"
-        @fluxor.destroy
-      end
-
       should "only have a version for the name_updated event" do
-        assert_equal 1, @fluxor.versions.length
-        assert_equal "name_updated", @fluxor.versions.last.event
+        record = ::On::Update.create(name: "Alice").tap { |model|
+          model.paper_trail_event = "name_updated"
+        }
+        record.update_attributes name: "blah"
+        record.destroy
+        assert_equal 1, record.versions.length
+        assert_equal "name_updated", record.versions.last.event
       end
     end
 
     context "on destroy" do
-      cleanup_callbacks(Fluxor, :create)
-      cleanup_callbacks(Fluxor, :update)
-      cleanup_callbacks(Fluxor, :destroy)
-      cleanup_callbacks(Fluxor, :save)
-
-      setup do
-        Fluxor.instance_eval <<-END
-          has_paper_trail :on => [:destroy]
-        END
-        @fluxor = Fluxor.create.tap { |model| model.paper_trail_event = "destroyed" }
-        @fluxor.update_attributes name: "blah"
-        @fluxor.destroy
-      end
-
       should "only have a version for the destroy event" do
-        assert_equal 1, @fluxor.versions.length
-        assert_equal "destroyed", @fluxor.versions.last.event
+        record = ::On::Destroy.create(name: "Alice").tap { |model|
+          model.paper_trail_event = "destroyed"
+        }
+        record.update_attributes name: "blah"
+        record.destroy
+        assert_equal 1, record.versions.length
+        assert_equal "destroyed", record.versions.last.event
       end
     end
   end
