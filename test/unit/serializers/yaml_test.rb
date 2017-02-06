@@ -44,11 +44,7 @@ class YamlTest < ActiveSupport::TestCase
         "Val 1"
       )
       assert matches.instance_of?(Arel::Nodes::Matches)
-      if Arel::VERSION >= "6"
-        assert_equal matches.right.val, "%\narg1: Val 1\n%"
-      else
-        assert_equal matches.right, "%\narg1: Val 1\n%"
-      end
+      assert_equal matches.right.val, "%\narg1: Val 1\n%"
     end
   end
 end

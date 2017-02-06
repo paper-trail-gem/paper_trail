@@ -32,11 +32,7 @@ module PaperTrail
             matches = PaperTrail::Serializers::JSON.
               where_object_condition(PaperTrail::Version.arel_table[:object], :arg1, "Val 1")
             expect(matches.instance_of?(Arel::Nodes::Matches)).to(eq(true))
-            if Arel::VERSION >= "6"
-              expect("%\"arg1\":\"Val 1\"%").to(eq(matches.right.val))
-            else
-              expect("%\"arg1\":\"Val 1\"%").to(eq(matches.right))
-            end
+            expect("%\"arg1\":\"Val 1\"%").to(eq(matches.right.val))
           end
         end
 
@@ -45,11 +41,7 @@ module PaperTrail
             matches = PaperTrail::Serializers::JSON.
               where_object_condition(PaperTrail::Version.arel_table[:object], :arg1, nil)
             expect(matches.instance_of?(Arel::Nodes::Matches)).to(eq(true))
-            if Arel::VERSION >= "6"
-              expect("%\"arg1\":null%").to(eq(matches.right.val))
-            else
-              expect("%\"arg1\":null%").to(eq(matches.right))
-            end
+            expect("%\"arg1\":null%").to(eq(matches.right.val))
           end
         end
 
@@ -59,13 +51,8 @@ module PaperTrail
               where_object_condition(PaperTrail::Version.arel_table[:object], :arg1, -3.5)
             expect(grouping.instance_of?(Arel::Nodes::Grouping)).to(eq(true))
             matches = grouping.select { |v| v.instance_of?(Arel::Nodes::Matches) }
-            if Arel::VERSION >= "6"
-              expect("%\"arg1\":-3.5,%").to(eq(matches.first.right.val))
-              expect("%\"arg1\":-3.5}%").to(eq(matches.last.right.val))
-            else
-              expect("%\"arg1\":-3.5,%").to(eq(matches.first.right))
-              expect("%\"arg1\":-3.5}%").to(eq(matches.last.right))
-            end
+            expect("%\"arg1\":-3.5,%").to(eq(matches.first.right.val))
+            expect("%\"arg1\":-3.5}%").to(eq(matches.last.right.val))
           end
         end
       end
