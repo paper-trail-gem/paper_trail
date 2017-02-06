@@ -118,6 +118,22 @@ DB=postgres bundle exec rake
 DB=postgres bundle exec appraisal ar-5.0 rake
 ```
 
+## Editing the migration
+
+After editing `test/dummy/db/migrate/20110208155312_set_up_test_tables.rb` ..
+
+```
+cd test/dummy
+export BUNDLE_GEMFILE=../../gemfiles/ar_5.0.gemfile
+RAILS_ENV=test bundle exec rake db:environment:set db:drop db:create db:migrate
+RAILS_ENV=foo bundle exec rake db:environment:set db:drop db:create db:migrate
+RAILS_ENV=bar bundle exec rake db:environment:set db:drop db:create db:migrate
+unset BUNDLE_GEMFILE
+cd ../..
+```
+
+Don't forget to commit changes to `schema.rb`.
+
 ## Releases
 
 1. Set the version in lib/paper_trail/version_number.rb

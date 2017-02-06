@@ -98,21 +98,3 @@ def params_wrapper(args)
     args
   end
 end
-
-# Deprecated
-module CleanupCallbacks
-  # Deprecated
-  def cleanup_callbacks(target, type)
-    original_callbacks = nil
-
-    setup do
-      original_callbacks = target.send(:get_callbacks, type).deep_dup
-    end
-
-    teardown do
-      if original_callbacks
-        target.send(:set_callbacks, type, original_callbacks)
-      end
-    end
-  end
-end
