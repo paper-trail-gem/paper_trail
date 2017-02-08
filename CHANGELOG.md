@@ -299,6 +299,10 @@ name conflict with your methods.
 
 ## 4.1.0 (2016-01-30)
 
+### Known Issues
+
+- Version changesets now store ENUM values incorrectly (as nulls). Previously the values were stored as strings. This only affects Rails 4, not Rails 5. See [#926](https://github.com/airblade/paper_trail/pull/926)
+
 ### Breaking Changes
 
 - None
