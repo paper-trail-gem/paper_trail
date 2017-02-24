@@ -404,7 +404,7 @@ The `:ignore` and `:only` options can also accept `Hash` arguments, where the :
 
 ```ruby
 class Article < ActiveRecord::Base
-  has_paper_trail :only => [:title => Proc.new { |obj| !obj.title.blank? } ]
+  has_paper_trail :only => { :title => Proc.new { |obj| !obj.title.blank? } }
 end
 ```
 
