@@ -62,10 +62,31 @@ describe PaperTrail do
   end
 
   describe :whodunnit do
-    before(:all) { PaperTrail.whodunnit = "foobar" }
+    context "when set globally" do
+      before(:all) { PaperTrail.whodunnit = "foobar" }
 
-    it "should get set to `nil` by default" do
-      expect(PaperTrail.whodunnit).to be_nil
+      it "should get set to `nil` by default" do
+        expect(PaperTrail.whodunnit).to be_nil
+      end
+    end
+
+    context "with block passed" do
+      it "should set whodunnit only for the block passed" do
+        PaperTrail.whodunnit("foo") do
+          expect(PaperTrail.whodunnit).to eq("foo")
+        end
+
+        expect(PaperTrail.whodunnit).to be_nil
+      end
+
+      it "should set whodunnit only for the current thread" do
+        PaperTrail.whodunnit("foo") do
+          expect(PaperTrail.whodunnit).to eq("foo")
+          Thread.new { expect(PaperTrail.whodunnit).to be_nil }.join
+        end
+
+        expect(PaperTrail.whodunnit).to be_nil
+      end
     end
   end
 
