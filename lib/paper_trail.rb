@@ -87,10 +87,33 @@ module PaperTrail
       paper_trail_store[:whodunnit] = value
     end
 
-    # Returns who is reponsible for any changes that occur.
+    # If nothing passed, returns who is reponsible for any changes that occur.
+    #
+    #   PaperTrail.whodunnit = "someone"
+    #   PaperTrail.whodunnit # => "someone"
+    #
+    # If value and block passed, set this value as whodunnit for the duration of the block
+    #
+    #   PaperTrail.whodunnit("me") do
+    #     puts PaperTrail.whodunnit # => "me"
+    #   end
+    #
     # @api public
-    def whodunnit
-      paper_trail_store[:whodunnit]
+    def whodunnit(value = nil)
+      if value
+        raise ArgumentError, "no block given" unless block_given?
+
+        previous_whodunnit = paper_trail_store[:whodunnit]
+        paper_trail_store[:whodunnit] = value
+
+        begin
+          yield
+        ensure
+          paper_trail_store[:whodunnit] = previous_whodunnit
+        end
+      else
+        paper_trail_store[:whodunnit]
+      end
     end
 
     # Sets any information from the controller that you want PaperTrail to

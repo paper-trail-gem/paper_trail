@@ -75,10 +75,31 @@ RSpec.describe PaperTrail do
   end
 
   describe ".whodunnit" do
-    before(:all) { described_class.whodunnit = "foobar" }
+    context "when set globally" do
+      before(:all) { described_class.whodunnit = "foobar" }
 
-    it "is nil by default" do
-      expect(described_class.whodunnit).to be_nil
+      it "is set to `nil` by default" do
+        expect(described_class.whodunnit).to be_nil
+      end
+    end
+
+    context "with block passed" do
+      it "sets whodunnit only for the block passed" do
+        described_class.whodunnit("foo") do
+          expect(described_class.whodunnit).to eq("foo")
+        end
+
+        expect(described_class.whodunnit).to be_nil
+      end
+
+      it "sets whodunnit only for the current thread" do
+        described_class.whodunnit("foo") do
+          expect(described_class.whodunnit).to eq("foo")
+          Thread.new { expect(described_class.whodunnit).to be_nil }.join
+        end
+
+        expect(described_class.whodunnit).to be_nil
+      end
     end
   end
 
