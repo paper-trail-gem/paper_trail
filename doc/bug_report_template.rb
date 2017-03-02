@@ -67,3 +67,5 @@ class BugTest < ActiveSupport::TestCase
     }
   end
 end
+
+# STEP SIX: Run this script using `ruby my_bug_report.rb`
