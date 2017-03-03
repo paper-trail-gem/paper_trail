@@ -9,6 +9,10 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 - Drop support for ruby 1.9.3, whose EOL was 2015-02-23
 - Drop support for ruby 2.0.0, whose EOL was 2016-02-24
+- Remove deprecated config methods:
+  - PaperTrail.serialized_attributes?
+  - PaperTrail.config.serialized_attributes
+  - PaperTrail.config.serialized_attributes=
 
 ### Added
 
