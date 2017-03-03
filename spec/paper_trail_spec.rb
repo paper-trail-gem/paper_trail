@@ -61,6 +61,11 @@ describe PaperTrail do
     end
   end
 
+  describe :version do
+    it { expect(PaperTrail).to respond_to(:version) }
+    it { expect(PaperTrail.version).to eq(PaperTrail::VERSION::STRING) }
+  end
+
   describe :whodunnit do
     before(:all) { PaperTrail.whodunnit = "foobar" }
 
