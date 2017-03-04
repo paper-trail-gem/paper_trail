@@ -1,3 +1,5 @@
+require: rubocop-rspec
+
 # Remove these configuration records
 # one by one as the offenses are removed from the code base.
 
@@ -11,4 +13,22 @@ Metrics/PerceivedComplexity:
   Max: 9 # Goal: 7
 
 Style/FrozenStringLiteralComment:
+  Enabled: false
+
+RSpec/InstanceVariable:
+  Enabled: false
+
+RSpec/ExampleWording:
+  Enabled: false
+
+RSpec/DescribedClass:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/NotToNot:
+  Enabled: false
+
+RSpec/FilePath:
   Enabled: false
