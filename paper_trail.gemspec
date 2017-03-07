@@ -41,7 +41,7 @@ has been destroyed.
   s.add_development_dependency "generator_spec", "~> 0.9.3"
   s.add_development_dependency "database_cleaner", "~> 1.2"
   s.add_development_dependency "pry-nav", "~> 0.2.4"
-  s.add_development_dependency "rubocop", "~> 0.41.1"
+  s.add_development_dependency "rubocop", "~> 0.41.2"
   s.add_development_dependency "rubocop-rspec", "~> 1.5.1"
   s.add_development_dependency "timecop", "~> 0.8.0"
   s.add_development_dependency "sqlite3", "~> 1.2"
