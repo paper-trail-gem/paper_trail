@@ -22,6 +22,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 - [#925](https://github.com/airblade/paper_trail/pull/925) - Update RSpec
   matchers to work with custom version association names
+- [#929](https://github.com/airblade/paper_trail/pull/929) -
+  Fix error calling private method in rails 4.0
 
 ## 6.0.2 (2016-12-13)
 

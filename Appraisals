@@ -7,6 +7,11 @@
 # > the version from the appraisal takes precedence.
 # > https://github.com/thoughtbot/appraisal
 
+appraise "ar-4.0" do
+  gem "activerecord", "~> 4.0"
+  gem "sinatra", "~> 1.4.6"
+end
+
 appraise "ar-4.2" do
   gem "activerecord", "~> 4.2"
   gem "sinatra", "~> 1.4.6"

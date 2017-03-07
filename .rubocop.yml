@@ -1,6 +1,5 @@
 require:
   - rubocop-rspec
-  - rubocop-thread_safety
 
 inherit_from: .rubocop_todo.yml
 
@@ -109,11 +108,3 @@ Style/StringLiterals:
 # because it makes the code harder to edit, and makes lines unnecessarily long.
 Style/SpaceAroundOperators:
   AllowForAlignment: false
-
-ThreadSafety/NewThread:
-  Exclude:
-    - 'test/functional/thread_safety_test.rb'
-
-ThreadSafety/InstanceVariableInClassMethod:
-  Exclude:
-    - 'lib/paper_trail.rb'
