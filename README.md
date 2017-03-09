@@ -357,84 +357,88 @@ use attribute_name_was instead of attribute_name.
 
 ### 2.c. Choosing Attributes To Monitor
 
-You can ignore changes to certain attributes like this:
+#### Ignore
+
+You can `ignore` changes to certain attributes:
 
 ```ruby
 class Article < ActiveRecord::Base
-  has_paper_trail :ignore => [:title, :rating]
+  has_paper_trail ignore: [:title, :rating]
 end
 ```
 
-This means that changes to just the `title` or `rating` will not store another
-version of the article.  It does not mean that the `title` and `rating`
-attributes will be ignored if some other change causes a new
-`PaperTrail::Version` to be created.  For example:
+Changes to just the `title` or `rating` will not create a version record.
+Changes to other attributes will create a version record.
 
 ```ruby
 a = Article.create
 a.versions.length                         # 1
-a.update_attributes :title => 'My Title', :rating => 3
+a.update_attributes title: 'My Title', rating: 3
 a.versions.length                         # 1
-a.update_attributes :title => 'Greeting', :content => 'Hello'
+a.update_attributes title: 'Greeting', content: 'Hello'
 a.versions.length                         # 2
 a.paper_trail.previous_version.title      # 'My Title'
 ```
 
-Or, you can specify a list of all attributes you care about:
+#### Only
+
+Or, you can specify a list of the `only` attributes you care about:
 
 ```ruby
 class Article < ActiveRecord::Base
-  has_paper_trail :only => [:title]
+  has_paper_trail only: [:title]
 end
 ```
 
-This means that only changes to the `title` will save a version of the article:
+Only changes to the `title` will create a version record.
 
 ```ruby
 a = Article.create
 a.versions.length                         # 1
-a.update_attributes :title => 'My Title'
+a.update_attributes title: 'My Title'
 a.versions.length                         # 2
-a.update_attributes :content => 'Hello'
+a.update_attributes content: 'Hello'
 a.versions.length                         # 2
 a.paper_trail.previous_version.content    # nil
 ```
 
-The `:ignore` and `:only` options can also accept `Hash` arguments, where the :
+The `:ignore` and `:only` options can also accept `Hash` arguments.
 
 ```ruby
 class Article < ActiveRecord::Base
-  has_paper_trail :only => [:title => Proc.new { |obj| !obj.title.blank? } ]
+  has_paper_trail only: { title: Proc.new { |obj| !obj.title.blank? } }
 end
 ```
 
-This means that if the `title` is not blank, then only changes to the `title`
-will save a version of the article:
+If the `title` is not blank, then only changes to the `title`
+will create a version record.
 
 ```ruby
 a = Article.create
 a.versions.length                         # 1
-a.update_attributes :content => 'Hello'
+a.update_attributes content: 'Hello'
 a.versions.length                         # 2
-a.update_attributes :title => 'My Title'
+a.update_attributes title: 'Title One'
 a.versions.length                         # 3
-a.update_attributes :content => 'Hai'
+a.update_attributes content: 'Hai'
 a.versions.length                         # 3
 a.paper_trail.previous_version.content    # "Hello"
-a.update_attributes :title => 'Dif Title'
+a.update_attributes title: 'Title Two'
 a.versions.length                         # 4
 a.paper_trail.previous_version.content    # "Hai"
 ```
 
-Passing both `:ignore` and `:only` options will result in the article being
-saved if a changed attribute is included in `:only` but not in `:ignore`.
+Configuring both `:ignore` and `:only` is not recommended, but it should work as
+expected. Passing both `:ignore` and `:only` options will result in the
+article being saved if a changed attribute is included in `:only` but not in
+`:ignore`.
 
-You can skip fields altogether with the `:skip` option.  As with `:ignore`,
-updates to these fields will not create a new `PaperTrail::Version`.  In
-addition, these fields will not be included in the serialized version of the
-object whenever a new `PaperTrail::Version` is created.
+#### Skip
 
-For example:
+You can skip attributes completely with the `:skip` option.  As with `:ignore`,
+updates to these attributes will not create a version record.  In addition, if a
+version record is created for some other reason, these attributes will not be
+persisted.
 
 ```ruby
 class Article < ActiveRecord::Base
