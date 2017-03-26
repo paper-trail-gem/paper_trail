@@ -24,6 +24,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
   matchers to work with custom version association names
 - [#929](https://github.com/airblade/paper_trail/pull/929) -
   Fix error calling private method in rails 4.0
+- [#938](https://github.com/airblade/paper_trail/pull/938) - Fix bug where
+  non-standard foreign key names broke belongs_to associations
 
 ## 6.0.2 (2016-12-13)
 

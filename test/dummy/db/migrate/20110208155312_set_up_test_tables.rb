@@ -166,6 +166,7 @@ class SetUpTestTables < ActiveRecord::Migration
     create_table :people, force: true do |t|
       t.string :name
       t.string :time_zone
+      t.integer :mentor_id
     end
 
     create_table :editorships, force: true do |t|

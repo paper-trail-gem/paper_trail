@@ -174,8 +174,9 @@ ActiveRecord::Schema.define(version: 20110208155312) do
   end
 
   create_table "people", force: :cascade do |t|
-    t.string "name"
-    t.string "time_zone"
+    t.string  "name"
+    t.string  "time_zone"
+    t.integer "mentor_id"
   end
 
   create_table "post_versions", force: :cascade do |t|
