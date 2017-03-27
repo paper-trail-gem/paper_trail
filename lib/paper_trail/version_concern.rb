@@ -240,7 +240,9 @@ module PaperTrail
 
     def sibling_versions(reload = false)
       if reload || @sibling_versions.nil?
-        @sibling_versions = self.class.with_item_keys(item_type, item_id)
+        @sibling_versions = self.class.
+          with_item_keys(item_type, item_id).
+          order(self.class.timestamp_sort_order('asc'))
       end
       @sibling_versions
     end
