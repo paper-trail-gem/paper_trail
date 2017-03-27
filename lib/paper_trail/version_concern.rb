@@ -240,9 +240,7 @@ module PaperTrail
 
     def sibling_versions(reload = false)
       if reload || @sibling_versions.nil?
-        @sibling_versions = self.class.
-          with_item_keys(item_type, item_id).
-          order(self.class.timestamp_sort_order('asc'))
+        @sibling_versions = self.class.with_item_keys(item_type, item_id)
       end
       @sibling_versions
     end
@@ -314,7 +312,8 @@ module PaperTrail
     def enforce_version_limit!
       limit = PaperTrail.config.version_limit
       return unless limit.is_a? Numeric
-      previous_versions = sibling_versions.not_creates
+      previous_versions = sibling_versions.not_creates.
+        order(self.class.timestamp_sort_order("asc"))
       return unless previous_versions.size > limit
       excess_versions = previous_versions - previous_versions.last(limit)
       excess_versions.map(&:destroy)
