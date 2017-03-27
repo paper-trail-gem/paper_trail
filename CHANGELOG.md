@@ -26,6 +26,9 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
   Fix error calling private method in rails 4.0
 - [#938](https://github.com/airblade/paper_trail/pull/938) - Fix bug where
   non-standard foreign key names broke belongs_to associations
+- [#940](https://github.com/airblade/paper_trail/pull/940) - When destroying
+  versions to stay under version_limit, don't rely on the database to
+  implicitly return the versions in the right order
 
 ## 6.0.2 (2016-12-13)
 
