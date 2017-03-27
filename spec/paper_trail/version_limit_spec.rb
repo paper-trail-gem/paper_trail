@@ -33,7 +33,6 @@ module PaperTrail
           PaperTrail::Version.create!(
             item: widget,
             event: "update",
-            #object: { "id" => widget.id, "name" => "Name #{n}" }.to_yaml
             object: { "id" => widget.id, "name" => "Name #{n}" }.to_yaml
           )
         end
