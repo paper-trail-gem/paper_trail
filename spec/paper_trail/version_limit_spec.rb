@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 module PaperTrail
   RSpec.describe Cleaner, versioning: true do
@@ -9,7 +9,7 @@ module PaperTrail
       PaperTrail.config.version_limit = @last_limit
     end
 
-    it 'cleans up old versions' do
+    it "cleans up old versions" do
       PaperTrail.config.version_limit = 10
       widget = Widget.create
 
