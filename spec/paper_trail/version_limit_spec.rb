@@ -20,7 +20,7 @@ module PaperTrail
       end
     end
 
-    it "cleans them up in the right order, even if the database query returns them in a different order" do
+    it "deletes oldest versions, when the database returns them in a different order" do
       epoch = DateTime.new(2017, 1, 1)
 
       widget = Timecop.freeze(epoch) { Widget.create }
