@@ -1499,53 +1499,7 @@ require 'paper_trail/frameworks/rspec'
 
 ## 8. Sinatra
 
-To configure PaperTrail for usage with [Sinatra][12], your `Sinatra`
-app must be using `ActiveRecord` 3 or 4. There is no released version of sinatra yet
-that is compatible with AR 5. We expect sinatra 2.0 to support AR 5, but it will have
-breaking changes that will require changes to PaperTrail.
-
-It is also recommended to use the
-[Sinatra ActiveRecord Extension][13] or something similar for managing your
-applications `ActiveRecord` connection in a manner similar to the way `Rails`
-does. If using the aforementioned `Sinatra ActiveRecord Extension`, steps for
-setting up your app with PaperTrail will look something like this:
-
-1. Add PaperTrail to your `Gemfile`.
-
-    `gem 'paper_trail'`
-
-2. Generate a migration to add a `versions` table to your database.
-
-    `bundle exec rake db:create_migration NAME=create_versions`
-
-3. Copy contents of [create_versions.rb][14]
-into the `create_versions` migration that was generated into your `db/migrate` directory.
-
-4. Run the migration.
-
-    `bundle exec rake db:migrate`
-
-5. Add `has_paper_trail` to the models you want to track.
-
-
-PaperTrail provides a helper extension that acts similar to the controller mixin
-it provides for `Rails` applications.
-
-It will set `PaperTrail.whodunnit` to whatever is returned by a method named
-`user_for_paper_trail` which you can define inside your Sinatra Application. (by
-default it attempts to invoke a method named `current_user`)
-
-If you're using the modular [`Sinatra::Base`][15] style of application, you will
-need to register the extension:
-
-```ruby
-# bleh_app.rb
-require 'sinatra/base'
-
-class BlehApp < Sinatra::Base
-  register PaperTrail::Sinatra
-end
-```
+See [paper_trail-sinatra][41].
 
 ## Articles
 
@@ -1642,10 +1596,7 @@ Released under the MIT licence.
 [9]: https://github.com/airblade/paper_trail/tree/3.0-stable
 [10]: https://github.com/airblade/paper_trail/tree/2.7-stable
 [11]: https://github.com/airblade/paper_trail/tree/rails2
-[12]: http://www.sinatrarb.com
-[13]: https://github.com/janko-m/sinatra-activerecord
 [14]: https://raw.github.com/airblade/paper_trail/master/lib/generators/paper_trail/templates/create_versions.rb
-[15]: http://www.sinatrarb.com/intro.html#Modular%20vs.%20Classic%20Style
 [16]: https://github.com/airblade/paper_trail/issues/113
 [17]: https://github.com/rails/protected_attributes
 [18]: https://github.com/rails/strong_parameters
@@ -1671,3 +1622,4 @@ Released under the MIT licence.
 [38]: https://github.com/sferik/rails_admin
 [39]: http://api.rubyonrails.org/classes/ActiveRecord/Base.html#class-ActiveRecord::Base-label-Single+table+inheritance
 [40]: http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html#module-ActiveRecord::Associations::ClassMethods-label-Polymorphic+Associations
+[41]: https://github.com/jaredbeck/paper_trail-sinatra

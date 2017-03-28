@@ -9,22 +9,16 @@
 
 appraise "ar-4.0" do
   gem "activerecord", "~> 4.0"
-  gem "sinatra", "~> 1.4.6"
 end
 
 appraise "ar-4.2" do
   gem "activerecord", "~> 4.2"
-  gem "sinatra", "~> 1.4.6"
 end
 
 appraise "ar-5.0" do
   gem "activerecord", "~> 5.0.0"
   gem "rspec-rails", "~> 3.5.1"
   gem 'rails-controller-testing'
-
-  # The AR5 version of PaperTrail is not compatible with sinatra 2 yet.
-  # Contributions welcome.
-  # gem "sinatra", "2.0.0.beta2"
 end
 
 appraise "ar_master" do

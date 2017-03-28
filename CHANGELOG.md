@@ -13,6 +13,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
   - PaperTrail.serialized_attributes?
   - PaperTrail.config.serialized_attributes
   - PaperTrail.config.serialized_attributes=
+- Sinatra integration moved to
+  [paper_trail-sinatra](https://github.com/jaredbeck/paper_trail-sinatra) gem
 
 ### Added
 
