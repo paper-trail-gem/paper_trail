@@ -1,6 +1,14 @@
 require "rails_helper"
 
 RSpec.describe PaperTrail do
+  describe ".gem_version" do
+    it "returns a Gem::Version" do
+      v = described_class.gem_version
+      expect(v).to be_a(::Gem::Version)
+      expect(v.to_s).to eq(::PaperTrail::VERSION::STRING)
+    end
+  end
+
   context "when enabled" do
     it "affects all threads" do
       Thread.new { described_class.enabled = false }.join
