@@ -18,7 +18,7 @@ describe PaperTrail::VersionConcern do
   end
 
   describe "persistence", versioning: true do
-    it "should store versions in the correct corresponding db location" do
+    it "stores versions in the correct corresponding db location" do
       foo_doc = Foo::Document.create!(name: "foobar")
       bar_doc = Bar::Document.create!(name: "raboof")
       expect(foo_doc.versions.first).to be_instance_of(Foo::Version)

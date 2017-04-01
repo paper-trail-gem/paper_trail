@@ -38,13 +38,13 @@ describe Widget, type: :model do
 
   describe "versioning option" do
     context "enabled", versioning: true do
-      it "should enable versioning" do
+      it "enables versioning" do
         expect(widget.versions.size).to eq(1)
       end
     end
 
     context "disabled (default)" do
-      it "should not enable versioning" do
+      it "does not enable versioning" do
         expect(widget.versions.size).to eq(0)
       end
     end
@@ -69,7 +69,7 @@ describe Widget, type: :model do
     describe "after_create" do
       let(:widget) { Widget.create!(name: "Foobar", created_at: Time.now - 1.week) }
 
-      it "corresponding version should use the widget's `updated_at`" do
+      it "corresponding version uses the widget's `updated_at`" do
         expect(widget.versions.last.created_at.to_i).to eq(widget.updated_at.to_i)
       end
     end
@@ -81,22 +81,22 @@ describe Widget, type: :model do
 
       it { expect(subject.paper_trail).not_to be_live }
 
-      it "should clear the `versions_association_name` virtual attribute" do
+      it "clears the `versions_association_name` virtual attribute" do
         subject.save!
         expect(subject.paper_trail).to be_live
       end
 
-      it "corresponding version should use the widget updated_at" do
+      it "corresponding version uses the widget updated_at" do
         expect(widget.versions.last.created_at.to_i).to eq(widget.updated_at.to_i)
       end
     end
 
     describe "after_destroy" do
-      it "should create a version for that event" do
+      it "creates a version for that event" do
         expect { widget.destroy }.to change(widget.versions, :count).by(1)
       end
 
-      it "should assign the version into the `versions_association_name`" do
+      it "assigns the version into the `versions_association_name`" do
         expect(widget.version).to be_nil
         widget.destroy
         expect(widget.version).not_to be_nil
@@ -134,7 +134,7 @@ describe Widget, type: :model do
 
   describe "Association", versioning: true do
     describe "sort order" do
-      it "should sort by the timestamp order from the `VersionConcern`" do
+      it "sorts by the timestamp order from the `VersionConcern`" do
         expect(widget.versions.to_sql).to eq(
           widget.versions.reorder(PaperTrail::Version.timestamp_sort_order).to_sql
         )
@@ -144,7 +144,7 @@ describe Widget, type: :model do
 
   if defined?(ActiveRecord::IdentityMap) && ActiveRecord::IdentityMap.respond_to?(:without)
     describe "IdentityMap", versioning: true do
-      it "should not clobber the IdentityMap when reifying" do
+      it "does not clobber the IdentityMap when reifying" do
         widget.update_attributes name: "Henry", created_at: Time.now - 1.day
         widget.update_attributes name: "Harry"
         expect(ActiveRecord::IdentityMap).to receive(:without).once
@@ -202,7 +202,7 @@ describe Widget, type: :model do
           context "accessed from live model instance" do
             specify { expect(widget.paper_trail).to be_live }
 
-            it "should return the originator for the model at a given state" do
+            it "returns the originator for the model at a given state" do
               expect(widget.paper_trail.originator).to eq(orig_name)
               widget.paper_trail.whodunnit(new_name) { |w|
                 w.update_attributes(name: "Elizabeth")
@@ -221,11 +221,11 @@ describe Widget, type: :model do
             context "default behavior (no `options[:dup]` option passed in)" do
               let(:reified_widget) { widget.versions[1].reify }
 
-              it "should return the appropriate originator" do
+              it "returns the appropriate originator" do
                 expect(reified_widget.paper_trail.originator).to eq(orig_name)
               end
 
-              it "should not create a new model instance" do
+              it "does not create a new model instance" do
                 expect(reified_widget).not_to be_new_record
               end
             end
@@ -233,11 +233,11 @@ describe Widget, type: :model do
             context "creating a new instance (`options[:dup] == true`)" do
               let(:reified_widget) { widget.versions[1].reify(dup: true) }
 
-              it "should return the appropriate originator" do
+              it "returns the appropriate originator" do
                 expect(reified_widget.paper_trail.originator).to eq(orig_name)
               end
 
-              it "should not create a new model instance" do
+              it "does not create a new model instance" do
                 expect(reified_widget).to be_new_record
               end
             end
@@ -247,7 +247,7 @@ describe Widget, type: :model do
 
       describe "#version_at" do
         context "Timestamp argument is AFTER object has been destroyed" do
-          it "should return `nil`" do
+          it "returns nil" do
             widget.update_attribute(:name, "foobar")
             widget.destroy
             expect(widget.paper_trail.version_at(Time.now)).to be_nil
@@ -257,7 +257,7 @@ describe Widget, type: :model do
 
       describe "#whodunnit" do
         context "no block given" do
-          it "should raise an error" do
+          it "raises an error" do
             expect {
               widget.paper_trail.whodunnit("Ben")
             }.to raise_error(ArgumentError, "expected to receive a block")
@@ -273,7 +273,7 @@ describe Widget, type: :model do
             expect(widget.versions.last.whodunnit).to eq(orig_name) # persist `widget`
           end
 
-          it "should modify value of `PaperTrail.whodunnit` while executing the block" do
+          it "modifies value of `PaperTrail.whodunnit` while executing the block" do
             widget.paper_trail.whodunnit(new_name) do
               expect(PaperTrail.whodunnit).to eq(new_name)
               widget.update_attributes(name: "Elizabeth")
@@ -339,7 +339,7 @@ describe Widget, type: :model do
       end
 
       describe ".disable" do
-        it "should set the `paper_trail.enabled?` to `false`" do
+        it "sets the `paper_trail.enabled?` to `false`" do
           expect(Widget.paper_trail.enabled?).to eq(true)
           Widget.paper_trail.disable
           expect(Widget.paper_trail.enabled?).to eq(false)
@@ -347,7 +347,7 @@ describe Widget, type: :model do
       end
 
       describe ".enable" do
-        it "should set the `paper_trail.enabled?` to `true`" do
+        it "sets the `paper_trail.enabled?` to `true`" do
           Widget.paper_trail.disable
           expect(Widget.paper_trail.enabled?).to eq(false)
           Widget.paper_trail.enable

@@ -13,11 +13,11 @@ describe Boolit, type: :model do
 
     before { subject.update_attributes!(name: FFaker::Name.name) }
 
-    it "should have versions" do
+    it "has two versions" do
       expect(subject.versions.size).to eq(2)
     end
 
-    it "should be able to be reified and persisted" do
+    it "can be reified and persisted" do
       expect { subject.versions.last.reify.save! }.to_not raise_error
     end
 
@@ -28,7 +28,7 @@ describe Boolit, type: :model do
         expect(Boolit.first).to be_nil
       end
 
-      it "should still be able to be reified and persisted" do
+      it "still can be reified and persisted" do
         expect { subject.paper_trail.previous_version.save! }.to_not raise_error
       end
 
@@ -40,7 +40,7 @@ describe Boolit, type: :model do
         end
         after { PaperTrail.serializer = PaperTrail::Serializers::YAML }
 
-        it "should not overwrite that attribute during the reification process" do
+        it "does not overwrite that attribute during the reification process" do
           expect(subject.paper_trail.previous_version.name).to be_nil
         end
       end
