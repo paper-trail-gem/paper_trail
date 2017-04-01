@@ -18,9 +18,6 @@ Style/FrozenStringLiteralComment:
 RSpec/BeforeAfterAll:
   Enabled: false
 
-RSpec/ExpectActual:
-  Enabled: false
-
 RSpec/FilePath:
   Enabled: false
 

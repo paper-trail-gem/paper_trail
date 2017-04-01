@@ -28,7 +28,7 @@ module PaperTrail
             matches = described_class.
               where_object_condition(PaperTrail::Version.arel_table[:object], :arg1, "Val 1")
             expect(matches.instance_of?(Arel::Nodes::Matches)).to(eq(true))
-            expect("%\"arg1\":\"Val 1\"%").to(eq(matches.right.val))
+            expect(matches.right.val).to eq("%\"arg1\":\"Val 1\"%")
           end
         end
 
@@ -37,7 +37,7 @@ module PaperTrail
             matches = described_class.
               where_object_condition(PaperTrail::Version.arel_table[:object], :arg1, nil)
             expect(matches.instance_of?(Arel::Nodes::Matches)).to(eq(true))
-            expect("%\"arg1\":null%").to(eq(matches.right.val))
+            expect(matches.right.val).to(eq("%\"arg1\":null%"))
           end
         end
 
@@ -47,8 +47,8 @@ module PaperTrail
               where_object_condition(PaperTrail::Version.arel_table[:object], :arg1, -3.5)
             expect(grouping.instance_of?(Arel::Nodes::Grouping)).to(eq(true))
             matches = grouping.select { |v| v.instance_of?(Arel::Nodes::Matches) }
-            expect("%\"arg1\":-3.5,%").to(eq(matches.first.right.val))
-            expect("%\"arg1\":-3.5}%").to(eq(matches.last.right.val))
+            expect(matches.first.right.val).to eq("%\"arg1\":-3.5,%")
+            expect(matches.last.right.val).to eq("%\"arg1\":-3.5}%")
           end
         end
       end
