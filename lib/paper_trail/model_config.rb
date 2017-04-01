@@ -76,7 +76,7 @@ module PaperTrail
     # "class attributes", instance methods, and more.
     # @api private
     def setup(options = {})
-      options[:on] ||= [:create, :update, :destroy]
+      options[:on] ||= %i(create update destroy)
       options[:on] = Array(options[:on]) # Support single symbol
       @model_class.send :include, ::PaperTrail::Model::InstanceMethods
       if ::ActiveRecord::VERSION::STRING < "4.2"
@@ -167,7 +167,7 @@ module PaperTrail
       @model_class.class_attribute :paper_trail_options
       @model_class.paper_trail_options = options.dup
 
-      [:ignore, :skip, :only].each do |k|
+      %i(ignore skip only).each do |k|
         @model_class.paper_trail_options[k] = [@model_class.paper_trail_options[k]].
           flatten.
           compact.

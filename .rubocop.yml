@@ -15,7 +15,7 @@ AllCops:
     - test/dummy/db/schema.rb # Generated, out of our control
 
   # Set to lowest supported version
-  TargetRubyVersion: 1.9
+  TargetRubyVersion: 2.1
 
 # Migrations often contain long up/down methods, and extracting smaller methods
 # from these is of questionable value.

@@ -62,7 +62,7 @@ describe CallbackModifier, type: :model do
       context "when no callback-method used" do
         it "should set paper_trail_options[:on] to [:create, :update, :destroy]" do
           modifier = DefaultModifier.create!(some_content: FFaker::Lorem.sentence)
-          expect(modifier.paper_trail_options[:on]).to eq [:create, :update, :destroy]
+          expect(modifier.paper_trail_options[:on]).to eq %i(create update destroy)
         end
 
         it "should default to track destroy" do
