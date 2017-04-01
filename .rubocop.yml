@@ -24,6 +24,10 @@ Metrics/AbcSize:
     - 'test/dummy/db/migrate/*'
 
 # Not a useful metric compared to, e.g. `AbcSize`.
+Metrics/BlockLength:
+  Enabled: false
+
+# Not a useful metric compared to, e.g. `AbcSize`.
 Metrics/ClassLength:
   Enabled: false
 
@@ -43,6 +47,13 @@ Metrics/MethodLength:
 Metrics/ModuleLength:
   Enabled: false
 
+# In an ideal world, each example has a single expectation. In the real world,
+# sometimes setup is a pain and you don't want to duplicate setup in multiple
+# examples, or make the specs more confusing with many nested `context`s, and
+# the practical thing is to have multiple expectations.
+RSpec/MultipleExpectations:
+  Enabled: false
+
 Style/AlignParameters:
   EnforcedStyle: with_fixed_indentation
 
@@ -59,16 +70,24 @@ Style/DotPosition:
 Style/DoubleNegation:
   Enabled: false
 
+Style/FileName:
+  Exclude:
+    - Appraisals
+
 # The decision of when to use a guard clause to improve readability is subtle,
 # and it's not clear that it can be linted. Certainly, the default
 # `MinBodyLength` of 1 can actually hurt readability.
 Style/GuardClause:
-  MinBodyLength: 3
+  Enabled: false
 
 # Use postfix (modifier) conditionals for one-liners, unless doing so would
 # exceed 60 characters.
 Style/IfUnlessModifier:
   MaxLineLength: 60
+
+Style/IndentHeredoc:
+  Exclude:
+    - paper_trail.gemspec
 
 # The Ruby Style Guide says:
 #

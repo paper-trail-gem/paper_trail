@@ -3,6 +3,9 @@ require: rubocop-rspec
 # Remove these configuration records
 # one by one as the offenses are removed from the code base.
 
+Lint/AmbiguousBlockAssociation:
+  Enabled: false
+
 Metrics/AbcSize:
   Max: 22 # Goal: 15
 
@@ -15,20 +18,38 @@ Metrics/PerceivedComplexity:
 Style/FrozenStringLiteralComment:
   Enabled: false
 
-RSpec/InstanceVariable:
-  Enabled: false
-
-RSpec/ExampleWording:
+RSpec/BeforeAfterAll:
   Enabled: false
 
 RSpec/DescribedClass:
   Enabled: false
 
+RSpec/ExampleWording:
+  Enabled: false
+
 RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/ExpectActual:
+  Enabled: false
+
+RSpec/FilePath:
+  Enabled: false
+
+RSpec/InstanceVariable:
+  Enabled: false
+
+RSpec/MessageSpies:
+  Enabled: false
+
+RSpec/NamedSubject:
+  Enabled: false
+
+RSpec/NestedGroups:
   Enabled: false
 
 RSpec/NotToNot:
   Enabled: false
 
-RSpec/FilePath:
+Security/YAMLLoad:
   Enabled: false

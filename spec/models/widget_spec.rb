@@ -51,7 +51,7 @@ describe Widget, type: :model do
   end
 
   describe "Callbacks", versioning: true do
-    describe :before_save do
+    describe "before_save" do
       context ":on => :update" do
         before { widget.update_attributes!(name: "Foobar") }
 
@@ -66,7 +66,7 @@ describe Widget, type: :model do
       end
     end
 
-    describe :after_create do
+    describe "after_create" do
       let(:widget) { Widget.create!(name: "Foobar", created_at: Time.now - 1.week) }
 
       it "corresponding version should use the widget's `updated_at`" do
@@ -74,7 +74,7 @@ describe Widget, type: :model do
       end
     end
 
-    describe :after_update do
+    describe "after_update" do
       before { widget.update_attributes!(name: "Foobar", updated_at: Time.now + 1.week) }
 
       subject { widget.versions.last.reify }
@@ -91,7 +91,7 @@ describe Widget, type: :model do
       end
     end
 
-    describe :after_destroy do
+    describe "after_destroy" do
       it "should create a version for that event" do
         expect { widget.destroy }.to change(widget.versions, :count).by(1)
       end
@@ -104,7 +104,7 @@ describe Widget, type: :model do
       end
     end
 
-    describe :after_rollback do
+    describe "after_rollback" do
       let(:rolled_back_name) { "Big Moo" }
 
       before do
@@ -194,7 +194,10 @@ describe Widget, type: :model do
         describe "return value" do
           let(:orig_name) { FFaker::Name.name }
           let(:new_name) { FFaker::Name.name }
-          before { PaperTrail.whodunnit = orig_name }
+
+          before do
+            PaperTrail.whodunnit = orig_name
+          end
 
           context "accessed from live model instance" do
             specify { expect(widget.paper_trail).to be_live }

@@ -46,13 +46,15 @@ describe PaperTrail::Version, type: :model do
         end
 
         context "Has previous version", versioning: true do
+          subject { widget.versions.last }
+
           let(:name) { FFaker::Name.name }
           let(:widget) { Widget.create!(name: FFaker::Name.name) }
+
           before do
             widget.versions.first.update_attributes!(whodunnit: name)
             widget.update_attributes!(name: FFaker::Name.first_name)
           end
-          subject { widget.versions.last }
 
           specify { expect(subject.previous).to be_instance_of(PaperTrail::Version) }
 
@@ -79,8 +81,9 @@ describe PaperTrail::Version, type: :model do
       end
 
       describe "#terminator" do
-        let(:attributes) { { whodunnit: FFaker::Name.first_name } }
         subject { PaperTrail::Version.new attributes }
+
+        let(:attributes) { { whodunnit: FFaker::Name.first_name } }
 
         it { is_expected.to respond_to(:terminator) }
 

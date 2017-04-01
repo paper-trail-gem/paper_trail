@@ -48,6 +48,9 @@ cd ../..
 
 # Run tests
 DB=sqlite bundle exec appraisal ar-4.2 rake
+
+# Run a single minitest file
+DB=sqlite bundle exec appraisal ar-4.2 ruby -I test test/unit/associations_test.rb
 ```
 
 ### Test sqlite, AR 5
