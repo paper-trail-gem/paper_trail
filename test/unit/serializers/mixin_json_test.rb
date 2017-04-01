@@ -19,8 +19,10 @@ class MixinJsonTest < ActiveSupport::TestCase
     end
 
     should "`deserialize` JSON to Ruby, removing pairs with `blank` keys or values" do
-      assert_equal @hash.reject { |k, v| k.blank? || v.blank? },
+      assert_equal(
+        @hash.reject { |k, v| k.blank? || v.blank? },
         CustomJsonSerializer.load(@hash_as_json)
+      )
     end
   end
 

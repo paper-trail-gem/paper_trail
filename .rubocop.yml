@@ -54,6 +54,12 @@ Metrics/ModuleLength:
 RSpec/MultipleExpectations:
   Enabled: false
 
+# Yes, ideally examples would be short. Is it possible to pick a limit and say,
+# "no example will ever be longer than this"? Hard to say. Sometimes they're
+# quite long.
+RSpec/ExampleLength:
+  Enabled: false
+
 Style/AlignParameters:
   EnforcedStyle: with_fixed_indentation
 

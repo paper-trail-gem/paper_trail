@@ -2,7 +2,7 @@ require "rails_helper"
 require "generator_spec/test_case"
 require File.expand_path("../../../lib/generators/paper_trail/install_generator", __FILE__)
 
-describe PaperTrail::InstallGenerator, type: :generator do
+RSpec.describe PaperTrail::InstallGenerator, type: :generator do
   include GeneratorSpec::TestCase
   destination File.expand_path("../tmp", __FILE__)
 
@@ -15,17 +15,19 @@ describe PaperTrail::InstallGenerator, type: :generator do
     end
 
     it "generates a migration for creating the 'versions' table" do
-      expect(destination_root).to have_structure {
-        directory "db" do
-          directory "migrate" do
-            migration "create_versions" do
-              contains "class CreateVersions"
-              contains "def change"
-              contains "create_table :versions"
-            end
-          end
-        end
-      }
+      expect(destination_root).to(
+        have_structure {
+          directory("db") {
+            directory("migrate") {
+              migration("create_versions") {
+                contains "class CreateVersions"
+                contains "def change"
+                contains "create_table :versions"
+              }
+            }
+          }
+        }
+      )
     end
   end
 
@@ -36,31 +38,35 @@ describe PaperTrail::InstallGenerator, type: :generator do
     end
 
     it "generates a migration for creating the 'versions' table" do
-      expect(destination_root).to have_structure {
-        directory "db" do
-          directory "migrate" do
-            migration "create_versions" do
-              contains "class CreateVersions"
-              contains "def change"
-              contains "create_table :versions"
-            end
-          end
-        end
-      }
+      expect(destination_root).to(
+        have_structure {
+          directory("db") {
+            directory("migrate") {
+              migration("create_versions") {
+                contains "class CreateVersions"
+                contains "def change"
+                contains "create_table :versions"
+              }
+            }
+          }
+        }
+      )
     end
 
     it "generates a migration for adding the 'object_changes' column to the 'versions' table" do
-      expect(destination_root).to have_structure {
-        directory "db" do
-          directory "migrate" do
-            migration "add_object_changes_to_versions" do
-              contains "class AddObjectChangesToVersions"
-              contains "def change"
-              contains "add_column :versions, :object_changes, :text"
-            end
-          end
-        end
-      }
+      expect(destination_root).to(
+        have_structure {
+          directory("db") {
+            directory("migrate") {
+              migration("add_object_changes_to_versions") {
+                contains "class AddObjectChangesToVersions"
+                contains "def change"
+                contains "add_column :versions, :object_changes, :text"
+              }
+            }
+          }
+        }
+      )
     end
   end
 end

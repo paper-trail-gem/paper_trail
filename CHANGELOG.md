@@ -18,7 +18,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
-- None
+- `PaperTrail.gem_version` returns a `Gem::Version`, nice for comparisons.
 
 ### Fixed
 

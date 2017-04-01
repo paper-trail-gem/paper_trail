@@ -4,7 +4,7 @@ describe PostWithStatus, type: :model do
   with_versioning do
     let(:post) { described_class.create!(status: "draft") }
 
-    it "should stash the enum value properly in versions" do
+    it "saves the enum value in versions" do
       post.published!
       post.archived!
       expect(post.paper_trail.previous_version.published?).to be true
@@ -23,7 +23,7 @@ describe PostWithStatus, type: :model do
     context "storing enum object_changes" do
       subject { post.versions.last }
 
-      it "should stash the enum value properly in versions object_changes" do
+      it "saves the enum value properly in versions object_changes" do
         post.published!
         post.archived!
         expect(subject.changeset["status"]).to eql %w(published archived)

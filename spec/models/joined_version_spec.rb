@@ -15,19 +15,19 @@ describe JoinedVersion, type: :model, versioning: true do
       before { widget } # persist a widget
 
       describe "#subsequent" do
-        it "shouldn't error out when there is a default_scope that joins" do
+        it "does not raise error when there is a default_scope that joins" do
           JoinedVersion.subsequent(version).first
         end
       end
 
       describe "#preceding" do
-        it "shouldn't error out when there is a default scope that joins" do
+        it "does not raise error when there is a default scope that joins" do
           JoinedVersion.preceding(version).first
         end
       end
 
       describe "#between" do
-        it "shouldn't error out when there is a default scope that joins" do
+        it "does not raise error when there is a default scope that joins" do
           JoinedVersion.between(Time.now, 1.minute.from_now).first
         end
       end
@@ -38,7 +38,7 @@ describe JoinedVersion, type: :model, versioning: true do
     describe "#index" do
       it { is_expected.to respond_to(:index) }
 
-      it "shouldn't error out when there is a default scope that joins" do
+      it "does not raise error when there is a default scope that joins" do
         widget # persist a widget
         version.index
       end

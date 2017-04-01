@@ -8,7 +8,7 @@ RSpec.describe ArticlesController, type: :controller do
       it "returns true" do
         assert PaperTrail.enabled?
         post :create, params_wrapper(article: { title: "Doh", content: FFaker::Lorem.sentence })
-        expect(assigns(:article)).to_not be_nil
+        expect(assigns(:article)).not_to be_nil
         assert PaperTrail.enabled_for_controller?
         assert_equal 1, assigns(:article).versions.length
       end

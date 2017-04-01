@@ -62,6 +62,13 @@ module PaperTrail
       !!paper_trail_store.fetch(:"enabled_for_#{model}", true)
     end
 
+    # Returns a `::Gem::Version`, convenient for comparisons. This is
+    # recommended over `::PaperTrail::VERSION::STRING`.
+    # @api public
+    def gem_version
+      ::Gem::Version.new(VERSION::STRING)
+    end
+
     # Set the field which records when a version was created.
     # @api public
     def timestamp_field=(_field_name)
