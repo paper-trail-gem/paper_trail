@@ -3,9 +3,6 @@ require: rubocop-rspec
 # Remove these configuration records
 # one by one as the offenses are removed from the code base.
 
-Lint/AmbiguousBlockAssociation:
-  Enabled: false
-
 Metrics/AbcSize:
   Max: 22 # Goal: 15
 

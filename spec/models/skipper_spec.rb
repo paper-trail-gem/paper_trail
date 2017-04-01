@@ -13,7 +13,7 @@ describe Skipper, type: :model do
           skipper = Skipper.create!(another_timestamp: t1)
           expect {
             skipper.update_attributes!(another_timestamp: t2)
-          }.to_not change { skipper.versions.length }
+          }.to_not(change { skipper.versions.length })
         end
       end
     end

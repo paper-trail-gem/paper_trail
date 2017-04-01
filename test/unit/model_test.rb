@@ -317,9 +317,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
         end
 
         should "have versions that are not live" do
-          assert @widget.versions.map(&:reify).compact.all? { |w|
-            !w.paper_trail.live?
-          }
+          assert(@widget.versions.map(&:reify).compact.all? { |w| !w.paper_trail.live? })
         end
 
         should "have stored changes" do
