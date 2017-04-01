@@ -306,8 +306,7 @@ module PaperTrail
       end
     end
 
-    # Checks that a value has been set for the `version_limit` config
-    # option, and if so enforces it.
+    # Enforces the `version_limit`, if set. Default: no limit.
     # @api private
     def enforce_version_limit!
       limit = PaperTrail.config.version_limit

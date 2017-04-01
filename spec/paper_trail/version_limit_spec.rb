@@ -2,11 +2,8 @@ require "rails_helper"
 
 module PaperTrail
   RSpec.describe Cleaner, versioning: true do
-    before do
-      @last_limit = PaperTrail.config.version_limit
-    end
     after do
-      PaperTrail.config.version_limit = @last_limit
+      PaperTrail.config.version_limit = nil
     end
 
     it "cleans up old versions" do

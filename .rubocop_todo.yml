@@ -36,9 +36,6 @@ RSpec/ExpectActual:
 RSpec/FilePath:
   Enabled: false
 
-RSpec/InstanceVariable:
-  Enabled: false
-
 RSpec/MessageSpies:
   Enabled: false
 

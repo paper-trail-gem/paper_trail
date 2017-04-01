@@ -18,26 +18,27 @@ module CustomYamlSerializer
 end
 
 RSpec.describe CustomYamlSerializer do
-  before do
-    @hash = {}
-    (1..4).each { |i| @hash["key#{i}"] = [FFaker::Lorem.word, nil].sample }
-    @hash["tkey"] = nil
-    @hash[""] = "foo"
-    @hash_as_yaml = @hash.to_yaml
-  end
+  let(:word_hash) {
+    {
+      "key1" => ::FFaker::Lorem.word,
+      "key2" => nil,
+      "tkey" => nil,
+      "" => "foo"
+    }
+  }
 
   context(".load") do
     it("deserializes YAML to Ruby, removing pairs with blank keys or values") do
-      expect(CustomYamlSerializer.load(@hash_as_yaml)).to eq(
-        @hash.reject { |k, v| (k.blank? || v.blank?) }
+      expect(CustomYamlSerializer.load(word_hash.to_yaml)).to eq(
+        word_hash.reject { |k, v| (k.blank? || v.blank?) }
       )
     end
   end
 
   context(".dump") do
     it("serializes Ruby to YAML, removing pairs with nil values") do
-      expect(CustomYamlSerializer.dump(@hash)).to eq(
-        @hash.reject { |_k, v| v.nil? }.to_yaml
+      expect(CustomYamlSerializer.dump(word_hash)).to eq(
+        word_hash.reject { |_k, v| v.nil? }.to_yaml
       )
     end
   end
