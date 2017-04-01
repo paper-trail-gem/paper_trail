@@ -122,12 +122,12 @@ describe Widget, type: :model do
 
       it "does not create an event for changes that did not happen" do
         widget.versions.map(&:changeset).each do |changeset|
-          expect(changeset.fetch("name", [])).to_not include(rolled_back_name)
+          expect(changeset.fetch("name", [])).not_to include(rolled_back_name)
         end
       end
 
       it "has not yet loaded the assocation" do
-        expect(widget.versions).to_not be_loaded
+        expect(widget.versions).not_to be_loaded
       end
     end
   end

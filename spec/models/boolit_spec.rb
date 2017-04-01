@@ -5,7 +5,7 @@ describe Boolit, type: :model do
   it { is_expected.to be_versioned }
 
   it "has a default scope" do
-    expect(subject.default_scopes).to_not be_empty
+    expect(subject.default_scopes).not_to be_empty
   end
 
   describe "Versioning", versioning: true do
@@ -18,7 +18,7 @@ describe Boolit, type: :model do
     end
 
     it "can be reified and persisted" do
-      expect { subject.versions.last.reify.save! }.to_not raise_error
+      expect { subject.versions.last.reify.save! }.not_to raise_error
     end
 
     context "Instance falls out of default scope" do
@@ -29,7 +29,7 @@ describe Boolit, type: :model do
       end
 
       it "still can be reified and persisted" do
-        expect { subject.paper_trail.previous_version.save! }.to_not raise_error
+        expect { subject.paper_trail.previous_version.save! }.not_to raise_error
       end
 
       context "with `nil` attributes on the live instance" do

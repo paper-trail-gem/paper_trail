@@ -10,7 +10,7 @@ describe "Articles management", type: :request, order: :defined do
       expect(PaperTrail).to be_enabled_for_controller
       expect {
         post articles_path, params_wrapper(valid_params)
-      }.to_not change(PaperTrail::Version, :count)
+      }.not_to change(PaperTrail::Version, :count)
     end
 
     it "does not leak the state of the `PaperTrail.enabled_for_controller?` into the next test" do

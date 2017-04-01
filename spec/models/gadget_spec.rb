@@ -11,7 +11,7 @@ describe Gadget, type: :model do
     end
 
     it "ignores for updates to `brand` attribute" do
-      expect { gadget.update_attribute(:brand, "Stanley") }.to_not(change { gadget.versions.size })
+      expect { gadget.update_attribute(:brand, "Stanley") }.not_to(change { gadget.versions.size })
     end
 
     it "still generates a version when only the `updated_at` attribute is updated" do

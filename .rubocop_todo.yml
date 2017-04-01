@@ -30,8 +30,5 @@ RSpec/NamedSubject:
 RSpec/NestedGroups:
   Enabled: false
 
-RSpec/NotToNot:
-  Enabled: false
-
 Security/YAMLLoad:
   Enabled: false
