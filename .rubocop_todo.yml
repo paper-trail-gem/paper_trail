@@ -28,7 +28,7 @@ RSpec/NamedSubject:
   Enabled: false
 
 RSpec/NestedGroups:
-  Enabled: false
+  Max: 5 # goal: 3
 
 Security/YAMLLoad:
   Enabled: false

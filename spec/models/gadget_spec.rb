@@ -22,45 +22,41 @@ describe Gadget, type: :model do
     end
   end
 
-  describe "Methods" do
-    describe "Instance", versioning: true do
-      describe "private" do
-        describe "#changed_notably?" do
-          subject { Gadget.new(created_at: Time.now) }
+  describe "#changed_notably?", versioning: true do
+    subject { Gadget.new(created_at: Time.now) }
 
-          context "create events" do
-            it { expect(subject.paper_trail.changed_notably?).to be true }
-          end
+    context "create events" do
+      it "returns true" do
+        expect(subject.paper_trail.changed_notably?).to eq(true)
+      end
+    end
 
-          context "update events" do
-            before { subject.save! }
+    context "update events" do
+      before { subject.save! }
 
-            context "without update timestamps" do
-              it "only acknowledges non-ignored attrs" do
-                subject.name = "Wrench"
-                expect(subject.paper_trail.changed_notably?).to be true
-              end
+      context "without update timestamps" do
+        it "only acknowledges non-ignored attrs" do
+          subject.name = "Wrench"
+          expect(subject.paper_trail.changed_notably?).to be true
+        end
 
-              it "does not acknowledge ignored attr (brand)" do
-                subject.brand = "Acme"
-                expect(subject.paper_trail.changed_notably?).to be false
-              end
-            end
+        it "does not acknowledge ignored attr (brand)" do
+          subject.brand = "Acme"
+          expect(subject.paper_trail.changed_notably?).to be false
+        end
+      end
 
-            context "with update timestamps" do
-              it "only acknowledges non-ignored attrs" do
-                subject.name = "Wrench"
-                subject.updated_at = Time.now
-                expect(subject.paper_trail.changed_notably?).to be true
-              end
+      context "with update timestamps" do
+        it "only acknowledges non-ignored attrs" do
+          subject.name = "Wrench"
+          subject.updated_at = Time.now
+          expect(subject.paper_trail.changed_notably?).to be true
+        end
 
-              it "does not acknowledge ignored attrs and timestamps only" do
-                subject.brand = "Acme"
-                subject.updated_at = Time.now
-                expect(subject.paper_trail.changed_notably?).to be false
-              end
-            end
-          end
+        it "does not acknowledge ignored attrs and timestamps only" do
+          subject.brand = "Acme"
+          subject.updated_at = Time.now
+          expect(subject.paper_trail.changed_notably?).to be false
         end
       end
     end
