@@ -7,6 +7,20 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Breaking Changes
 
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- None
+
+## 7.0.0 (2017-04-01)
+
+### Breaking Changes
+
 - Drop support for ruby 1.9.3, whose EOL was 2015-02-23
 - Drop support for ruby 2.0.0, whose EOL was 2016-02-24
 - Remove deprecated config methods:
