@@ -162,13 +162,13 @@ module PaperTrail
       # Returns whether the `object` column is using the `json` type supported
       # by PostgreSQL.
       def object_col_is_json?
-        [:json, :jsonb].include?(columns_hash["object"].type)
+        %i(json jsonb).include?(columns_hash["object"].type)
       end
 
       # Returns whether the `object_changes` column is using the `json` type
       # supported by PostgreSQL.
       def object_changes_col_is_json?
-        [:json, :jsonb].include?(columns_hash["object_changes"].try(:type))
+        %i(json jsonb).include?(columns_hash["object_changes"].try(:type))
       end
     end
 
@@ -306,8 +306,7 @@ module PaperTrail
       end
     end
 
-    # Checks that a value has been set for the `version_limit` config
-    # option, and if so enforces it.
+    # Enforces the `version_limit`, if set. Default: no limit.
     # @api private
     def enforce_version_limit!
       limit = PaperTrail.config.version_limit

@@ -10,6 +10,7 @@ describe Boolit, type: :model do
 
   describe "Versioning", versioning: true do
     subject { Boolit.create! }
+
     before { subject.update_attributes!(name: FFaker::Name.name) }
 
     it "should have versions" do

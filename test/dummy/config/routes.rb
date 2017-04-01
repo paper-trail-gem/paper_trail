@@ -1,4 +1,4 @@
 Dummy::Application.routes.draw do
   resources :articles, only: [:create]
-  resources :widgets, only: [:create, :update, :destroy]
+  resources :widgets, only: %i(create update destroy)
 end

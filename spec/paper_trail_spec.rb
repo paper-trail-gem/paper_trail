@@ -61,12 +61,12 @@ describe PaperTrail do
     end
   end
 
-  describe :version do
+  describe ".version" do
     it { expect(PaperTrail).to respond_to(:version) }
     it { expect(PaperTrail.version).to eq(PaperTrail::VERSION::STRING) }
   end
 
-  describe :whodunnit do
+  describe ".whodunnit" do
     before(:all) { PaperTrail.whodunnit = "foobar" }
 
     it "should get set to `nil` by default" do
@@ -74,7 +74,7 @@ describe PaperTrail do
     end
   end
 
-  describe :controller_info do
+  describe ".controller_info" do
     before(:all) { ::PaperTrail.controller_info = { foo: "bar" } }
 
     it "should get set to an empty hash before each test" do

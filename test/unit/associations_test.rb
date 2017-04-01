@@ -43,10 +43,10 @@ class AssociationsTest < ActiveSupport::TestCase
       end
 
       context "when reified" do
-        setup { @widget_0 = @widget.versions.last.reify(has_one: true) }
+        setup { @widget0 = @widget.versions.last.reify(has_one: true) }
 
         should "see the associated as it was at the time" do
-          assert_nil @widget_0.wotsit
+          assert_nil @widget0.wotsit
         end
 
         should "not persist changes to the live association" do
@@ -63,10 +63,10 @@ class AssociationsTest < ActiveSupport::TestCase
       end
 
       context "when reified" do
-        setup { @widget_0 = @widget.versions.last.reify(has_one: true) }
+        setup { @widget0 = @widget.versions.last.reify(has_one: true) }
 
         should "see the associated as it was at the time" do
-          assert_equal "wotsit_0", @widget_0.wotsit.name
+          assert_equal "wotsit_0", @widget0.wotsit.name
         end
 
         should "not persist changes to the live association" do
@@ -84,10 +84,10 @@ class AssociationsTest < ActiveSupport::TestCase
         end
 
         context "when reified" do
-          setup { @widget_1 = @widget.versions.last.reify(has_one: true) }
+          setup { @widget1 = @widget.versions.last.reify(has_one: true) }
 
           should "see the associated as it was at the time" do
-            assert_equal "wotsit_2", @widget_1.wotsit.name
+            assert_equal "wotsit_2", @widget1.wotsit.name
           end
 
           should "not persist changes to the live association" do
@@ -96,10 +96,10 @@ class AssociationsTest < ActiveSupport::TestCase
         end
 
         context "when reified opting out of has_one reification" do
-          setup { @widget_1 = @widget.versions.last.reify(has_one: false) }
+          setup { @widget1 = @widget.versions.last.reify(has_one: false) }
 
           should "see the associated as it is live" do
-            assert_equal "wotsit_3", @widget_1.wotsit.name
+            assert_equal "wotsit_3", @widget1.wotsit.name
           end
         end
       end
@@ -110,10 +110,10 @@ class AssociationsTest < ActiveSupport::TestCase
         end
 
         context "when reify" do
-          setup { @widget_1 = @widget.versions.last.reify(has_one: true) }
+          setup { @widget1 = @widget.versions.last.reify(has_one: true) }
 
           should "see the associated as it was at the time" do
-            assert_equal @wotsit, @widget_1.wotsit
+            assert_equal @wotsit, @widget1.wotsit
           end
 
           should "not persist changes to the live association" do
@@ -128,10 +128,10 @@ class AssociationsTest < ActiveSupport::TestCase
           end
 
           context "when reified" do
-            setup { @widget_2 = @widget.versions.last.reify(has_one: true) }
+            setup { @widget2 = @widget.versions.last.reify(has_one: true) }
 
             should "see the associated as it was at the time" do
-              assert_nil @widget_2.wotsit
+              assert_nil @widget2.wotsit
             end
           end
         end
@@ -149,10 +149,10 @@ class AssociationsTest < ActiveSupport::TestCase
       end
 
       context "when reified" do
-        setup { @customer_0 = @customer.versions.last.reify(has_many: true) }
+        setup { @customer0 = @customer.versions.last.reify(has_many: true) }
 
         should "see the associated as it was at the time" do
-          assert_equal [], @customer_0.orders
+          assert_equal [], @customer0.orders
         end
 
         should "not persist changes to the live association" do
@@ -162,11 +162,11 @@ class AssociationsTest < ActiveSupport::TestCase
 
       context "when reified with option mark_for_destruction" do
         should "mark the associated for destruction" do
-          @customer_0 = @customer.versions.last.reify(
+          @customer0 = @customer.versions.last.reify(
             has_many: true,
             mark_for_destruction: true
           )
-          assert_equal [true], @customer_0.orders.map(&:marked_for_destruction?)
+          assert_equal [true], @customer0.orders.map(&:marked_for_destruction?)
         end
       end
     end
@@ -179,10 +179,10 @@ class AssociationsTest < ActiveSupport::TestCase
       end
 
       context "when reified" do
-        setup { @customer_0 = @customer.versions.last.reify(has_many: true) }
+        setup { @customer0 = @customer.versions.last.reify(has_many: true) }
 
         should "see the associated as it was at the time" do
-          assert_equal ["order_date_0"], @customer_0.orders.map(&:order_date)
+          assert_equal ["order_date_0"], @customer0.orders.map(&:order_date)
         end
       end
 
@@ -192,10 +192,10 @@ class AssociationsTest < ActiveSupport::TestCase
         end
 
         context "when reified" do
-          setup { @customer_0 = @customer.versions.last.reify(has_many: true) }
+          setup { @customer0 = @customer.versions.last.reify(has_many: true) }
 
           should "see the live version of the nested association" do
-            assert_equal ["product_0"], @customer_0.orders.first.line_items.map(&:product)
+            assert_equal ["product_0"], @customer0.orders.first.line_items.map(&:product)
           end
         end
       end
@@ -210,10 +210,10 @@ class AssociationsTest < ActiveSupport::TestCase
         end
 
         context "when reified" do
-          setup { @customer_1 = @customer.versions.last.reify(has_many: true) }
+          setup { @customer1 = @customer.versions.last.reify(has_many: true) }
 
           should "see the associated as it was at the time" do
-            assert_equal ["order_date_2"], @customer_1.orders.map(&:order_date)
+            assert_equal ["order_date_2"], @customer1.orders.map(&:order_date)
           end
 
           should "not persist changes to the live association" do
@@ -222,10 +222,10 @@ class AssociationsTest < ActiveSupport::TestCase
         end
 
         context "when reified opting out of has_many reification" do
-          setup { @customer_1 = @customer.versions.last.reify(has_many: false) }
+          setup { @customer1 = @customer.versions.last.reify(has_many: false) }
 
           should "see the associated as it is live" do
-            assert_equal ["order_date_3"], @customer_1.orders.map(&:order_date)
+            assert_equal ["order_date_3"], @customer1.orders.map(&:order_date)
           end
         end
 
@@ -235,10 +235,10 @@ class AssociationsTest < ActiveSupport::TestCase
           end
 
           context "when reified" do
-            setup { @customer_1 = @customer.versions.last.reify(has_many: true) }
+            setup { @customer1 = @customer.versions.last.reify(has_many: true) }
 
             should "see the associated as it was at the time" do
-              assert_equal ["order_date_2"], @customer_1.orders.map(&:order_date)
+              assert_equal ["order_date_2"], @customer1.orders.map(&:order_date)
             end
 
             should "not persist changes to the live association" do
@@ -254,10 +254,10 @@ class AssociationsTest < ActiveSupport::TestCase
         end
 
         context "when reified" do
-          setup { @customer_1 = @customer.versions.last.reify(has_many: true) }
+          setup { @customer1 = @customer.versions.last.reify(has_many: true) }
 
           should "see the associated as it was at the time" do
-            assert_equal [@order.order_date], @customer_1.orders.map(&:order_date)
+            assert_equal [@order.order_date], @customer1.orders.map(&:order_date)
           end
 
           should "not persist changes to the live association" do
@@ -274,10 +274,10 @@ class AssociationsTest < ActiveSupport::TestCase
         end
 
         context "when reified" do
-          setup { @customer_1 = @customer.versions.last.reify(has_many: true) }
+          setup { @customer1 = @customer.versions.last.reify(has_many: true) }
 
           should "see the associated as it was at the time" do
-            assert_equal [], @customer_1.orders
+            assert_equal [], @customer1.orders
           end
         end
       end
@@ -288,10 +288,10 @@ class AssociationsTest < ActiveSupport::TestCase
         end
 
         context "when reified" do
-          setup { @customer_0 = @customer.versions.last.reify(has_many: true) }
+          setup { @customer0 = @customer.versions.last.reify(has_many: true) }
 
           should "see the associated as it was at the time" do
-            assert_equal ["order_date_0"], @customer_0.orders.map(&:order_date)
+            assert_equal ["order_date_0"], @customer0.orders.map(&:order_date)
           end
 
           should "not persist changes to the live association" do
@@ -302,11 +302,11 @@ class AssociationsTest < ActiveSupport::TestCase
 
         context "when reified with option mark_for_destruction" do
           should "mark the newly associated for destruction" do
-            @customer_0 = @customer.versions.last.reify(
+            @customer0 = @customer.versions.last.reify(
               has_many: true,
               mark_for_destruction: true
             )
-            assert @customer_0.
+            assert @customer0.
               orders.
               detect { |o| o.order_date == "order_date_1" }.
               marked_for_destruction?
@@ -327,10 +327,10 @@ class AssociationsTest < ActiveSupport::TestCase
         end
 
         context "when reified" do
-          setup { @book_0 = @book.versions.last.reify(has_many: true) }
+          setup { @book0 = @book.versions.last.reify(has_many: true) }
 
           should "see the associated as it was at the time" do
-            assert_equal [], @book_0.authors
+            assert_equal [], @book0.authors
           end
 
           should "not persist changes to the live association" do
@@ -340,18 +340,18 @@ class AssociationsTest < ActiveSupport::TestCase
 
         context "when reified with option mark_for_destruction" do
           setup do
-            @book_0 = @book.versions.last.reify(
+            @book0 = @book.versions.last.reify(
               has_many: true,
               mark_for_destruction: true
             )
           end
 
           should "mark the associated for destruction" do
-            assert_equal [true], @book_0.authors.map(&:marked_for_destruction?)
+            assert_equal [true], @book0.authors.map(&:marked_for_destruction?)
           end
 
           should "mark the associated-through for destruction" do
-            assert_equal [true], @book_0.authorships.map(&:marked_for_destruction?)
+            assert_equal [true], @book0.authorships.map(&:marked_for_destruction?)
           end
         end
       end
@@ -366,28 +366,28 @@ class AssociationsTest < ActiveSupport::TestCase
 
         context "when reified" do
           setup do
-            @book_0 = @book.versions.last.reify(has_many: true)
+            @book0 = @book.versions.last.reify(has_many: true)
           end
 
           should "see the associated as it was at the time" do
-            assert_equal [], @book_0.authors
+            assert_equal [], @book0.authors
           end
         end
 
         context "when reified with option mark_for_destruction" do
           setup do
-            @book_0 = @book.versions.last.reify(
+            @book0 = @book.versions.last.reify(
               has_many: true,
               mark_for_destruction: true
             )
           end
 
           should "not mark the associated for destruction" do
-            assert_equal [false], @book_0.authors.map(&:marked_for_destruction?)
+            assert_equal [false], @book0.authors.map(&:marked_for_destruction?)
           end
 
           should "mark the associated-through for destruction" do
-            assert_equal [true], @book_0.authorships.map(&:marked_for_destruction?)
+            assert_equal [true], @book0.authorships.map(&:marked_for_destruction?)
           end
         end
       end
@@ -401,10 +401,10 @@ class AssociationsTest < ActiveSupport::TestCase
         end
 
         context "when reified" do
-          setup { @book_0 = @book.versions.last.reify(has_many: true) }
+          setup { @book0 = @book.versions.last.reify(has_many: true) }
 
           should "see the associated as it was at the time" do
-            assert_equal ["author_0"], @book_0.authors.map(&:name)
+            assert_equal ["author_0"], @book0.authors.map(&:name)
           end
         end
 
@@ -418,10 +418,10 @@ class AssociationsTest < ActiveSupport::TestCase
           end
 
           context "when reified" do
-            setup { @book_1 = @book.versions.last.reify(has_many: true) }
+            setup { @book1 = @book.versions.last.reify(has_many: true) }
 
             should "see the associated as it was at the time" do
-              assert_equal ["author_2"], @book_1.authors.map(&:name)
+              assert_equal ["author_2"], @book1.authors.map(&:name)
             end
 
             should "not persist changes to the live association" do
@@ -430,10 +430,10 @@ class AssociationsTest < ActiveSupport::TestCase
           end
 
           context "when reified opting out of has_many reification" do
-            setup { @book_1 = @book.versions.last.reify(has_many: false) }
+            setup { @book1 = @book.versions.last.reify(has_many: false) }
 
             should "see the associated as it is live" do
-              assert_equal ["author_3"], @book_1.authors.map(&:name)
+              assert_equal ["author_3"], @book1.authors.map(&:name)
             end
           end
         end
@@ -444,10 +444,10 @@ class AssociationsTest < ActiveSupport::TestCase
           end
 
           context "when reified" do
-            setup { @book_1 = @book.versions.last.reify(has_many: true) }
+            setup { @book1 = @book.versions.last.reify(has_many: true) }
 
             should "see the associated as it was at the time" do
-              assert_equal [@author.name], @book_1.authors.map(&:name)
+              assert_equal [@author.name], @book1.authors.map(&:name)
             end
 
             should "not persist changes to the live association" do
@@ -464,10 +464,10 @@ class AssociationsTest < ActiveSupport::TestCase
           end
 
           context "when reified" do
-            setup { @book_1 = @book.versions.last.reify(has_many: true) }
+            setup { @book1 = @book.versions.last.reify(has_many: true) }
 
             should "see the associated as it was at the time" do
-              assert_equal [], @book_1.authors
+              assert_equal [], @book1.authors
             end
           end
         end
@@ -480,10 +480,10 @@ class AssociationsTest < ActiveSupport::TestCase
           end
 
           context "when reified" do
-            setup { @book_1 = @book.versions.last.reify(has_many: true) }
+            setup { @book1 = @book.versions.last.reify(has_many: true) }
 
             should "see the associated as it was at the time" do
-              assert_equal [], @book_1.authors
+              assert_equal [], @book1.authors
             end
           end
         end
@@ -494,10 +494,10 @@ class AssociationsTest < ActiveSupport::TestCase
           end
 
           context "when reified" do
-            setup { @book_0 = @book.versions.last.reify(has_many: true) }
+            setup { @book0 = @book.versions.last.reify(has_many: true) }
 
             should "only see the first associated" do
-              assert_equal ["author_0"], @book_0.authors.map(&:name)
+              assert_equal ["author_0"], @book0.authors.map(&:name)
             end
 
             should "not persist changes to the live association" do
@@ -507,21 +507,21 @@ class AssociationsTest < ActiveSupport::TestCase
 
           context "when reified with option mark_for_destruction" do
             setup do
-              @book_0 = @book.versions.last.reify(
+              @book0 = @book.versions.last.reify(
                 has_many: true,
                 mark_for_destruction: true
               )
             end
 
             should "mark the newly associated for destruction" do
-              assert @book_0.
+              assert @book0.
                 authors.
                 detect { |a| a.name == "author_1" }.
                 marked_for_destruction?
             end
 
             should "mark the newly associated-through for destruction" do
-              assert @book_0.
+              assert @book0.
                 authorships.
                 detect { |as| as.author.name == "author_1" }.
                 marked_for_destruction?
@@ -535,10 +535,10 @@ class AssociationsTest < ActiveSupport::TestCase
           end
 
           context "when reified" do
-            setup { @book_0 = @book.versions.last.reify(has_many: true) }
+            setup { @book0 = @book.versions.last.reify(has_many: true) }
 
             should "only see the first associated" do
-              assert_equal ["author_0"], @book_0.authors.map(&:name)
+              assert_equal ["author_0"], @book0.authors.map(&:name)
             end
 
             should "not persist changes to the live association" do
@@ -548,21 +548,21 @@ class AssociationsTest < ActiveSupport::TestCase
 
           context "when reified with option mark_for_destruction" do
             setup do
-              @book_0 = @book.versions.last.reify(
+              @book0 = @book.versions.last.reify(
                 has_many: true,
                 mark_for_destruction: true
               )
             end
 
             should "not mark the newly associated for destruction" do
-              assert !@book_0.
+              assert !@book0.
                 authors.
                 detect { |a| a.name == "person_existing" }.
                 marked_for_destruction?
             end
 
             should "mark the newly associated-through for destruction" do
-              assert @book_0.
+              assert @book0.
                 authorships.
                 detect { |as| as.author.name == "person_existing" }.
                 marked_for_destruction?
@@ -578,10 +578,10 @@ class AssociationsTest < ActiveSupport::TestCase
         end
 
         context "when reified" do
-          setup { @book_0 = @book.versions.last.reify(has_many: true) }
+          setup { @book0 = @book.versions.last.reify(has_many: true) }
 
           should "see the live association" do
-            assert_equal ["editor_0"], @book_0.editors.map(&:name)
+            assert_equal ["editor_0"], @book0.editors.map(&:name)
           end
         end
       end
@@ -782,10 +782,10 @@ class AssociationsTest < ActiveSupport::TestCase
         end
 
         context "when reified" do
-          setup { @wotsit_0 = @wotsit.versions.last.reify(belongs_to: true) }
+          setup { @wotsit0 = @wotsit.versions.last.reify(belongs_to: true) }
 
           should "see the associated as it was at the time" do
-            assert_nil @wotsit_0.widget
+            assert_nil @wotsit0.widget
           end
 
           should "not persist changes to the live association" do
@@ -803,10 +803,10 @@ class AssociationsTest < ActiveSupport::TestCase
           end
 
           context "when reified" do
-            setup { @wotsit_1 = @wotsit.versions.last.reify(belongs_to: true) }
+            setup { @wotsit1 = @wotsit.versions.last.reify(belongs_to: true) }
 
             should "see the associated as it was at the time" do
-              assert_equal "widget_2", @wotsit_1.widget.name
+              assert_equal "widget_2", @wotsit1.widget.name
             end
 
             should "not persist changes to the live association" do
@@ -815,10 +815,10 @@ class AssociationsTest < ActiveSupport::TestCase
           end
 
           context "when reified opting out of belongs_to reification" do
-            setup { @wotsit_1 = @wotsit.versions.last.reify(belongs_to: false) }
+            setup { @wotsit1 = @wotsit.versions.last.reify(belongs_to: false) }
 
             should "see the associated as it is live" do
-              assert_equal "widget_3", @wotsit_1.widget.name
+              assert_equal "widget_3", @wotsit1.widget.name
             end
           end
         end
@@ -830,10 +830,10 @@ class AssociationsTest < ActiveSupport::TestCase
           end
 
           context "when reified" do
-            setup { @wotsit_2 = @wotsit.versions.last.reify(belongs_to: true) }
+            setup { @wotsit2 = @wotsit.versions.last.reify(belongs_to: true) }
 
             should "see the associated as it was at the time" do
-              assert_equal @widget, @wotsit_2.widget
+              assert_equal @widget, @wotsit2.widget
             end
 
             should "not persist changes to the live association" do
@@ -848,10 +848,10 @@ class AssociationsTest < ActiveSupport::TestCase
             end
 
             context "when reified" do
-              setup { @wotsit_2 = @wotsit.versions.last.reify(belongs_to: true) }
+              setup { @wotsit2 = @wotsit.versions.last.reify(belongs_to: true) }
 
               should "see the associated as it was the time" do
-                assert_nil @wotsit_2.widget
+                assert_nil @wotsit2.widget
               end
             end
           end
@@ -867,10 +867,10 @@ class AssociationsTest < ActiveSupport::TestCase
         end
 
         context "when reified" do
-          setup { @wotsit_0 = @wotsit.versions.last.reify(belongs_to: true) }
+          setup { @wotsit0 = @wotsit.versions.last.reify(belongs_to: true) }
 
           should "see the association as it was at the time" do
-            assert_equal "widget_0", @wotsit_0.widget.name
+            assert_equal "widget_0", @wotsit0.widget.name
           end
 
           should "not persist changes to the live association" do
@@ -880,7 +880,7 @@ class AssociationsTest < ActiveSupport::TestCase
 
         context "when reified with option mark_for_destruction" do
           setup do
-            @wotsit_0 = @wotsit.versions.last.
+            @wotsit0 = @wotsit.versions.last.
               reify(belongs_to: true, mark_for_destruction: true)
           end
 
