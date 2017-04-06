@@ -677,7 +677,7 @@ For diffing two ActiveRecord objects:
 * [activerecord-diff][23]: rather like ActiveRecord::Dirty but also allows you
   to specify which columns to compare.
 
-If you wish to selectively record changes for some models but not others you
+If you want to selectively record changes for some models but not others you
 can opt out of recording changes by passing `:save_changes => false` to your
 `has_paper_trail` method declaration.
 
@@ -1151,11 +1151,12 @@ class Post < ActiveRecord::Base
 
   # Existing versions method.  We don't want to clash.
   def versions
-    ...
+    # ...
   end
+
   # Existing version method.  We don't want to clash.
   def version
-    ...
+    # ...
   end
 end
 ```
@@ -1183,10 +1184,10 @@ If you use PostgreSQL, and would like to store your `object` (and/or
 
 ```ruby
 create_table :versions do |t|
-  ...
+  # ...
   t.json :object          # Full object changes
   t.json :object_changes  # Optional column-level changes
-  ...
+  # ...
 end
 ```
 
@@ -1331,13 +1332,13 @@ ENV["RAILS_ENV"] ||= 'test'
 require 'spec_helper'
 require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
-...
+# ...
 require 'paper_trail/frameworks/rspec'
 ```
 
 With the helper loaded, PaperTrail will be turned off for all tests by
 default. To enable PaperTrail for a test you can either wrap the
-test in a `with_versioning` block, or pass in `:versioning => true` option to a
+test in a `with_versioning` block, or pass in `versioning: true` option to a
 spec block.
 
 ```ruby
@@ -1352,7 +1353,7 @@ describe "RSpec test group" do
     end
   end
 
-  it 'can be turned on at the `it` or `describe` level like this', :versioning => true do
+  it 'can be turned on at the `it` or `describe` level', versioning: true do
     expect(PaperTrail).to be_enabled
   end
 end
@@ -1389,34 +1390,34 @@ describe Widget do
 end
 ```
 
-It is also possible to do assertions on the versions using `have_a_version_with` matcher.
+#### Matchers
+
+The `have_a_version_with` matcher makes assertions about versions using
+`where_object`, based on the `object` column.
 
 ```ruby
 describe '`have_a_version_with` matcher' do
-  before do
+  it "is possible to do assertions on version attributes" do
     widget.update_attributes!(name: 'Leonard', an_integer: 1)
     widget.update_attributes!(name: 'Tom')
     widget.update_attributes!(name: 'Bob')
-  end
-
-  it "is possible to do assertions on version attributes" do
     expect(widget).to have_a_version_with name: 'Leonard', an_integer: 1
     expect(widget).to have_a_version_with an_integer: 1
     expect(widget).to have_a_version_with name: 'Tom'
   end
 end
 ```
-There is also a `have_a_version_with_changes` matcher. This is only usable if your versions table [has an `object_changes` column for storing changesets](#3c-diffing-versions).
+
+The `have_a_version_with_changes` matcher makes assertions about versions using
+`where_object_changes`, based on the optional
+[`object_changes` column](#3c-diffing-versions).
 
 ```ruby
 describe '`have_a_version_with_changes` matcher' do
-  before do
+  it "is possible to do assertions on version changes" do
     widget.update_attributes!(name: 'Leonard', an_integer: 1)
     widget.update_attributes!(name: 'Tom')
     widget.update_attributes!(name: 'Bob')
-  end
-
-  it "is possible to do assertions on version changes" do
     expect(widget).to have_a_version_with_changes name: 'Leonard', an_integer: 2
     expect(widget).to have_a_version_with_changes an_integer: 2
     expect(widget).to have_a_version_with_changes name: 'Bob'
@@ -1430,7 +1431,7 @@ For more examples of the RSpec matchers, see the
 ### 7.c. Cucumber
 
 PaperTrail provides a helper for [Cucumber][28] that works similar to the RSpec
-helper.If you wish to use the helper, you will need to require in your cucumber
+helper. If you want to use the helper, you will need to require in your cucumber
 helper like so:
 
 ```ruby
@@ -1438,12 +1439,12 @@ helper like so:
 
 ENV["RAILS_ENV"] ||= "cucumber"
 require File.expand_path(File.dirname(__FILE__) + '/../../config/environment')
-...
+# ...
 require 'paper_trail/frameworks/cucumber'
 ```
 
 When the helper is loaded, PaperTrail will be turned off for all scenarios by a
-`before` hook added by the helper by default. When you wish to enable PaperTrail
+`before` hook added by the helper by default. When you want to enable PaperTrail
 for a scenario, you can wrap code in a `with_versioning` block in a step, like
 so:
 
@@ -1462,7 +1463,7 @@ value to `{}` as well, again, to help prevent data spillover between tests.
 
 ### 7.d. Spork
 
-If you wish to use the `RSpec` or `Cucumber` helpers with [Spork][29], you will
+If you want to use the `RSpec` or `Cucumber` helpers with [Spork][29], you will
 need to manually require the helper(s) in your `prefork` block on your test
 helper, like so:
 
@@ -1479,13 +1480,13 @@ Spork.prefork do
   require 'rspec/rails'
   require 'paper_trail/frameworks/rspec'
   require 'paper_trail/frameworks/cucumber'
-  ...
+  # ...
 end
 ```
 
 ### 7.e. Zeus or Spring
 
-If you wish to use the `RSpec` or `Cucumber` helpers with [Zeus][30] or
+If you want to use the `RSpec` or `Cucumber` helpers with [Zeus][30] or
 [Spring][31], you will need to manually require the helper(s) in your test
 helper, like so:
 
