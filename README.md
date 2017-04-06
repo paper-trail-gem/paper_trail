@@ -1417,9 +1417,9 @@ describe '`have_a_version_with_changes` matcher' do
   end
 
   it "is possible to do assertions on version changes" do
-    expect(widget).to have_a_version_with name: 'Leonard', an_integer: 2
-    expect(widget).to have_a_version_with an_integer: 2
-    expect(widget).to have_a_version_with name: 'Bob'
+    expect(widget).to have_a_version_with_changes name: 'Leonard', an_integer: 2
+    expect(widget).to have_a_version_with_changes an_integer: 2
+    expect(widget).to have_a_version_with_changes name: 'Bob'
   end
 end
 ```
