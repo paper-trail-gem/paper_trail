@@ -50,7 +50,18 @@ module PaperTrail
       if self.class.migration_exists?(migration_dir, template)
         ::Kernel.warn "Migration already exists: #{template}"
       else
-        migration_template "#{template}.rb", "db/migrate/#{template}.rb"
+        migration_template(
+          "#{template}.rb.erb",
+          "db/migrate/#{template}.rb",
+          migration_version: migration_version
+        )
+      end
+    end
+
+    def migration_version
+      major = ActiveRecord::VERSION::MAJOR
+      if major >= 5
+        "[#{major}.#{ActiveRecord::VERSION::MINOR}]"
       end
     end
   end
