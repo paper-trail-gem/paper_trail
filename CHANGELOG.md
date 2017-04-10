@@ -11,11 +11,12 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
-- None
+- Generate cleaner migrations for databases other than MySQL
 
 ### Fixed
 
-- None
+- [#949](https://github.com/airblade/paper_trail/issues/949) - Inherit from the
+  new versioned migration class, e.g. `ActiveRecord::Migration[5.1]`
 
 ## 7.0.0 (2017-04-01)
 
