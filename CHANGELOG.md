@@ -11,7 +11,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
-- None
+- Generate cleaner migrations for databases other than MySQL
 
 ### Fixed
 

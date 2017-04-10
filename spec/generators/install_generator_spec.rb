@@ -24,6 +24,13 @@ RSpec.describe PaperTrail::InstallGenerator, type: :generator do
           old_school
         end
       }.call
+      expected_create_table_options = lambda {
+        if described_class::MYSQL_ADAPTERS.include?(ActiveRecord::Base.connection.class.name)
+          ', { options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci" }'
+        else
+          ""
+        end
+      }.call
       expect(destination_root).to(
         have_structure {
           directory("db") {
@@ -31,7 +38,7 @@ RSpec.describe PaperTrail::InstallGenerator, type: :generator do
               migration("create_versions") {
                 contains("class CreateVersions < " + expected_parent_class)
                 contains "def change"
-                contains "create_table :versions"
+                contains "create_table :versions#{expected_create_table_options}"
               }
             }
           }
