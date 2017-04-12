@@ -890,9 +890,6 @@ issues, in order of descending importance.
 1. PaperTrail only reifies the first level of associations.
 1. [#542](https://github.com/airblade/paper_trail/issues/542) -
    Not compatible with [transactional tests][34], aka. transactional fixtures.
-1. [#841](https://github.com/airblade/paper_trail/issues/841) -
-   Without a workaround, reified records cannot be persisted if their associated
-   records have been deleted.
 1. Requires database timestamp columns with fractional second precision.
    - Sqlite and postgres timestamps have fractional second precision by default.
    [MySQL timestamps do not][35]. Furthermore, MySQL 5.5 and earlier do not

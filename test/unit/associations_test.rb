@@ -829,7 +829,7 @@ class AssociationsTest < ActiveSupport::TestCase
             @widget.destroy
           end
 
-          context "when reified" do
+          context "when reified with belongs_to: true" do
             setup { @wotsit2 = @wotsit.versions.last.reify(belongs_to: true) }
 
             should "see the associated as it was at the time" do
@@ -838,6 +838,22 @@ class AssociationsTest < ActiveSupport::TestCase
 
             should "not persist changes to the live association" do
               assert_nil @wotsit.reload.widget
+            end
+
+            should "be able to persist the reified record" do
+              assert_nothing_raised { @wotsit2.save! }
+            end
+          end
+
+          context "when reified with belongs_to: false" do
+            setup do
+              @wotsit2 = @wotsit.versions.last.reify(belongs_to: false)
+            end
+
+            should "save should not re-create the widget record" do
+              # Save succeeds because Wotsit does not validate presence of widget
+              @wotsit2.save!
+              assert_nil ::Widget.find_by(id: @widget.id)
             end
           end
 
