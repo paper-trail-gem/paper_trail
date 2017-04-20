@@ -4,7 +4,7 @@ describe NotOnUpdate, type: :model do
   describe "#touch_with_version", versioning: true do
     let!(:record) { described_class.create! }
 
-    it "should create a version, regardless" do
+    it "creates a version, regardless" do
       expect { record.paper_trail.touch_with_version }.to change {
         PaperTrail::Version.count
       }.by(+1)

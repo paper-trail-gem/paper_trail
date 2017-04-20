@@ -18,21 +18,6 @@ module PaperTrail
       @serializer = PaperTrail::Serializers::YAML
     end
 
-    def serialized_attributes
-      ActiveSupport::Deprecation.warn(
-        "PaperTrail.config.serialized_attributes is deprecated without " +
-          "replacement and always returns false."
-      )
-      false
-    end
-
-    def serialized_attributes=(_)
-      ActiveSupport::Deprecation.warn(
-        "PaperTrail.config.serialized_attributes= is deprecated without " +
-          "replacement and no longer has any effect."
-      )
-    end
-
     # Previously, we checked `PaperTrail::VersionAssociation.table_exists?`
     # here, but that proved to be problematic in situations when the database
     # connection had not been established, or when the database does not exist

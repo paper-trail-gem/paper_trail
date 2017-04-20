@@ -6,7 +6,7 @@ module PaperTrail
       class << self
         # @api private
         def reify(assoc, model, options, transaction_id)
-          id = model.send(assoc.association_foreign_key)
+          id = model.send(assoc.foreign_key)
           version = load_version(assoc, id, transaction_id, options[:version_at])
           record = load_record(assoc, id, options, version)
           model.send("#{assoc.name}=".to_sym, record)

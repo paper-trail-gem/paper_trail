@@ -34,14 +34,6 @@ module PaperTrail
       !!PaperTrail.config.enabled
     end
 
-    def serialized_attributes?
-      ActiveSupport::Deprecation.warn(
-        "PaperTrail.serialized_attributes? is deprecated without replacement " +
-          "and always returns false."
-      )
-      false
-    end
-
     # Sets whether PaperTrail is enabled or disabled for the current request.
     # @api public
     def enabled_for_controller=(value)
@@ -68,6 +60,13 @@ module PaperTrail
     # @api public
     def enabled_for_model?(model)
       !!paper_trail_store.fetch(:"enabled_for_#{model}", true)
+    end
+
+    # Returns a `::Gem::Version`, convenient for comparisons. This is
+    # recommended over `::PaperTrail::VERSION::STRING`.
+    # @api public
+    def gem_version
+      ::Gem::Version.new(VERSION::STRING)
     end
 
     # Set the field which records when a version was created.
@@ -186,7 +185,6 @@ ActiveSupport.on_load(:active_record) do
 end
 
 # Require frameworks
-require "paper_trail/frameworks/sinatra"
 if defined?(::Rails) && ActiveRecord::VERSION::STRING >= "3.2"
   require "paper_trail/frameworks/rails"
 else

@@ -11,6 +11,7 @@ has been destroyed.
 | Version        | Documentation |
 | -------------- | ------------- |
 | Unreleased     | https://github.com/airblade/paper_trail/blob/master/README.md |
+| 7.0.1          | https://github.com/airblade/paper_trail/blob/v7.0.1/README.md |
 | 6.0.2          | https://github.com/airblade/paper_trail/blob/v6.0.2/README.md |
 | 5.2.3          | https://github.com/airblade/paper_trail/blob/v5.2.3/README.md |
 | 4.2.0          | https://github.com/airblade/paper_trail/blob/v4.2.0/README.md |
@@ -65,6 +66,7 @@ has been destroyed.
 | paper_trail    | branch     | tags   | ruby     | activerecord  |
 | -------------- | ---------- | ------ | -------- | ------------- |
 | unreleased     | master     |        | >= 2.1.0 | >= 4.0, < 6   |
+| 7              | 7-stable   | v7.x   | >= 2.1.0 | >= 4.0, < 6   |
 | 6              | 6-stable   | v6.x   | >= 1.9.3 | >= 4.0, < 6   |
 | 5              | 5-stable   | v5.x   | >= 1.9.3 | >= 3.0, < 5.1 |
 | 4              | 4-stable   | v4.x   | >= 1.8.7 | >= 3.0, < 5.1 |
@@ -357,84 +359,88 @@ use attribute_name_was instead of attribute_name.
 
 ### 2.c. Choosing Attributes To Monitor
 
-You can ignore changes to certain attributes like this:
+#### Ignore
+
+You can `ignore` changes to certain attributes:
 
 ```ruby
 class Article < ActiveRecord::Base
-  has_paper_trail :ignore => [:title, :rating]
+  has_paper_trail ignore: [:title, :rating]
 end
 ```
 
-This means that changes to just the `title` or `rating` will not store another
-version of the article.  It does not mean that the `title` and `rating`
-attributes will be ignored if some other change causes a new
-`PaperTrail::Version` to be created.  For example:
+Changes to just the `title` or `rating` will not create a version record.
+Changes to other attributes will create a version record.
 
 ```ruby
 a = Article.create
 a.versions.length                         # 1
-a.update_attributes :title => 'My Title', :rating => 3
+a.update_attributes title: 'My Title', rating: 3
 a.versions.length                         # 1
-a.update_attributes :title => 'Greeting', :content => 'Hello'
+a.update_attributes title: 'Greeting', content: 'Hello'
 a.versions.length                         # 2
 a.paper_trail.previous_version.title      # 'My Title'
 ```
 
-Or, you can specify a list of all attributes you care about:
+#### Only
+
+Or, you can specify a list of the `only` attributes you care about:
 
 ```ruby
 class Article < ActiveRecord::Base
-  has_paper_trail :only => [:title]
+  has_paper_trail only: [:title]
 end
 ```
 
-This means that only changes to the `title` will save a version of the article:
+Only changes to the `title` will create a version record.
 
 ```ruby
 a = Article.create
 a.versions.length                         # 1
-a.update_attributes :title => 'My Title'
+a.update_attributes title: 'My Title'
 a.versions.length                         # 2
-a.update_attributes :content => 'Hello'
+a.update_attributes content: 'Hello'
 a.versions.length                         # 2
 a.paper_trail.previous_version.content    # nil
 ```
 
-The `:ignore` and `:only` options can also accept `Hash` arguments, where the :
+The `:ignore` and `:only` options can also accept `Hash` arguments.
 
 ```ruby
 class Article < ActiveRecord::Base
-  has_paper_trail :only => [:title => Proc.new { |obj| !obj.title.blank? } ]
+  has_paper_trail only: { title: Proc.new { |obj| !obj.title.blank? } }
 end
 ```
 
-This means that if the `title` is not blank, then only changes to the `title`
-will save a version of the article:
+If the `title` is not blank, then only changes to the `title`
+will create a version record.
 
 ```ruby
 a = Article.create
 a.versions.length                         # 1
-a.update_attributes :content => 'Hello'
+a.update_attributes content: 'Hello'
 a.versions.length                         # 2
-a.update_attributes :title => 'My Title'
+a.update_attributes title: 'Title One'
 a.versions.length                         # 3
-a.update_attributes :content => 'Hai'
+a.update_attributes content: 'Hai'
 a.versions.length                         # 3
 a.paper_trail.previous_version.content    # "Hello"
-a.update_attributes :title => 'Dif Title'
+a.update_attributes title: 'Title Two'
 a.versions.length                         # 4
 a.paper_trail.previous_version.content    # "Hai"
 ```
 
-Passing both `:ignore` and `:only` options will result in the article being
-saved if a changed attribute is included in `:only` but not in `:ignore`.
+Configuring both `:ignore` and `:only` is not recommended, but it should work as
+expected. Passing both `:ignore` and `:only` options will result in the
+article being saved if a changed attribute is included in `:only` but not in
+`:ignore`.
 
-You can skip fields altogether with the `:skip` option.  As with `:ignore`,
-updates to these fields will not create a new `PaperTrail::Version`.  In
-addition, these fields will not be included in the serialized version of the
-object whenever a new `PaperTrail::Version` is created.
+#### Skip
 
-For example:
+You can skip attributes completely with the `:skip` option.  As with `:ignore`,
+updates to these attributes will not create a version record.  In addition, if a
+version record is created for some other reason, these attributes will not be
+persisted.
 
 ```ruby
 class Article < ActiveRecord::Base
@@ -671,7 +677,7 @@ For diffing two ActiveRecord objects:
 * [activerecord-diff][23]: rather like ActiveRecord::Dirty but also allows you
   to specify which columns to compare.
 
-If you wish to selectively record changes for some models but not others you
+If you want to selectively record changes for some models but not others you
 can opt out of recording changes by passing `:save_changes => false` to your
 `has_paper_trail` method declaration.
 
@@ -884,9 +890,6 @@ issues, in order of descending importance.
 1. PaperTrail only reifies the first level of associations.
 1. [#542](https://github.com/airblade/paper_trail/issues/542) -
    Not compatible with [transactional tests][34], aka. transactional fixtures.
-1. [#841](https://github.com/airblade/paper_trail/issues/841) -
-   Without a workaround, reified records cannot be persisted if their associated
-   records have been deleted.
 1. Requires database timestamp columns with fractional second precision.
    - Sqlite and postgres timestamps have fractional second precision by default.
    [MySQL timestamps do not][35]. Furthermore, MySQL 5.5 and earlier do not
@@ -1145,11 +1148,12 @@ class Post < ActiveRecord::Base
 
   # Existing versions method.  We don't want to clash.
   def versions
-    ...
+    # ...
   end
+
   # Existing version method.  We don't want to clash.
   def version
-    ...
+    # ...
   end
 end
 ```
@@ -1177,10 +1181,10 @@ If you use PostgreSQL, and would like to store your `object` (and/or
 
 ```ruby
 create_table :versions do |t|
-  ...
+  # ...
   t.json :object          # Full object changes
   t.json :object_changes  # Optional column-level changes
-  ...
+  # ...
 end
 ```
 
@@ -1325,13 +1329,13 @@ ENV["RAILS_ENV"] ||= 'test'
 require 'spec_helper'
 require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
-...
+# ...
 require 'paper_trail/frameworks/rspec'
 ```
 
 With the helper loaded, PaperTrail will be turned off for all tests by
 default. To enable PaperTrail for a test you can either wrap the
-test in a `with_versioning` block, or pass in `:versioning => true` option to a
+test in a `with_versioning` block, or pass in `versioning: true` option to a
 spec block.
 
 ```ruby
@@ -1346,7 +1350,7 @@ describe "RSpec test group" do
     end
   end
 
-  it 'can be turned on at the `it` or `describe` level like this', :versioning => true do
+  it 'can be turned on at the `it` or `describe` level', versioning: true do
     expect(PaperTrail).to be_enabled
   end
 end
@@ -1383,37 +1387,37 @@ describe Widget do
 end
 ```
 
-It is also possible to do assertions on the versions using `have_a_version_with` matcher.
+#### Matchers
+
+The `have_a_version_with` matcher makes assertions about versions using
+`where_object`, based on the `object` column.
 
 ```ruby
 describe '`have_a_version_with` matcher' do
-  before do
+  it "is possible to do assertions on version attributes" do
     widget.update_attributes!(name: 'Leonard', an_integer: 1)
     widget.update_attributes!(name: 'Tom')
     widget.update_attributes!(name: 'Bob')
-  end
-
-  it "is possible to do assertions on version attributes" do
     expect(widget).to have_a_version_with name: 'Leonard', an_integer: 1
     expect(widget).to have_a_version_with an_integer: 1
     expect(widget).to have_a_version_with name: 'Tom'
   end
 end
 ```
-There is also a `have_a_version_with_changes` matcher. This is only usable if your versions table [has an `object_changes` column for storing changesets](#3c-diffing-versions).
+
+The `have_a_version_with_changes` matcher makes assertions about versions using
+`where_object_changes`, based on the optional
+[`object_changes` column](#3c-diffing-versions).
 
 ```ruby
 describe '`have_a_version_with_changes` matcher' do
-  before do
+  it "is possible to do assertions on version changes" do
     widget.update_attributes!(name: 'Leonard', an_integer: 1)
     widget.update_attributes!(name: 'Tom')
     widget.update_attributes!(name: 'Bob')
-  end
-
-  it "is possible to do assertions on version changes" do
-    expect(widget).to have_a_version_with name: 'Leonard', an_integer: 2
-    expect(widget).to have_a_version_with an_integer: 2
-    expect(widget).to have_a_version_with name: 'Bob'
+    expect(widget).to have_a_version_with_changes name: 'Leonard', an_integer: 2
+    expect(widget).to have_a_version_with_changes an_integer: 2
+    expect(widget).to have_a_version_with_changes name: 'Bob'
   end
 end
 ```
@@ -1424,7 +1428,7 @@ For more examples of the RSpec matchers, see the
 ### 7.c. Cucumber
 
 PaperTrail provides a helper for [Cucumber][28] that works similar to the RSpec
-helper.If you wish to use the helper, you will need to require in your cucumber
+helper. If you want to use the helper, you will need to require in your cucumber
 helper like so:
 
 ```ruby
@@ -1432,12 +1436,12 @@ helper like so:
 
 ENV["RAILS_ENV"] ||= "cucumber"
 require File.expand_path(File.dirname(__FILE__) + '/../../config/environment')
-...
+# ...
 require 'paper_trail/frameworks/cucumber'
 ```
 
 When the helper is loaded, PaperTrail will be turned off for all scenarios by a
-`before` hook added by the helper by default. When you wish to enable PaperTrail
+`before` hook added by the helper by default. When you want to enable PaperTrail
 for a scenario, you can wrap code in a `with_versioning` block in a step, like
 so:
 
@@ -1456,7 +1460,7 @@ value to `{}` as well, again, to help prevent data spillover between tests.
 
 ### 7.d. Spork
 
-If you wish to use the `RSpec` or `Cucumber` helpers with [Spork][29], you will
+If you want to use the `RSpec` or `Cucumber` helpers with [Spork][29], you will
 need to manually require the helper(s) in your `prefork` block on your test
 helper, like so:
 
@@ -1473,13 +1477,13 @@ Spork.prefork do
   require 'rspec/rails'
   require 'paper_trail/frameworks/rspec'
   require 'paper_trail/frameworks/cucumber'
-  ...
+  # ...
 end
 ```
 
 ### 7.e. Zeus or Spring
 
-If you wish to use the `RSpec` or `Cucumber` helpers with [Zeus][30] or
+If you want to use the `RSpec` or `Cucumber` helpers with [Zeus][30] or
 [Spring][31], you will need to manually require the helper(s) in your test
 helper, like so:
 
@@ -1495,53 +1499,7 @@ require 'paper_trail/frameworks/rspec'
 
 ## 8. Sinatra
 
-To configure PaperTrail for usage with [Sinatra][12], your `Sinatra`
-app must be using `ActiveRecord` 3 or 4. There is no released version of sinatra yet
-that is compatible with AR 5. We expect sinatra 2.0 to support AR 5, but it will have
-breaking changes that will require changes to PaperTrail.
-
-It is also recommended to use the
-[Sinatra ActiveRecord Extension][13] or something similar for managing your
-applications `ActiveRecord` connection in a manner similar to the way `Rails`
-does. If using the aforementioned `Sinatra ActiveRecord Extension`, steps for
-setting up your app with PaperTrail will look something like this:
-
-1. Add PaperTrail to your `Gemfile`.
-
-    `gem 'paper_trail'`
-
-2. Generate a migration to add a `versions` table to your database.
-
-    `bundle exec rake db:create_migration NAME=create_versions`
-
-3. Copy contents of [create_versions.rb][14]
-into the `create_versions` migration that was generated into your `db/migrate` directory.
-
-4. Run the migration.
-
-    `bundle exec rake db:migrate`
-
-5. Add `has_paper_trail` to the models you want to track.
-
-
-PaperTrail provides a helper extension that acts similar to the controller mixin
-it provides for `Rails` applications.
-
-It will set `PaperTrail.whodunnit` to whatever is returned by a method named
-`user_for_paper_trail` which you can define inside your Sinatra Application. (by
-default it attempts to invoke a method named `current_user`)
-
-If you're using the modular [`Sinatra::Base`][15] style of application, you will
-need to register the extension:
-
-```ruby
-# bleh_app.rb
-require 'sinatra/base'
-
-class BlehApp < Sinatra::Base
-  register PaperTrail::Sinatra
-end
-```
+See [paper_trail-sinatra][41].
 
 ## Articles
 
@@ -1638,10 +1596,7 @@ Released under the MIT licence.
 [9]: https://github.com/airblade/paper_trail/tree/3.0-stable
 [10]: https://github.com/airblade/paper_trail/tree/2.7-stable
 [11]: https://github.com/airblade/paper_trail/tree/rails2
-[12]: http://www.sinatrarb.com
-[13]: https://github.com/janko-m/sinatra-activerecord
 [14]: https://raw.github.com/airblade/paper_trail/master/lib/generators/paper_trail/templates/create_versions.rb
-[15]: http://www.sinatrarb.com/intro.html#Modular%20vs.%20Classic%20Style
 [16]: https://github.com/airblade/paper_trail/issues/113
 [17]: https://github.com/rails/protected_attributes
 [18]: https://github.com/rails/strong_parameters
@@ -1667,3 +1622,4 @@ Released under the MIT licence.
 [38]: https://github.com/sferik/rails_admin
 [39]: http://api.rubyonrails.org/classes/ActiveRecord/Base.html#class-ActiveRecord::Base-label-Single+table+inheritance
 [40]: http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html#module-ActiveRecord::Associations::ClassMethods-label-Polymorphic+Associations
+[41]: https://github.com/jaredbeck/paper_trail-sinatra

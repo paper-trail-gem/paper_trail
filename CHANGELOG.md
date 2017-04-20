@@ -7,8 +7,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Breaking Changes
 
-- Drop support for ruby 1.9.3, whose EOL was 2015-02-23
-- Drop support for ruby 2.0.0, whose EOL was 2016-02-24
+- None
 
 ### Added
 
@@ -16,8 +15,51 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
+- None
+
+## 7.0.1 (2017-04-10)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- Generate cleaner migrations for databases other than MySQL
+
+### Fixed
+
+- [#949](https://github.com/airblade/paper_trail/issues/949) - Inherit from the
+  new versioned migration class, e.g. `ActiveRecord::Migration[5.1]`
+
+## 7.0.0 (2017-04-01)
+
+### Breaking Changes
+
+- Drop support for ruby 1.9.3, whose EOL was 2015-02-23
+- Drop support for ruby 2.0.0, whose EOL was 2016-02-24
+- Remove deprecated config methods:
+  - PaperTrail.serialized_attributes?
+  - PaperTrail.config.serialized_attributes
+  - PaperTrail.config.serialized_attributes=
+- Sinatra integration moved to
+  [paper_trail-sinatra](https://github.com/jaredbeck/paper_trail-sinatra) gem
+
+### Added
+
+- `PaperTrail.gem_version` returns a `Gem::Version`, nice for comparisons.
+
+### Fixed
+
 - [#925](https://github.com/airblade/paper_trail/pull/925) - Update RSpec
   matchers to work with custom version association names
+- [#929](https://github.com/airblade/paper_trail/pull/929) -
+  Fix error calling private method in rails 4.0
+- [#938](https://github.com/airblade/paper_trail/pull/938) - Fix bug where
+  non-standard foreign key names broke belongs_to associations
+- [#940](https://github.com/airblade/paper_trail/pull/940) - When destroying
+  versions to stay under version_limit, don't rely on the database to
+  implicitly return the versions in the right order
 
 ## 6.0.2 (2016-12-13)
 

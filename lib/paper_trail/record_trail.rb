@@ -474,7 +474,9 @@ module PaperTrail
       if @in_after_callback && RAILS_GTE_5_1
         @record.attribute_before_last_save(attr_name.to_s)
       else
-        @record.attribute_was(attr_name.to_s)
+        # TODO: after dropping support for rails 4.0, remove send, because
+        # attribute_was is no longer private.
+        @record.send(:attribute_was, attr_name.to_s)
       end
     end
 
