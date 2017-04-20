@@ -68,12 +68,12 @@ RSpec.describe PaperTrail do
       expect(described_class).not_to be_enabled
     end
   end
-  
+
   describe ".version" do
     it { expect(described_class).to respond_to(:version) }
     it { expect(described_class.version).to eq(described_class::VERSION::STRING) }
   end
-  
+
   describe ".whodunnit" do
     context "when set globally" do
       before(:all) { PaperTrail.whodunnit = "foobar" }
