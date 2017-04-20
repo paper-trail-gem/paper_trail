@@ -11,7 +11,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
-- None
+- [#932](https://github.com/airblade/paper_trail/pull/932) -
+  `PaperTrail.whodunnit` now accepts a block.
 
 ### Fixed
 

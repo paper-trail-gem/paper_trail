@@ -708,6 +708,14 @@ widget.update_attributes :name => 'Wibble'
 widget.versions.last.whodunnit              # Andy Stewart
 ```
 
+`whodunnit` also accepts a block, a convenient way to temporarily set the value.
+
+```ruby
+PaperTrail.whodunnit("Dorian Marié") do
+  widget.update_attributes :name => 'Wibble'
+end
+```
+
 If your controller has a `current_user` method, PaperTrail provides a
 `before_action` that will assign `current_user.id` to `PaperTrail.whodunnit`.
 You can add this `before_action` to your `ApplicationController`.
