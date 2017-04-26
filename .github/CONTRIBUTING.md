@@ -147,7 +147,7 @@ Don't forget to commit changes to `schema.rb`.
   - Add a new "Unreleased" section
 1. In the readme, update references to version number, including
   - documentation links table
-  - compatability table
+  - compatability table (major versions only)
 1. Commit
 1. git tag -a -m "v5.0.0" "v5.0.0" # or whatever number
 1. git push --tags origin 5-stable # or whatever branch

@@ -11,6 +11,20 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
+- None
+
+### Fixed
+
+- None
+
+## 7.0.2 (2017-04-26)
+
+### Breaking Changes
+
+- None
+
+### Added
+
 - [#932](https://github.com/airblade/paper_trail/pull/932) -
   `PaperTrail.whodunnit` now accepts a block.
 
