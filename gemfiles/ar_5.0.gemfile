@@ -6,4 +6,4 @@ gem "activerecord", "~> 5.0.0"
 gem "rspec-rails", "~> 3.5.1"
 gem "rails-controller-testing"
 
-gemspec :path => "../"
+gemspec path: "../"

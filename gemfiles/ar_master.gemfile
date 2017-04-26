@@ -2,8 +2,8 @@
 
 source "https://rubygems.org"
 
-gem "rails", :github => "rails/rails"
+gem "rails", github: "rails/rails"
 gem "rspec-rails", "~> 3.5.1"
 gem "rails-controller-testing"
 
-gemspec :path => "../"
+gemspec path: "../"
