@@ -1,7 +1,8 @@
 module PaperTrail
   # Represents the "paper trail" for a single record.
   class RecordTrail
-    RAILS_GTE_5_1 = ::ActiveRecord::VERSION::MAJOR >= 5 && ::ActiveRecord::VERSION::MINOR >= 1
+    RAILS_GTE_5_1 = ::ActiveRecord.respond_to?(:gem_version) &&
+      ::ActiveRecord.gem_version >= ::Gem::Version.new("5.1.0.beta1")
 
     def initialize(record)
       @record = record
