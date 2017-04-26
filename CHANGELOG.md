@@ -16,7 +16,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- None
+- [#956](https://github.com/airblade/paper_trail/pull/956) -
+  Fix ActiveRecord >= 5.1 version check 
 
 ## 7.0.1 (2017-04-10)
 
