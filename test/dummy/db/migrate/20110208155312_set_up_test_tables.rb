@@ -1,7 +1,16 @@
-# Keep this migration in sync with
+# Parts of this migration must be kept in sync with
 # `lib/generators/paper_trail/templates/create_versions.rb`
-# TODO: Is there a way to avoid duplication?
-class SetUpTestTables < ActiveRecord::Migration
+#
+# Starting with AR 5.1, we must specify which version of AR we are using.
+# I tried using `const_get` but I got a `NameError`, then I learned about
+# `::ActiveRecord::Migration::Current`.
+class SetUpTestTables < (
+  if ::ActiveRecord::VERSION::MAJOR >= 5
+    ::ActiveRecord::Migration::Current
+  else
+    ::ActiveRecord::Migration
+  end
+)
   MYSQL_ADAPTERS = [
     "ActiveRecord::ConnectionAdapters::MysqlAdapter",
     "ActiveRecord::ConnectionAdapters::Mysql2Adapter"

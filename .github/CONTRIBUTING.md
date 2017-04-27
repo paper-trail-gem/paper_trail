@@ -128,7 +128,7 @@ After editing `test/dummy/db/migrate/20110208155312_set_up_test_tables.rb` ..
 
 ```
 cd test/dummy
-export BUNDLE_GEMFILE=../../gemfiles/ar_5.0.gemfile
+export BUNDLE_GEMFILE=../../gemfiles/ar_5.1.gemfile
 RAILS_ENV=test bundle exec rake db:environment:set db:drop db:create db:migrate
 RAILS_ENV=foo bundle exec rake db:environment:set db:drop db:create db:migrate
 RAILS_ENV=bar bundle exec rake db:environment:set db:drop db:create db:migrate
