@@ -239,7 +239,7 @@ module PaperTrail
     alias version_author terminator
 
     def sibling_versions(reload = false)
-      if reload || @sibling_versions.nil?
+      if reload || !defined?(@sibling_versions) || @sibling_versions.nil?
         @sibling_versions = self.class.with_item_keys(item_type, item_id)
       end
       @sibling_versions

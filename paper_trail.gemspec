@@ -29,9 +29,9 @@ has been destroyed.
   s.add_dependency "request_store", "~> 1.1"
 
   s.add_development_dependency "appraisal", "~> 2.1"
-  s.add_development_dependency "rake", "~> 10.4.2"
-  s.add_development_dependency "shoulda", "~> 3.5.0"
-  s.add_development_dependency "ffaker", "~> 2.1.0"
+  s.add_development_dependency "rake", "~> 12.0"
+  s.add_development_dependency "shoulda", "~> 3.5"
+  s.add_development_dependency "ffaker", "~> 2.5"
 
   # Why `railties`? Possibly used by `test/dummy` boot up?
   s.add_development_dependency "railties", [">= 4.0", "< 5.2"]
