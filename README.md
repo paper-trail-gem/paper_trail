@@ -57,7 +57,7 @@ has been destroyed.
   - [7.c Cucumber](#7c-cucumber)
   - [7.d Spork](#7d-spork)
   - [7.e Zeus or Spring](#7e-zeus-or-spring)
-- [8. Sinatra](#8-sinatra)
+- [8. Integration with Other Libraries](#8-integration-with-other-libraries)
 
 ## 1. Introduction
 
@@ -1505,9 +1505,10 @@ require 'rspec/rails'
 require 'paper_trail/frameworks/rspec'
 ```
 
-## 8. Sinatra
+## 8. Integration with Other Libraries
 
-See [paper_trail-sinatra][41].
+- [ActiveAdmin][42]
+- Sinatra - [paper_trail-sinatra][41]
 
 ## Articles
 
@@ -1631,3 +1632,4 @@ Released under the MIT licence.
 [39]: http://api.rubyonrails.org/classes/ActiveRecord/Base.html#class-ActiveRecord::Base-label-Single+table+inheritance
 [40]: http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html#module-ActiveRecord::Associations::ClassMethods-label-Polymorphic+Associations
 [41]: https://github.com/jaredbeck/paper_trail-sinatra
+[42]: https://github.com/activeadmin/activeadmin/wiki/Auditing-via-paper_trail-%28change-history%29
