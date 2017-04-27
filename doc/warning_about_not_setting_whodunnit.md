@@ -8,7 +8,7 @@ After upgrading to PaperTrail 5, you see this warning:
 
 ## You want to track whodunnit
 
-Add the set_paper_trail_whodunnit before_action to your ApplicationController.
+Add `before_action :set_paper_trail_whodunnit` to your ApplicationController.
 See the PaperTrail readme for an example (https://git.io/vrsbt).
 
 ## You don't want to track whodunnit
@@ -25,8 +25,9 @@ end
 
 ## You just want the warning to go away
 
-To disable this warning for any other reason, use `skip_after_action`.
+Upgrade to PT 6.
 
-```
-skip_after_action :warn_about_not_setting_whodunnit
-```
+## Why does PT no longer add this callback for me?
+
+So that you can control the order of callbacks. Maybe you have another callback
+that must happen first, before `set_paper_trail_whodunnit`.
