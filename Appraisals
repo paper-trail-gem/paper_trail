@@ -21,8 +21,8 @@ appraise "ar-5.0" do
   gem "rails-controller-testing"
 end
 
-appraise "ar_master" do
-  gem "rails", github: "rails/rails"
+appraise "ar-5.1" do
+  gem "rails", "5.1.0.rc2"
   gem "rspec-rails", "~> 3.5.1"
   gem "rails-controller-testing"
 end

@@ -30,11 +30,11 @@ ActiveRecord::Schema.define(version: 20110208155312) do
   end
 
   create_table "banana_versions", force: :cascade do |t|
-    t.string   "item_type",  null: false
-    t.integer  "item_id",    null: false
-    t.string   "event",      null: false
-    t.string   "whodunnit"
-    t.text     "object"
+    t.string "item_type", null: false
+    t.integer "item_id", null: false
+    t.string "event", null: false
+    t.string "whodunnit"
+    t.text "object"
     t.datetime "created_at"
     t.index ["item_type", "item_id"], name: "index_banana_versions_on_item_type_and_item_id"
   end
@@ -60,13 +60,13 @@ ActiveRecord::Schema.define(version: 20110208155312) do
   end
 
   create_table "boolits", force: :cascade do |t|
-    t.string  "name"
+    t.string "name"
     t.boolean "scoped", default: true
   end
 
   create_table "callback_modifiers", force: :cascade do |t|
-    t.string  "some_content"
-    t.boolean "deleted",      default: false
+    t.string "some_content"
+    t.boolean "deleted", default: false
   end
 
   create_table "chapters", force: :cascade do |t|
@@ -78,20 +78,20 @@ ActiveRecord::Schema.define(version: 20110208155312) do
   end
 
   create_table "custom_primary_key_record_versions", force: :cascade do |t|
-    t.string   "item_type",  null: false
-    t.string   "item_id",    null: false
-    t.string   "event",      null: false
-    t.string   "whodunnit"
-    t.text     "object"
+    t.string "item_type", null: false
+    t.string "item_id", null: false
+    t.string "event", null: false
+    t.string "whodunnit"
+    t.text "object"
     t.datetime "created_at"
     t.index ["item_type", "item_id"], name: "idx_cust_pk_item"
   end
 
   create_table "custom_primary_key_records", primary_key: "uuid", id: :string, force: :cascade do |t|
-    t.string   "name"
+    t.string "name"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.index ["uuid"], unique: true
+    t.index ["uuid"], name: "sqlite_autoindex_custom_primary_key_records_1", unique: true
   end
 
   create_table "customers", force: :cascade do |t|
@@ -113,7 +113,7 @@ ActiveRecord::Schema.define(version: 20110208155312) do
 
   create_table "fluxors", force: :cascade do |t|
     t.integer "widget_id"
-    t.string  "name"
+    t.string "name"
   end
 
   create_table "foo_habtms", force: :cascade do |t|
@@ -126,20 +126,20 @@ ActiveRecord::Schema.define(version: 20110208155312) do
   end
 
   create_table "gadgets", force: :cascade do |t|
-    t.string   "name"
-    t.string   "brand"
+    t.string "name"
+    t.string "brand"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "legacy_widgets", force: :cascade do |t|
-    t.string  "name"
+    t.string "name"
     t.integer "version"
   end
 
   create_table "line_items", force: :cascade do |t|
     t.integer "order_id"
-    t.string  "product"
+    t.string "product"
   end
 
   create_table "not_on_updates", force: :cascade do |t|
@@ -165,34 +165,34 @@ ActiveRecord::Schema.define(version: 20110208155312) do
 
   create_table "orders", force: :cascade do |t|
     t.integer "customer_id"
-    t.string  "order_date"
+    t.string "order_date"
   end
 
   create_table "paragraphs", force: :cascade do |t|
     t.integer "section_id"
-    t.string  "name"
+    t.string "name"
   end
 
   create_table "people", force: :cascade do |t|
-    t.string  "name"
-    t.string  "time_zone"
+    t.string "name"
+    t.string "time_zone"
     t.integer "mentor_id"
   end
 
   create_table "post_versions", force: :cascade do |t|
-    t.string   "item_type",  null: false
-    t.integer  "item_id",    null: false
-    t.string   "event",      null: false
-    t.string   "whodunnit"
-    t.text     "object"
+    t.string "item_type", null: false
+    t.integer "item_id", null: false
+    t.string "event", null: false
+    t.string "whodunnit"
+    t.text "object"
     t.datetime "created_at"
-    t.string   "ip"
-    t.string   "user_agent"
+    t.string "ip"
+    t.string "user_agent"
     t.index ["item_type", "item_id"], name: "index_post_versions_on_item_type_and_item_id"
   end
 
   create_table "post_with_statuses", force: :cascade do |t|
-    t.integer  "status"
+    t.integer "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -208,11 +208,11 @@ ActiveRecord::Schema.define(version: 20110208155312) do
 
   create_table "sections", force: :cascade do |t|
     t.integer "chapter_id"
-    t.string  "name"
+    t.string "name"
   end
 
   create_table "skippers", force: :cascade do |t|
-    t.string   "name"
+    t.string "name"
     t.datetime "another_timestamp"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -234,63 +234,63 @@ ActiveRecord::Schema.define(version: 20110208155312) do
   end
 
   create_table "vehicles", force: :cascade do |t|
-    t.string   "name",       null: false
-    t.string   "type",       null: false
+    t.string "name", null: false
+    t.string "type", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "version_associations", force: :cascade do |t|
     t.integer "version_id"
-    t.string  "foreign_key_name", null: false
+    t.string "foreign_key_name", null: false
     t.integer "foreign_key_id"
     t.index ["foreign_key_name", "foreign_key_id"], name: "index_version_associations_on_foreign_key"
     t.index ["version_id"], name: "index_version_associations_on_version_id"
   end
 
   create_table "versions", force: :cascade do |t|
-    t.string   "item_type",                         null: false
-    t.integer  "item_id",                           null: false
-    t.string   "event",                             null: false
-    t.string   "whodunnit"
-    t.text     "object",         limit: 1073741823
-    t.text     "object_changes", limit: 1073741823
-    t.integer  "transaction_id"
+    t.string "item_type", null: false
+    t.integer "item_id", null: false
+    t.string "event", null: false
+    t.string "whodunnit"
+    t.text "object", limit: 1073741823
+    t.text "object_changes", limit: 1073741823
+    t.integer "transaction_id"
     t.datetime "created_at"
-    t.integer  "answer"
-    t.string   "action"
-    t.string   "question"
-    t.integer  "article_id"
-    t.string   "title"
-    t.string   "ip"
-    t.string   "user_agent"
+    t.integer "answer"
+    t.string "action"
+    t.string "question"
+    t.integer "article_id"
+    t.string "title"
+    t.string "ip"
+    t.string "user_agent"
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
   create_table "whatchamajiggers", force: :cascade do |t|
-    t.string  "owner_type"
+    t.string "owner_type"
     t.integer "owner_id"
-    t.string  "name"
+    t.string "name"
   end
 
   create_table "widgets", force: :cascade do |t|
-    t.string   "name"
-    t.text     "a_text"
-    t.integer  "an_integer"
-    t.float    "a_float"
-    t.decimal  "a_decimal",  precision: 6, scale: 4
+    t.string "name"
+    t.text "a_text"
+    t.integer "an_integer"
+    t.float "a_float"
+    t.decimal "a_decimal", precision: 6, scale: 4
     t.datetime "a_datetime"
-    t.time     "a_time"
-    t.date     "a_date"
-    t.boolean  "a_boolean"
-    t.string   "type"
+    t.time "a_time"
+    t.date "a_date"
+    t.boolean "a_boolean"
+    t.string "type"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "wotsits", force: :cascade do |t|
-    t.integer  "widget_id"
-    t.string   "name"
+    t.integer "widget_id"
+    t.string "name"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

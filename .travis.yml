@@ -27,15 +27,15 @@ gemfile:
   - gemfiles/ar_4.0.gemfile
   - gemfiles/ar_4.2.gemfile
   - gemfiles/ar_5.0.gemfile
-  - gemfiles/ar_master.gemfile
+  - gemfiles/ar_5.1.gemfile
 
 matrix:
   fast_finish: true
   exclude:
     - gemfile: gemfiles/ar_5.0.gemfile
       rvm: 2.1.10
-  allow_failures:
-    - gemfile: gemfiles/ar_master.gemfile
+    - gemfile: gemfiles/ar_5.1.gemfile
+      rvm: 2.1.10
 
 addons:
   postgresql: "9.4"
