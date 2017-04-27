@@ -1529,61 +1529,10 @@ Please use GitHub's [issue tracker](http://github.com/airblade/paper_trail/issue
 
 ## Contributors
 
-Many thanks to:
+Created by Andy Stewart in 2010, maintained since 2012 by Ben Atkins, since 2015
+by Jared Beck, with contributions by over 150 people.
 
-* [Dmitry Polushkin](https://github.com/dmitry)
-* [Russell Osborne](https://github.com/rposborne)
-* [Zachery Hostens](http://github.com/zacheryph)
-* [Jeremy Weiskotten](http://github.com/jeremyw)
-* [Phan Le](http://github.com/revo)
-* [jdrucza](http://github.com/jdrucza)
-* [conickal](http://github.com/conickal)
-* [Thibaud Guillaume-Gentil](http://github.com/thibaudgg)
-* Danny Trelogan
-* [Mikl Kurkov](http://github.com/mkurkov)
-* [Franco Catena](https://github.com/francocatena)
-* [Emmanuel Gomez](https://github.com/emmanuel)
-* [Matthew MacLeod](https://github.com/mattmacleod)
-* [benzittlau](https://github.com/benzittlau)
-* [Tom Derks](https://github.com/EgoH)
-* [Jonas Hoglund](https://github.com/jhoglund)
-* [Stefan Huber](https://github.com/MSNexploder)
-* [thinkcast](https://github.com/thinkcast)
-* [Dominik Sander](https://github.com/dsander)
-* [Burke Libbey](https://github.com/burke)
-* [6twenty](https://github.com/6twenty)
-* [nir0](https://github.com/nir0)
-* [Eduard Tsech](https://github.com/edtsech)
-* [Mathieu Arnold](https://github.com/mat813)
-* [Nicholas Thrower](https://github.com/throwern)
-* [Benjamin Curtis](https://github.com/stympy)
-* [Peter Harkins](https://github.com/pushcx)
-* [Mohd Amree](https://github.com/amree)
-* [Nikita Cernovs](https://github.com/nikitachernov)
-* [Jason Noble](https://github.com/jasonnoble)
-* [Jared Mehle](https://github.com/jrmehle)
-* [Eric Schwartz](https://github.com/emschwar)
-* [Ben Woosley](https://github.com/Empact)
-* [Philip Arndt](https://github.com/parndt)
-* [Daniel Vydra](https://github.com/dvydra)
-* [Byron Bowerman](https://github.com/BM5k)
-* [Nicolas Buduroi](https://github.com/budu)
-* [Pikender Sharma](https://github.com/pikender)
-* [Paul Brannan](https://github.com/cout)
-* [Ben Morrall](https://github.com/bmorrall)
-* [Yves Senn](https://github.com/senny)
-* [Ben Atkins](https://github.com/fullbridge-batkins)
-* [Tyler Rick](https://github.com/TylerRick)
-* [Bradley Priest](https://github.com/bradleypriest)
-* [David Butler](https://github.com/dwbutler)
-* [Paul Belt](https://github.com/belt)
-* [Vlad Bokov](https://github.com/razum2um)
-* [Sean Marcia](https://github.com/SeanMarcia)
-* [Chulki Lee](https://github.com/chulkilee)
-* [Lucas Souza](https://github.com/lucasas)
-* [Russell Osborne](https://github.com/rposborne)
-* [Ben Li](https://github.com/bli)
-* [Felix Liu](https://github.com/lyfeyaj)
+https://github.com/airblade/paper_trail/graphs/contributors
 
 ## Inspirations
 
