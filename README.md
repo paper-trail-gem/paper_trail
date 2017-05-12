@@ -327,13 +327,13 @@ class Article < ActiveRecord::Base
   has_paper_trail :on => []
 
   # Add callbacks in the order you need.
-  paper_trail.on_destroy    # add destroy callback
-  paper_trail.on_update     # etc.
-  paper_trail.on_create
+  paper_trail_on_destroy    # add destroy callback
+  paper_trail_on_update     # etc.
+  paper_trail_on_create
 end
 ```
 
-The `paper_trail.on_destroy` method can be further configured to happen
+The `paper_trail_on_destroy` method can be further configured to happen
 `:before` or `:after` the destroy event. In PaperTrail 4, the default is
 `:after`. In PaperTrail 5, the default will be `:before`, to support
 ActiveRecord 5. (see https://github.com/airblade/paper_trail/pull/683)
