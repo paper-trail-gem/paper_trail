@@ -88,7 +88,7 @@ has been destroyed.
     ```
 
     If using [rails_admin][38], you must enable the experimental
-    [Associations](#associations) feature. For more information on this
+    [Associations](#4b-associations) feature. For more information on this
     generator, see [section 5.c. Generators](#5c-generators).
 
 1. Add `has_paper_trail` to the models you want to track.
