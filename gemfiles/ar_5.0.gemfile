@@ -2,8 +2,7 @@
 
 source "https://rubygems.org"
 
-gem "activerecord", "~> 5.0.0"
-gem "rspec-rails", "~> 3.5.1"
+gem "activerecord", "~> 5.0.3"
 gem "rails-controller-testing"
 
 gemspec path: "../"
