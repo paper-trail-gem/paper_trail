@@ -40,7 +40,7 @@ has been destroyed.
   s.add_development_dependency "rspec-rails", "~> 3.5"
   s.add_development_dependency "generator_spec", "~> 0.9.3"
   s.add_development_dependency "database_cleaner", "~> 1.2"
-  s.add_development_dependency "pry-nav", "~> 0.2.4"
+  s.add_development_dependency "pry-byebug", "~> 3.4"
   s.add_development_dependency "rubocop", "0.48.0"
   s.add_development_dependency "rubocop-rspec", "~> 1.15.0"
   s.add_development_dependency "timecop", "~> 0.8.0"

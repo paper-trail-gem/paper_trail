@@ -1,4 +1,4 @@
-require "pry-nav"
+require "pry"
 
 ENV["RAILS_ENV"] = "test"
 ENV["DB"] ||= "sqlite"
