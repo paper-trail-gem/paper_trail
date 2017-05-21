@@ -14,6 +14,11 @@ Rake::TestTask.new(:test) do |t|
   t.libs << "test"
   t.pattern = "test/**/*_test.rb"
   t.verbose = false
+
+  # Enabling ruby interpreter warnings (-w) is, sadly, impractical. There are
+  # too many noisy warnings that we have no control over, e.g. caused by libs we
+  # depend on.
+  t.warning = false
 end
 
 require "rspec/core/rake_task"
