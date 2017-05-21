@@ -50,7 +50,7 @@ RSpec.describe PaperTrail::InstallGenerator, type: :generator do
   describe "`--with-changes` option set to `true`" do
     before(:all) do
       prepare_destination
-      run_generator %w(--with-changes)
+      run_generator %w[--with-changes]
     end
 
     it "generates a migration for creating the 'versions' table" do

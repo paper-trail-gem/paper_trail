@@ -32,4 +32,4 @@ require "rubocop/rake_task"
 RuboCop::RakeTask.new
 
 desc "Default: run all available test suites"
-task default: %i(rubocop prepare test spec)
+task default: %i[rubocop prepare test spec]

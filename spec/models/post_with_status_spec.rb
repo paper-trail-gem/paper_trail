@@ -17,7 +17,7 @@ RSpec.describe PostWithStatus, type: :model do
       # Simulate behavior PT 4, which used to save the string version of
       # enums to `object_changes`
       version.update(object_changes: "---\nid:\n- \n- 1\nstatus:\n- draft\n- published\n")
-      assert_equal %w(draft published), version.changeset["status"]
+      assert_equal %w[draft published], version.changeset["status"]
     end
 
     context "storing enum object_changes" do
@@ -26,7 +26,7 @@ RSpec.describe PostWithStatus, type: :model do
       it "saves the enum value properly in versions object_changes" do
         post.published!
         post.archived!
-        expect(subject.changeset["status"]).to eql %w(published archived)
+        expect(subject.changeset["status"]).to eql %w[published archived]
       end
     end
 

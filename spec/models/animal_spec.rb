@@ -28,11 +28,11 @@ RSpec.describe Animal, type: :model, versioning: true do
     dog_versions = PaperTrail::Version.where(item_id: dog.id).order(:created_at)
     expect(dog_versions.count).to(eq(4))
     expect(dog_versions.first.reify).to(be_nil)
-    expect(dog_versions.map { |v| v.reify.class.name }).to eq(%w(NilClass Dog Dog Dog))
+    expect(dog_versions.map { |v| v.reify.class.name }).to eq(%w[NilClass Dog Dog Dog])
     cat_versions = PaperTrail::Version.where(item_id: cat.id).order(:created_at)
     expect(cat_versions.count).to(eq(4))
     expect(cat_versions.first.reify).to(be_nil)
-    expect(cat_versions.map { |v| v.reify.class.name }).to eq(%w(NilClass Cat Cat Cat))
+    expect(cat_versions.map { |v| v.reify.class.name }).to eq(%w[NilClass Cat Cat Cat])
   end
 
   it "allows the inheritance_column (species) to be updated" do
@@ -49,7 +49,7 @@ RSpec.describe Animal, type: :model, versioning: true do
       it "trails all events" do
         callback_cat.update_attributes(name: "Billie")
         callback_cat.destroy
-        expect(callback_cat.versions.collect(&:event)).to eq %w(create update destroy)
+        expect(callback_cat.versions.collect(&:event)).to eq %w[create update destroy]
       end
 
       it "does not break reify" do

@@ -31,7 +31,7 @@ if JsonVersion.table_exists?
           end
 
           context "valid arguments", versioning: true do
-            let(:fruit_names) { %w(apple orange lemon banana lime coconut strawberry blueberry) }
+            let(:fruit_names) { %w[apple orange lemon banana lime coconut strawberry blueberry] }
             let(:fruit) { Fruit.new }
             let(:name) { "pomegranate" }
             let(:color) { FFaker::Color.name }
@@ -70,9 +70,9 @@ if JsonVersion.table_exists?
           end
 
           context "valid arguments", versioning: true do
-            let(:color) { %w(red green) }
+            let(:color) { %w[red green] }
             let(:fruit) { Fruit.create!(name: name[0]) }
-            let(:name) { %w(banana kiwi mango) }
+            let(:name) { %w[banana kiwi mango] }
 
             before do
               fruit.update_attributes!(name: name[1], color: color[0])

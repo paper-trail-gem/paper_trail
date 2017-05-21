@@ -105,7 +105,7 @@ module PaperTrail
           before do
             if override
               ActiveRecord::Base.connection.execute("SAVEPOINT pgtest;")
-              %w(object object_changes).each do |column|
+              %w[object object_changes].each do |column|
                 ActiveRecord::Base.connection.execute(
                   "ALTER TABLE versions DROP COLUMN #{column};"
                 )

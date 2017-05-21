@@ -82,7 +82,7 @@ class SetUpTestTables < (
       t.string :ip
       t.string :user_agent
     end
-    add_index :versions, %i(item_type item_id)
+    add_index :versions, %i[item_type item_id]
 
     create_table :version_associations do |t|
       t.integer  :version_id
@@ -91,7 +91,7 @@ class SetUpTestTables < (
     end
     add_index :version_associations, [:version_id]
     add_index :version_associations,
-      %i(foreign_key_name foreign_key_id),
+      %i[foreign_key_name foreign_key_id],
       name: "index_version_associations_on_foreign_key"
 
     create_table :post_versions, force: true do |t|
@@ -106,7 +106,7 @@ class SetUpTestTables < (
       t.string :ip
       t.string :user_agent
     end
-    add_index :post_versions, %i(item_type item_id)
+    add_index :post_versions, %i[item_type item_id]
 
     if ENV["DB"] == "postgres" && ::ActiveRecord::VERSION::MAJOR >= 4
       create_table :json_versions, force: true do |t|
@@ -118,7 +118,7 @@ class SetUpTestTables < (
         t.json     :object_changes
         t.datetime :created_at
       end
-      add_index :json_versions, %i(item_type item_id)
+      add_index :json_versions, %i[item_type item_id]
     end
 
     create_table :not_on_updates, force: true do |t|
@@ -137,7 +137,7 @@ class SetUpTestTables < (
       t.text     :object
       t.datetime :created_at
     end
-    add_index :banana_versions, %i(item_type item_id)
+    add_index :banana_versions, %i[item_type item_id]
 
     create_table :wotsits, force: true do |t|
       t.integer :widget_id
@@ -314,7 +314,7 @@ class SetUpTestTables < (
       t.text     :object
       t.datetime :created_at
     end
-    add_index :custom_primary_key_record_versions, %i(item_type item_id), name: "idx_cust_pk_item"
+    add_index :custom_primary_key_record_versions, %i[item_type item_id], name: "idx_cust_pk_item"
   end
 
   def down
