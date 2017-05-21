@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe NotOnUpdate, type: :model do
+RSpec.describe NotOnUpdate, type: :model do
   describe "#touch_with_version", versioning: true do
     let!(:record) { described_class.create! }
 

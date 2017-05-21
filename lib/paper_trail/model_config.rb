@@ -40,7 +40,7 @@ module PaperTrail
 
     # Adds a callback that records a version before or after a "destroy" event.
     def on_destroy(recording_order = "before")
-      unless %w(after before).include?(recording_order.to_s)
+      unless %w[after before].include?(recording_order.to_s)
         raise ArgumentError, 'recording order can only be "after" or "before"'
       end
 
@@ -76,7 +76,7 @@ module PaperTrail
     # "class attributes", instance methods, and more.
     # @api private
     def setup(options = {})
-      options[:on] ||= %i(create update destroy)
+      options[:on] ||= %i[create update destroy]
       options[:on] = Array(options[:on]) # Support single symbol
       @model_class.send :include, ::PaperTrail::Model::InstanceMethods
       if ::ActiveRecord::VERSION::STRING < "4.2"
@@ -153,7 +153,7 @@ module PaperTrail
 
     def setup_habtm_change_callbacks(assoc)
       assoc_name = assoc.name
-      %w(add remove).each do |verb|
+      %w[add remove].each do |verb|
         @model_class.send(:"before_#{verb}_for_#{assoc_name}").send(
           :<<,
           lambda do |*args|
@@ -167,7 +167,7 @@ module PaperTrail
       @model_class.class_attribute :paper_trail_options
       @model_class.paper_trail_options = options.dup
 
-      %i(ignore skip only).each do |k|
+      %i[ignore skip only].each do |k|
         @model_class.paper_trail_options[k] = [@model_class.paper_trail_options[k]].
           flatten.
           compact.

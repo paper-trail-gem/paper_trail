@@ -24,7 +24,7 @@ module PaperTrail
 
       validates_presence_of :event
       after_create :enforce_version_limit!
-      scope :within_transaction, ->(id) { where transaction_id: id }
+      scope(:within_transaction, ->(id) { where transaction_id: id })
     end
 
     # :nodoc:
@@ -162,13 +162,13 @@ module PaperTrail
       # Returns whether the `object` column is using the `json` type supported
       # by PostgreSQL.
       def object_col_is_json?
-        %i(json jsonb).include?(columns_hash["object"].type)
+        %i[json jsonb].include?(columns_hash["object"].type)
       end
 
       # Returns whether the `object_changes` column is using the `json` type
       # supported by PostgreSQL.
       def object_changes_col_is_json?
-        %i(json jsonb).include?(columns_hash["object_changes"].try(:type))
+        %i[json jsonb].include?(columns_hash["object_changes"].try(:type))
       end
     end
 

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Thing, type: :model do
+RSpec.describe Thing, type: :model do
   it { is_expected.to be_versioned }
 
   describe "does not store object_changes", versioning: true do

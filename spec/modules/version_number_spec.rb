@@ -1,7 +1,7 @@
 require "spec_helper"
 
 module PaperTrail
-  RSpec.describe VERSION do
+  ::RSpec.describe VERSION do
     describe "STRING" do
       it "joins the numbers into a period separated string" do
         expect(described_class::STRING).to eq(

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Document, type: :model do
+RSpec.describe Document, type: :model do
   describe "`have_a_version_with` matcher", versioning: true do
     it "works with custom versions association" do
       document = Document.create!(name: "Foo")

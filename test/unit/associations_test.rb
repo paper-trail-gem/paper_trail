@@ -295,7 +295,7 @@ class AssociationsTest < ActiveSupport::TestCase
           end
 
           should "not persist changes to the live association" do
-            assert_equal %w(order_date_0 order_date_1),
+            assert_equal %w[order_date_0 order_date_1],
               @customer.orders.reload.map(&:order_date).sort
           end
         end
@@ -501,7 +501,7 @@ class AssociationsTest < ActiveSupport::TestCase
             end
 
             should "not persist changes to the live association" do
-              assert_equal %w(author_0 author_1), @book.authors.reload.map(&:name)
+              assert_equal %w[author_0 author_1], @book.authors.reload.map(&:name)
             end
           end
 
@@ -542,7 +542,7 @@ class AssociationsTest < ActiveSupport::TestCase
             end
 
             should "not persist changes to the live association" do
-              assert_equal %w(author_0 person_existing), @book.authors.reload.map(&:name).sort
+              assert_equal %w[author_0 person_existing], @book.authors.reload.map(&:name).sort
             end
           end
 

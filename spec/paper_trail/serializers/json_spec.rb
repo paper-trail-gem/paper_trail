@@ -2,7 +2,7 @@ require "rails_helper"
 
 module PaperTrail
   module Serializers
-    RSpec.describe JSON do
+    ::RSpec.describe JSON do
       let(:word_hash) {
         (1..4).each_with_object({}) { |i, a| a["key#{i}"] = ::FFaker::Lorem.word }
       }

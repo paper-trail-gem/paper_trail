@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Widget, type: :model do
+RSpec.describe Widget, type: :model do
   describe "`be_versioned` matcher" do
     it { is_expected.to be_versioned }
   end
@@ -317,6 +317,10 @@ describe Widget, type: :model do
       Widget.paper_trail.disable
       expect(Widget.paper_trail.enabled?).to eq(false)
     end
+
+    after do
+      Widget.paper_trail.enable
+    end
   end
 
   describe ".enable" do
@@ -325,6 +329,10 @@ describe Widget, type: :model do
       expect(Widget.paper_trail.enabled?).to eq(false)
       Widget.paper_trail.enable
       expect(Widget.paper_trail.enabled?).to eq(true)
+    end
+
+    after do
+      Widget.paper_trail.enable
     end
   end
 end

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Gadget, type: :model do
+RSpec.describe Gadget, type: :model do
   it { is_expected.to be_versioned }
 
   let(:gadget) { Gadget.create!(name: "Wrench", brand: "Acme") }

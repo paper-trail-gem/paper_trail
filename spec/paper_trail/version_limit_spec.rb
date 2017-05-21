@@ -1,7 +1,7 @@
 require "rails_helper"
 
 module PaperTrail
-  RSpec.describe Cleaner, versioning: true do
+  ::RSpec.describe Cleaner, versioning: true do
     after do
       PaperTrail.config.version_limit = nil
     end

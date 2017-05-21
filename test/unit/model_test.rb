@@ -328,16 +328,16 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
           actual = PaperTrail.serializer.load(last_obj_changes).reject { |k, _v|
             k.to_sym == :updated_at
           }
-          assert_equal ({ "name" => %w(Henry Harry) }), actual
+          assert_equal ({ "name" => %w[Henry Harry] }), actual
           actual = @widget.versions.last.changeset.reject { |k, _v|
             k.to_sym == :updated_at
           }
-          assert_equal ({ "name" => %w(Henry Harry) }), actual
+          assert_equal ({ "name" => %w[Henry Harry] }), actual
         end
 
         should "return changes with indifferent access" do
-          assert_equal %w(Henry Harry), @widget.versions.last.changeset[:name]
-          assert_equal %w(Henry Harry), @widget.versions.last.changeset["name"]
+          assert_equal %w[Henry Harry], @widget.versions.last.changeset[:name]
+          assert_equal %w[Henry Harry], @widget.versions.last.changeset["name"]
         end
 
         context "and has one associated object" do
@@ -798,9 +798,9 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
       should "return versions in the time period" do
         assert_equal ["Fidget"],
           @widget.paper_trail.versions_between(20.days.ago, 10.days.ago).map(&:name)
-        assert_equal %w(Widget Fidget),
+        assert_equal %w[Widget Fidget],
           @widget.paper_trail.versions_between(45.days.ago, 10.days.ago).map(&:name)
-        assert_equal %w(Fidget Digit Digit),
+        assert_equal %w[Fidget Digit Digit],
           @widget.paper_trail.versions_between(16.days.ago, 1.minute.ago).map(&:name)
         assert_equal [],
           @widget.paper_trail.versions_between(60.days.ago, 45.days.ago).map(&:name)
@@ -916,7 +916,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
   context "A reified item" do
     setup do
       widget = Widget.create name: "Bob"
-      %w(Tom Dick Jane).each { |name| widget.update_attributes name: name }
+      %w[Tom Dick Jane].each { |name| widget.update_attributes name: name }
       @version = widget.versions.last
       @widget = @version.reify
     end
@@ -945,7 +945,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
     context "with versions" do
       setup do
         @widget.save
-        %w(Tom Dick Jane).each { |name| @widget.update_attributes name: name }
+        %w[Tom Dick Jane].each { |name| @widget.update_attributes name: name }
       end
 
       should "have a previous version" do
@@ -962,7 +962,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
   context "A reified item" do
     setup do
       @widget = Widget.create name: "Bob"
-      %w(Tom Dick Jane).each { |name| @widget.update_attributes name: name }
+      %w[Tom Dick Jane].each { |name| @widget.update_attributes name: name }
       @second_widget = @widget.versions[1].reify # first widget is `nil`
       @last_widget = @widget.versions.last.reify
     end
@@ -1347,7 +1347,7 @@ class HasPaperTrailModelTest < ActiveSupport::TestCase
   context "A reified item with a column -version- and custom version_method" do
     setup do
       widget = LegacyWidget.create(name: "foo", version: 2)
-      %w(bar baz).each { |name| widget.update_attributes name: name }
+      %w[bar baz].each { |name| widget.update_attributes name: name }
       @version = widget.versions.last
       @widget = @version.reify
     end

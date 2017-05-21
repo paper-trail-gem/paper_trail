@@ -1,7 +1,7 @@
 require "rails_helper"
 
 module PaperTrail
-  describe Version, type: :model do
+  ::RSpec.describe Version, type: :model do
     describe "object_changes column", versioning: true do
       let(:widget) { Widget.create!(name: "Dashboard") }
       let(:value) { widget.versions.last.object_changes }
@@ -105,7 +105,7 @@ module PaperTrail
           before do
             if override
               ActiveRecord::Base.connection.execute("SAVEPOINT pgtest;")
-              %w(object object_changes).each do |column|
+              %w[object object_changes].each do |column|
                 ActiveRecord::Base.connection.execute(
                   "ALTER TABLE versions DROP COLUMN #{column};"
                 )
