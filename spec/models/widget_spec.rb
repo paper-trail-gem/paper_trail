@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Widget, type: :model do
+RSpec.describe Widget, type: :model do
   describe "`be_versioned` matcher" do
     it { is_expected.to be_versioned }
   end

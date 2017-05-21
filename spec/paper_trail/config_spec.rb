@@ -1,7 +1,7 @@
 require "rails_helper"
 
 module PaperTrail
-  RSpec.describe Config do
+  ::RSpec.describe Config do
     describe ".instance" do
       it "returns the singleton instance" do
         expect { described_class.instance }.not_to raise_error

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Car, type: :model do
+RSpec.describe Car, type: :model do
   it { is_expected.to be_versioned }
 
   describe "changeset", versioning: true do

@@ -1,7 +1,7 @@
 require "rails_helper"
 
 module PaperTrail
-  describe Version, type: :model do
+  ::RSpec.describe Version, type: :model do
     describe "object_changes column", versioning: true do
       let(:widget) { Widget.create!(name: "Dashboard") }
       let(:value) { widget.versions.last.object_changes }

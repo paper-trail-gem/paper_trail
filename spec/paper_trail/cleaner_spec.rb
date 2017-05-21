@@ -1,7 +1,7 @@
 require "rails_helper"
 
 module PaperTrail
-  RSpec.describe Cleaner, versioning: true do
+  ::RSpec.describe Cleaner, versioning: true do
     describe "clean_versions!" do
       let(:animal) { ::Animal.new }
       let(:dog) { ::Dog.new }

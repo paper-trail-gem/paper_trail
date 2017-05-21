@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe CustomPrimaryKeyRecord, type: :model do
+RSpec.describe CustomPrimaryKeyRecord, type: :model do
   it { is_expected.to be_versioned }
 
   describe "#versions" do

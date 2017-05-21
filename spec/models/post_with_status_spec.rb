@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe PostWithStatus, type: :model do
+RSpec.describe PostWithStatus, type: :model do
   with_versioning do
     let(:post) { described_class.create!(status: "draft") }
 

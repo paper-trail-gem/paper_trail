@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Animal, type: :model, versioning: true do
+RSpec.describe Animal, type: :model, versioning: true do
   it "baseline test setup" do
     expect(Animal.new).to be_versioned
     expect(Animal.inheritance_column).to eq("species")

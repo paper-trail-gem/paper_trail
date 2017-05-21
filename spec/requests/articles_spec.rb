@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe "Articles management", type: :request, order: :defined do
+RSpec.describe "Articles management", type: :request, order: :defined do
   let(:valid_params) { { article: { title: "Doh", content: FFaker::Lorem.sentence } } }
 
   context "versioning disabled" do

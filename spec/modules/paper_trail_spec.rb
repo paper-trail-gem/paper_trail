@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe PaperTrail, type: :module, versioning: true do
+RSpec.describe PaperTrail, type: :module, versioning: true do
   describe "#config" do
     it { is_expected.to respond_to(:config) }
 
