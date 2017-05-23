@@ -179,6 +179,12 @@ module PaperTrail
       else
         PaperTrail.serializer.load(object)
       end
+
+      # Returns ActiveRecord::Relation [] of recent versions
+      def recent_history(num_versions = 10)
+        raise ArgumentError, 'expected to receive a Fixnum' unless num_versions.is_a?(Fixnum)
+        order(self.timestamp_sort_order('desc')).limit(num_versions)
+      end
     end
 
     # Restore the item from this version.

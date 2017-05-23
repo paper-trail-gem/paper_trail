@@ -252,6 +252,26 @@ module PaperTrail
           end
         end
       end
+
+      describe '#recent_history' do
+        context "invalid arguments" do
+          it "should raise an error" do
+            expect { PaperTrail::Version.recent_history(:foo) }.to raise_error(ArgumentError)
+          end
+        end
+
+        context "valid arguments", :versioning => true do
+          let(:widget) { Widget.new }
+
+          before do
+            3.times { widget.update_attributes!(:name => "a#{widget.name}") }
+          end
+
+          it "orders the recent history" do
+            expect(PaperTrail::Version.recent_history(1).first.object_changes).to include('aaa')
+          end
+        end
+      end
     end
   end
 end
