@@ -20,15 +20,18 @@ Test::Unit.run = true if defined?(Test::Unit) && Test::Unit.respond_to?(:run=)
 # If you are not using ActiveRecord, you can remove this line.
 ActiveRecord::Migration.check_pending! if ActiveRecord::Migration.respond_to?(:check_pending!)
 
+require "database_cleaner"
+DatabaseCleaner.strategy = :truncation
+
 RSpec.configure do |config|
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
+  config.use_transactional_fixtures = active_record_gem_version >= ::Gem::Version.new("5")
 
-  # If you're not using ActiveRecord, or you'd prefer not to run each of your
-  # examples within a transaction, remove the following line or assign false
-  # instead of true.
-  config.use_transactional_fixtures = true
-
-  # The different available types are documented in the features, such as in
-  # https://relishapp.com/rspec/rspec-rails/docs
-  # config.infer_spec_type_from_file_location!
+  # In rails < 5, some tests seem to require DatabaseCleaner-truncation.
+  # Truncation is about three times slower than transaction rollback, so it'll
+  # be nice when we can drop support for rails < 5.
+  if active_record_gem_version < ::Gem::Version.new("5")
+    config.before(:each) { DatabaseCleaner.start }
+    config.after(:each) { DatabaseCleaner.clean }
+  end
 end
