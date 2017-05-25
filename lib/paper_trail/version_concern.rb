@@ -309,13 +309,18 @@ module PaperTrail
     # Enforces the `version_limit`, if set. Default: no limit.
     # @api private
     def enforce_version_limit!
-      limit = PaperTrail.config.version_limit
+      limit = paper_trail_options[:version_limit] || PaperTrail.config.version_limit
       return unless limit.is_a? Numeric
       previous_versions = sibling_versions.not_creates.
         order(self.class.timestamp_sort_order("asc"))
       return unless previous_versions.size > limit
       excess_versions = previous_versions - previous_versions.last(limit)
       excess_versions.map(&:destroy)
+    end
+
+    # @api private
+    def paper_trail_options
+      item ? item.paper_trail_options : {}
     end
   end
 end
