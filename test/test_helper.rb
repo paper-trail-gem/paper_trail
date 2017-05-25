@@ -53,38 +53,6 @@ module ActiveSupport
       DatabaseCleaner.clean if using_mysql?
       Thread.current[:paper_trail] = nil
     end
-
-    private
-
-    def assert_attributes_equal(expected, actual)
-      if using_mysql?
-        expected = expected.dup
-        actual = actual.dup
-
-        # Adjust timestamps for missing fractional seconds precision.
-        %w[created_at updated_at].each do |timestamp|
-          expected[timestamp] = expected[timestamp].change(usec: 0)
-          actual[timestamp] = actual[timestamp].change(usec: 0)
-        end
-      end
-
-      assert_equal expected, actual
-    end
-
-    def assert_changes_equal(expected, actual)
-      if using_mysql?
-        expected = expected.dup
-        actual = actual.dup
-
-        # Adjust timestamps for missing fractional seconds precision.
-        %w[created_at updated_at].each do |timestamp|
-          expected[timestamp][1] = expected[timestamp][1].change(usec: 0)
-          actual[timestamp][1] = actual[timestamp][1].change(usec: 0)
-        end
-      end
-
-      assert_equal expected, actual
-    end
   end
 end
 

@@ -31,7 +31,9 @@ module PaperTrail
         animal = Animal.create
         animal.update_attributes(name: "Animal")
         animal.destroy
-        expect(described_class.not_creates.pluck(:event)).to eq(%w[update destroy])
+        expect(
+          described_class.not_creates.pluck(:event)
+        ).to match_array(%w[update destroy])
       end
     end
 
