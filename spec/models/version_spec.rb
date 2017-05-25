@@ -93,6 +93,10 @@ module PaperTrail
     end
 
     describe "Methods" do
+      # TODO: Changing the data type of these database columns in the middle
+      # of the test suite adds a fair amount of complication. Is there a better
+      # way? We already have a `json_versions` table in our tests, maybe we
+      # could use that and add a `jsonb_versions` table?
       column_overrides = [false]
       if ENV["DB"] == "postgres" && ::ActiveRecord::VERSION::MAJOR >= 4
         column_overrides << "json"
@@ -104,7 +108,11 @@ module PaperTrail
         context "with a #{override || 'text'} column" do
           before do
             if override
-              ActiveRecord::Base.connection.execute("SAVEPOINT pgtest;")
+              # In rails < 5, we use truncation, ie. there is no transaction
+              # around the tests, so we can't use a savepoint.
+              if active_record_gem_version >= ::Gem::Version.new("5")
+                ActiveRecord::Base.connection.execute("SAVEPOINT pgtest;")
+              end
               %w[object object_changes].each do |column|
                 ActiveRecord::Base.connection.execute(
                   "ALTER TABLE versions DROP COLUMN #{column};"
@@ -119,7 +127,20 @@ module PaperTrail
 
           after do
             if override
-              ActiveRecord::Base.connection.execute("ROLLBACK TO SAVEPOINT pgtest;")
+              # In rails < 5, we use truncation, ie. there is no transaction
+              # around the tests, so we can't use a savepoint.
+              if active_record_gem_version >= ::Gem::Version.new("5")
+                ActiveRecord::Base.connection.execute("ROLLBACK TO SAVEPOINT pgtest;")
+              else
+                %w[object object_changes].each do |column|
+                  ActiveRecord::Base.connection.execute(
+                    "ALTER TABLE versions DROP COLUMN #{column};"
+                  )
+                  ActiveRecord::Base.connection.execute(
+                    "ALTER TABLE versions ADD COLUMN #{column} text;"
+                  )
+                end
+              end
               PaperTrail::Version.reset_column_information
             end
           end

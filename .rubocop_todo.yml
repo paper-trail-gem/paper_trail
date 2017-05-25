@@ -21,11 +21,19 @@ RSpec/BeforeAfterAll:
 RSpec/FilePath:
   Enabled: false
 
+RSpec/InstanceVariable:
+  Exclude:
+    - spec/paper_trail/associations_spec.rb
+
 RSpec/MessageSpies:
   Enabled: false
 
 RSpec/NamedSubject:
   Enabled: false
+
+RSpec/NestedGroups:
+  Exclude:
+    - spec/paper_trail/associations_spec.rb
 
 Security/YAMLLoad:
   Enabled: false
