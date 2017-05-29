@@ -145,7 +145,7 @@ widget.name                                 # 'Doobly'
 # Add has_paper_trail to Widget model.
 
 widget.versions                             # []
-widget.update_attributes :name => 'Wotsit'
+widget.update_attributes name: 'Wotsit'
 widget.versions.last.reify.name             # 'Doobly'
 widget.versions.last.event                  # 'update'
 ```
@@ -286,7 +286,7 @@ ignore `create` events:
 
 ```ruby
 class Article < ActiveRecord::Base
-  has_paper_trail :on => [:update, :destroy]
+  has_paper_trail on: [:update, :destroy]
 end
 ```
 
@@ -305,11 +305,11 @@ a = Article.create
 a.versions.size                           # 1
 a.versions.last.event                     # 'create'
 a.paper_trail_event = 'update title'
-a.update_attributes :title => 'My Title'
+a.update_attributes title: 'My Title'
 a.versions.size                           # 2
 a.versions.last.event                     # 'update title'
 a.paper_trail_event = nil
-a.update_attributes :title => "Alternate"
+a.update_attributes title: 'Alternate'
 a.versions.size                           # 3
 a.versions.last.event                     # 'update'
 ```
@@ -324,7 +324,7 @@ class Article < ActiveRecord::Base
 
   # Include PaperTrail, but do not add any callbacks yet. Passing the
   # empty array to `:on` omits callbacks.
-  has_paper_trail :on => []
+  has_paper_trail on: []
 
   # Add callbacks in the order you need.
   paper_trail.on_destroy    # add destroy callback
@@ -346,8 +346,8 @@ translations:
 
 ```ruby
 class Translation < ActiveRecord::Base
-  has_paper_trail :if     => Proc.new { |t| t.language_code == 'US' },
-                  :unless => Proc.new { |t| t.type == 'DRAFT'       }
+  has_paper_trail if:     Proc.new { |t| t.language_code == 'US' },
+                  unless: Proc.new { |t| t.type == 'DRAFT'       }
 end
 ```
 
@@ -444,7 +444,7 @@ persisted.
 
 ```ruby
 class Article < ActiveRecord::Base
-  has_paper_trail :skip => [:file_upload]
+  has_paper_trail skip: [:file_upload]
 end
 ```
 
@@ -501,7 +501,7 @@ Or a block:
 
 ```ruby
 @widget.paper_trail.without_versioning do
-  @widget.update_attributes :name => 'Ford'
+  @widget.update_attributes name: 'Ford'
 end
 ```
 
@@ -528,7 +528,7 @@ PaperTrail makes reverting to a previous version easy:
 
 ```ruby
 widget = Widget.find 42
-widget.update_attributes :name => 'Blah blah'
+widget.update_attributes name: 'Blah blah'
 # Time passes....
 widget = widget.paper_trail.previous_version  # the widget as it was before the update
 widget.save                                   # reverted
@@ -613,7 +613,7 @@ And you can perform `WHERE` queries for object versions based on attributes:
 
 ```ruby
 # All versions that meet these criteria.
-PaperTrail::Version.where_object(content: "Hello", title: "Article")
+PaperTrail::Version.where_object(content: 'Hello', title: 'Article')
 ```
 
 ### 3.c. Diffing Versions
@@ -629,7 +629,7 @@ attributes PaperTrail is ignoring) in each `update` version.  You can use the
 `version.changeset` method to retrieve it.  For example:
 
 ```ruby
-widget = Widget.create :name => 'Bob'
+widget = Widget.create name: 'Bob'
 widget.versions.last.changeset
 # {
 #   "name"=>[nil, "Bob"],
@@ -637,7 +637,7 @@ widget.versions.last.changeset
 #   "updated_at"=>[nil, 2015-08-10 04:10:40 UTC],
 #   "id"=>[nil, 1]
 # }
-widget.update_attributes :name => 'Robert'
+widget.update_attributes name: 'Robert'
 widget.versions.last.changeset
 # {
 #   "name"=>["Bob", "Robert"],
@@ -678,7 +678,7 @@ For diffing two ActiveRecord objects:
   to specify which columns to compare.
 
 If you want to selectively record changes for some models but not others you
-can opt out of recording changes by passing `:save_changes => false` to your
+can opt out of recording changes by passing `save_changes: false` to your
 `has_paper_trail` method declaration.
 
 ### 3.d. Deleting Old Versions
@@ -692,7 +692,7 @@ sql> delete from versions where created_at < 2010-06-01;
 ```
 
 ```ruby
-PaperTrail::Version.delete_all ["created_at < ?", 1.week.ago]
+PaperTrail::Version.delete_all ['created_at < ?', 1.week.ago]
 ```
 
 ## 4. Saving More Information About Versions
@@ -704,15 +704,15 @@ Set `PaperTrail.whodunnit=`, and that value will be stored in the version's
 
 ```ruby
 PaperTrail.whodunnit = 'Andy Stewart'
-widget.update_attributes :name => 'Wibble'
+widget.update_attributes name: 'Wibble'
 widget.versions.last.whodunnit              # Andy Stewart
 ```
 
 `whodunnit` also accepts a block, a convenient way to temporarily set the value.
 
 ```ruby
-PaperTrail.whodunnit("Dorian Marié") do
-  widget.update_attributes :name => 'Wibble'
+PaperTrail.whodunnit('Dorian Marié') do
+  widget.update_attributes name: 'Wibble'
 end
 ```
 
@@ -747,10 +747,10 @@ the `whodunnit` value for an operation inside a block like this:
 ```ruby
 PaperTrail.whodunnit = 'Andy Stewart'
 widget.paper_trail.whodunnit('Lucas Souza') do
-  widget.update_attributes :name => 'Wibble'
+  widget.update_attributes name: 'Wibble'
 end
 widget.versions.last.whodunnit              # Lucas Souza
-widget.update_attributes :name => 'Clair'
+widget.update_attributes name: 'Clair'
 widget.versions.last.whodunnit              # Andy Stewart
 ```
 
@@ -767,10 +767,10 @@ like it does, call `paper_trail_originator` on the object.
 ```ruby
 widget = Widget.find 153                    # assume widget has 0 versions
 PaperTrail.whodunnit = 'Alice'
-widget.update_attributes :name => 'Yankee'
+widget.update_attributes name: 'Yankee'
 widget.paper_trail.originator               # 'Alice'
 PaperTrail.whodunnit = 'Bob'
-widget.update_attributes :name => 'Zulu'
+widget.update_attributes name: 'Zulu'
 widget.paper_trail.originator               # 'Bob'
 first_version, last_version = widget.versions.first, widget.versions.last
 first_version.whodunnit                     # 'Alice'
@@ -813,10 +813,10 @@ association and reify it. The `transaction_id` is a unique id for version record
 created in the same transaction. It is used to associate the version of the model
 and the version of the association that are created in the same transaction.
 
-To restore Has-One associations as they were at the time, pass option `:has_one
-=> true` to `reify`. To restore Has-Many and Has-Many-Through associations, use
-option `:has_many => true`. To restore Belongs-To association, use
-option `:belongs_to => true`. For example:
+To restore Has-One associations as they were at the time, pass option `has_one:
+true` to `reify`. To restore Has-Many and Has-Many-Through associations, use
+option `has_many: true`. To restore Belongs-To association, use
+option `belongs_to: true`. For example:
 
 ```ruby
 class Location < ActiveRecord::Base
@@ -832,10 +832,10 @@ end
 treasure.amount                  # 100
 treasure.location.latitude       # 12.345
 
-treasure.update_attributes :amount => 153
-treasure.location.update_attributes :latitude => 54.321
+treasure.update_attributes amount: 153
+treasure.location.update_attributes latitude: 54.321
 
-t = treasure.versions.last.reify(:has_one => true)
+t = treasure.versions.last.reify(has_one: true)
 t.amount                         # 100
 t.location.latitude              # 12.345
 ```
@@ -849,11 +849,11 @@ treasure.amount                  # 100
 treasure.location.latitude       # 12.345
 
 Treasure.transaction do
-treasure.location.update_attributes :latitude => 54.321
-treasure.update_attributes :amount => 153
+treasure.location.update_attributes latitude: 54.321
+treasure.update_attributes amount: 153
 end
 
-t = treasure.versions.last.reify(:has_one => true)
+t = treasure.versions.last.reify(has_one: true)
 t.amount                         # 100
 t.location.latitude              # 12.345, instead of 54.321
 ```
@@ -862,7 +862,7 @@ By default, PaperTrail excludes an associated record from the reified parent
 model if the associated record exists in the live model but did not exist as at
 the time the version was created. This is usually what you want if you just want
 to look at the reified version. But if you want to persist it, it would be
-better to pass in option `:mark_for_destruction => true` so that the associated
+better to pass in option `mark_for_destruction: true` so that the associated
 record is included and marked for destruction. Note that `mark_for_destruction`
 only has [an effect on associations marked with `autosave: true`][32].
 
@@ -877,14 +877,14 @@ class Wotsit < ActiveRecord::Base
   belongs_to :widget
 end
 
-widget = Widget.create(:name => 'widget_0')
-widget.update_attributes(:name => 'widget_1')
-widget.create_wotsit(:name => 'wotsit')
+widget = Widget.create(name: 'widget_0')
+widget.update_attributes(name: 'widget_1')
+widget.create_wotsit(name: 'wotsit')
 
-widget_0 = widget.versions.last.reify(:has_one => true)
+widget_0 = widget.versions.last.reify(has_one: true)
 widget_0.wotsit                                  # nil
 
-widget_0 = widget.versions.last.reify(:has_one => true, :mark_for_destruction => true)
+widget_0 = widget.versions.last.reify(has_one: true, mark_for_destruction: true)
 widget_0.wotsit.marked_for_destruction?          # true
 widget_0.save!
 widget.reload.wotsit                             # nil
@@ -919,8 +919,8 @@ Given these models:
 
 ```ruby
 class Book < ActiveRecord::Base
-  has_many :authorships, :dependent => :destroy
-  has_many :authors, :through => :authorships, :source => :person
+  has_many :authorships, dependent: :destroy
+  has_many :authors, through: :authorships, source: :person
   has_paper_trail
 end
 
@@ -931,8 +931,8 @@ class Authorship < ActiveRecord::Base
 end
 
 class Person < ActiveRecord::Base
-  has_many :authorships, :dependent => :destroy
-  has_many :books, :through => :authorships
+  has_many :authorships, dependent: :destroy
+  has_many :books, through: :authorships
   has_paper_trail
 end
 ```
@@ -941,7 +941,7 @@ Then each of the following will store authorship versions:
 
 ```ruby
 @book.authors << @dostoyevsky
-@book.authors.create :name => 'Tolstoy'
+@book.authors.create name: 'Tolstoy'
 @book.authorships.last.destroy
 @book.authorships.clear
 @book.author_ids = [@solzhenistyn.id, @dostoyevsky.id]
@@ -984,9 +984,9 @@ You can store arbitrary model-level metadata alongside each version like this:
 ```ruby
 class Article < ActiveRecord::Base
   belongs_to :author
-  has_paper_trail :meta => { :author_id  => :author_id,
-                             :word_count => :count_words,
-                             :answer     => 42 }
+  has_paper_trail meta: { author_id:  :author_id,
+                          word_count: :count_words,
+                          answer:     42 }
   def count_words
     153
   end
@@ -1008,7 +1008,7 @@ question.  Clearly this is inefficient.  Using the metadata you can find just
 those versions you want:
 
 ```ruby
-PaperTrail::Version.where(:author_id => author_id)
+PaperTrail::Version.where(author_id: author_id)
 ```
 
 #### Metadata from Controllers
@@ -1020,7 +1020,7 @@ correspond to columns in your `versions` table.
 ```ruby
 class ApplicationController
   def info_for_paper_trail
-    { :ip => request.remote_ip, :user_agent => request.user_agent }
+    { ip: request.remote_ip, user_agent: request.user_agent }
   end
 end
 ```
@@ -1105,7 +1105,7 @@ class PostVersion < PaperTrail::Version
 end
 
 class Post < ActiveRecord::Base
-  has_paper_trail :class_name => 'PostVersion'
+  has_paper_trail class_name: 'PostVersion'
 end
 ```
 
@@ -1151,8 +1151,8 @@ model.  For example:
 
 ```ruby
 class Post < ActiveRecord::Base
-  has_paper_trail :versions => :paper_trail_versions,
-                  :version  => :paper_trail_version
+  has_paper_trail versions: :paper_trail_versions,
+                  version:  :paper_trail_version
 
   # Existing versions method.  We don't want to clash.
   def versions
@@ -1318,7 +1318,7 @@ end
 Then, use the helper in your tests.
 
 ```ruby
-test "something that needs versioning" do
+test 'something that needs versioning' do
   with_versioning do
     # your test
   end
@@ -1347,7 +1347,7 @@ test in a `with_versioning` block, or pass in `versioning: true` option to a
 spec block.
 
 ```ruby
-describe "RSpec test group" do
+describe 'RSpec test group' do
   it 'by default, PaperTrail will be turned off' do
     expect(PaperTrail).to_not be_enabled
   end
@@ -1377,18 +1377,18 @@ class Widget < ActiveRecord::Base
 end
 
 describe Widget do
-  it "is not versioned by default" do
+  it 'is not versioned by default' do
     is_expected.to_not be_versioned
   end
 
-  describe "add versioning to the `Widget` class" do
+  describe 'add versioning to the `Widget` class' do
     before(:all) do
       class Widget < ActiveRecord::Base
         has_paper_trail
       end
     end
 
-    it "enables paper trail" do
+    it 'enables paper trail' do
       is_expected.to be_versioned
     end
   end
@@ -1402,7 +1402,7 @@ The `have_a_version_with` matcher makes assertions about versions using
 
 ```ruby
 describe '`have_a_version_with` matcher' do
-  it "is possible to do assertions on version attributes" do
+  it 'is possible to do assertions on version attributes' do
     widget.update_attributes!(name: 'Leonard', an_integer: 1)
     widget.update_attributes!(name: 'Tom')
     widget.update_attributes!(name: 'Bob')
@@ -1419,7 +1419,7 @@ The `have_a_version_with_changes` matcher makes assertions about versions using
 
 ```ruby
 describe '`have_a_version_with_changes` matcher' do
-  it "is possible to do assertions on version changes" do
+  it 'is possible to do assertions on version changes' do
     widget.update_attributes!(name: 'Leonard', an_integer: 1)
     widget.update_attributes!(name: 'Tom')
     widget.update_attributes!(name: 'Bob')
@@ -1442,7 +1442,7 @@ helper like so:
 ```ruby
 # features/support/env.rb
 
-ENV["RAILS_ENV"] ||= "cucumber"
+ENV["RAILS_ENV"] ||= 'cucumber'
 require File.expand_path(File.dirname(__FILE__) + '/../../config/environment')
 # ...
 require 'paper_trail/frameworks/cucumber'
