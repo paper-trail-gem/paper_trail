@@ -1,4 +1,4 @@
-require "rails_helper"
+require "spec_helper"
 
 RSpec.describe CallbackModifier, type: :model, versioning: true do
   describe "paper_trail_on_destroy" do

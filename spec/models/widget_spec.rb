@@ -1,4 +1,4 @@
-require "rails_helper"
+require "spec_helper"
 
 RSpec.describe Widget, type: :model do
   describe "`be_versioned` matcher" do

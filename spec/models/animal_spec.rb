@@ -1,4 +1,4 @@
-require "rails_helper"
+require "spec_helper"
 
 RSpec.describe Animal, type: :model, versioning: true do
   it "baseline test setup" do

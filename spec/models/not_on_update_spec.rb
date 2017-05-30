@@ -1,4 +1,4 @@
-require "rails_helper"
+require "spec_helper"
 
 RSpec.describe NotOnUpdate, type: :model do
   describe "#touch_with_version", versioning: true do

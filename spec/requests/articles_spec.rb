@@ -1,4 +1,4 @@
-require "rails_helper"
+require "spec_helper"
 
 RSpec.describe "Articles management", type: :request, order: :defined do
   let(:valid_params) { { article: { title: "Doh", content: FFaker::Lorem.sentence } } }

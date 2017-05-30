@@ -1,4 +1,4 @@
-require "rails_helper"
+require "spec_helper"
 
 RSpec.describe PostWithStatus, type: :model do
   with_versioning do

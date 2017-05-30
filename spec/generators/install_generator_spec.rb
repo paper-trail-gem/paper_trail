@@ -1,4 +1,4 @@
-require "rails_helper"
+require "spec_helper"
 require "generator_spec/test_case"
 require File.expand_path("../../../lib/generators/paper_trail/install_generator", __FILE__)
 

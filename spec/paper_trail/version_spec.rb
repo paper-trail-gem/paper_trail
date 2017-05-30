@@ -1,4 +1,4 @@
-require "rails_helper"
+require "spec_helper"
 
 module PaperTrail
   ::RSpec.describe(Version, versioning: true) do

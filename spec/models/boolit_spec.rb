@@ -1,4 +1,4 @@
-require "rails_helper"
+require "spec_helper"
 require "support/custom_json_serializer"
 
 RSpec.describe Boolit, type: :model, versioning: true do
