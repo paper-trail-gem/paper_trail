@@ -1,5 +1,5 @@
 require "rails_helper"
-require Rails.root.join("..", "custom_json_serializer")
+require "support/custom_json_serializer"
 
 RSpec.describe Boolit, type: :model, versioning: true do
   subject { Boolit.create! }
