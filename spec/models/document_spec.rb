@@ -1,4 +1,4 @@
-require "rails_helper"
+require "spec_helper"
 
 RSpec.describe Document, type: :model do
   describe "`have_a_version_with` matcher", versioning: true do

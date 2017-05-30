@@ -1,4 +1,4 @@
-require "rails_helper"
+require "spec_helper"
 
 module Kitchen
   RSpec.describe Banana, type: :model do

@@ -1,5 +1,5 @@
 require "test_helper"
-require "custom_json_serializer"
+require_relative "../../../spec/support/custom_json_serializer"
 
 class MixinJsonTest < ActiveSupport::TestCase
   setup do

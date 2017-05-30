@@ -1,4 +1,4 @@
-require "rails_helper"
+require "spec_helper"
 
 RSpec.describe ArticlesController, type: :controller do
   describe "PaperTrail.enabled_for_controller?" do

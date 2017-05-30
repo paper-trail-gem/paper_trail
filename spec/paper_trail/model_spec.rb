@@ -1,4 +1,4 @@
-require "rails_helper"
+require "spec_helper"
 
 RSpec.describe(::PaperTrail, versioning: true) do
   context "A record with defined 'only' and 'ignore' attributes" do

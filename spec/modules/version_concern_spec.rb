@@ -1,4 +1,4 @@
-require "rails_helper"
+require "spec_helper"
 
 RSpec.describe PaperTrail::VersionConcern do
   before(:all) { require "support/alt_db_init" }

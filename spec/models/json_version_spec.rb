@@ -1,4 +1,4 @@
-require "rails_helper"
+require "spec_helper"
 
 # The `json_versions` table tests postgres' `json` data type. So, that
 # table is only created when testing against postgres and ActiveRecord >= 4.

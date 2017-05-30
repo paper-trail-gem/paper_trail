@@ -1,4 +1,4 @@
-require "rails_helper"
+require "spec_helper"
 
 RSpec.describe JoinedVersion, type: :model, versioning: true do
   let(:widget) { Widget.create!(name: FFaker::Name.name) }

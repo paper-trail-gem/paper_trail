@@ -1,4 +1,4 @@
-require "rails_helper"
+require "spec_helper"
 
 RSpec.describe PaperTrail, type: :module, versioning: true do
   describe "#config" do

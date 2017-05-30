@@ -1,4 +1,4 @@
-require "rails_helper"
+require "spec_helper"
 
 RSpec.describe Gadget, type: :model do
   it { is_expected.to be_versioned }
