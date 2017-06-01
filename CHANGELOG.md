@@ -17,6 +17,21 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 - None
 
+## 7.0.3 (2017-06-01)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- [#959](https://github.com/airblade/paper_trail/pull/959) -
+  Add migration version (eg. `[5.1]`) to all migration generators.
+
 ## 7.0.2 (2017-04-26)
 
 ### Breaking Changes
@@ -31,7 +46,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 ### Fixed
 
 - [#956](https://github.com/airblade/paper_trail/pull/956) -
-  Fix ActiveRecord >= 5.1 version check 
+  Fix ActiveRecord >= 5.1 version check
 
 ## 7.0.1 (2017-04-10)
 
