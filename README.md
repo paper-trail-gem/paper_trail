@@ -129,6 +129,7 @@ v.created_at                # When the `event` occurred
 v.whodunnit                 # If the update was via a controller and the
                             # controller has a current_user method, returns the
                             # id of the current user as a string.
+v.user                      # Gets the user model instance if any (works with device).                   
 widget = v.reify            # The widget as it was before the update
                             # (nil for a create event)
 ```
@@ -232,6 +233,13 @@ version.paper_trail_originator
 version.terminator
 version.whodunnit
 version.version_author
+
+# Returns user active user model instance
+version.user
+# This method takes two arguments. First is the model name and the second is
+# primary key. By default the model is `User` and the primary key is `id`.
+# If you are using a different model (example: Customer) to store users then
+# make a call like this: version.user(:Customer)
 
 # Returns the next version.
 version.next

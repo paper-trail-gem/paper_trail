@@ -7,5 +7,12 @@ module PaperTrail
   # See the readme for details.
   class Version < ::ActiveRecord::Base
     include PaperTrail::VersionConcern
+
+    # You can now get user object (supports Device defaults)
+    def user(user_model = :User, primary_key = :id)
+      unless whodunnit.nil?
+      	user_model.to_s.constantize.find_by(primary_key.to_s.concat(' = ?'), whodunnit)
+      end
+    end
   end
 end
