@@ -170,6 +170,21 @@ module PaperTrail
       def object_changes_col_is_json?
         %i[json jsonb].include?(columns_hash["object_changes"].try(:type))
       end
+
+      # Overrides the default +version_limit+ value per model
+      #   class Article < ActiveRecord::Base
+      #     version_limit 10
+      #   end
+      def version_limit(val)
+        @_default_version_limit = val
+      end
+
+      # This model's default +version_limit+ value
+      # returns +default_version_limit+ value
+      def default_version_limit
+        (defined?(@_default_version_limit) && @_default_version_limit) || PaperTrail.config.version_limit
+      end
+
     end
 
     # @api private
@@ -309,7 +324,7 @@ module PaperTrail
     # Enforces the `version_limit`, if set. Default: no limit.
     # @api private
     def enforce_version_limit!
-      limit = PaperTrail.config.version_limit
+      limit = default_version_limit
       return unless limit.is_a? Numeric
       previous_versions = sibling_versions.not_creates.
         order(self.class.timestamp_sort_order("asc"))
