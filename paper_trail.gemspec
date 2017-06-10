@@ -12,7 +12,7 @@ at any stage in its lifecycle, revert it to any version, or restore it after it
 has been destroyed.
   EOS
   s.homepage = "https://github.com/airblade/paper_trail"
-  s.authors = ["Andy Stewart", "Ben Atkins"]
+  s.authors = ["Andy Stewart", "Ben Atkins", "Jared Beck"]
   s.email = "batkinz@gmail.com"
   s.license = "MIT"
 
