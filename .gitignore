@@ -2,10 +2,10 @@ gemfiles/*.lock
 NOTES
 test/debug.log
 test/paper_trail_plugin.sqlite3.db
-test/dummy/config/database.yml
-test/dummy/db/*.sqlite3
-test/dummy/log/*
-test/dummy/tmp/*
+spec/dummy_app/config/database.yml
+spec/dummy_app/db/*.sqlite3
+spec/dummy_app/log/*
+spec/dummy_app/tmp/*
 spec/dummy/
 coverage
 pkg/*

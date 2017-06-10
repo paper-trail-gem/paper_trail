@@ -1,12 +1,12 @@
+require "pry"
+
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV["RAILS_ENV"] ||= "test"
 ENV["DB"] ||= "sqlite"
 
-unless File.exist?(File.expand_path("../../test/dummy/config/database.yml", __FILE__))
+unless File.exist?(File.expand_path("dummy_app/config/database.yml", __dir__))
   warn "WARNING: No database.yml detected for the dummy app, please run `rake prepare` first"
 end
-
-require "pry"
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
@@ -52,18 +52,14 @@ def params_wrapper(args)
   end
 end
 
-require File.expand_path("../../test/dummy/config/environment", __FILE__)
+require File.expand_path("../dummy_app/config/environment", __FILE__)
 require "rspec/rails"
 require "paper_trail/frameworks/rspec"
 require "ffaker"
 require "timecop"
 
-# prevent Test::Unit's AutoRunner from executing during RSpec's rake task
-Test::Unit.run = true if defined?(Test::Unit) && Test::Unit.respond_to?(:run=)
-
-# Checks for pending migrations before tests are run.
-# If you are not using ActiveRecord, you can remove this line.
-ActiveRecord::Migration.check_pending! if ActiveRecord::Migration.respond_to?(:check_pending!)
+# Run any available migration
+ActiveRecord::Migrator.migrate File.expand_path("dummy_app/db/migrate/", __dir__)
 
 require "database_cleaner"
 DatabaseCleaner.strategy = :truncation
