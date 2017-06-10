@@ -30,10 +30,9 @@ has been destroyed.
 
   s.add_development_dependency "appraisal", "~> 2.1"
   s.add_development_dependency "rake", "~> 12.0"
-  s.add_development_dependency "shoulda", "~> 3.5"
   s.add_development_dependency "ffaker", "~> 2.5"
 
-  # Why `railties`? Possibly used by `test/dummy` boot up?
+  # Why `railties`? Possibly used by `spec/dummy_app` boot up?
   s.add_development_dependency "railties", [">= 4.0", "< 5.2"]
 
   s.add_development_dependency "rack-test", "~> 0.6.3"

@@ -7,10 +7,7 @@ https://stackoverflow.com/tags/paper-trail-gem
 
 **Please do not use github issues to ask usage questions.**
 
-On github, we appreciate bug reports, feature
-suggestions, and especially pull requests.
-
-Thanks, and happy (paper) trails :)
+On github, we appreciate bug reports, feature suggestions, and pull requests.
 
 ## Reporting Bugs
 
@@ -32,13 +29,13 @@ Testing is a little awkward because the test suite:
 
 ```
 # Create the appropriate database config. file
-rm test/dummy/config/database.yml
+rm spec/dummy_app/config/database.yml
 DB=sqlite bundle exec rake prepare
 
 # If this is the first test run ever, create databases.
-# We can't use `appraisal` inside the test dummy, so we must set `BUNDLE_GEMFILE`.
-# See test/dummy/config/boot.rb for a complete explanation.
-cd test/dummy
+# We can't use `appraisal` inside the dummy app, so we must set `BUNDLE_GEMFILE`.
+# See spec/dummy_app/config/boot.rb for a complete explanation.
+cd spec/dummy_app
 export BUNDLE_GEMFILE=../../gemfiles/ar_4.2.gemfile
 RAILS_ENV=test bundle exec rake db:setup
 RAILS_ENV=foo bundle exec rake db:setup
@@ -49,8 +46,7 @@ cd ../..
 # Run tests
 DB=sqlite bundle exec appraisal ar-4.2 rake
 
-# Run a single test file
-DB=sqlite bundle exec appraisal ar-4.2 ruby -I test test/unit/associations_test.rb
+# Run a single test
 DB=sqlite bundle exec appraisal ar-4.2 rspec spec/paper_trail/serializers/json_spec.rb
 ```
 
@@ -58,13 +54,13 @@ DB=sqlite bundle exec appraisal ar-4.2 rspec spec/paper_trail/serializers/json_s
 
 ```
 # Create the appropriate database config. file
-rm test/dummy/config/database.yml
+rm spec/dummy_app/config/database.yml
 DB=sqlite bundle exec rake prepare
 
 # If this is the first test run ever, create databases.
-# We can't use `appraisal` inside the test dummy, so we must set `BUNDLE_GEMFILE`.
-# See test/dummy/config/boot.rb for a complete explanation.
-cd test/dummy
+# We can't use `appraisal` inside the dummy app, so we must set `BUNDLE_GEMFILE`.
+# See spec/dummy_app/config/boot.rb for a complete explanation.
+cd spec/dummy_app
 export BUNDLE_GEMFILE=../../gemfiles/ar_5.0.gemfile
 RAILS_ENV=test bundle exec rake db:environment:set db:setup
 RAILS_ENV=foo bundle exec rake db:environment:set db:setup
@@ -80,13 +76,13 @@ DB=sqlite bundle exec appraisal ar-5.0 rake
 
 ```
 # Create the appropriate database config. file
-rm test/dummy/config/database.yml
+rm spec/dummy_app/config/database.yml
 DB=mysql bundle exec rake prepare
 
 # If this is the first test run ever, create databases.
-# We can't use `appraisal` inside the test dummy, so we must set `BUNDLE_GEMFILE`.
-# See test/dummy/config/boot.rb for a complete explanation.
-cd test/dummy
+# We can't use `appraisal` inside the dummy app, so we must set `BUNDLE_GEMFILE`.
+# See spec/dummy_app/config/boot.rb for a complete explanation.
+cd spec/dummy_app
 export BUNDLE_GEMFILE=../../gemfiles/ar_5.0.gemfile
 RAILS_ENV=test bundle exec rake db:environment:set db:setup
 RAILS_ENV=foo bundle exec rake db:environment:set db:setup
@@ -102,14 +98,14 @@ DB=mysql bundle exec appraisal ar-5.0 rake
 
 ```
 # Create the appropriate database config. file
-rm test/dummy/config/database.yml
+rm spec/dummy_app/config/database.yml
 DB=postgres bundle exec rake prepare
 
 # If this is the first test run ever, create databases.
 # Unlike mysql, use create/migrate instead of setup.
-# We can't use `appraisal` inside the test dummy, so we must set `BUNDLE_GEMFILE`.
-# See test/dummy/config/boot.rb for a complete explanation.
-cd test/dummy
+# We can't use `appraisal` inside the dummy app, so we must set `BUNDLE_GEMFILE`.
+# See spec/dummy_app/config/boot.rb for a complete explanation.
+cd spec/dummy_app
 export BUNDLE_GEMFILE=../../gemfiles/ar_5.0.gemfile
 DB=postgres RAILS_ENV=test bundle exec rake db:drop db:create db:migrate
 DB=postgres RAILS_ENV=foo bundle exec rake db:drop db:create db:migrate
@@ -124,10 +120,10 @@ DB=postgres bundle exec appraisal ar-5.0 rake
 
 ## Editing the migration
 
-After editing `test/dummy/db/migrate/20110208155312_set_up_test_tables.rb` ..
+After editing `spec/dummy_app/db/migrate/20110208155312_set_up_test_tables.rb` ..
 
 ```
-cd test/dummy
+cd spec/dummy_app
 export BUNDLE_GEMFILE=../../gemfiles/ar_5.1.gemfile
 RAILS_ENV=test bundle exec rake db:environment:set db:drop db:create db:migrate
 RAILS_ENV=foo bundle exec rake db:environment:set db:drop db:create db:migrate

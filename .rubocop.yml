@@ -12,7 +12,7 @@ inherit_from: .rubocop_todo.yml
 AllCops:
   Exclude:
     - gemfiles/vendor/bundle/**/* # This dir only shows up on travis ¯\_(ツ)_/¯
-    - test/dummy/db/schema.rb # Generated, out of our control
+    - spec/dummy_app/db/schema.rb # Generated, out of our control
 
   # Set to lowest supported version
   TargetRubyVersion: 2.1
@@ -21,7 +21,7 @@ AllCops:
 # from these is of questionable value.
 Metrics/AbcSize:
   Exclude:
-    - 'test/dummy/db/migrate/*'
+    - 'spec/dummy_app/db/migrate/*'
 
 # Not a useful metric compared to, e.g. `AbcSize`.
 Metrics/BlockLength:
