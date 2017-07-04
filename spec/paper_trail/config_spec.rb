@@ -29,5 +29,17 @@ module PaperTrail
         end
       end
     end
+
+    describe ".version_limit", versioning: true do
+      after { PaperTrail.config.version_limit = nil }
+
+      it "limits the number of versions to 3 (2 plus the created at event)" do
+        PaperTrail.config.version_limit = 2
+        widget = Widget.create!(name: "Henry")
+        6.times { widget.update_attribute(:name, FFaker::Lorem.word) }
+        expect(widget.versions.first.event).to(eq("create"))
+        expect(widget.versions.size).to(eq(3))
+      end
+    end
   end
 end
