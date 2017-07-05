@@ -101,6 +101,15 @@ RSpec.describe PaperTrail do
         expect(described_class.whodunnit).to be_nil
       end
     end
+
+    context "when set to a proc" do
+      it "evaluates the proc each time a version is made" do
+        call_count = 0
+        described_class.whodunnit = proc { call_count += 1 }
+        expect(described_class.whodunnit).to eq(1)
+        expect(described_class.whodunnit).to eq(2)
+      end
+    end
   end
 
   describe ".controller_info" do
