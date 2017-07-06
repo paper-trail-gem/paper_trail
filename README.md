@@ -1092,11 +1092,8 @@ As of version 6, PT no longer supports rails 3 or the [protected_attributes][17]
 gem. If you are still using them, you may use PT 5 or lower. We recommend
 upgrading to [strong_parameters][18] as soon as possible.  
 
-If you find yourself stuck with [protected_attributes][17] for the time being, the following example provides a temporary workaround
-(tested with protected_attributes 1.0.9 / rails 4.2.8 / paper_trail 7.0.3 ) :
-
-First, add (or update) version.rb to your project at:
-``` app/models/paper_trail/version.rb ``` and add in the required attr_accessible fields like so:
+If you must use [protected_attributes][17] for now, and want to use PT > 5, you 
+can reopen `PaperTrail::Version` and add the following `attr_accessible` fields:
 
 ```ruby
 # app/models/paper_trail/version.rb
@@ -1108,6 +1105,8 @@ module PaperTrail
 end
 ```
 
+This unsupported workaround has been tested with protected_attributes 1.0.9 /
+rails 4.2.8 / paper_trail 7.0.3.
 
 ## 6. Extensibility
 
