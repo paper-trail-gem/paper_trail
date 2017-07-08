@@ -716,6 +716,14 @@ PaperTrail.whodunnit('Dorian Marié') do
 end
 ```
 
+`whodunnit` also accepts a `Proc`.
+
+```ruby
+PaperTrail.whodunnit = proc do
+  caller.first{ |c| c.starts_with? Rails.root.to_s }
+end
+```
+
 If your controller has a `current_user` method, PaperTrail provides a
 `before_action` that will assign `current_user.id` to `PaperTrail.whodunnit`.
 You can add this `before_action` to your `ApplicationController`.
@@ -1550,6 +1558,10 @@ by Jared Beck, with contributions by over 150 people.
 
 https://github.com/airblade/paper_trail/graphs/contributors
 
+## Contributing
+
+See our [contribution guidelines][43]
+
 ## Inspirations
 
 * [Simply Versioned](http://github.com/github/simply_versioned)
@@ -1598,3 +1610,4 @@ Released under the MIT licence.
 [40]: http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html#module-ActiveRecord::Associations::ClassMethods-label-Polymorphic+Associations
 [41]: https://github.com/jaredbeck/paper_trail-sinatra
 [42]: https://github.com/activeadmin/activeadmin/wiki/Auditing-via-paper_trail-%28change-history%29
+[43]: https://github.com/airblade/paper_trail/blob/master/.github/CONTRIBUTING.md

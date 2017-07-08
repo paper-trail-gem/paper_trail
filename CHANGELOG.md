@@ -11,7 +11,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
-- None
+- [#976](https://github.com/airblade/paper_trail/pull/976)
+  `PaperTrail.whodunnit` accepts a `Proc`
 
 ### Fixed
 

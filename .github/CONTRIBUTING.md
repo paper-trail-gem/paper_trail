@@ -15,9 +15,7 @@ Please use our [bug report template][1].
 
 ## Development
 
-Install gems with `bundle exec appraisal install`. This requires ruby >= 2.0.
-(It is still possible to run the `ar-4.2` gemfile locally on ruby 1.9.3, but
-not the `ar-5.0` gemfile.)
+Install gems with `bundle exec appraisal install`.
 
 Testing is a little awkward because the test suite:
 

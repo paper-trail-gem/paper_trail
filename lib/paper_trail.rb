@@ -111,6 +111,8 @@ module PaperTrail
         ensure
           paper_trail_store[:whodunnit] = previous_whodunnit
         end
+      elsif paper_trail_store[:whodunnit].respond_to?(:call)
+        paper_trail_store[:whodunnit].call
       else
         paper_trail_store[:whodunnit]
       end
