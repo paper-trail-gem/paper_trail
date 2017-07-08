@@ -1541,6 +1541,10 @@ by Jared Beck, with contributions by over 150 people.
 
 https://github.com/airblade/paper_trail/graphs/contributors
 
+## Contributing
+
+See our [contribution guidelines](https://github.com/airblade/paper_trail/blob/master/.github/CONTRIBUTING.md)
+
 ## Inspirations
 
 * [Simply Versioned](http://github.com/github/simply_versioned)
