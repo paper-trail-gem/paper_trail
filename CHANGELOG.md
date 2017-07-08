@@ -5,6 +5,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ## Unreleased
 
+- `Papertrail.whodunnit` accepts a `proc` (or other object that responds to `call`)
+
 ### Breaking Changes
 
 - None
