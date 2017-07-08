@@ -5,15 +5,14 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ## Unreleased
 
-- `Papertrail.whodunnit` accepts a `proc` (or other object that responds to `call`)
-
 ### Breaking Changes
 
 - None
 
 ### Added
 
-- None
+- [#976](https://github.com/airblade/paper_trail/pull/976)
+  `PaperTrail.whodunnit` accepts a `Proc`
 
 ### Fixed
 
