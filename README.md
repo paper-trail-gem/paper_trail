@@ -716,6 +716,13 @@ PaperTrail.whodunnit('Dorian Marié') do
 end
 ```
 
+`whodunnit` also accepts a proc, if you find yourself needing a dynamic value.
+```ruby
+PaperTrail.whodunnit = proc do
+  caller.first{|c| c.starts_with? Rails.root.to_s}
+end
+```
+
 If your controller has a `current_user` method, PaperTrail provides a
 `before_action` that will assign `current_user.id` to `PaperTrail.whodunnit`.
 You can add this `before_action` to your `ApplicationController`.
