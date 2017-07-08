@@ -716,10 +716,11 @@ PaperTrail.whodunnit('Dorian Marié') do
 end
 ```
 
-`whodunnit` also accepts a proc, if you find yourself needing a dynamic value.
+`whodunnit` also accepts a `Proc`.
+
 ```ruby
 PaperTrail.whodunnit = proc do
-  caller.first{|c| c.starts_with? Rails.root.to_s}
+  caller.first{ |c| c.starts_with? Rails.root.to_s }
 end
 ```
 
@@ -1543,7 +1544,7 @@ https://github.com/airblade/paper_trail/graphs/contributors
 
 ## Contributing
 
-See our [contribution guidelines](https://github.com/airblade/paper_trail/blob/master/.github/CONTRIBUTING.md)
+See our [contribution guidelines][43]
 
 ## Inspirations
 
@@ -1593,3 +1594,4 @@ Released under the MIT licence.
 [40]: http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html#module-ActiveRecord::Associations::ClassMethods-label-Polymorphic+Associations
 [41]: https://github.com/jaredbeck/paper_trail-sinatra
 [42]: https://github.com/activeadmin/activeadmin/wiki/Auditing-via-paper_trail-%28change-history%29
+[43]: https://github.com/airblade/paper_trail/blob/master/.github/CONTRIBUTING.md
