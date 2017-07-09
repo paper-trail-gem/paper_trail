@@ -15,7 +15,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- None
+- Stop including unnecessary files in released gem. Reduces .gem file size
+  from 100K to 30K.
 
 ## 7.1.0 (2017-07-09)
 

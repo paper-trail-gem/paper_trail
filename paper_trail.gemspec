@@ -16,9 +16,10 @@ has been destroyed.
   s.email = "batkinz@gmail.com"
   s.license = "MIT"
 
-  s.files = `git ls-files`.split("\n")
-  s.test_files = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.executables = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
+  s.files = `git ls-files -z`.split("\x0").select { |f|
+    f.match(%r{^(Gemfile|MIT-LICENSE|lib|paper_trail.gemspec)/})
+  }
+  s.executables = []
   s.require_paths = ["lib"]
 
   s.required_rubygems_version = ">= 1.3.6"
