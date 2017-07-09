@@ -11,6 +11,20 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
+- None
+
+### Fixed
+
+- None
+
+## 7.1.0 (2017-07-09)
+
+### Breaking Changes
+
+- None
+
+### Added
+
 - [#803](https://github.com/airblade/paper_trail/issues/803)
   Deprecate `where_object_changes` when reading json from a text column
 - [#976](https://github.com/airblade/paper_trail/pull/976)
