@@ -207,11 +207,11 @@ module PaperTrail
           describe "#where_object_changes", versioning: true do
             let(:widget) { Widget.new }
             let(:name) { FFaker::Name.first_name }
-            let(:int) { rand(5) + 2 }
+            let(:int) { rand(10) + 1 }
 
             before do
               widget.update_attributes!(name: name, an_integer: 0)
-              widget.update_attributes!(name: "foobar", an_integer: 77)
+              widget.update_attributes!(name: "foobar", an_integer: 100)
               widget.update_attributes!(name: FFaker::Name.last_name, an_integer: int)
             end
 
@@ -232,7 +232,7 @@ module PaperTrail
                   widget.versions.where_object_changes(name: name)
                 ).to eq(widget.versions[0..1])
                 expect(
-                  widget.versions.where_object_changes(an_integer: 77)
+                  widget.versions.where_object_changes(an_integer: 100)
                 ).to eq(widget.versions[1..2])
                 expect(
                   widget.versions.where_object_changes(an_integer: int)
@@ -241,7 +241,7 @@ module PaperTrail
 
               it "handles queries for multiple attributes" do
                 expect(
-                  widget.versions.where_object_changes(an_integer: 77, name: "foobar")
+                  widget.versions.where_object_changes(an_integer: 100, name: "foobar")
                 ).to eq(widget.versions[1..2])
               end
             end
@@ -255,7 +255,7 @@ module PaperTrail
                   widget.versions.where_object_changes(name: name)
                 ).to eq(widget.versions[0..1])
                 expect(
-                  widget.versions.where_object_changes(an_integer: 77)
+                  widget.versions.where_object_changes(an_integer: 100)
                 ).to eq(widget.versions[1..2])
                 expect(
                   widget.versions.where_object_changes(an_integer: int)
@@ -264,7 +264,7 @@ module PaperTrail
 
               it "handles queries for multiple attributes" do
                 expect(
-                  widget.versions.where_object_changes(an_integer: 77, name: "foobar")
+                  widget.versions.where_object_changes(an_integer: 100, name: "foobar")
                 ).to eq(widget.versions[1..2])
               end
 

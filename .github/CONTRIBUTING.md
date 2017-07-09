@@ -112,7 +112,6 @@ unset BUNDLE_GEMFILE
 cd ../..
 
 # Run tests
-DB=postgres bundle exec rake
 DB=postgres bundle exec appraisal ar-5.0 rake
 ```
 
