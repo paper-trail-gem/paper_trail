@@ -225,8 +225,6 @@ module PaperTrail
             end
 
             context "YAML serializer" do
-              specify { expect(PaperTrail.serializer).to be PaperTrail::Serializers::YAML }
-
               it "locates versions according to their `object_changes` contents" do
                 expect(
                   widget.versions.where_object_changes(name: name)
@@ -248,7 +246,13 @@ module PaperTrail
 
             context "JSON serializer" do
               before(:all) { PaperTrail.serializer = PaperTrail::Serializers::JSON }
-              specify { expect(PaperTrail.serializer).to be PaperTrail::Serializers::JSON }
+              before do
+                unless override
+                  expect(::ActiveSupport::Deprecation).to(
+                    receive(:warn).at_least(:once).with(/^where_object_changes/)
+                  )
+                end
+              end
 
               it "locates versions according to their `object_changes` contents" do
                 expect(
