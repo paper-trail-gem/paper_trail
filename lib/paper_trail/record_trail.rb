@@ -399,7 +399,7 @@ module PaperTrail
     # leverage an `after_update` callback anyways (likely for v4.0.0)
     def touch_with_version(name = nil)
       unless @record.persisted?
-        raise ActiveRecordError, "can not touch on a new record object"
+        raise ::ActiveRecord::ActiveRecordError, "can not touch on a new record object"
       end
       attributes = @record.send :timestamp_attributes_for_update_in_model
       attributes << name if name
