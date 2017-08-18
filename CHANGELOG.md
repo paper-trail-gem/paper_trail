@@ -15,6 +15,20 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
+- None
+
+## 7.1.1 (2017-08-18)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
 - Stop including unnecessary files in released gem. Reduces .gem file size
   from 100K to 30K.
 - [#984](https://github.com/airblade/paper_trail/pull/984) - Fix NameError
