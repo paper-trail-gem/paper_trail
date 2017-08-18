@@ -17,8 +17,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 - Stop including unnecessary files in released gem. Reduces .gem file size
   from 100K to 30K.
-- [#984](https://github.com/airblade/paper_trail/pull/984) - Fix wrong
-  exception in `touch_with_version` if record object isn't persisted
+- [#984](https://github.com/airblade/paper_trail/pull/984) - Fix NameError
+  suspected to be caused by autoload race condition.
 
 ## 7.1.0 (2017-07-09)
 
