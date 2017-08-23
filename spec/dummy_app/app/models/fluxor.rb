@@ -1,3 +1,7 @@
 class Fluxor < ActiveRecord::Base
-  belongs_to :widget
+  if ActiveRecord.gem_version >= Gem::Version.new("5.0")
+    belongs_to :widget, optional: true
+  else
+    belongs_to :widget
+  end
 end

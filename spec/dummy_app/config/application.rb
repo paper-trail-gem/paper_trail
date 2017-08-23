@@ -31,7 +31,12 @@ module Dummy
       if v >= Gem::Version.new("4.2") && v < Gem::Version.new("5.0.0.beta1")
         config.active_record.raise_in_transactional_callbacks = true
       end
-      if v >= Gem::Version.new("5.0.0.beta1")
+      if v >= Gem::Version.new("5.0.0.beta1") && v < Gem::Version.new("5.1")
+        config.active_record.belongs_to_required_by_default = true
+        config.active_record.time_zone_aware_types = [:datetime]
+      end
+      if v >= Gem::Version.new("5.1")
+        config.load_defaults "5.1"
         config.active_record.time_zone_aware_types = [:datetime]
       end
     end

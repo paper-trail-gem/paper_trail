@@ -15,7 +15,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- None
+- [#985](https://github.com/airblade/paper_trail/pull/985) - Fix RecordInvalid error on nil item
+  association when belongs_to_required_by_default is enabled.
 
 ## 7.1.1 (2017-08-18)
 
