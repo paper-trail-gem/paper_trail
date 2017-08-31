@@ -12,7 +12,11 @@ module PaperTrail
     extend ::ActiveSupport::Concern
 
     included do
-      belongs_to :item, polymorphic: true
+      if ActiveRecord.gem_version >= Gem::Version.new("5.0")
+        belongs_to :item, polymorphic: true, optional: true
+      else
+        belongs_to :item, polymorphic: true
+      end
 
       # Since the test suite has test coverage for this, we want to declare
       # the association when the test suite is running. This makes it pass when

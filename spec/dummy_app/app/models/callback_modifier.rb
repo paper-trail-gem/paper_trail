@@ -20,9 +20,14 @@ class BeforeDestroyModifier < CallbackModifier
   paper_trail.on_destroy :before
 end
 
-class AfterDestroyModifier < CallbackModifier
-  has_paper_trail on: []
-  paper_trail.on_destroy :after
+if ActiveRecord.gem_version < Gem::Version.new("5") ||
+    !ActiveRecord::Base.belongs_to_required_by_default
+
+  class AfterDestroyModifier < CallbackModifier
+    has_paper_trail on: []
+    paper_trail.on_destroy :after
+  end
+
 end
 
 class NoArgDestroyModifier < CallbackModifier
