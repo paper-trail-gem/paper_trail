@@ -12,7 +12,8 @@ module PaperTrail
     extend ::ActiveSupport::Concern
 
     included do
-      if ActiveRecord.gem_version >= Gem::Version.new("5.0")
+      if ::ActiveRecord.respond_to?(:gem_version) &&
+          ::ActiveRecord.gem_version >= Gem::Version.new("5.0")
         belongs_to :item, polymorphic: true, optional: true
       else
         belongs_to :item, polymorphic: true
