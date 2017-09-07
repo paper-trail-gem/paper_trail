@@ -12,6 +12,8 @@ module PaperTrail
     extend ::ActiveSupport::Concern
 
     included do
+      # The respond_to? check here is specific to ActiveRecord 4.0 and can be
+      # removed when support for ActiveRecord < 4.2 is dropped.
       if ::ActiveRecord.respond_to?(:gem_version) &&
           ::ActiveRecord.gem_version >= Gem::Version.new("5.0")
         belongs_to :item, polymorphic: true, optional: true

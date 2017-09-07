@@ -1,6 +1,8 @@
 module PaperTrail
   # Represents the "paper trail" for a single record.
   class RecordTrail
+    # The respond_to? check here is specific to ActiveRecord 4.0 and can be
+    # removed when support for ActiveRecord < 4.2 is dropped.
     RAILS_GTE_5_1 = ::ActiveRecord.respond_to?(:gem_version) &&
       ::ActiveRecord.gem_version >= ::Gem::Version.new("5.1.0.beta1")
 
