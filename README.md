@@ -1307,7 +1307,7 @@ end
 ## 7. Testing
 
 You may want to turn PaperTrail off to speed up your tests.  See [Turning
-PaperTrail Off](#turning-papertrail-off) above.
+PaperTrail Off](#2d-turning-papertrail-off) above.
 
 ### 7.a. Minitest
 
