@@ -83,6 +83,14 @@ RSpec.describe PaperTrail do
       end
     end
 
+    it "has whodunnit on in a `with_versioning` block" do
+      expect(described_class.whodunnit).to be_nil
+      with_versioning(whodunnit: "Not me") do
+        expect(described_class.whodunnit).to eq("Not me")
+      end
+      expect(described_class.whodunnit).to be_nil
+    end
+
     context "with block passed" do
       it "sets whodunnit only for the block passed" do
         described_class.whodunnit("foo") do

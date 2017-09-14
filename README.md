@@ -1098,9 +1098,9 @@ Generates (but does not run) a migration to add a versions table.  Also generate
 
 As of version 6, PT no longer supports rails 3 or the [protected_attributes][17]
 gem. If you are still using them, you may use PT 5 or lower. We recommend
-upgrading to [strong_parameters][18] as soon as possible.  
+upgrading to [strong_parameters][18] as soon as possible.
 
-If you must use [protected_attributes][17] for now, and want to use PT > 5, you 
+If you must use [protected_attributes][17] for now, and want to use PT > 5, you
 can reopen `PaperTrail::Version` and add the following `attr_accessible` fields:
 
 ```ruby
@@ -1532,6 +1532,7 @@ require 'paper_trail/frameworks/rspec'
 ## 8. Integration with Other Libraries
 
 - [ActiveAdmin][42]
+- [RailsAdmin](https://github.com/sferik/rails_admin/wiki/Papertrail)
 - Sinatra - [paper_trail-sinatra][41]
 
 ## Articles
