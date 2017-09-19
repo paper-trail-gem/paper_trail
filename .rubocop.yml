@@ -17,6 +17,27 @@ AllCops:
   # Set to lowest supported version
   TargetRubyVersion: 2.1
 
+Layout/AlignParameters:
+  EnforcedStyle: with_fixed_indentation
+
+Layout/DotPosition:
+  EnforcedStyle: trailing
+
+Layout/IndentHeredoc:
+  Exclude:
+    - paper_trail.gemspec
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+Layout/MultilineOperationIndentation:
+  EnforcedStyle: indented
+
+# Use exactly one space on each side of an operator. Do not align operators
+# because it makes the code harder to edit, and makes lines unnecessarily long.
+Layout/SpaceAroundOperators:
+  AllowForAlignment: false
+
 # Migrations often contain long up/down methods, and extracting smaller methods
 # from these is of questionable value.
 Metrics/AbcSize:
@@ -47,6 +68,23 @@ Metrics/MethodLength:
 Metrics/ModuleLength:
   Enabled: false
 
+Naming/FileName:
+  Exclude:
+    - Appraisals
+
+# It is a decades-old convention to use EOS as a heredoc delimiter. There is
+# not enough value in changinge this convention. SQL should still be used as
+# a delimiter when appropriate.
+Naming/HeredocDelimiterNaming:
+  Enabled: false
+
+Naming/PredicateName:
+  NameWhitelist: has_paper_trail
+
+# In 0.50.0, this cop has a bug https://github.com/bbatsov/rubocop/issues/4732
+Performance/HashEachMethods:
+  Enabled: false
+
 # In an ideal world, each example has a single expectation. In the real world,
 # sometimes setup is a pain and you don't want to duplicate setup in multiple
 # examples, or make the specs more confusing with many nested `context`s, and
@@ -60,25 +98,15 @@ RSpec/MultipleExpectations:
 RSpec/ExampleLength:
   Enabled: false
 
-Style/AlignParameters:
-  EnforcedStyle: with_fixed_indentation
-
 # Please use semantic style, e.g. `do` when there's a side-effect, else `{}`.
 # The semantic style is too nuanced to lint, so the cop is disabled.
 Style/BlockDelimiters:
   Enabled: false
 
-Style/DotPosition:
-  EnforcedStyle: trailing
-
 # Use double negation wherever it would otherwise be impractical to convert
 # a value to an actual boolean.
 Style/DoubleNegation:
   Enabled: false
-
-Style/FileName:
-  Exclude:
-    - Appraisals
 
 # The decision of when to use a guard clause to improve readability is subtle,
 # and it's not clear that it can be linted. Certainly, the default
@@ -90,10 +118,6 @@ Style/GuardClause:
 # exceed 60 characters.
 Style/IfUnlessModifier:
   MaxLineLength: 60
-
-Style/IndentHeredoc:
-  Exclude:
-    - paper_trail.gemspec
 
 # The Ruby Style Guide says:
 #
@@ -114,22 +138,8 @@ Style/ModuleFunction:
     - 'lib/paper_trail/serializers/json.rb'
     - 'lib/paper_trail/serializers/yaml.rb'
 
-Style/MultilineMethodCallIndentation:
-  EnforcedStyle: indented
-
-Style/MultilineOperationIndentation:
-  EnforcedStyle: indented
-
-Style/PredicateName:
-  NameWhitelist: has_paper_trail
-
 # The Ruby Style Guide does not prescribe a particular quote character, only
 # that a project should pick one and be consistent. The decision has no
 # performance implications. Double quotes are slightly easier to read.
 Style/StringLiterals:
   EnforcedStyle: double_quotes
-
-# Use exactly one space on each side of an operator. Do not align operators
-# because it makes the code harder to edit, and makes lines unnecessarily long.
-Style/SpaceAroundOperators:
-  AllowForAlignment: false
