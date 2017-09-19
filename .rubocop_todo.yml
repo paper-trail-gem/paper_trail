@@ -3,9 +3,6 @@ require: rubocop-rspec
 # Remove these configuration records
 # one by one as the offenses are removed from the code base.
 
-Lint/RescueWithoutErrorClass:
-  Enabled: false
-
 Metrics/AbcSize:
   Max: 22 # Goal: 15
 
@@ -22,12 +19,11 @@ RSpec/BeforeAfterAll:
   Enabled: false
 
 RSpec/ExpectInHook:
-  Enabled: false
+  Exclude:
+    - spec/paper_trail/associations_spec.rb
+    - spec/models/version_spec.rb
 
 RSpec/FilePath:
-  Enabled: false
-
-RSpec/HookArgument:
   Enabled: false
 
 RSpec/InstanceVariable:
@@ -35,11 +31,9 @@ RSpec/InstanceVariable:
     - spec/paper_trail/associations_spec.rb
     - spec/paper_trail/model_spec.rb
 
-RSpec/LetBeforeExamples:
-  Enabled: false
-
 RSpec/MessageSpies:
-  Enabled: false
+  Exclude:
+    - spec/models/version_spec.rb
 
 RSpec/NamedSubject:
   Enabled: false
@@ -48,9 +42,6 @@ RSpec/NestedGroups:
   Exclude:
     - spec/paper_trail/associations_spec.rb
     - spec/paper_trail/model_spec.rb
-
-RSpec/PredicateMatcher:
-  Enabled: false
 
 Security/YAMLLoad:
   Enabled: false

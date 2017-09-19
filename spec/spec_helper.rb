@@ -72,7 +72,7 @@ RSpec.configure do |config|
   # Truncation is about three times slower than transaction rollback, so it'll
   # be nice when we can drop support for rails < 5.
   if active_record_gem_version < ::Gem::Version.new("5")
-    config.before(:each) { DatabaseCleaner.start }
-    config.after(:each) { DatabaseCleaner.clean }
+    config.before { DatabaseCleaner.start }
+    config.after { DatabaseCleaner.clean }
   end
 end

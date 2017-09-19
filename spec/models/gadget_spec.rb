@@ -1,9 +1,9 @@
 require "spec_helper"
 
 RSpec.describe Gadget, type: :model do
-  it { is_expected.to be_versioned }
-
   let(:gadget) { Gadget.create!(name: "Wrench", brand: "Acme") }
+
+  it { is_expected.to be_versioned }
 
   describe "updates", versioning: true do
     it "generates a version for updates to `name` attribute" do

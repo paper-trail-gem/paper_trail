@@ -65,15 +65,16 @@ module PaperTrail
       it "sets the invoke `paper_trail_originator`" do
         allow(ActiveSupport::Deprecation).to receive(:warn)
         subject = PaperTrail::Version.new
-        expect(subject).to receive(:paper_trail_originator)
+        allow(subject).to receive(:paper_trail_originator)
         subject.originator
+        expect(subject).to have_received(:paper_trail_originator)
       end
 
       it "displays a deprecation warning" do
-        expect(ActiveSupport::Deprecation).to receive(:warn).
+        allow(ActiveSupport::Deprecation).to receive(:warn)
+        PaperTrail::Version.new.originator
+        expect(ActiveSupport::Deprecation).to have_received(:warn).
           with(/Use paper_trail_originator instead of originator/)
-        subject = PaperTrail::Version.new
-        subject.originator
       end
     end
 

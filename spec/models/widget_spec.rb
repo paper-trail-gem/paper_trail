@@ -1,11 +1,11 @@
 require "spec_helper"
 
 RSpec.describe Widget, type: :model do
+  let(:widget) { Widget.create! name: "Bob", an_integer: 1 }
+
   describe "`be_versioned` matcher" do
     it { is_expected.to be_versioned }
   end
-
-  let(:widget) { Widget.create! name: "Bob", an_integer: 1 }
 
   describe "`have_a_version_with` matcher", versioning: true do
     before do
@@ -145,8 +145,9 @@ RSpec.describe Widget, type: :model do
       it "does not clobber the IdentityMap when reifying" do
         widget.update_attributes name: "Henry", created_at: Time.now - 1.day
         widget.update_attributes name: "Harry"
-        expect(ActiveRecord::IdentityMap).to receive(:without).once
+        allow(ActiveRecord::IdentityMap).to receive(:without)
         widget.versions.last.reify
+        expect(ActiveRecord::IdentityMap).to have_receive(:without).once
       end
     end
   end
@@ -249,10 +250,11 @@ RSpec.describe Widget, type: :model do
 
       before do
         PaperTrail.whodunnit = orig_name
-        expect(widget.versions.last.whodunnit).to eq(orig_name) # persist `widget`
+        widget # persist `widget` (call the `let`)
       end
 
       it "modifies value of `PaperTrail.whodunnit` while executing the block" do
+        expect(widget.versions.last.whodunnit).to eq(orig_name)
         widget.paper_trail.whodunnit(new_name) do
           expect(PaperTrail.whodunnit).to eq(new_name)
           widget.update_attributes(name: "Elizabeth")
@@ -261,6 +263,7 @@ RSpec.describe Widget, type: :model do
       end
 
       it "reverts value of whodunnit to previous value after executing the block" do
+        expect(widget.versions.last.whodunnit).to eq(orig_name)
         widget.paper_trail.whodunnit(new_name) { |w|
           w.update_attributes(name: "Elizabeth")
         }
@@ -268,6 +271,7 @@ RSpec.describe Widget, type: :model do
       end
 
       it "reverts to previous value, even if error within block" do
+        expect(widget.versions.last.whodunnit).to eq(orig_name)
         expect {
           widget.paper_trail.whodunnit(new_name) { raise }
         }.to raise_error(RuntimeError)
