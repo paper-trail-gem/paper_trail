@@ -84,9 +84,9 @@ RSpec.describe(::PaperTrail, versioning: true) do
         end
 
         it "have versions that are not live" do
-          expect(
-            @widget.versions.map(&:reify).compact.all? { |w| !w.paper_trail.live? }
-          ).to(be_truthy)
+          @widget.versions.map(&:reify).compact.each do |v|
+            expect(v.paper_trail).not_to be_live
+          end
         end
 
         it "have stored changes" do

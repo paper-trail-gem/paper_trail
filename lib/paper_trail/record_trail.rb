@@ -170,7 +170,7 @@ module PaperTrail
     def next_version
       subsequent_version = source_version.next
       subsequent_version ? subsequent_version.reify : @record.class.find(@record.id)
-    rescue # TODO: Rescue something more specific
+    rescue StandardError # TODO: Rescue something more specific
       nil
     end
 

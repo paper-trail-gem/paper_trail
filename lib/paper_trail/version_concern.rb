@@ -162,7 +162,7 @@ module PaperTrail
 
       def primary_key_is_int?
         @primary_key_is_int ||= columns_hash[primary_key].type == :integer
-      rescue
+      rescue StandardError # TODO: Rescue something more specific
         true
       end
 
@@ -307,7 +307,7 @@ module PaperTrail
       else
         begin
           PaperTrail.serializer.load(object_changes)
-        rescue # TODO: Rescue something specific
+        rescue StandardError # TODO: Rescue something more specific
           {}
         end
       end
