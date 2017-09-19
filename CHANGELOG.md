@@ -15,9 +15,22 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
+- None
+
+## 7.1.3 (2017-09-19)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
 - [#988](https://github.com/airblade/paper_trail/pull/988) - Fix ActiveRecord
   version check in `VersionConcern` for Rails 4.0
-
 
 ## 7.1.2 (2017-08-30)
 
