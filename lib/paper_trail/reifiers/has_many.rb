@@ -98,7 +98,7 @@ module PaperTrail
             select("MIN(version_id)").
             where("foreign_key_name = ?", assoc.foreign_key).
             where("foreign_key_id = ?", model.id).
-            where("#{version_table}.item_type = ?", assoc.class_name).
+            where("#{version_table}.item_type = ?", assoc.klass.name).
             where("created_at >= ? OR transaction_id = ?", version_at, tx_id).
             group("item_id").
             to_sql
