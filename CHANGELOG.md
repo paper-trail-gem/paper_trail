@@ -7,7 +7,9 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Breaking Changes
 
-- Drop support for ruby 2.1, whose EoL was 2017-04-01
+- Drop support for rails 4.0 and 4.1, whose EoL was
+  [2016-06-30](http://weblog.rubyonrails.org/2016/6/30/Rails-5-0-final/)
+- Drop support for ruby 2.1, whose EoL was [2017-04-01](http://bit.ly/2ppWDYa)
 - [#803](https://github.com/airblade/paper_trail/issues/803) -
   where_object_changes no longer supports reading json from a text column
 

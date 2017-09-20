@@ -7,20 +7,16 @@
 # > the version from the appraisal takes precedence.
 # > https://github.com/thoughtbot/appraisal
 
-appraise "ar-4.0" do
-  gem "activerecord", "~> 4.0"
-end
-
 appraise "ar-4.2" do
-  gem "activerecord", "~> 4.2"
+  gem "activerecord", "~> 4.2.9"
 end
 
 appraise "ar-5.0" do
-  gem "activerecord", "~> 5.0.3"
+  gem "activerecord", "~> 5.0.6"
   gem "rails-controller-testing"
 end
 
 appraise "ar-5.1" do
-  gem "rails", "5.1.1"
+  gem "activerecord", "~> 5.1.4"
   gem "rails-controller-testing"
 end

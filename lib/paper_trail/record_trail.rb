@@ -1,10 +1,7 @@
 module PaperTrail
   # Represents the "paper trail" for a single record.
   class RecordTrail
-    # The respond_to? check here is specific to ActiveRecord 4.0 and can be
-    # removed when support for ActiveRecord < 4.2 is dropped.
-    RAILS_GTE_5_1 = ::ActiveRecord.respond_to?(:gem_version) &&
-      ::ActiveRecord.gem_version >= ::Gem::Version.new("5.1.0.beta1")
+    RAILS_GTE_5_1 = ::ActiveRecord.gem_version >= ::Gem::Version.new("5.1.0.beta1")
 
     def initialize(record)
       @record = record
@@ -477,9 +474,7 @@ module PaperTrail
       if @in_after_callback && RAILS_GTE_5_1
         @record.attribute_before_last_save(attr_name.to_s)
       else
-        # TODO: after dropping support for rails 4.0, remove send, because
-        # attribute_was is no longer private.
-        @record.send(:attribute_was, attr_name.to_s)
+        @record.attribute_was(attr_name.to_s)
       end
     end
 

@@ -24,7 +24,6 @@ before_script:
   - sh -c "if [ \"$DB\" = 'postgres' ]; then psql -c 'create database paper_trail_foo;'  -U postgres; fi"
 
 gemfile:
-  - gemfiles/ar_4.0.gemfile
   - gemfiles/ar_4.2.gemfile
   - gemfiles/ar_5.0.gemfile
   - gemfiles/ar_5.1.gemfile

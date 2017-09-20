@@ -26,7 +26,7 @@ has been destroyed.
   s.required_ruby_version = ">= 2.2.0"
 
   # Rails does not follow semver, makes breaking changes in minor versions.
-  s.add_dependency "activerecord", [">= 4.0", "< 5.2"]
+  s.add_dependency "activerecord", [">= 4.2", "< 5.2"]
   s.add_dependency "request_store", "~> 1.1"
 
   s.add_development_dependency "appraisal", "~> 2.1"
@@ -34,7 +34,7 @@ has been destroyed.
   s.add_development_dependency "ffaker", "~> 2.5"
 
   # Why `railties`? Possibly used by `spec/dummy_app` boot up?
-  s.add_development_dependency "railties", [">= 4.0", "< 5.2"]
+  s.add_development_dependency "railties", [">= 4.2", "< 5.2"]
 
   s.add_development_dependency "rack-test", "~> 0.6.3"
   s.add_development_dependency "rspec-rails", "~> 3.5"
