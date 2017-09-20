@@ -105,9 +105,9 @@ DB=postgres bundle exec rake prepare
 # See spec/dummy_app/config/boot.rb for a complete explanation.
 cd spec/dummy_app
 export BUNDLE_GEMFILE=../../gemfiles/ar_5.0.gemfile
-DB=postgres RAILS_ENV=test bundle exec rake db:drop db:create db:migrate
-DB=postgres RAILS_ENV=foo bundle exec rake db:drop db:create db:migrate
-DB=postgres RAILS_ENV=bar bundle exec rake db:drop db:create db:migrate
+DB=postgres RAILS_ENV=test bundle exec rake db:environment:set db:drop db:create db:migrate
+DB=postgres RAILS_ENV=foo bundle exec rake db:environment:set db:drop db:create db:migrate
+DB=postgres RAILS_ENV=bar bundle exec rake db:environment:set db:drop db:create db:migrate
 unset BUNDLE_GEMFILE
 cd ../..
 
