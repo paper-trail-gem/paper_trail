@@ -15,7 +15,7 @@ AllCops:
     - spec/dummy_app/db/schema.rb # Generated, out of our control
 
   # Set to lowest supported version
-  TargetRubyVersion: 2.1
+  TargetRubyVersion: 2.2
 
 Layout/AlignParameters:
   EnforcedStyle: with_fixed_indentation

@@ -1,8 +1,8 @@
 language: ruby
 cache: bundler
 rvm:
-  - 2.3.4
-  - 2.1.10
+  - 2.4.2
+  - 2.2.8
 env:
   global:
     - TRAVIS=true
@@ -31,11 +31,6 @@ gemfile:
 
 matrix:
   fast_finish: true
-  exclude:
-    - gemfile: gemfiles/ar_5.0.gemfile
-      rvm: 2.1.10
-    - gemfile: gemfiles/ar_5.1.gemfile
-      rvm: 2.1.10
 
 addons:
   postgresql: "9.4"
