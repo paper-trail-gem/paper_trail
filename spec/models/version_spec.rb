@@ -105,10 +105,10 @@ module PaperTrail
         column_overrides << "jsonb" if ::ActiveRecord::VERSION::STRING >= "4.2"
       end
 
-      column_overrides.shuffle.each do |override|
-        context "with a #{override || 'text'} column" do
+      column_overrides.shuffle.each do |column_datatype_override|
+        context "with a #{column_datatype_override || 'text'} column" do
           before do
-            if override
+            if column_datatype_override
               # In rails < 5, we use truncation, ie. there is no transaction
               # around the tests, so we can't use a savepoint.
               if active_record_gem_version >= ::Gem::Version.new("5")
@@ -119,7 +119,7 @@ module PaperTrail
                   "ALTER TABLE versions DROP COLUMN #{column};"
                 )
                 ActiveRecord::Base.connection.execute(
-                  "ALTER TABLE versions ADD COLUMN #{column} #{override};"
+                  "ALTER TABLE versions ADD COLUMN #{column} #{column_datatype_override};"
                 )
               end
               PaperTrail::Version.reset_column_information
@@ -127,7 +127,7 @@ module PaperTrail
           end
 
           after do
-            if override
+            if column_datatype_override
               # In rails < 5, we use truncation, ie. there is no transaction
               # around the tests, so we can't use a savepoint.
               if active_record_gem_version >= ::Gem::Version.new("5")
@@ -245,35 +245,33 @@ module PaperTrail
               end
             end
 
-            context "JSON serializer" do
-              before(:all) { PaperTrail.serializer = PaperTrail::Serializers::JSON }
-              before do
-                unless override
-                  expect(::ActiveSupport::Deprecation).to(
-                    receive(:warn).at_least(:once).with(/^where_object_changes/)
-                  )
+            # Only test the JSON serializer against where_object_changes
+            # for json and jsonb columns, not for text columns, which are
+            # no longer supported.
+            if column_datatype_override
+              context "JSON serializer" do
+                before(:all) { PaperTrail.serializer = PaperTrail::Serializers::JSON }
+
+                it "locates versions according to their `object_changes` contents" do
+                  expect(
+                    widget.versions.where_object_changes(name: name)
+                  ).to eq(widget.versions[0..1])
+                  expect(
+                    widget.versions.where_object_changes(an_integer: 77)
+                  ).to eq(widget.versions[1..2])
+                  expect(
+                    widget.versions.where_object_changes(an_integer: int)
+                  ).to eq([widget.versions.last])
                 end
-              end
 
-              it "locates versions according to their `object_changes` contents" do
-                expect(
-                  widget.versions.where_object_changes(name: name)
-                ).to eq(widget.versions[0..1])
-                expect(
-                  widget.versions.where_object_changes(an_integer: 77)
-                ).to eq(widget.versions[1..2])
-                expect(
-                  widget.versions.where_object_changes(an_integer: int)
-                ).to eq([widget.versions.last])
-              end
+                it "handles queries for multiple attributes" do
+                  expect(
+                    widget.versions.where_object_changes(an_integer: 77, name: "foobar")
+                  ).to eq(widget.versions[1..2])
+                end
 
-              it "handles queries for multiple attributes" do
-                expect(
-                  widget.versions.where_object_changes(an_integer: 77, name: "foobar")
-                ).to eq(widget.versions[1..2])
+                after(:all) { PaperTrail.serializer = PaperTrail::Serializers::YAML }
               end
-
-              after(:all) { PaperTrail.serializer = PaperTrail::Serializers::YAML }
             end
           end
         end

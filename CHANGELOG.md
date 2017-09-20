@@ -7,7 +7,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Breaking Changes
 
-- None
+- [#803](https://github.com/airblade/paper_trail/issues/803) -
+  where_object_changes no longer supports reading json from a text column
 
 ### Added
 

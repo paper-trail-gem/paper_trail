@@ -52,6 +52,14 @@ module PaperTrail
           end
         end
       end
+
+      describe ".where_object_changes_condition" do
+        it "raises error" do
+          expect {
+            described_class.where_object_changes_condition
+          }.to raise_error(/no longer supports/)
+        end
+      end
     end
   end
 end
