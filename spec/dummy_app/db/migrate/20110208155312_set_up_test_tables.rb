@@ -315,6 +315,33 @@ class SetUpTestTables < (
       t.datetime :created_at
     end
     add_index :custom_primary_key_record_versions, %i[item_type item_id], name: "idx_cust_pk_item"
+
+    create_table :families do |t|
+      t.references :parent
+      t.references :grandson
+    end
+
+    create_table :parents do |t|
+      t.string :name
+      t.references :family
+    end
+
+    create_table :partners do |t|
+      t.string :name
+      t.references :parent
+    end
+
+    create_table :children do |t|
+      t.string :name
+      t.references :parent
+    end
+
+    create_table :grandsons do |t|
+      t.string :name
+      t.references :family
+      t.references :child
+      t.timestamps
+    end
   end
 
   def down

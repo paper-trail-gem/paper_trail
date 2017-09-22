@@ -19,7 +19,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- None
+- Fix Associations
+  supports revision of association with module name.
 
 ## 7.1.3 (2017-09-19)
 

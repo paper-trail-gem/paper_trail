@@ -73,6 +73,12 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.string "name"
   end
 
+  create_table "children", force: :cascade do |t|
+    t.string "name"
+    t.integer "parent_id"
+    t.index ["parent_id"], name: "index_children_on_parent_id"
+  end
+
   create_table "citations", force: :cascade do |t|
     t.integer "quotation_id"
   end
@@ -111,6 +117,13 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.integer "editor_id"
   end
 
+  create_table "families", force: :cascade do |t|
+    t.integer "parent_id"
+    t.integer "grandson_id"
+    t.index ["grandson_id"], name: "index_families_on_grandson_id"
+    t.index ["parent_id"], name: "index_families_on_parent_id"
+  end
+
   create_table "fluxors", force: :cascade do |t|
     t.integer "widget_id"
     t.string "name"
@@ -130,6 +143,16 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.string "brand"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "grandsons", force: :cascade do |t|
+    t.string "name"
+    t.integer "family_id"
+    t.integer "child_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["child_id"], name: "index_grandsons_on_child_id"
+    t.index ["family_id"], name: "index_grandsons_on_family_id"
   end
 
   create_table "legacy_widgets", force: :cascade do |t|
@@ -171,6 +194,18 @@ ActiveRecord::Schema.define(version: 20110208155312) do
   create_table "paragraphs", force: :cascade do |t|
     t.integer "section_id"
     t.string "name"
+  end
+
+  create_table "parents", force: :cascade do |t|
+    t.string "name"
+    t.integer "family_id"
+    t.index ["family_id"], name: "index_parents_on_family_id"
+  end
+
+  create_table "partners", force: :cascade do |t|
+    t.string "name"
+    t.integer "parent_id"
+    t.index ["parent_id"], name: "index_partners_on_parent_id"
   end
 
   create_table "people", force: :cascade do |t|
