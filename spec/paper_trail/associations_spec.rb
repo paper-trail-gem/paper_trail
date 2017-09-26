@@ -128,14 +128,16 @@ RSpec.describe(::PaperTrail, versioning: true) do
         parent = Family::Parent.new(name: "parent1")
         parent.build_partner(name: "partner1")
         parent.save!
+        Timecop.travel(1.second.since)
         parent
       end
 
       context "change partner" do
         before do
-          parent_with_partner.name = "parent2"
-          parent_with_partner.partner.name = "partner2"
-          parent_with_partner.save!
+          parent_with_partner.update_attributes(
+            name: "parent2",
+            partner_attributes: { id: parent_with_partner.partner.id, name: "partner2" }
+          )
         end
 
         it "reify partner" do
@@ -313,6 +315,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
         parent = Family::Parent.new(name: "parent1")
         parent.children.build(name: "child1")
         parent.save!
+        Timecop.travel(1.second.since)
         parent
       end
 
@@ -754,6 +757,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
         parent = Family::Parent.new(name: "parent1")
         parent.grandsons.build(name: "grandson1")
         parent.save!
+        Timecop.travel(1.second.since)
         parent
       end
 
@@ -912,6 +916,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
         parent = Family::Parent.new(name: "parent1")
         parent.children.build(name: "child1")
         parent.save!
+        Timecop.travel(1.second.since)
         parent
       end
 

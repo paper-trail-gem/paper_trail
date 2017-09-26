@@ -7,6 +7,7 @@ module Family
     has_many :families
     has_many :grandsons, through: :families
 
+    accepts_nested_attributes_for :partner
     accepts_nested_attributes_for :children
   end
 end
