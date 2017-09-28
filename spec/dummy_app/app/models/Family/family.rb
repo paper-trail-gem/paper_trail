@@ -2,7 +2,15 @@ module Family
   class Family < ActiveRecord::Base
     has_paper_trail
 
-    belongs_to :parent
-    belongs_to :grandson
+    if ActiveRecord.gem_version >= Gem::Version.new("5.0")
+      belongs_to :parent, class_name: "Family::Person", foreign_key: :parent_id, optional: true
+    else
+      belongs_to :parent, class_name: "Family::Person", foreign_key: :parent_id
+    end
+    if ActiveRecord.gem_version >= Gem::Version.new("5.0")
+      belongs_to :grandson, class_name: "Family::Person", foreign_key: :grandson_id, optional: true
+    else
+      belongs_to :grandson, class_name: "Family::Person", foreign_key: :grandson_id
+    end
   end
 end

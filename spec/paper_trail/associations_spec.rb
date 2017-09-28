@@ -125,8 +125,8 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
     context "module name is given" do
       let(:parent_with_partner) do
-        parent = Family::Parent.new(name: "parent1")
-        parent.build_partner(name: "partner1")
+        parent = Family::Person.new(name: "parent1")
+        parent.build_mentee(name: "partner1")
         parent.save!
         Timecop.travel(1.second.since)
         parent
@@ -136,13 +136,13 @@ RSpec.describe(::PaperTrail, versioning: true) do
         before do
           parent_with_partner.update_attributes(
             name: "parent2",
-            partner_attributes: { id: parent_with_partner.partner.id, name: "partner2" }
+            mentee_attributes: { id: parent_with_partner.mentee.id, name: "partner2" }
           )
         end
 
         it "reify partner" do
           previous_parent = parent_with_partner.versions.last.reify(has_one: true)
-          previous_partner = previous_parent.partner
+          previous_partner = previous_parent.mentee
           expect(previous_partner.name).to eq "partner1"
         end
       end
@@ -312,7 +312,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
     context "module name is given" do
       let(:parent_with_children) do
-        parent = Family::Parent.new(name: "parent1")
+        parent = Family::Person.new(name: "parent1")
         parent.children.build(name: "child1")
         parent.save!
         Timecop.travel(1.second.since)
@@ -754,7 +754,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
     context "module name is given" do
       let(:parent_with_grandsons) do
-        parent = Family::Parent.new(name: "parent1")
+        parent = Family::Person.new(name: "parent1")
         parent.grandsons.build(name: "grandson1")
         parent.save!
         Timecop.travel(1.second.since)
@@ -913,7 +913,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
     context "module name is given" do
       let(:parent_with_children) do
-        parent = Family::Parent.new(name: "parent1")
+        parent = Family::Person.new(name: "parent1")
         parent.children.build(name: "child1")
         parent.save!
         Timecop.travel(1.second.since)

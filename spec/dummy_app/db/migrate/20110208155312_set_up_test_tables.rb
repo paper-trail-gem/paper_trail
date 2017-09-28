@@ -316,31 +316,15 @@ class SetUpTestTables < (
     end
     add_index :custom_primary_key_record_versions, %i[item_type item_id], name: "idx_cust_pk_item"
 
-    create_table :families do |t|
-      t.references :parent
-      t.references :grandson
+    create_table :family_families do |t|
+      t.integer :parent_id
+      t.integer :grandson_id
     end
 
-    create_table :parents do |t|
+    create_table :family_people do |t|
       t.string :name
-      t.references :family
-    end
-
-    create_table :partners do |t|
-      t.string :name
-      t.references :parent
-    end
-
-    create_table :children do |t|
-      t.string :name
-      t.references :parent
-    end
-
-    create_table :grandsons do |t|
-      t.string :name
-      t.references :family
-      t.references :child
-      t.timestamps
+      t.integer :parent_id
+      t.integer :partner_id
     end
   end
 
