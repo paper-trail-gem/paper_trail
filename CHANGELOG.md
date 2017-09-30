@@ -29,7 +29,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
-- None
+- [#990](https://github.com/airblade/paper_trail/pull/990) Add whodunnit for with_versioning method in RSpec unit tests
 
 ### Fixed
 
