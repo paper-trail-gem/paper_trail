@@ -125,7 +125,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
     context "module name is given" do
       let(:parent_with_partner) do
-        parent = Family::Person.new(name: "parent1")
+        parent = Family::Family.new(name: "parent1")
         parent.build_mentee(name: "partner1")
         parent.save!
         Timecop.travel(1.second.since)
@@ -312,7 +312,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
     context "module name is given" do
       let(:parent_with_children) do
-        parent = Family::Person.new(name: "parent1")
+        parent = Family::Family.new(name: "parent1")
         parent.children.build(name: "child1")
         parent.save!
         Timecop.travel(1.second.since)
@@ -754,7 +754,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
     context "module name is given" do
       let(:parent_with_grandsons) do
-        parent = Family::Person.new(name: "parent1")
+        parent = Family::Family.new(name: "parent1")
         parent.grandsons.build(name: "grandson1")
         parent.save!
         Timecop.travel(1.second.since)
@@ -913,7 +913,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
     context "module name is given" do
       let(:parent_with_children) do
-        parent = Family::Person.new(name: "parent1")
+        parent = Family::Family.new(name: "parent1")
         parent.children.build(name: "child1")
         parent.save!
         Timecop.travel(1.second.since)

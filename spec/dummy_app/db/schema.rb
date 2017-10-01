@@ -111,15 +111,15 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.integer "editor_id"
   end
 
-  create_table "family_families", force: :cascade do |t|
-    t.integer "parent_id"
-    t.integer "grandson_id"
-  end
-
-  create_table "family_people", force: :cascade do |t|
+  create_table "families", force: :cascade do |t|
     t.string "name"
     t.integer "parent_id"
     t.integer "partner_id"
+  end
+
+  create_table "family_lines", force: :cascade do |t|
+    t.integer "parent_id"
+    t.integer "grandson_id"
   end
 
   create_table "fluxors", force: :cascade do |t|
