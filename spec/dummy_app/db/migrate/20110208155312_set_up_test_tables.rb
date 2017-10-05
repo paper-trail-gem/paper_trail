@@ -315,6 +315,17 @@ class SetUpTestTables < (
       t.datetime :created_at
     end
     add_index :custom_primary_key_record_versions, %i[item_type item_id], name: "idx_cust_pk_item"
+
+    create_table :family_lines do |t|
+      t.integer :parent_id
+      t.integer :grandson_id
+    end
+
+    create_table :families do |t|
+      t.string :name
+      t.integer :parent_id
+      t.integer :partner_id
+    end
   end
 
   def down
