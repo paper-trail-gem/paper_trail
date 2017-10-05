@@ -7,6 +7,20 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Breaking Changes
 
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- None
+
+## 8.0.0 (2017-10-04)
+
+### Breaking Changes
+
 - Drop support for rails 4.0 and 4.1, whose EoL was
   [2016-06-30](http://weblog.rubyonrails.org/2016/6/30/Rails-5-0-final/)
 - Drop support for ruby 2.1, whose EoL was [2017-04-01](http://bit.ly/2ppWDYa)
@@ -19,8 +33,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- Fix Associations
-  supports revision of association with module name.
+- [#996](https://github.com/airblade/paper_trail/pull/996) - Incorrect
+  item_type in association reification query
 
 ## 7.1.3 (2017-09-19)
 

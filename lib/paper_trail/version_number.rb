@@ -5,9 +5,9 @@ module PaperTrail
   # because of this confusion, but it's not worth the breaking change.
   # People are encouraged to use `PaperTrail.gem_version` instead.
   module VERSION
-    MAJOR = 7
-    MINOR = 1
-    TINY = 3
+    MAJOR = 8
+    MINOR = 0
+    TINY = 0
     PRE = nil
 
     STRING = [MAJOR, MINOR, TINY, PRE].compact.join(".").freeze

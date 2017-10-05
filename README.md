@@ -11,6 +11,7 @@ has been destroyed.
 | Version        | Documentation |
 | -------------- | ------------- |
 | Unreleased     | https://github.com/airblade/paper_trail/blob/master/README.md |
+| 8.0.0          | https://github.com/airblade/paper_trail/blob/v8.0.0/README.md |
 | 7.1.3          | https://github.com/airblade/paper_trail/blob/v7.1.3/README.md |
 | 6.0.2          | https://github.com/airblade/paper_trail/blob/v6.0.2/README.md |
 | 5.2.3          | https://github.com/airblade/paper_trail/blob/v5.2.3/README.md |
@@ -66,6 +67,7 @@ has been destroyed.
 | paper_trail    | branch     | tags   | ruby     | activerecord  |
 | -------------- | ---------- | ------ | -------- | ------------- |
 | unreleased     | master     |        | >= 2.2.0 | >= 4.2, < 6   |
+| 8              | master     | v8.x   | >= 2.2.0 | >= 4.2, < 6   |
 | 7              | 7-stable   | v7.x   | >= 2.1.0 | >= 4.0, < 6   |
 | 6              | 6-stable   | v6.x   | >= 1.9.3 | >= 4.0, < 6   |
 | 5              | 5-stable   | v5.x   | >= 1.9.3 | >= 3.0, < 5.1 |
