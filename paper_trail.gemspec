@@ -45,6 +45,6 @@ has been destroyed.
   s.add_development_dependency "rubocop-rspec", "~> 1.18.0"
   s.add_development_dependency "timecop", "~> 0.8.0"
   s.add_development_dependency "sqlite3", "~> 1.2"
-  s.add_development_dependency "pg", "~> 0.19.0"
+  s.add_development_dependency "pg", "~> 0.21.0"
   s.add_development_dependency "mysql2", "~> 0.4.2"
 end
