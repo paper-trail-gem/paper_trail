@@ -122,22 +122,6 @@ RSpec.describe(::PaperTrail, versioning: true) do
         end
       end
     end
-
-    context "Family::Family" do
-      it "uses the correct item_type in reify queries" do
-        parent_with_partner = Family::Family.new(name: "parent1")
-        parent_with_partner.build_mentee(name: "partner1")
-        parent_with_partner.save!
-        Timecop.travel(1.second.since)
-        parent_with_partner.update_attributes(
-          name: "parent2",
-          mentee_attributes: { id: parent_with_partner.mentee.id, name: "partner2" }
-        )
-        previous_parent = parent_with_partner.versions.last.reify(has_one: true)
-        previous_partner = previous_parent.mentee
-        expect(previous_partner.name).to eq "partner1"
-      end
-    end
   end
 
   context "a has_many association" do
@@ -298,22 +282,6 @@ RSpec.describe(::PaperTrail, versioning: true) do
             expect(order).to be_marked_for_destruction
           end
         end
-      end
-    end
-
-    context "Family::Family" do
-      it "uses the correct item_type in reify queries" do
-        parent = Family::Family.new(name: "parent1")
-        parent.children.build(name: "child1")
-        parent.save!
-        Timecop.travel(1.second.since)
-        parent.name = "parent2"
-        parent.children.build(name: "child2")
-        parent.save!
-        previous_parent = parent.versions.last.reify(has_many: true)
-        previous_children = previous_parent.children
-        expect(previous_children.size).to eq 1
-        expect(previous_children.first.name).to eq "child1"
       end
     end
   end
@@ -733,22 +701,6 @@ RSpec.describe(::PaperTrail, versioning: true) do
         end
       end
     end
-
-    context "Family::Family" do
-      it "uses the correct item_type in reify queries" do
-        parent = Family::Family.new(name: "parent1")
-        parent.grandsons.build(name: "grandson1")
-        parent.save!
-        Timecop.travel(1.second.since)
-        parent.name = "parent2"
-        parent.grandsons.build(name: "grandson2")
-        parent.save!
-        previous_parent = parent.versions.last.reify(has_many: true)
-        previous_grandsons = previous_parent.grandsons
-        expect(previous_grandsons.size).to eq 1
-        expect(previous_grandsons.first.name).to eq "grandson1"
-      end
-    end
   end
 
   context "belongs_to associations" do
@@ -881,22 +833,6 @@ RSpec.describe(::PaperTrail, versioning: true) do
             expect(@new_widget.marked_for_destruction?).to(eq(false))
           end
         end
-      end
-    end
-
-    context "Family::Family" do
-      it "uses the correct item_type in reify queries" do
-        parent = Family::Family.new(name: "parent1")
-        parent.children.build(name: "child1")
-        parent.save!
-        Timecop.travel(1.second.since)
-        parent.update_attributes!(
-          name: "parent2",
-          children_attributes: { id: parent.children.first.id, name: "child2" }
-        )
-        previous_children = parent.children.
-          first.versions.last.reify(belongs_to: true)
-        expect(previous_children.parent.name).to eq "parent1"
       end
     end
   end
