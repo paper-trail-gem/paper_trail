@@ -123,28 +123,19 @@ RSpec.describe(::PaperTrail, versioning: true) do
       end
     end
 
-    context "module name is given" do
-      let(:parent_with_partner) do
-        parent = Family::Family.new(name: "parent1")
-        parent.build_mentee(name: "partner1")
-        parent.save!
+    context "Family::Family" do
+      it "uses the correct item_type in reify queries" do
+        parent_with_partner = Family::Family.new(name: "parent1")
+        parent_with_partner.build_mentee(name: "partner1")
+        parent_with_partner.save!
         Timecop.travel(1.second.since)
-        parent
-      end
-
-      context "change partner" do
-        before do
-          parent_with_partner.update_attributes(
-            name: "parent2",
-            mentee_attributes: { id: parent_with_partner.mentee.id, name: "partner2" }
-          )
-        end
-
-        it "reify partner" do
-          previous_parent = parent_with_partner.versions.last.reify(has_one: true)
-          previous_partner = previous_parent.mentee
-          expect(previous_partner.name).to eq "partner1"
-        end
+        parent_with_partner.update_attributes(
+          name: "parent2",
+          mentee_attributes: { id: parent_with_partner.mentee.id, name: "partner2" }
+        )
+        previous_parent = parent_with_partner.versions.last.reify(has_one: true)
+        previous_partner = previous_parent.mentee
+        expect(previous_partner.name).to eq "partner1"
       end
     end
   end
@@ -310,28 +301,19 @@ RSpec.describe(::PaperTrail, versioning: true) do
       end
     end
 
-    context "module name is given" do
-      let(:parent_with_children) do
+    context "Family::Family" do
+      it "uses the correct item_type in reify queries" do
         parent = Family::Family.new(name: "parent1")
         parent.children.build(name: "child1")
         parent.save!
         Timecop.travel(1.second.since)
-        parent
-      end
-
-      context "create new children" do
-        before do
-          parent_with_children.name = "parent2"
-          parent_with_children.children.build(name: "child2")
-          parent_with_children.save!
-        end
-
-        it "reify children" do
-          previous_parent = parent_with_children.versions.last.reify(has_many: true)
-          previous_children = previous_parent.children
-          expect(previous_children.size).to eq 1
-          expect(previous_children.first.name).to eq "child1"
-        end
+        parent.name = "parent2"
+        parent.children.build(name: "child2")
+        parent.save!
+        previous_parent = parent.versions.last.reify(has_many: true)
+        previous_children = previous_parent.children
+        expect(previous_children.size).to eq 1
+        expect(previous_children.first.name).to eq "child1"
       end
     end
   end
@@ -752,28 +734,19 @@ RSpec.describe(::PaperTrail, versioning: true) do
       end
     end
 
-    context "module name is given" do
-      let(:parent_with_grandsons) do
+    context "Family::Family" do
+      it "uses the correct item_type in reify queries" do
         parent = Family::Family.new(name: "parent1")
         parent.grandsons.build(name: "grandson1")
         parent.save!
         Timecop.travel(1.second.since)
-        parent
-      end
-
-      context "create new grandsons" do
-        before do
-          parent_with_grandsons.name = "parent2"
-          parent_with_grandsons.grandsons.build(name: "grandson2")
-          parent_with_grandsons.save!
-        end
-
-        it "reify grandsons" do
-          previous_parent = parent_with_grandsons.versions.last.reify(has_many: true)
-          previous_grandsons = previous_parent.grandsons
-          expect(previous_grandsons.size).to eq 1
-          expect(previous_grandsons.first.name).to eq "grandson1"
-        end
+        parent.name = "parent2"
+        parent.grandsons.build(name: "grandson2")
+        parent.save!
+        previous_parent = parent.versions.last.reify(has_many: true)
+        previous_grandsons = previous_parent.grandsons
+        expect(previous_grandsons.size).to eq 1
+        expect(previous_grandsons.first.name).to eq "grandson1"
       end
     end
   end
@@ -911,28 +884,19 @@ RSpec.describe(::PaperTrail, versioning: true) do
       end
     end
 
-    context "module name is given" do
-      let(:parent_with_children) do
+    context "Family::Family" do
+      it "uses the correct item_type in reify queries" do
         parent = Family::Family.new(name: "parent1")
         parent.children.build(name: "child1")
         parent.save!
         Timecop.travel(1.second.since)
-        parent
-      end
-
-      context "change children" do
-        before do
-          parent_with_children.update_attributes!(
-            name: "parent2",
-            children_attributes: { id: parent_with_children.children.first.id, name: "child2" }
-          )
-        end
-
-        it "reify parent" do
-          previous_children = parent_with_children.children.
-            first.versions.last.reify(belongs_to: true)
-          expect(previous_children.parent.name).to eq "parent1"
-        end
+        parent.update_attributes!(
+          name: "parent2",
+          children_attributes: { id: parent.children.first.id, name: "child2" }
+        )
+        previous_children = parent.children.
+          first.versions.last.reify(belongs_to: true)
+        expect(previous_children.parent.name).to eq "parent1"
       end
     end
   end
