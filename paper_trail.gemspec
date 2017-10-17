@@ -38,7 +38,8 @@ has been destroyed.
   s.add_development_dependency "pry-byebug", "~> 3.5"
   s.add_development_dependency "rack-test", "~> 0.6.3"
   s.add_development_dependency "rake", "~> 12.1"
-  s.add_development_dependency "rspec-rails", "~> 3.7"
+  # rspec-rails 3.7.0 has a bug: https://github.com/rspec/rspec-rails/issues/1882
+  s.add_development_dependency "rspec-rails", "~> 3.6.1"
   s.add_development_dependency "rubocop", "0.50.0"
   s.add_development_dependency "rubocop-rspec", "~> 1.18.0"
   s.add_development_dependency "sqlite3", "~> 1.3"
