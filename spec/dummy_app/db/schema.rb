@@ -91,7 +91,7 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.string "name"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.index ["uuid"], name: "sqlite_autoindex_custom_primary_key_records_1", unique: true
+    t.index ["uuid"], unique: true
   end
 
   create_table "customers", force: :cascade do |t|
