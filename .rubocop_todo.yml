@@ -23,9 +23,6 @@ RSpec/ExpectInHook:
     - spec/paper_trail/associations_spec.rb
     - spec/models/version_spec.rb
 
-RSpec/FilePath:
-  Enabled: false
-
 RSpec/InstanceVariable:
   Exclude:
     - spec/paper_trail/associations_spec.rb
