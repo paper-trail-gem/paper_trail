@@ -32,10 +32,6 @@ has been destroyed.
   s.add_development_dependency "appraisal", "~> 2.2"
   s.add_development_dependency "rake", "~> 12.1"
   s.add_development_dependency "ffaker", "~> 2.7"
-
-  # Why `railties`? Possibly used by `spec/dummy_app` boot up?
-  s.add_development_dependency "railties", [">= 4.2", "< 5.2"]
-
   s.add_development_dependency "rack-test", "~> 0.6.3"
   s.add_development_dependency "rspec-rails", "~> 3.7"
   s.add_development_dependency "generator_spec", "~> 0.9.4"
