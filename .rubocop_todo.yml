@@ -31,10 +31,6 @@ RSpec/InstanceVariable:
     - spec/paper_trail/associations_spec.rb
     - spec/paper_trail/model_spec.rb
 
-RSpec/MessageSpies:
-  Exclude:
-    - spec/models/version_spec.rb
-
 RSpec/NamedSubject:
   Enabled: false
 
