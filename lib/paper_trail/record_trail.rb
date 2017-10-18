@@ -333,13 +333,7 @@ module PaperTrail
     def reset_timestamp_attrs_for_update_if_needed
       return if live?
       @record.send(:timestamp_attributes_for_update_in_model).each do |column|
-        # ActiveRecord 4.2 deprecated `reset_column!` in favor of
-        # `restore_column!`.
-        if @record.respond_to?("restore_#{column}!")
-          @record.send("restore_#{column}!")
-        else
-          @record.send("reset_#{column}!")
-        end
+        @record.send("restore_#{column}!")
       end
     end
 
