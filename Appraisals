@@ -8,7 +8,7 @@
 # > https://github.com/thoughtbot/appraisal
 
 appraise "ar-4.2" do
-  gem "activerecord", "~> 4.2.9"
+  gem "activerecord", "~> 4.2.10"
 end
 
 appraise "ar-5.0" do
