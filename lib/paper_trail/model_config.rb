@@ -59,7 +59,7 @@ module PaperTrail
 
     # Adds a callback that records a version after an "update" event.
     def on_update
-      @model_class.before_update { |r|
+      @model_class.before_save { |r|
         r.paper_trail.reset_timestamp_attrs_for_update_if_needed
       }
       @model_class.after_update { |r|
