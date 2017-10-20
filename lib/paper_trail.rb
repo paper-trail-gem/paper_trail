@@ -187,7 +187,7 @@ ActiveSupport.on_load(:active_record) do
 end
 
 # Require frameworks
-if defined?(::Rails.env) && ActiveRecord::VERSION::STRING >= "3.2"
+if defined?(::Rails.application) && ActiveRecord::VERSION::STRING >= "3.2"
   require "paper_trail/frameworks/rails"
 else
   require "paper_trail/frameworks/active_record"
