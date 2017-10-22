@@ -228,6 +228,12 @@ module PaperTrail
             end
 
             context "YAML serializer" do
+              before do
+                unless column_datatype_override
+                  allow(ActiveSupport::Deprecation).to receive(:warn)
+                end
+              end
+
               it "locates versions according to their `object_changes` contents" do
                 expect(
                   widget.versions.where_object_changes(name: name)
@@ -238,12 +244,20 @@ module PaperTrail
                 expect(
                   widget.versions.where_object_changes(an_integer: int)
                 ).to eq([widget.versions.last])
+                unless column_datatype_override
+                  expect(ActiveSupport::Deprecation).to have_received(:warn).
+                    exactly(3).times.with(/^where_object_changes/)
+                end
               end
 
               it "handles queries for multiple attributes" do
                 expect(
                   widget.versions.where_object_changes(an_integer: 100, name: "foobar")
                 ).to eq(widget.versions[1..2])
+                unless column_datatype_override
+                  expect(ActiveSupport::Deprecation).to have_received(:warn).
+                    at_least(:once).with(/^where_object_changes/)
+                end
               end
             end
 

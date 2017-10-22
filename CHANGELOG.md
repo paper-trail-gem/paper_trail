@@ -11,7 +11,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
-- None
+- [#997](https://github.com/airblade/paper_trail/pull/997)
+  Deprecate `where_object_changes` when reading YAML from a text column
 
 ### Fixed
 
