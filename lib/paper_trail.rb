@@ -190,7 +190,9 @@ ActiveSupport.on_load(:active_record) do
 end
 
 # Require frameworks
-if defined?(::Rails) && ActiveRecord::VERSION::STRING >= "3.2"
+# Rails module is sometimes opened by gems like rails-html-sanitizer 
+# so let's check for presence of Rails.application instead
+if defined?(::Rails.application) && ActiveRecord::VERSION::STRING >= "3.2"
   require "paper_trail/frameworks/rails"
 else
   require "paper_trail/frameworks/active_record"
