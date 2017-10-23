@@ -107,6 +107,10 @@ module PaperTrail
 
       column_overrides.shuffle.each do |column_datatype_override|
         context "with a #{column_datatype_override || 'text'} column" do
+          let(:widget) { Widget.new }
+          let(:name) { FFaker::Name.first_name }
+          let(:int) { column_datatype_override ? 1 : rand(5) + 2 }
+
           before do
             if column_datatype_override
               # In rails < 5, we use truncation, ie. there is no transaction
@@ -147,10 +151,6 @@ module PaperTrail
           end
 
           describe "#where_object", versioning: true do
-            let(:widget) { Widget.new }
-            let(:name) { FFaker::Name.first_name }
-            let(:int) { rand(10) + 1 }
-
             before do
               widget.update_attributes!(name: name, an_integer: int)
               widget.update_attributes!(name: "foobar", an_integer: 100)
@@ -173,6 +173,9 @@ module PaperTrail
 
               it "locates versions according to their `object` contents" do
                 expect(
+                  PaperTrail::Version.where_object(an_integer: int)
+                ).to eq([widget.versions[1]])
+                expect(
                   PaperTrail::Version.where_object(name: name)
                 ).to eq([widget.versions[1]])
                 expect(
@@ -192,6 +195,9 @@ module PaperTrail
 
               it "locates versions according to their `object` contents" do
                 expect(
+                  PaperTrail::Version.where_object(an_integer: int)
+                ).to eq([widget.versions[1]])
+                expect(
                   PaperTrail::Version.where_object(name: name)
                 ).to eq([widget.versions[1]])
                 expect(
@@ -206,13 +212,9 @@ module PaperTrail
           end
 
           describe "#where_object_changes", versioning: true do
-            let(:widget) { Widget.new }
-            let(:name) { FFaker::Name.first_name }
-            let(:int) { rand(5) + 2 }
-
             before do
               widget.update_attributes!(name: name, an_integer: 0)
-              widget.update_attributes!(name: "foobar", an_integer: 77)
+              widget.update_attributes!(name: "foobar", an_integer: 100)
               widget.update_attributes!(name: FFaker::Name.last_name, an_integer: int)
             end
 
@@ -226,22 +228,36 @@ module PaperTrail
             end
 
             context "YAML serializer" do
+              before do
+                unless column_datatype_override
+                  allow(ActiveSupport::Deprecation).to receive(:warn)
+                end
+              end
+
               it "locates versions according to their `object_changes` contents" do
                 expect(
                   widget.versions.where_object_changes(name: name)
                 ).to eq(widget.versions[0..1])
                 expect(
-                  widget.versions.where_object_changes(an_integer: 77)
+                  widget.versions.where_object_changes(an_integer: 100)
                 ).to eq(widget.versions[1..2])
                 expect(
                   widget.versions.where_object_changes(an_integer: int)
                 ).to eq([widget.versions.last])
+                unless column_datatype_override
+                  expect(ActiveSupport::Deprecation).to have_received(:warn).
+                    exactly(3).times.with(/^where_object_changes/)
+                end
               end
 
               it "handles queries for multiple attributes" do
                 expect(
-                  widget.versions.where_object_changes(an_integer: 77, name: "foobar")
+                  widget.versions.where_object_changes(an_integer: 100, name: "foobar")
                 ).to eq(widget.versions[1..2])
+                unless column_datatype_override
+                  expect(ActiveSupport::Deprecation).to have_received(:warn).
+                    at_least(:once).with(/^where_object_changes/)
+                end
               end
             end
 
@@ -257,7 +273,7 @@ module PaperTrail
                     widget.versions.where_object_changes(name: name)
                   ).to eq(widget.versions[0..1])
                   expect(
-                    widget.versions.where_object_changes(an_integer: 77)
+                    widget.versions.where_object_changes(an_integer: 100)
                   ).to eq(widget.versions[1..2])
                   expect(
                     widget.versions.where_object_changes(an_integer: int)
@@ -266,7 +282,7 @@ module PaperTrail
 
                 it "handles queries for multiple attributes" do
                   expect(
-                    widget.versions.where_object_changes(an_integer: 77, name: "foobar")
+                    widget.versions.where_object_changes(an_integer: 100, name: "foobar")
                   ).to eq(widget.versions[1..2])
                 end
 

@@ -248,9 +248,11 @@ version.index
 version.event
 
 # Query the `versions.object` column (or `object_changes` column), by
-# attributes, using the SQL LIKE operator. Known issue: inconsistent results for
-# numeric values due to limitations of SQL wildcard matchers against the
-# serialized objects.
+# attributes, using the SQL LIKE operator.
+#
+# Known issue: `where_object_changes` with the default YAML serializer and
+# an `object_changes` text column may return incorrect results for numeric values
+# due to limitations of SQL wildcard matchers against the serialized objects.
 PaperTrail::Version.where_object(attr1: val1, attr2: val2)
 PaperTrail::Version.where_object_changes(attr1: val1)
 ```
