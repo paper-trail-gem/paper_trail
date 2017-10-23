@@ -1,3 +1,4 @@
+require "active_support"
 require "request_store"
 require "paper_trail/cleaner"
 require "paper_trail/config"
@@ -13,6 +14,12 @@ require "paper_trail/serializers/yaml"
 # An ActiveRecord extension that tracks changes to your models, for auditing or
 # versioning.
 module PaperTrail
+  E_TIMESTAMP_FIELD_CONFIG = <<-EOS.squish.freeze
+    PaperTrail.timestamp_field= has been removed, without replacement. It is no
+    longer configurable. The timestamp field in the versions table must now be
+    named created_at.
+  EOS
+
   extend PaperTrail::Cleaner
 
   class << self
@@ -72,11 +79,7 @@ module PaperTrail
     # Set the field which records when a version was created.
     # @api public
     def timestamp_field=(_field_name)
-      raise(
-        "PaperTrail.timestamp_field= has been removed, without replacement. " \
-          "It is no longer configurable. The timestamp field in the versions table " \
-          "must now be named created_at."
-      )
+      raise(E_TIMESTAMP_FIELD_CONFIG)
     end
 
     # Sets who is responsible for any changes that occur. You would normally use
