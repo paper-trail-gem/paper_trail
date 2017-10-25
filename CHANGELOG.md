@@ -16,7 +16,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- None
+- [#1003](https://github.com/airblade/paper_trail/pull/1003) - Warn when PT
+  cannot be loaded because rails is not loaded yet.
 
 ## 8.0.0 (2017-10-04)
 
