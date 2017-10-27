@@ -39,8 +39,8 @@ has been destroyed.
   s.add_development_dependency "rack-test", "~> 0.6.3"
   s.add_development_dependency "rake", "~> 12.1"
   s.add_development_dependency "rspec-rails", "~> 3.7.1"
-  s.add_development_dependency "rubocop", "0.50.0"
-  s.add_development_dependency "rubocop-rspec", "~> 1.18.0"
+  s.add_development_dependency "rubocop", "0.51.0"
+  s.add_development_dependency "rubocop-rspec", "~> 1.19.0"
   s.add_development_dependency "sqlite3", "~> 1.3"
   s.add_development_dependency "timecop", "~> 0.9.1"
 end
