@@ -12,6 +12,8 @@ Metrics/CyclomaticComplexity:
 Metrics/PerceivedComplexity:
   Max: 9 # Goal: 7
 
+# Switching to frozen strings internally would be fine, but if any of those
+# frozen strings cross our public API, that would be a breaking change.
 Style/FrozenStringLiteralComment:
   Enabled: false
 
@@ -36,5 +38,8 @@ RSpec/NestedGroups:
     - spec/paper_trail/associations_spec.rb
     - spec/paper_trail/model_spec.rb
 
+# It may be possible for us to use safe_load, but we'd have to pass the
+# safelists, like `whitelist_classes` into our serializer, and the serializer
+# interface is a public API, so that would be a breaking change.
 Security/YAMLLoad:
   Enabled: false
