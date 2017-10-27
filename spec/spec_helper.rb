@@ -1,8 +1,7 @@
-require "pry"
-
-# This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV["RAILS_ENV"] ||= "test"
 ENV["DB"] ||= "sqlite"
+
+require "byebug"
 
 unless File.exist?(File.expand_path("dummy_app/config/database.yml", __dir__))
   warn "WARNING: No database.yml detected for the dummy app, please run `rake prepare` first"

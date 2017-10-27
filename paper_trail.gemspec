@@ -30,12 +30,12 @@ has been destroyed.
   s.add_dependency "request_store", "~> 1.1"
 
   s.add_development_dependency "appraisal", "~> 2.2"
+  s.add_development_dependency "byebug", "~> 9.1"
   s.add_development_dependency "database_cleaner", "~> 1.6"
   s.add_development_dependency "ffaker", "~> 2.7"
   s.add_development_dependency "generator_spec", "~> 0.9.4"
   s.add_development_dependency "mysql2", "~> 0.4.9"
   s.add_development_dependency "pg", "~> 0.21.0"
-  s.add_development_dependency "pry-byebug", "~> 3.5"
   s.add_development_dependency "rack-test", "~> 0.6.3"
   s.add_development_dependency "rake", "~> 12.1"
   s.add_development_dependency "rspec-rails", "~> 3.7.1"
