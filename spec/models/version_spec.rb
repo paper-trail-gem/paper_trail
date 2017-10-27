@@ -62,12 +62,12 @@ module PaperTrail
     end
 
     describe "#originator" do
-      it "sets the invoke `paper_trail_originator`" do
+      it "delegates to paper_trail_originator" do
         allow(ActiveSupport::Deprecation).to receive(:warn)
-        subject = PaperTrail::Version.new
-        allow(subject).to receive(:paper_trail_originator)
-        subject.originator
-        expect(subject).to have_received(:paper_trail_originator)
+        version = PaperTrail::Version.new
+        allow(version).to receive(:paper_trail_originator)
+        version.originator
+        expect(version).to have_received(:paper_trail_originator)
       end
 
       it "displays a deprecation warning" do
@@ -81,19 +81,19 @@ module PaperTrail
     describe "#terminator" do
       it "is an alias for the `whodunnit` attribute" do
         attributes = { whodunnit: FFaker::Name.first_name }
-        subject = PaperTrail::Version.new(attributes)
-        expect(subject.terminator).to eq(attributes[:whodunnit])
+        version = PaperTrail::Version.new(attributes)
+        expect(version.terminator).to eq(attributes[:whodunnit])
       end
     end
 
     describe "#version_author" do
       it "is an alias for the `terminator` method" do
-        subject = PaperTrail::Version.new
-        expect(subject.method(:version_author)).to eq(subject.method(:terminator))
+        version = PaperTrail::Version.new
+        expect(version.method(:version_author)).to eq(version.method(:terminator))
       end
     end
 
-    describe "Methods" do
+    context "changing the data type of database columns on the fly" do
       # TODO: Changing the data type of these database columns in the middle
       # of the test suite adds a fair amount of complication. Is there a better
       # way? We already have a `json_versions` table in our tests, maybe we

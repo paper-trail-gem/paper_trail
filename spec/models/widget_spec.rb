@@ -52,14 +52,12 @@ RSpec.describe Widget, type: :model do
 
   describe "Callbacks", versioning: true do
     describe "before_save" do
-      before { widget.update_attributes!(name: "Foobar") }
-
-      subject { widget.versions.last.reify }
-
       it "resets value for timestamp attrs for update so that value gets updated properly" do
+        widget.update_attributes!(name: "Foobar")
+        w = widget.versions.last.reify
         # Travel 1 second because MySQL lacks sub-second resolution
         Timecop.travel(1) do
-          expect { subject.save! }.to change(subject, :updated_at)
+          expect { w.save! }.to change(w, :updated_at)
         end
       end
     end
@@ -73,15 +71,15 @@ RSpec.describe Widget, type: :model do
     end
 
     describe "after_update" do
-      before { widget.update_attributes!(name: "Foobar", updated_at: Time.now + 1.week) }
-
-      subject { widget.versions.last.reify }
-
-      it { expect(subject.paper_trail).not_to be_live }
+      before do
+        widget.update_attributes!(name: "Foobar", updated_at: Time.now + 1.week)
+      end
 
       it "clears the `versions_association_name` virtual attribute" do
-        subject.save!
-        expect(subject.paper_trail).to be_live
+        w = widget.versions.last.reify
+        expect(w.paper_trail).not_to be_live
+        w.save!
+        expect(w.paper_trail).to be_live
       end
 
       it "corresponding version uses the widget updated_at" do

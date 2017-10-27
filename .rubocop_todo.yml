@@ -30,9 +30,6 @@ RSpec/InstanceVariable:
     - spec/paper_trail/associations_spec.rb
     - spec/paper_trail/model_spec.rb
 
-RSpec/NamedSubject:
-  Enabled: false
-
 RSpec/NestedGroups:
   Exclude:
     - spec/paper_trail/associations_spec.rb
