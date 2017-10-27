@@ -79,13 +79,6 @@ module PaperTrail
       options[:on] ||= %i[create update destroy]
       options[:on] = Array(options[:on]) # Support single symbol
       @model_class.send :include, ::PaperTrail::Model::InstanceMethods
-      if ::ActiveRecord::VERSION::STRING < "4.2"
-        ::ActiveSupport::Deprecation.warn(
-          "Your version of ActiveRecord (< 4.2) has reached EOL. PaperTrail " \
-          "will soon drop support. Please upgrade ActiveRecord ASAP."
-        )
-        @model_class.send :extend, AttributeSerializers::LegacyActiveRecordShim
-      end
       setup_options(options)
       setup_associations(options)
       setup_transaction_callbacks
