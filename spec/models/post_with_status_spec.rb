@@ -21,12 +21,11 @@ RSpec.describe PostWithStatus, type: :model do
     end
 
     context "storing enum object_changes" do
-      subject { post.versions.last }
-
       it "saves the enum value properly in versions object_changes" do
         post.published!
         post.archived!
-        expect(subject.changeset["status"]).to eql %w[published archived]
+        post_version = post.versions.last
+        expect(post_version.changeset["status"]).to eql(%w[published archived])
       end
     end
 

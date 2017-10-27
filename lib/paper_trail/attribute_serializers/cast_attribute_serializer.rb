@@ -6,8 +6,7 @@ module PaperTrail
     # to an attribute of type `ActiveRecord::Type::Integer`.
     #
     # This implementation depends on the `type_for_attribute` method, which was
-    # introduced in rails 4.2. In older versions of rails, we shim this method
-    # with `LegacyActiveRecordShim`.
+    # introduced in rails 4.2. As of PT 8, we no longer support rails < 4.2.
     class CastAttributeSerializer
       def initialize(klass)
         @klass = klass

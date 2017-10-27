@@ -3,6 +3,20 @@
 This project follows [semver 2.0.0](http://semver.org/spec/v2.0.0.html) and the
 recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
+## Next Major Version: 9
+
+In PT 8, the following are deprecated, and will be removed in 9:
+
+- [#479](https://github.com/airblade/paper_trail/issues/479) - Deprecated
+  `originator` method, use `paper_trail_originator`
+- Using paper_trail.on_destroy(:after) with ActiveRecord's
+  belongs_to_required_by_default will produce an error instead of a warning.
+- Failing to set PaperTrail.config.track_associations will no longer produce
+  a warning. The default (false) will remain the same.
+- warn_about_not_setting_whodunnit controller method
+- [#997](https://github.com/airblade/paper_trail/pull/997) -
+  where_object_changes reading YAML from a text column
+
 ## Unreleased
 
 ### Breaking Changes

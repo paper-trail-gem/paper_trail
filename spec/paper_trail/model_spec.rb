@@ -215,7 +215,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
   context "a record's papertrail" do
     before do
-      @date_time = DateTime.now.utc
+      @date_time = Time.now
       @time = Time.now
       @date = Date.new(2009, 5, 29)
       @widget = Widget.create(

@@ -18,8 +18,7 @@ module PaperTrail
     end
 
     it "deletes oldest versions, when the database returns them in a different order" do
-      epoch = DateTime.new(2017, 1, 1)
-
+      epoch = Date.new(2017, 1, 1)
       widget = Timecop.freeze(epoch) { Widget.create }
 
       # Sometimes a database will returns records in a different order than
