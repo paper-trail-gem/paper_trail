@@ -30,7 +30,8 @@ In PT 8, the following are deprecated, and will be removed in 9:
 
 ### Fixed
 
-- None
+- [#1009](https://github.com/airblade/paper_trail/pull/1009)
+  End generated `config/initializers/paper_trail.rb` with newline.
 
 ## 8.0.1 (2017-10-25)
 
