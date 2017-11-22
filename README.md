@@ -164,8 +164,8 @@ Here's a helpful table showing what PaperTrail stores:
 | *Model Before* | nil      | widget   | widget    |
 | *Model After*  | widget   | widget   | nil       |
 
-PaperTrail stores the values in the Model Before column.  Most other
-auditing/versioning plugins store the After column.
+PaperTrail stores the values in the Model Before row.  Most other
+auditing/versioning plugins store the After row.
 
 ### 1.d. API Summary
 
