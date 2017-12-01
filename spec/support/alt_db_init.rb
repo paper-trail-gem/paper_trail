@@ -1,6 +1,7 @@
-# This file copies the test database into locations for the `Foo` and `Bar` namespace,
-# then defines those namespaces, then establishes the sqlite3 connection for the namespaces
-# to simulate an application with multiple database connections.
+# This file copies the test database into locations for the `Foo` and `Bar`
+# namespace, then defines those namespaces, then establishes the sqlite3
+# connection for the namespaces to simulate an application with multiple
+# database connections.
 
 # Load database yaml to use
 configs = YAML.load_file("#{Rails.root}/config/database.yml")

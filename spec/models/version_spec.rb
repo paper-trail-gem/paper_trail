@@ -15,13 +15,17 @@ module PaperTrail
       end
 
       context "serializer is JSON" do
-        before(:all) { PaperTrail.serializer = PaperTrail::Serializers::JSON }
+        before do
+          PaperTrail.serializer = PaperTrail::Serializers::JSON
+        end
 
         it "store out as a plain hash" do
           expect(value =~ /HashWithIndifferentAccess/).to be_nil
         end
 
-        after(:all) { PaperTrail.serializer = PaperTrail::Serializers::YAML }
+        after do
+          PaperTrail.serializer = PaperTrail::Serializers::YAML
+        end
       end
     end
 
@@ -131,6 +135,8 @@ module PaperTrail
           end
 
           after do
+            PaperTrail.serializer = PaperTrail::Serializers::YAML
+
             if column_datatype_override
               # In rails < 5, we use truncation, ie. there is no transaction
               # around the tests, so we can't use a savepoint.
@@ -151,13 +157,10 @@ module PaperTrail
           end
 
           describe "#where_object", versioning: true do
-            before do
+            it "requires its argument to be a Hash" do
               widget.update_attributes!(name: name, an_integer: int)
               widget.update_attributes!(name: "foobar", an_integer: 100)
               widget.update_attributes!(name: FFaker::Name.last_name, an_integer: 15)
-            end
-
-            it "requires its argument to be a Hash" do
               expect {
                 PaperTrail::Version.where_object(:foo)
               }.to raise_error(ArgumentError)
@@ -167,11 +170,11 @@ module PaperTrail
             end
 
             context "`serializer == YAML`" do
-              specify do
-                expect(PaperTrail.serializer).to be PaperTrail::Serializers::YAML
-              end
-
               it "locates versions according to their `object` contents" do
+                expect(PaperTrail.serializer).to be PaperTrail::Serializers::YAML
+                widget.update_attributes!(name: name, an_integer: int)
+                widget.update_attributes!(name: "foobar", an_integer: 100)
+                widget.update_attributes!(name: FFaker::Name.last_name, an_integer: 15)
                 expect(
                   PaperTrail::Version.where_object(an_integer: int)
                 ).to eq([widget.versions[1]])
@@ -185,15 +188,12 @@ module PaperTrail
             end
 
             context "JSON serializer" do
-              before(:all) do
-                PaperTrail.serializer = PaperTrail::Serializers::JSON
-              end
-
-              specify do
-                expect(PaperTrail.serializer).to be PaperTrail::Serializers::JSON
-              end
-
               it "locates versions according to their `object` contents" do
+                PaperTrail.serializer = PaperTrail::Serializers::JSON
+                expect(PaperTrail.serializer).to be PaperTrail::Serializers::JSON
+                widget.update_attributes!(name: name, an_integer: int)
+                widget.update_attributes!(name: "foobar", an_integer: 100)
+                widget.update_attributes!(name: FFaker::Name.last_name, an_integer: 15)
                 expect(
                   PaperTrail::Version.where_object(an_integer: int)
                 ).to eq([widget.versions[1]])
@@ -203,10 +203,6 @@ module PaperTrail
                 expect(
                   PaperTrail::Version.where_object(an_integer: 100)
                 ).to eq([widget.versions[2]])
-              end
-
-              after(:all) do
-                PaperTrail.serializer = PaperTrail::Serializers::YAML
               end
             end
           end
@@ -266,7 +262,9 @@ module PaperTrail
             # no longer supported.
             if column_datatype_override
               context "JSON serializer" do
-                before(:all) { PaperTrail.serializer = PaperTrail::Serializers::JSON }
+                before do
+                  PaperTrail.serializer = PaperTrail::Serializers::JSON
+                end
 
                 it "locates versions according to their `object_changes` contents" do
                   expect(
@@ -285,8 +283,6 @@ module PaperTrail
                     widget.versions.where_object_changes(an_integer: 100, name: "foobar")
                   ).to eq(widget.versions[1..2])
                 end
-
-                after(:all) { PaperTrail.serializer = PaperTrail::Serializers::YAML }
               end
             end
           end

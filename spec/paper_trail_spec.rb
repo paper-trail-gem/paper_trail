@@ -97,14 +97,6 @@ RSpec.describe PaperTrail do
   end
 
   describe ".whodunnit" do
-    context "when set globally" do
-      before(:all) { described_class.whodunnit = "foobar" }
-
-      it "is set to `nil` by default" do
-        expect(described_class.whodunnit).to be_nil
-      end
-    end
-
     context "with block passed" do
       it "sets whodunnit only for the block passed" do
         described_class.whodunnit("foo") do
@@ -131,14 +123,6 @@ RSpec.describe PaperTrail do
         expect(described_class.whodunnit).to eq(1)
         expect(described_class.whodunnit).to eq(2)
       end
-    end
-  end
-
-  describe ".controller_info" do
-    before(:all) { described_class.controller_info = { foo: "bar" } }
-
-    it "is set to an empty hash before each test" do
-      expect(described_class.controller_info).to eq({})
     end
   end
 end

@@ -17,9 +17,6 @@ Metrics/PerceivedComplexity:
 Style/FrozenStringLiteralComment:
   Enabled: false
 
-RSpec/BeforeAfterAll:
-  Enabled: false
-
 RSpec/ExpectInHook:
   Exclude:
     - spec/paper_trail/associations_spec.rb
