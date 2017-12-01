@@ -3,9 +3,9 @@
 This project follows [semver 2.0.0](http://semver.org/spec/v2.0.0.html) and the
 recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
-## Next Major Version: 9
+## 9.0.0 (Unreleased)
 
-In PT 8, the following are deprecated, and will be removed in 9:
+### Breaking Changes
 
 - [#479](https://github.com/airblade/paper_trail/issues/479) - Deprecated
   `originator` method, use `paper_trail_originator`
@@ -17,7 +17,15 @@ In PT 8, the following are deprecated, and will be removed in 9:
 - [#997](https://github.com/airblade/paper_trail/pull/997) -
   where_object_changes reading YAML from a text column
 
-## Unreleased
+### Added
+
+- None
+
+### Fixed
+
+- None
+
+## 8.1.0 (2017-11-30)
 
 ### Breaking Changes
 
