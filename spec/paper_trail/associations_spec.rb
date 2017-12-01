@@ -545,16 +545,13 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
       context "after the first has_many through relationship is created" do
         before do
-          expect(@chapter.versions.size).to(eq(1))
           @chapter.update_attributes(name: CHAPTER_NAMES[1])
-          expect(@chapter.versions.size).to(eq(2))
           Timecop.travel(1.second.since)
           @chapter.sections.create(name: "section 1")
           Timecop.travel(1.second.since)
           @chapter.sections.first.update_attributes(name: "section 2")
           Timecop.travel(1.second.since)
           @chapter.update_attributes(name: CHAPTER_NAMES[2])
-          expect(@chapter.versions.size).to(eq(3))
           Timecop.travel(1.second.since)
           @chapter.sections.first.update_attributes(name: "section 3")
         end
@@ -605,7 +602,6 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
         context "after creating a paragraph" do
           before do
-            expect(@chapter.versions.size).to(eq(3))
             @section = @chapter.sections.first
             Timecop.travel(1.second.since)
             @paragraph = @section.paragraphs.create(name: "para1")
