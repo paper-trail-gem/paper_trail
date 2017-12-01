@@ -19,11 +19,6 @@ Metrics/PerceivedComplexity:
 Style/FrozenStringLiteralComment:
   Enabled: false
 
-RSpec/ExpectInHook:
-  Exclude:
-    - spec/paper_trail/associations_spec.rb
-    - spec/models/version_spec.rb
-
 RSpec/InstanceVariable:
   Exclude:
     - spec/paper_trail/associations_spec.rb
