@@ -14,6 +14,8 @@ Metrics/PerceivedComplexity:
 
 # Switching to frozen strings internally would be fine, but if any of those
 # frozen strings cross our public API, that would be a breaking change.
+# Let's wait until we drop support for ruby 2.2 before doing this. If we freeze
+# before dropping 2.2, the comment could be misleading.
 Style/FrozenStringLiteralComment:
   Enabled: false
 
