@@ -25,6 +25,28 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 - None
 
+## 8.1.1 (2017-12-02)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- [#todo](todo) -
+- Any config can be set using a block with_paper_trail_config
+```ruby
+config = { whodunnit: 'system', controller_info: { ip: '127.0.0.1' } }
+PaperTrail.with_paper_trail_config(config) do
+  puts PaperTrail.controller_info # => { ip: '127.0.0.1' }
+  puts PaperTrail.whodunnit # => 'system'
+end
+```
+
+### Fixed
+
+- None
+
 ## 8.1.0 (2017-11-30)
 
 ### Breaking Changes

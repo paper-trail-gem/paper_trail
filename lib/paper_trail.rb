@@ -139,11 +139,11 @@ module PaperTrail
 
     # Allows for paper trail settings to be set with a block
     #
-    #   config = { whodunnit: 'system', controller_info: { ip: '127.0.0.1' } }
-    #   PaperTrail.with_paper_trail_config(config) do
-    #     puts PaperTrail.controller_info # => { ip: '127.0.0.1' }
-    #     puts PaperTrail.whodunnit # => 'system'
-    #   end
+      # config = { whodunnit: 'system', controller_info: { ip: '127.0.0.1' } }
+      # PaperTrail.with_paper_trail_config(config) do
+      #   puts PaperTrail.controller_info # => { ip: '127.0.0.1' }
+      #   puts PaperTrail.whodunnit # => 'system'
+      # end
     #
     # @api public
     def with_paper_trail_config(config)
