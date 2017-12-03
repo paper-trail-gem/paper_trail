@@ -33,6 +33,26 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
+- [#1017](https://github.com/airblade/paper_trail/pull/1017) - Set paper trail config in sidekiq jobs
+```ruby
+Sidekiq.configure_server do |config|
+  config.server_middleware do |chain|
+    sidekiq_whodunnit = -> { Thread.current[:current_user] || 'system' }
+    sidekiq_controller_info = -> { {ip: Thread.current[:current_user_ip] || '0.0.0.0'} }
+    chain.add GrapeEater::Sidekiq::TaggingMiddleware, whodunnit: sidekiq_whodunnit, controller_info: sidekiq_controller_info
+  end
+end
+```
+
+
+## 8.1.1 (2017-12-02)
+
+### Breaking Changes
+
+- None
+
+### Added
+
 - [#1016](https://github.com/airblade/paper_trail/pull/1016) - Any config can be set using a block with_paper_trail_config
 ```ruby
 config = { whodunnit: 'system', controller_info: { ip: '127.0.0.1' } }
