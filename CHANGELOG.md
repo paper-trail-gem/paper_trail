@@ -33,8 +33,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
-- [#todo](todo) -
-- Any config can be set using a block with_paper_trail_config
+- [#1016](https://github.com/airblade/paper_trail/pull/1016) - Any config can be set using a block with_paper_trail_config
 ```ruby
 config = { whodunnit: 'system', controller_info: { ip: '127.0.0.1' } }
 PaperTrail.with_paper_trail_config(config) do
