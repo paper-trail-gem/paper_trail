@@ -108,8 +108,10 @@ module PaperTrail
     #   end
     #
     # @api public
-    def whodunnit(value = nil, &block)
-      config_handler(:whodunnit, value, block)
+    def whodunnit(value = nil)
+      config_handler(:whodunnit, value) do
+        yield
+      end
     end
 
     # Sets any information from the controller that you want PaperTrail to
@@ -133,17 +135,19 @@ module PaperTrail
     #   end
     #
     # @api public
-    def controller_info(value = nil, &block)
-      config_handler(:controller_info, value, block)
+    def controller_info(value = nil)
+      config_handler(:controller_info, value) do
+        yield
+      end
     end
 
     # Allows for paper trail settings to be set with a block
     #
-      # config = { whodunnit: 'system', controller_info: { ip: '127.0.0.1' } }
-      # PaperTrail.with_paper_trail_config(config) do
-      #   puts PaperTrail.controller_info # => { ip: '127.0.0.1' }
-      #   puts PaperTrail.whodunnit # => 'system'
-      # end
+    # config = { whodunnit: 'system', controller_info: { ip: '127.0.0.1' } }
+    # PaperTrail.with_paper_trail_config(config) do
+    #   puts PaperTrail.controller_info # => { ip: '127.0.0.1' }
+    #   puts PaperTrail.whodunnit # => 'system'
+    # end
     #
     # @api public
     def with_paper_trail_config(config)
@@ -176,9 +180,9 @@ module PaperTrail
     # If no value is passed in and the current value is not a proc,
     # it will simply return that value
     # @api private
-    def config_handler(config, value = nil, block)
+    def config_handler(config, value = nil)
       if value
-        with_paper_trail_config(Hash[config, value]) { block.call }
+        with_paper_trail_config(Hash[config, value]) { yield }
       elsif paper_trail_store[config].respond_to?(:call)
         paper_trail_store[config].call
       else

@@ -127,14 +127,15 @@ RSpec.describe PaperTrail do
   end
 
   describe ".controller_info" do
-    context 'value is passed' do
-      it 'delegates to with_paper_trail_config' do
-        expect(described_class)
-          .to receive(:with_paper_trail_config)
-          .with({controller_info: {ip: :stubbed_ip}})
+    context "value is passed" do
+      it "delegates to with_paper_trail_config" do
+        allow(described_class).to receive(:with_paper_trail_config)
         described_class.controller_info(ip: :stubbed_ip) do
           expect(described_class.controller_info).to eq(ip: :stubbed_ip)
         end
+        expect(described_class).
+          to have_received(:with_paper_trail_config).
+          with(controller_info: { ip: :stubbed_ip })
       end
     end
 
@@ -150,84 +151,81 @@ RSpec.describe PaperTrail do
       end
     end
 
-    context 'no value is passed' do
-      it 'returns the value of whodunnit' do
-        described_class.controller_info = 'me'
-        expect(described_class.controller_info).to eq 'me'
+    context "no value is passed" do
+      it "returns the value of whodunnit" do
+        described_class.controller_info = "me"
+        expect(described_class.controller_info).to eq "me"
       end
     end
   end
 
   describe ".with_paper_trail_config" do
     let(:whodunnit) { 123 }
-    let(:controller_info) { {ip: :stubbed_ip} }
+    let(:controller_info) { { ip: :stubbed_ip } }
     let(:config) do
       {
         whodunnit: whodunnit,
-        controller_info: controller_info,
+        controller_info: controller_info
       }
     end
 
-    context 'with no block' do
-      it 'raises an error' do
-        expect{described_class.with_paper_trail_config(config)}.to raise_error('no block given')
+    context "with no block" do
+      it "raises an error" do
+        expect { described_class.with_paper_trail_config(config) }.to raise_error("no block given")
       end
     end
 
-    context "with block passed" do
-      context "both values are non-procs" do
-        it "sets the config for the duration of the block" do
-          described_class.controller_info = {request_data: :some_data}
-          described_class.whodunnit = 567
-          described_class.with_paper_trail_config(config) do
-            expect(described_class.controller_info).to eq(ip: :stubbed_ip)
-            expect(described_class.whodunnit).to eq(123)
-          end
-
-          expect(described_class.controller_info).to eq({request_data: :some_data})
-          expect(described_class.whodunnit).to eq(567)
+    context "with block passed and non-proc values" do
+      it "sets the config for the duration of the block" do
+        described_class.controller_info = { request_data: :some_data }
+        described_class.whodunnit = 567
+        described_class.with_paper_trail_config(config) do
+          expect(described_class.controller_info).to eq(ip: :stubbed_ip)
+          expect(described_class.whodunnit).to eq(123)
         end
 
-        it "sets config only for the current thread" do
-          described_class.controller_info = {request_data: :some_data}
-          described_class.whodunnit = 567
-          described_class.with_paper_trail_config(config) do
-            expect(described_class.controller_info).to eq(ip: :stubbed_ip)
-            expect(described_class.whodunnit).to eq(123)
-            Thread.new do
-              # For some reason, the controller info within a thread is not being
-              # set to an empty hash as expected.  This seems like a bug.
-              expect(described_class.controller_info).to be_nil
-              expect(described_class.whodunnit).to be_nil
-            end.join
-          end
-
-          expect(described_class.controller_info).to eq({request_data: :some_data})
-          expect(described_class.whodunnit).to eq(567)
-        end
-
+        expect(described_class.controller_info).to eq(request_data: :some_data)
+        expect(described_class.whodunnit).to eq(567)
       end
 
-      context "values are procs" do
-        it "sets config values as procs only for the block passed" do
-          described_class.controller_info = {request_data: :some_data}
-          described_class.whodunnit = 567
-          call_count = 0
-          user_id = 0
-          proc_config = {
-            whodunnit: proc { user_id += 1 },
-            controller_info: proc { { count_of_requests: call_count += 1 } }
-          }
-          described_class.with_paper_trail_config(proc_config) do
-            expect(described_class.controller_info).to eq(count_of_requests: 1)
-            expect(described_class.controller_info).to eq(count_of_requests: 2)
-            expect(described_class.whodunnit).to eq(1)
-            expect(described_class.whodunnit).to eq(2)
-          end
-
-          expect(described_class.controller_info).to eq({request_data: :some_data})
-          expect(described_class.whodunnit).to eq(567)
+      it "sets config only for the current thread" do
+        described_class.controller_info = { request_data: :some_data }
+        described_class.whodunnit = 567
+        described_class.with_paper_trail_config(config) do
+          expect(described_class.controller_info).to eq(ip: :stubbed_ip)
+          expect(described_class.whodunnit).to eq(123)
+          Thread.new do
+            # For some reason, the controller info within a thread is not being
+            # set to an empty hash as expected.  This seems like a bug.
+            expect(described_class.controller_info).to be_nil
+            expect(described_class.whodunnit).to be_nil
+          end.join
         end
+
+        expect(described_class.controller_info).to eq(request_data: :some_data)
+        expect(described_class.whodunnit).to eq(567)
+      end
+    end
+
+    context " with block passed and values are procs" do
+      it "sets config values as procs only for the block passed" do
+        described_class.controller_info = { request_data: :some_data }
+        described_class.whodunnit = 567
+        call_count = 0
+        user_id = 0
+        proc_config = {
+          whodunnit: proc { user_id += 1 },
+          controller_info: proc { { count_of_requests: call_count += 1 } }
+        }
+        described_class.with_paper_trail_config(proc_config) do
+          expect(described_class.controller_info).to eq(count_of_requests: 1)
+          expect(described_class.controller_info).to eq(count_of_requests: 2)
+          expect(described_class.whodunnit).to eq(1)
+          expect(described_class.whodunnit).to eq(2)
+        end
+
+        expect(described_class.controller_info).to eq(request_data: :some_data)
+        expect(described_class.whodunnit).to eq(567)
       end
     end
   end
