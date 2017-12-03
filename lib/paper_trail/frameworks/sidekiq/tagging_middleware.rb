@@ -1,5 +1,6 @@
 module PaperTrail
   module Sidekiq
+    # Can be added to the sidekiq server middleware chain to enable paper trail in sidekiq easily
     class TaggingMiddleware
       def initialize(config)
         @config = config
