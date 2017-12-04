@@ -22,6 +22,16 @@ RSpec.describe PaperTrail::AttributeSerializers::ObjectAttribute do
         described_class.new(PostgresUser).deserialize(attrs)
         expect(attrs["post_ids"]).to eq [1, 2, 3]
       end
+
+      it "deserializes an array of time objects correctly" do
+        date1 = 1.day.ago
+        date2 = 2.days.ago
+        date3 = 3.days.ago
+        attrs = { "post_ids" => [date1, date2, date3] }
+        described_class.new(PostgresUser).serialize(attrs)
+        described_class.new(PostgresUser).deserialize(attrs)
+        expect(attrs["post_ids"]).to eq [date1, date2, date3]
+      end
     end
   end
 end

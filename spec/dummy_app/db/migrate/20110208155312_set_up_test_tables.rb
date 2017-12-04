@@ -64,7 +64,8 @@ class SetUpTestTables < (
     if ENV["DB"] == "postgres"
       create_table :postgres_users, force: true do |t|
         t.string     :name
-        t.integer    :post_ids, array: true
+        t.integer    :post_ids,    array: true
+        t.datetime   :login_times, array: true
         t.timestamps null: true
       end
     end

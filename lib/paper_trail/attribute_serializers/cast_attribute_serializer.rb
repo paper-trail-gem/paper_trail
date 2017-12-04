@@ -42,7 +42,7 @@ module PaperTrail
             # Because PT 4 used to save the string version of enums to `object_changes`
             val
           else
-            @klass.type_for_attribute(attr).deserialize(val)
+            PaperTrail::AttributeSerializers::AttributeSerializer.for(@klass, attr).deserialize(val)
           end
         end
       end
