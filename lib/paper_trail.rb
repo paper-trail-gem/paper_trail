@@ -22,7 +22,7 @@ module PaperTrail
   EOS
   E_TIMESTAMP_FIELD_CONFIG = <<-EOS.squish.freeze
     PaperTrail.timestamp_field= has been removed, without replacement. It is no
-    longer configurable. The timestamp field in the versions table must now be
+    longer configurable. The timestamp column in the versions table must now be
     named created_at.
   EOS
 
