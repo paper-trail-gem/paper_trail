@@ -21,3 +21,4 @@ vendor/*
 .ruby-version
 .ruby-gemset
 .rbenv-gemsets
+.byebug_history
