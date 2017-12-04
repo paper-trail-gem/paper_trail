@@ -35,7 +35,6 @@ module PaperTrail
       class CastAttributeSerializer
         def serialize(attr, val)
           PaperTrail::AttributeSerializers::AttributeSerializer.for(@klass, attr).serialize(val)
-          # @klass.type_for_attribute(attr).serialize(val)
         end
 
         def deserialize(attr, val)
