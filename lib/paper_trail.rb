@@ -109,21 +109,8 @@ module PaperTrail
     #
     # @api public
     def whodunnit(value = nil)
-      if value
-        raise ArgumentError, "no block given" unless block_given?
-
-        previous_whodunnit = paper_trail_store[:whodunnit]
-        paper_trail_store[:whodunnit] = value
-
-        begin
-          yield
-        ensure
-          paper_trail_store[:whodunnit] = previous_whodunnit
-        end
-      elsif paper_trail_store[:whodunnit].respond_to?(:call)
-        paper_trail_store[:whodunnit].call
-      else
-        paper_trail_store[:whodunnit]
+      config_handler(:whodunnit, value) do
+        yield
       end
     end
 
@@ -134,13 +121,73 @@ module PaperTrail
       paper_trail_store[:controller_info] = value
     end
 
-    # Returns any information from the controller that you want
-    # PaperTrail to store.
-    #
+    # If nothing passed, returns the paper trail info from the controller that you want PaperTrail
+    # to store
     # See `PaperTrail::Rails::Controller#info_for_paper_trail`.
+    #
+    #   PaperTrail.controller_info = { ip: request_user_ip }
+    #   PaperTrail.controller_info # => { ip: '127.0.0.1' }
+    #
+    # If value and block passed, set this value as the controller info for the duration of the block
+    #
+    #   PaperTrail.controller_info({ ip: '127.0.0.1' }) do
+    #     puts PaperTrail.controller_info # => { ip: '127.0.0.1' }
+    #   end
+    #
     # @api public
-    def controller_info
-      paper_trail_store[:controller_info]
+    def controller_info(value = nil)
+      config_handler(:controller_info, value) do
+        yield
+      end
+    end
+
+    # Allows for paper trail settings to be set with a block
+    #
+    # config = { whodunnit: 'system', controller_info: { ip: '127.0.0.1' } }
+    # PaperTrail.with_paper_trail_config(config) do
+    #   puts PaperTrail.controller_info # => { ip: '127.0.0.1' }
+    #   puts PaperTrail.whodunnit # => 'system'
+    # end
+    #
+    # @api public
+    def with_paper_trail_config(config)
+      raise ArgumentError, "no block given" unless block_given?
+
+      previous_config = {}
+      config.each do |config_key, config_value|
+        if config_value
+          previous_config[config_key] = paper_trail_store[config_key]
+          paper_trail_store[config_key] = config_value
+        elsif paper_trail_store[config_key].respond_to?(:call)
+          paper_trail_store[config_key].call
+        end
+      end
+
+      begin
+        yield
+      ensure
+        previous_config.each do |config_key, config_value|
+          paper_trail_store[config_key] = config_value
+        end
+      end
+    end
+
+    # Standard getter/setter that has three behaviors:
+    # If a value is passed in, it behaves as a setter for
+    # the duration of a yielded block.
+    # If no value is passed in but the config is is a proc,
+    # then it will call that proc
+    # If no value is passed in and the current value is not a proc,
+    # it will simply return that value
+    # @api private
+    def config_handler(config, value = nil)
+      if value
+        with_paper_trail_config(Hash[config, value]) { yield }
+      elsif paper_trail_store[config].respond_to?(:call)
+        paper_trail_store[config].call
+      else
+        paper_trail_store[config]
+      end
     end
 
     # Getter and Setter for PaperTrail Serializer

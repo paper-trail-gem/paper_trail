@@ -11,6 +11,7 @@ has been destroyed.
 | Version        | Documentation |
 | -------------- | ------------- |
 | Unreleased     | https://github.com/airblade/paper_trail/blob/master/README.md |
+| 8.1.1          | https://github.com/airblade/paper_trail/blob/v8.1.1/README.md |
 | 8.1.0          | https://github.com/airblade/paper_trail/blob/v8.1.0/README.md |
 | 7.1.3          | https://github.com/airblade/paper_trail/blob/v7.1.3/README.md |
 | 6.0.2          | https://github.com/airblade/paper_trail/blob/v6.0.2/README.md |
@@ -58,6 +59,7 @@ has been destroyed.
   - [7.c Cucumber](#7c-cucumber)
   - [7.d Spork](#7d-spork)
   - [7.e Zeus or Spring](#7e-zeus-or-spring)
+  - [7.f Sidekiq](#7f-sidekiq)
 - [8. Integration with Other Libraries](#8-integration-with-other-libraries)
 
 ## 1. Introduction
@@ -1531,6 +1533,20 @@ require 'spec_helper'
 require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
 require 'paper_trail/frameworks/rspec'
+```
+
+### 7.f. Sidekiq
+If you want paper trail config, such as whodunnits, to be set during sidekiq jobs, you can use the sidekiq middleware.
+For example:
+```ruby
+require "paper_trail/frameworks/sidekiq/tagging_middleware"
+Sidekiq.configure_server do |config|
+  config.server_middleware do |chain|
+    sidekiq_whodunnit = -> { Thread.current[:current_user] || 'system' }
+    sidekiq_controller_info = -> { {ip: Thread.current[:current_user_ip] || '0.0.0.0'} }
+    chain.add GrapeEater::Sidekiq::TaggingMiddleware, whodunnit: sidekiq_whodunnit, controller_info: sidekiq_controller_info
+  end
+end
 ```
 
 ## 8. Integration with Other Libraries
