@@ -11,6 +11,7 @@ coverage
 pkg/*
 *.gem
 .bundle
+.byebug_history
 .rbenv-version
 Gemfile.lock
 vendor/*
