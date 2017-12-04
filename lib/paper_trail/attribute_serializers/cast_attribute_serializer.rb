@@ -1,4 +1,4 @@
-require 'paper_trail/attribute_serializers/attribute_serializer'
+require "paper_trail/attribute_serializers/attribute_serializer"
 
 module PaperTrail
   # :nodoc:

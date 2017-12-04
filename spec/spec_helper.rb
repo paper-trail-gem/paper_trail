@@ -2,6 +2,7 @@ ENV["RAILS_ENV"] ||= "test"
 ENV["DB"] ||= "sqlite"
 
 require "byebug"
+require "support/database_specific_specs"
 
 unless File.exist?(File.expand_path("dummy_app/config/database.yml", __dir__))
   warn "WARNING: No database.yml detected for the dummy app, please run `rake prepare` first"
