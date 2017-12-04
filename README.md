@@ -1536,8 +1536,21 @@ require 'paper_trail/frameworks/rspec'
 ## 8. Integration with Other Libraries
 
 - [ActiveAdmin][42]
+- [paper_trail_manager][46] - Browse, subscribe, view and revert changes to
+  records with rails and paper_trail
+- [rails_admin_history_rollback][51] - History rollback for rails_admin with PT
 - Sinatra - [paper_trail-sinatra][41]
 - [globalize][45] - [globalize-versioning][44]
+- [solidus_papertrail][47] - PT integration for Solidus
+- [paper_trail-globalid][49] - enhances whodunnint by adding an `actor`
+  method to instances of PaperTrail::Version that returns the ActiveRecord
+  object who was responsible for change
+
+## 9. Related Libraries and Ports
+
+- [izelnakri/paper_trail][50] - An Ecto library, inspired by PT.
+- [sequelize-paper-trail][48] - A JS library, inspired by PT. A sequelize
+  plugin for tracking revision history of model instances.
 
 ## Articles
 
@@ -1618,3 +1631,9 @@ Released under the MIT licence.
 [43]: https://github.com/airblade/paper_trail/blob/master/.github/CONTRIBUTING.md
 [44]: https://github.com/globalize/globalize-versioning
 [45]: https://github.com/globalize/globalize
+[46]: https://github.com/fusion94/paper_trail_manager
+[47]: https://github.com/solidusio-contrib/solidus_papertrail
+[48]: https://github.com/nielsgl/sequelize-paper-trail
+[49]: https://github.com/ankit1910/paper_trail-globalid
+[50]: https://github.com/izelnakri/paper_trail
+[51]: https://github.com/rikkipitt/rails_admin_history_rollback
