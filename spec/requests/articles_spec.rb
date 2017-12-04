@@ -13,7 +13,8 @@ RSpec.describe "Articles management", type: :request, order: :defined do
       }.not_to change(PaperTrail::Version, :count)
     end
 
-    it "does not leak the state of the `PaperTrail.request.enabled_for_controller?` into the next test" do
+    it "does not leak the state of the `PaperTrail.request.enabled_for_controller?` \
+        into the next test" do
       expect(PaperTrail.request).to be_enabled_for_controller
     end
   end

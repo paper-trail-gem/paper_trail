@@ -171,7 +171,8 @@ RSpec.describe PaperTrail do
   #
   #   context "with no block" do
   #     it "raises an error" do
-  #       expect { described_class.with_paper_trail_config(config) }.to raise_error("no block given")
+  #       expect { described_class.with_paper_trail_config(config) }
+  #         .to raise_error("no block given")
   #     end
   #   end
   #

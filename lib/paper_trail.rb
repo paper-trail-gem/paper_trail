@@ -63,18 +63,18 @@ module PaperTrail
 
     # All methods that cause changes to the keys that affect the current
     # request are now moved into PaperTrail::Request
-    REQUEST_STORE_DEPRECATED_METHODS = [
-      :enabled_for_controller=,
-      :enabled_for_controller?,
-      :enabled_for_model,
-      :enabled_for_model?,
-      :whodunnit=,
-      :whodunnit,
-      :controller_info=,
-      :controller_info,
-      :transaction_id,
-      :transaction_id=
-    ]
+    REQUEST_STORE_DEPRECATED_METHODS = %i[
+      enabled_for_controller=
+      enabled_for_controller?
+      enabled_for_model
+      enabled_for_model?
+      whodunnit=
+      whodunnit
+      controller_info=
+      controller_info
+      transaction_id
+      transaction_id=
+    ].freeze
 
     def method_missing(method, *args, &block)
       if REQUEST_STORE_DEPRECATED_METHODS.include?(method)
