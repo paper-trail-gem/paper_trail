@@ -33,10 +33,8 @@ RSpec.describe(PaperTrail, versioning: true) do
       expect(customer.versions.length).to(eq(2))
       expect(customer.versions[0].reify).to(be_nil)
       expect(customer.versions[1].reify.name).to(eq("Some text."))
-      expect(PaperTrail.config.serializer.load(customer.versions[1].object)).
-        to(eq(original_attributes))
-      expect(customer.versions[1].object).
-        to(eq(PaperTrail.config.serializer.dump(original_attributes)))
+      expect(ActiveSupport::JSON.decode(customer.versions[1].object)).to(eq(original_attributes))
+      expect(customer.versions[1].object).to(eq(ActiveSupport::JSON.encode(original_attributes)))
     end
 
     describe "#changeset" do
