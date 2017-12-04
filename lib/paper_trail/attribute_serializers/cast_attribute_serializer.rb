@@ -1,3 +1,5 @@
+require 'paper_trail/attribute_serializers/attribute_serializer'
+
 module PaperTrail
   # :nodoc:
   module AttributeSerializers
@@ -32,7 +34,8 @@ module PaperTrail
       # This implementation uses AR 5's `serialize` and `deserialize`.
       class CastAttributeSerializer
         def serialize(attr, val)
-          @klass.type_for_attribute(attr).serialize(val)
+          PaperTrail::AttributeSerializers::AttributeSerializer.for(@klass, attr).serialize(val)
+          # @klass.type_for_attribute(attr).serialize(val)
         end
 
         def deserialize(attr, val)
