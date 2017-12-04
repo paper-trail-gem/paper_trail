@@ -16,17 +16,17 @@ module PaperTrail
 
     # Switches PaperTrail off for this class.
     def disable
-      ::PaperTrail.enabled_for_model(@model_class, false)
+      ::PaperTrail.request.enabled_for_model(@model_class, false)
     end
 
     # Switches PaperTrail on for this class.
     def enable
-      ::PaperTrail.enabled_for_model(@model_class, true)
+      ::PaperTrail.request.enabled_for_model(@model_class, true)
     end
 
     def enabled?
       return false unless @model_class.include?(::PaperTrail::Model::InstanceMethods)
-      ::PaperTrail.enabled_for_model?(@model_class)
+      ::PaperTrail.request.enabled_for_model?(@model_class)
     end
 
     # Adds a callback that records a version after a "create" event.
