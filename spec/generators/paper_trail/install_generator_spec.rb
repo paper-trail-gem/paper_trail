@@ -6,10 +6,12 @@ RSpec.describe PaperTrail::InstallGenerator, type: :generator do
   include GeneratorSpec::TestCase
   destination File.expand_path("../tmp", __FILE__)
 
-  after(:all) { prepare_destination } # cleanup the tmp directory
+  after do
+    prepare_destination # cleanup the tmp directory
+  end
 
   describe "no options" do
-    before(:all) do
+    before do
       prepare_destination
       run_generator
     end
@@ -48,7 +50,7 @@ RSpec.describe PaperTrail::InstallGenerator, type: :generator do
   end
 
   describe "`--with-changes` option set to `true`" do
-    before(:all) do
+    before do
       prepare_destination
       run_generator %w[--with-changes]
     end
