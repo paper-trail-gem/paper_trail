@@ -1,7 +1,8 @@
 module PaperTrail
-  module AttributeSerializers
-    # :nodoc:
-    class ArraySerializer
+  module TypeSerializers
+    # Provides an alternative method of serialization
+    # and deserialization of PostgreSQL array columns.
+    class PostgresArraySerializer
       def initialize(subtype, delimiter)
         @subtype = subtype
         @delimiter = delimiter
@@ -16,6 +17,8 @@ module PaperTrail
         return deserialize_with_ar(array) if active_record_pre_502?
 
         case array
+        # Needed for legacy reasons. If serialized array is a string
+        # then it was serialized with Rails < 5.0.2.
         when ::String then deserialize_with_ar(array)
         else array
         end
