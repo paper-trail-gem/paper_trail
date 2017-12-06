@@ -1,15 +1,6 @@
-require "singleton"
-require "paper_trail/serializers/yaml"
-
 module PaperTrail
   # Manages the request_store that affects the current request
   class Request
-    PUBLIC_KEY_PATTERNS = [
-      "request_enabled_for_controller"
-
-    ].freeze
-    def initialize; end
-
     # Sets whether PaperTrail is enabled or disabled for the current request.
     # @api public
     def enabled_for_controller=(value)

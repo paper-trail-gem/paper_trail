@@ -33,14 +33,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
-- [#1016](https://github.com/airblade/paper_trail/pull/1016) - Any config can be set using a block with_paper_trail_config
-```ruby
-config = { whodunnit: 'system', controller_info: { ip: '127.0.0.1' } }
-PaperTrail.with_paper_trail_config(config) do
-  puts PaperTrail.controller_info # => { ip: '127.0.0.1' }
-  puts PaperTrail.whodunnit # => 'system'
-end
-```
+- [#1016](https://github.com/airblade/paper_trail/pull/1016) - Any config can be set using a block.  Also added a `PaperTrail::Request` object that handles request-level configuration
+
 
 ### Fixed
 

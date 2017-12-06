@@ -48,7 +48,36 @@ module PaperTrail
       !!PaperTrail.config.enabled
     end
 
+    # See PaperTrail::Request for information
+    # @api public
+    def enabled_for_controller=(value)
+      request.enabled_for_controller = value
+    end
+
+    # See PaperTrail::Request for information
+    # @api public
+    def enabled_for_controller?
+      request.enabled_for_controller?
+    end
+
+    # See PaperTrail::Request for information
+    # @api public
+    def enabled_for_model(model, value)
+      request.enabled_for_model(model, value)
+    end
+
+    # See PaperTrail::Request for information
+    # @api public
+    def enabled_for_model?(model)
+      request.enabled_for_model?(model)
+    end
+
     # Returns the PaperTrail::Request object for setting keys for a single request
+    # All methods that handle request-level configuration and are now handled
+    # by PaperTrail::Request
+    #
+    # We will add deprecation notices for these methods in a later version
+    # For now, please refer to PaperTrail::Request for method documentation
     # @api public
     def request(options = nil)
       if options
@@ -59,35 +88,6 @@ module PaperTrail
       else
         @request ||= PaperTrail::Request.new
       end
-    end
-
-    # All methods that cause changes to the keys that affect the current
-    # request are now moved into PaperTrail::Request
-    REQUEST_STORE_DEPRECATED_METHODS = %i[
-      enabled_for_controller=
-      enabled_for_controller?
-      enabled_for_model
-      enabled_for_model?
-      whodunnit=
-      whodunnit
-      controller_info=
-      controller_info
-      transaction_id
-      transaction_id=
-    ].freeze
-
-    def method_missing(method, *args, &block)
-      if REQUEST_STORE_DEPRECATED_METHODS.include?(method)
-        msg = format("Use paper_trail.request.%s instead of paper_trail.%s", method, method)
-        ::ActiveSupport::Deprecation.warn(msg, caller)
-        request.send(method, *args, &block)
-      else
-        super
-      end
-    end
-
-    def respond_to_missing?(method_name, include_private = false)
-      REQUEST_STORE_DEPRECATED_METHODS.include?(method_name) || super
     end
 
     # Returns a `::Gem::Version`, convenient for comparisons. This is
@@ -101,6 +101,30 @@ module PaperTrail
     # @api public
     def timestamp_field=(_field_name)
       raise(E_TIMESTAMP_FIELD_CONFIG)
+    end
+
+    # See PaperTrail::Request for information
+    # @api public
+    def whodunnit=(value)
+      request.whodunnit = value
+    end
+
+    # See PaperTrail::Request for information
+    # @api public
+    def whodunnit(value = nil, &block)
+      request.whodunnit(value, &block)
+    end
+
+    # See PaperTrail::Request for information
+    # @api public
+    def controller_info=(value)
+      request.controller_info = value
+    end
+
+    # See PaperTrail::Request for information
+    # @api public
+    def controller_info(value = nil, &block)
+      request.controller_info(value, &block)
     end
 
     # Getter and Setter for PaperTrail Serializer
@@ -117,6 +141,18 @@ module PaperTrail
     # @api public
     def transaction?
       ::ActiveRecord::Base.connection.open_transactions > 0
+    end
+
+    # See PaperTrail::Request for information
+    # @api public
+    def transaction_id
+      request.transaction_id
+    end
+
+    # See PaperTrail::Request for information
+    # @api public
+    def transaction_id=(id)
+      request.transaction_id = id
     end
 
     # Returns PaperTrail's configuration object.
