@@ -81,9 +81,10 @@ module PaperTrail
         # @return A `Hash` mapping IDs to `Version`s
         #
         def versions_by_id(klass, version_id_subquery)
+          ids = version_id_subquery.map(&:min_id).reject(&:nil?)
           klass.
             paper_trail.version_class.
-            where("id IN (#{version_id_subquery})").
+            where("id IN (?)", ids).
             inject({}) { |a, e| a.merge!(e.item_id => e) }
         end
 
@@ -95,13 +96,12 @@ module PaperTrail
         def load_versions_for_hm_association(assoc, model, version_table, tx_id, version_at)
           version_id_subquery = ::PaperTrail::VersionAssociation.
             joins(model.class.version_association_name).
-            select("MIN(version_id)").
+            select("MIN(version_id) as min_id").
             where("foreign_key_name = ?", assoc.foreign_key).
             where("foreign_key_id = ?", model.id).
             where("#{version_table}.item_type = ?", assoc.class_name).
             where("created_at >= ? OR transaction_id = ?", version_at, tx_id).
-            group("item_id").
-            to_sql
+            group("item_id")
           versions_by_id(model.class, version_id_subquery)
         end
       end
