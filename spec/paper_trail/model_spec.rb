@@ -393,7 +393,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
     context "when a record is created" do
       before do
-        PaperTrail.whodunnit = "Alice"
+        PaperTrail.request.whodunnit = "Alice"
         @widget.save
         @version = @widget.versions.last
       end
@@ -407,7 +407,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
       context "when a record is updated" do
         before do
-          PaperTrail.whodunnit = "Bob"
+          PaperTrail.request.whodunnit = "Bob"
           @widget.update_attributes(name: "Rivet")
           @version = @widget.versions.last
         end
@@ -421,7 +421,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
         context "when a record is destroyed" do
           before do
-            PaperTrail.whodunnit = "Charlie"
+            PaperTrail.request.whodunnit = "Charlie"
             @widget.destroy
             @version = PaperTrail::Version.last
           end
@@ -465,9 +465,9 @@ RSpec.describe(::PaperTrail, versioning: true) do
     end
 
     it "returns the correct originator" do
-      PaperTrail.whodunnit = "Ben"
+      PaperTrail.request.whodunnit = "Ben"
       @foo.update_attribute(:name, "Geoffrey")
-      expect(@foo.paper_trail.originator).to(eq(PaperTrail.whodunnit))
+      expect(@foo.paper_trail.originator).to(eq(PaperTrail.request.whodunnit))
     end
 
     context "when destroyed" do

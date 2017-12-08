@@ -8,12 +8,12 @@ RSpec.describe PaperTrail do
         controller = TestController.new
         controller.send(:set_paper_trail_whodunnit)
         sleep(0.001) while blocked
-        described_class.whodunnit
+        described_class.request.whodunnit
       end
       fast_thread = Thread.new do
         controller = TestController.new
         controller.send(:set_paper_trail_whodunnit)
-        who = described_class.whodunnit
+        who = described_class.request.whodunnit
         blocked = false
         who
       end
@@ -38,7 +38,7 @@ RSpec.describe PaperTrail do
       end
       expect(fast_thread.value).not_to(eq(slow_thread.value))
       expect(Widget.paper_trail.enabled?).to(eq(true))
-      expect(described_class.enabled_for_model?(Widget)).to(eq(true))
+      expect(described_class.request.enabled_for_model?(Widget)).to(eq(true))
     end
   end
 end

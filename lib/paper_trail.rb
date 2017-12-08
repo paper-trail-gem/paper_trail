@@ -5,6 +5,7 @@ require "paper_trail/config"
 require "paper_trail/has_paper_trail"
 require "paper_trail/record_history"
 require "paper_trail/reifier"
+require "paper_trail/request"
 require "paper_trail/version_association_concern"
 require "paper_trail/version_concern"
 require "paper_trail/version_number"
@@ -31,7 +32,7 @@ module PaperTrail
   class << self
     # @api private
     def clear_transaction_id
-      self.transaction_id = nil
+      request.transaction_id = nil
     end
 
     # Switches PaperTrail on or off.
@@ -47,32 +48,46 @@ module PaperTrail
       !!PaperTrail.config.enabled
     end
 
-    # Sets whether PaperTrail is enabled or disabled for the current request.
+    # See PaperTrail::Request for information
     # @api public
     def enabled_for_controller=(value)
-      paper_trail_store[:request_enabled_for_controller] = value
+      request.enabled_for_controller = value
     end
 
-    # Returns `true` if PaperTrail is enabled for the request, `false` otherwise.
-    #
-    # See `PaperTrail::Rails::Controller#paper_trail_enabled_for_controller`.
+    # See PaperTrail::Request for information
     # @api public
     def enabled_for_controller?
-      !!paper_trail_store[:request_enabled_for_controller]
+      request.enabled_for_controller?
     end
 
-    # Sets whether PaperTrail is enabled or disabled for this model in the
-    # current request.
+    # See PaperTrail::Request for information
     # @api public
     def enabled_for_model(model, value)
-      paper_trail_store[:"enabled_for_#{model}"] = value
+      request.enabled_for_model(model, value)
     end
 
-    # Returns `true` if PaperTrail is enabled for this model in the current
-    # request, `false` otherwise.
+    # See PaperTrail::Request for information
     # @api public
     def enabled_for_model?(model)
-      !!paper_trail_store.fetch(:"enabled_for_#{model}", true)
+      request.enabled_for_model?(model)
+    end
+
+    # Returns the PaperTrail::Request object for setting keys for a single request
+    # All methods that handle request-level configuration and are now handled
+    # by PaperTrail::Request
+    #
+    # We will add deprecation notices for these methods in a later version
+    # For now, please refer to PaperTrail::Request for method documentation
+    # @api public
+    def request(options = nil)
+      if options
+        old_request = @request
+        @request ||= PaperTrail::Request.new
+        yield
+        @request = old_request
+      else
+        @request ||= PaperTrail::Request.new
+      end
     end
 
     # Returns a `::Gem::Version`, convenient for comparisons. This is
@@ -88,59 +103,28 @@ module PaperTrail
       raise(E_TIMESTAMP_FIELD_CONFIG)
     end
 
-    # Sets who is responsible for any changes that occur. You would normally use
-    # this in a migration or on the console, when working with models directly.
-    # In a controller it is set automatically to the `current_user`.
+    # See PaperTrail::Request for information
     # @api public
     def whodunnit=(value)
-      paper_trail_store[:whodunnit] = value
+      request.whodunnit = value
     end
 
-    # If nothing passed, returns who is reponsible for any changes that occur.
-    #
-    #   PaperTrail.whodunnit = "someone"
-    #   PaperTrail.whodunnit # => "someone"
-    #
-    # If value and block passed, set this value as whodunnit for the duration of the block
-    #
-    #   PaperTrail.whodunnit("me") do
-    #     puts PaperTrail.whodunnit # => "me"
-    #   end
-    #
+    # See PaperTrail::Request for information
     # @api public
-    def whodunnit(value = nil)
-      if value
-        raise ArgumentError, "no block given" unless block_given?
-
-        previous_whodunnit = paper_trail_store[:whodunnit]
-        paper_trail_store[:whodunnit] = value
-
-        begin
-          yield
-        ensure
-          paper_trail_store[:whodunnit] = previous_whodunnit
-        end
-      elsif paper_trail_store[:whodunnit].respond_to?(:call)
-        paper_trail_store[:whodunnit].call
-      else
-        paper_trail_store[:whodunnit]
-      end
+    def whodunnit(value = nil, &block)
+      request.whodunnit(value, &block)
     end
 
-    # Sets any information from the controller that you want PaperTrail to
-    # store.  By default this is set automatically by a before filter.
+    # See PaperTrail::Request for information
     # @api public
     def controller_info=(value)
-      paper_trail_store[:controller_info] = value
+      request.controller_info = value
     end
 
-    # Returns any information from the controller that you want
-    # PaperTrail to store.
-    #
-    # See `PaperTrail::Rails::Controller#info_for_paper_trail`.
+    # See PaperTrail::Request for information
     # @api public
-    def controller_info
-      paper_trail_store[:controller_info]
+    def controller_info(value = nil, &block)
+      request.controller_info(value, &block)
     end
 
     # Getter and Setter for PaperTrail Serializer
@@ -159,21 +143,16 @@ module PaperTrail
       ::ActiveRecord::Base.connection.open_transactions > 0
     end
 
+    # See PaperTrail::Request for information
     # @api public
     def transaction_id
-      paper_trail_store[:transaction_id]
+      request.transaction_id
     end
 
+    # See PaperTrail::Request for information
     # @api public
     def transaction_id=(id)
-      paper_trail_store[:transaction_id] = id
-    end
-
-    # Thread-safe hash to hold PaperTrail's data. Initializing with needed
-    # default values.
-    # @api private
-    def paper_trail_store
-      RequestStore.store[:paper_trail] ||= { request_enabled_for_controller: true }
+      request.transaction_id = id
     end
 
     # Returns PaperTrail's configuration object.

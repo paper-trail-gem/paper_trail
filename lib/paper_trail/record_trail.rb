@@ -97,7 +97,7 @@ module PaperTrail
     end
 
     def enabled?
-      PaperTrail.enabled? && PaperTrail.enabled_for_controller? && enabled_for_model?
+      PaperTrail.enabled? && PaperTrail.request.enabled_for_controller? && enabled_for_model?
     end
 
     def enabled_for_model?
@@ -128,7 +128,7 @@ module PaperTrail
     # Updates `data` from `controller_info`.
     # @api private
     def merge_metadata_from_controller_into(data)
-      data.merge(PaperTrail.controller_info || {})
+      data.merge(PaperTrail.request.controller_info || {})
     end
 
     # Updates `data` from the model's `meta` option.
@@ -218,7 +218,7 @@ module PaperTrail
     def data_for_create
       data = {
         event: @record.paper_trail_event || "create",
-        whodunnit: PaperTrail.whodunnit
+        whodunnit: PaperTrail.request.whodunnit
       }
       if @record.respond_to?(:updated_at)
         data[:created_at] = @record.updated_at
@@ -252,7 +252,7 @@ module PaperTrail
         item_type: @record.class.base_class.name,
         event: @record.paper_trail_event || "destroy",
         object: recordable_object,
-        whodunnit: PaperTrail.whodunnit
+        whodunnit: PaperTrail.request.whodunnit
       }
       add_transaction_id_to(data)
       merge_metadata_into(data)
@@ -288,7 +288,7 @@ module PaperTrail
       data = {
         event: @record.paper_trail_event || "update",
         object: recordable_object,
-        whodunnit: PaperTrail.whodunnit
+        whodunnit: PaperTrail.request.whodunnit
       }
       if @record.respond_to?(:updated_at)
         data[:created_at] = @record.updated_at
@@ -440,18 +440,18 @@ module PaperTrail
     # provided block.
     def whodunnit(value)
       raise ArgumentError, "expected to receive a block" unless block_given?
-      current_whodunnit = PaperTrail.whodunnit
-      PaperTrail.whodunnit = value
+      current_whodunnit = PaperTrail.request.whodunnit
+      PaperTrail.request.whodunnit = value
       yield @record
     ensure
-      PaperTrail.whodunnit = current_whodunnit
+      PaperTrail.request.whodunnit = current_whodunnit
     end
 
     private
 
     def add_transaction_id_to(data)
       return unless @record.class.paper_trail.version_class.column_names.include?("transaction_id")
-      data[:transaction_id] = PaperTrail.transaction_id
+      data[:transaction_id] = PaperTrail.request.transaction_id
     end
 
     # @api private
@@ -544,8 +544,8 @@ module PaperTrail
 
     def update_transaction_id(version)
       return unless @record.class.paper_trail.version_class.column_names.include?("transaction_id")
-      if PaperTrail.transaction? && PaperTrail.transaction_id.nil?
-        PaperTrail.transaction_id = version.id
+      if PaperTrail.transaction? && PaperTrail.request.transaction_id.nil?
+        PaperTrail.request.transaction_id = version.id
         version.transaction_id = version.id
         version.save
       end

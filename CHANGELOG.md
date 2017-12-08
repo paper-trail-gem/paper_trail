@@ -25,6 +25,21 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 - None
 
+## 8.1.1 (2017-12-02)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- [#1016](https://github.com/airblade/paper_trail/pull/1016) - Any config can be set using a block.  Also added a `PaperTrail::Request` object that handles request-level configuration
+
+
+### Fixed
+
+- None
+
 ## 8.1.0 (2017-11-30)
 
 ### Breaking Changes
