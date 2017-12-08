@@ -61,6 +61,15 @@ class SetUpTestTables < (
       t.timestamps null: true
     end
 
+    if ENV["DB"] == "postgres"
+      create_table :postgres_users, force: true do |t|
+        t.string     :name
+        t.integer    :post_ids,    array: true
+        t.datetime   :login_times, array: true
+        t.timestamps null: true
+      end
+    end
+
     create_table :versions, versions_table_options do |t|
       t.string   :item_type, item_type_options
       t.integer  :item_id,   null: false

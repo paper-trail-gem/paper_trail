@@ -1,3 +1,5 @@
+require "paper_trail/attribute_serializers/attribute_serializer_factory"
+
 module PaperTrail
   # :nodoc:
   module AttributeSerializers
@@ -32,7 +34,7 @@ module PaperTrail
       # This implementation uses AR 5's `serialize` and `deserialize`.
       class CastAttributeSerializer
         def serialize(attr, val)
-          @klass.type_for_attribute(attr).serialize(val)
+          AttributeSerializerFactory.for(@klass, attr).serialize(val)
         end
 
         def deserialize(attr, val)
@@ -40,7 +42,7 @@ module PaperTrail
             # Because PT 4 used to save the string version of enums to `object_changes`
             val
           else
-            @klass.type_for_attribute(attr).deserialize(val)
+            AttributeSerializerFactory.for(@klass, attr).deserialize(val)
           end
         end
       end
