@@ -13,7 +13,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
   belongs_to_required_by_default will produce an error instead of a warning.
 - Failing to set PaperTrail.config.track_associations will no longer produce
   a warning. The default (false) will remain the same.
-- warn_about_not_setting_whodunnit controller method
+- The `warn_about_not_setting_whodunnit` controller method will be removed.
+  Remove callbacks like `skip_after_action :warn_about_not_setting_whodunnit`.
 - [#997](https://github.com/airblade/paper_trail/pull/997) -
   where_object_changes reading YAML from a text column
 
