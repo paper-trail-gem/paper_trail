@@ -7,10 +7,11 @@ module PaperTrail
     # replaces certain default Active Record serializers
     # with custom PaperTrail ones.
     module AttributeSerializerFactory
+      AR_PG_ARRAY_CLASS = "ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Array".freeze
+
       def self.for(klass, attr)
         active_record_serializer = klass.type_for_attribute(attr)
-        case active_record_serializer
-        when ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Array then
+        if active_record_serializer.class.name == AR_PG_ARRAY_CLASS
           TypeSerializers::PostgresArraySerializer.new(
             active_record_serializer.subtype,
             active_record_serializer.delimiter
