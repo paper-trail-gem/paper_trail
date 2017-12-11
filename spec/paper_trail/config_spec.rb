@@ -16,16 +16,14 @@ module PaperTrail
 
     describe "track_associations?" do
       context "@track_associations is nil" do
-        after do
-          PaperTrail.config.track_associations = true
-        end
-
         it "returns false and prints a deprecation warning" do
           config = described_class.instance
           config.track_associations = nil
-          expect {
-            expect(config.track_associations?).to eq(false)
-          }.to output(/DEPRECATION WARNING/).to_stderr
+          expect(config.track_associations?).to eq(false)
+        end
+
+        after do
+          PaperTrail.config.track_associations = true
         end
       end
     end
