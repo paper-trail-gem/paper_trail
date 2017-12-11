@@ -6,7 +6,7 @@ module PaperTrail
   class ModelConfig
     E_CANNOT_RECORD_AFTER_DESTROY = <<-STR.strip_heredoc.freeze
       paper_trail.on_destroy(:after) is incompatible with ActiveRecord's
-      belongs_to_required_by_default and has no effect. Please use :before
+      belongs_to_required_by_default. Use on_destroy(:before)
       or disable belongs_to_required_by_default.
     STR
 
@@ -45,7 +45,7 @@ module PaperTrail
       end
 
       if recording_order.to_s == "after" && cannot_record_after_destroy?
-        ::ActiveSupport::Deprecation.warn(E_CANNOT_RECORD_AFTER_DESTROY)
+        raise E_CANNOT_RECORD_AFTER_DESTROY
       end
 
       @model_class.send(
