@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "paper_trail/attribute_serializers/cast_attribute_serializer"
 
 module PaperTrail

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module PaperTrail
   module Rails
     # Extensions to rails controllers. Provides convenient ways to pass certain

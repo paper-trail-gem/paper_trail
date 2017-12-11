@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module PaperTrail
   module Reifiers
     # Reify a single HMT association of `model`.

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CallbackModifier < ActiveRecord::Base
   has_paper_trail on: []
 

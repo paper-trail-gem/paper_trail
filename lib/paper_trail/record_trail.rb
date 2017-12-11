@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module PaperTrail
   # Represents the "paper trail" for a single record.
   class RecordTrail

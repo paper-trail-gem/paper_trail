@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module PaperTrail
   module RSpec
     module Helpers

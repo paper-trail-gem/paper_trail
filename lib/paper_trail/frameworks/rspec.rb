@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rspec/core"
 require "rspec/matchers"
 require "paper_trail/frameworks/rspec/helpers"

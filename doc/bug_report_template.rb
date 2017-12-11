@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Use this template to report PaperTrail bugs.
 # Please include only the minimum code necessary to reproduce your issue.
 require "bundler/inline"

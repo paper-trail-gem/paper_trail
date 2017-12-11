@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Parts of this migration must be kept in sync with
 # `lib/generators/paper_trail/templates/create_versions.rb`
 #

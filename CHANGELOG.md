@@ -9,6 +9,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 - Drop support for ruby 2.2, [whose EoL is the end of March,
   2018](https://www.ruby-lang.org/en/news/2017/09/14/ruby-2-2-8-released/)
+- Assume that all strings returned by PaperTrail are frozen.
 - Removed deprecated `Version#originator`, use `#paper_trail_originator`
 - Using paper_trail.on_destroy(:after) with ActiveRecord's
   belongs_to_required_by_default will produce an error instead of a warning.

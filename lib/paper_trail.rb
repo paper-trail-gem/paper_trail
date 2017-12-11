@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "active_support"
 require "request_store"
 require "paper_trail/cleaner"

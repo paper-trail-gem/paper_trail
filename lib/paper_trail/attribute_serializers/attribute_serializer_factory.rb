@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "paper_trail/type_serializers/postgres_array_serializer"
 
 module PaperTrail
@@ -7,7 +9,7 @@ module PaperTrail
     # replaces certain default Active Record serializers
     # with custom PaperTrail ones.
     module AttributeSerializerFactory
-      AR_PG_ARRAY_CLASS = "ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Array".freeze
+      AR_PG_ARRAY_CLASS = "ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Array"
 
       def self.for(klass, attr)
         active_record_serializer = klass.type_for_attribute(attr)
