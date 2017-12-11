@@ -65,23 +65,6 @@ module PaperTrail
       end
     end
 
-    describe "#originator" do
-      it "delegates to paper_trail_originator" do
-        allow(ActiveSupport::Deprecation).to receive(:warn)
-        version = PaperTrail::Version.new
-        allow(version).to receive(:paper_trail_originator)
-        version.originator
-        expect(version).to have_received(:paper_trail_originator)
-      end
-
-      it "displays a deprecation warning" do
-        allow(ActiveSupport::Deprecation).to receive(:warn)
-        PaperTrail::Version.new.originator
-        expect(ActiveSupport::Deprecation).to have_received(:warn).
-          with(/Use paper_trail_originator instead of originator/)
-      end
-    end
-
     describe "#terminator" do
       it "is an alias for the `whodunnit` attribute" do
         attributes = { whodunnit: FFaker::Name.first_name }

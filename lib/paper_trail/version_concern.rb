@@ -230,11 +230,6 @@ module PaperTrail
       @paper_trail_originator ||= previous.try(:whodunnit)
     end
 
-    def originator
-      ::ActiveSupport::Deprecation.warn "Use paper_trail_originator instead of originator."
-      paper_trail_originator
-    end
-
     # Returns who changed the item from the state it had in this version. This
     # is an alias for `whodunnit`.
     def terminator

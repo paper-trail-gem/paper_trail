@@ -7,8 +7,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Breaking Changes
 
-- [#479](https://github.com/airblade/paper_trail/issues/479) - Deprecated
-  `originator` method, use `paper_trail_originator`
+- Removed deprecated `Version#originator`, use `#paper_trail_originator`
 - Using paper_trail.on_destroy(:after) with ActiveRecord's
   belongs_to_required_by_default will produce an error instead of a warning.
 - Failing to set PaperTrail.config.track_associations will no longer produce
