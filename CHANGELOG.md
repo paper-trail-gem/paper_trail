@@ -14,8 +14,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
   a warning. The default (false) will remain the same.
 - Removed `warn_about_not_setting_whodunnit` controller method. Please remove
   callbacks like `skip_after_action :warn_about_not_setting_whodunnit`.
-- [#997](https://github.com/airblade/paper_trail/pull/997) -
-  where_object_changes reading YAML from a text column
+- Using where_object_changes to read YAML from a text column will now raise
+  error, was deprecated in 8.1.0.
 
 ### Added
 

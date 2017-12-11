@@ -152,7 +152,7 @@ module PaperTrail
               }.to raise_error(ArgumentError)
             end
 
-            context "`serializer == YAML`" do
+            context "YAML serializer" do
               it "locates versions according to their `object` contents" do
                 expect(PaperTrail.serializer).to be PaperTrail::Serializers::YAML
                 widget.update_attributes!(name: name, an_integer: int)
@@ -191,12 +191,6 @@ module PaperTrail
           end
 
           describe "#where_object_changes", versioning: true do
-            before do
-              widget.update_attributes!(name: name, an_integer: 0)
-              widget.update_attributes!(name: "foobar", an_integer: 100)
-              widget.update_attributes!(name: FFaker::Name.last_name, an_integer: int)
-            end
-
             it "requires its argument to be a Hash" do
               expect {
                 PaperTrail::Version.where_object_changes(:foo)
@@ -206,14 +200,13 @@ module PaperTrail
               }.to raise_error(ArgumentError)
             end
 
-            context "YAML serializer" do
-              before do
-                unless column_datatype_override
-                  allow(ActiveSupport::Deprecation).to receive(:warn)
-                end
-              end
-
-              it "locates versions according to their `object_changes` contents" do
+            # Only test json and jsonb columns. where_object_changes no longer
+            # supports text columns.
+            if column_datatype_override
+              it "locates versions according to their object_changes contents" do
+                widget.update_attributes!(name: name, an_integer: 0)
+                widget.update_attributes!(name: "foobar", an_integer: 100)
+                widget.update_attributes!(name: FFaker::Name.last_name, an_integer: int)
                 expect(
                   widget.versions.where_object_changes(name: name)
                 ).to eq(widget.versions[0..1])
@@ -223,49 +216,15 @@ module PaperTrail
                 expect(
                   widget.versions.where_object_changes(an_integer: int)
                 ).to eq([widget.versions.last])
-                unless column_datatype_override
-                  expect(ActiveSupport::Deprecation).to have_received(:warn).
-                    exactly(3).times.with(/^where_object_changes/)
-                end
-              end
-
-              it "handles queries for multiple attributes" do
                 expect(
                   widget.versions.where_object_changes(an_integer: 100, name: "foobar")
                 ).to eq(widget.versions[1..2])
-                unless column_datatype_override
-                  expect(ActiveSupport::Deprecation).to have_received(:warn).
-                    at_least(:once).with(/^where_object_changes/)
-                end
               end
-            end
-
-            # Only test the JSON serializer against where_object_changes
-            # for json and jsonb columns, not for text columns, which are
-            # no longer supported.
-            if column_datatype_override
-              context "JSON serializer" do
-                before do
-                  PaperTrail.serializer = PaperTrail::Serializers::JSON
-                end
-
-                it "locates versions according to their `object_changes` contents" do
-                  expect(
-                    widget.versions.where_object_changes(name: name)
-                  ).to eq(widget.versions[0..1])
-                  expect(
-                    widget.versions.where_object_changes(an_integer: 100)
-                  ).to eq(widget.versions[1..2])
-                  expect(
-                    widget.versions.where_object_changes(an_integer: int)
-                  ).to eq([widget.versions.last])
-                end
-
-                it "handles queries for multiple attributes" do
-                  expect(
-                    widget.versions.where_object_changes(an_integer: 100, name: "foobar")
-                  ).to eq(widget.versions[1..2])
-                end
+            else
+              it "raises error" do
+                expect {
+                  widget.versions.where_object_changes(name: "foo").to_a
+                }.to(raise_error(/no longer supports reading YAML from a text column/))
               end
             end
           end
