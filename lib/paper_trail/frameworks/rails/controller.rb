@@ -78,16 +78,6 @@ module PaperTrail
           ::PaperTrail.controller_info = info_for_paper_trail
         end
       end
-
-      # We have removed this warning. We no longer add it as a callback.
-      # However, some people use `skip_after_action :warn_about_not_setting_whodunnit`,
-      # so removing this method would be a breaking change. We can remove it
-      # in the next major version.
-      def warn_about_not_setting_whodunnit
-        ::ActiveSupport::Deprecation.warn(
-          "warn_about_not_setting_whodunnit is a no-op and is deprecated."
-        )
-      end
     end
   end
 end
