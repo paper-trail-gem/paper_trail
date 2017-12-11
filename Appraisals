@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Specify here only version constraints that differ from
 # `paper_trail.gemspec`.
 #

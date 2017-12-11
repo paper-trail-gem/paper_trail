@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rubygems"
 
 # When you run rake locally (not on travis) in this dummy app, set the

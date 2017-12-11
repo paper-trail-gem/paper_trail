@@ -7,16 +7,18 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Breaking Changes
 
-- [#479](https://github.com/airblade/paper_trail/issues/479) - Deprecated
-  `originator` method, use `paper_trail_originator`
+- Drop support for ruby 2.2, [whose EoL is the end of March,
+  2018](https://www.ruby-lang.org/en/news/2017/09/14/ruby-2-2-8-released/)
+- Assume that all strings returned by PaperTrail are frozen.
+- Removed deprecated `Version#originator`, use `#paper_trail_originator`
 - Using paper_trail.on_destroy(:after) with ActiveRecord's
   belongs_to_required_by_default will produce an error instead of a warning.
 - Failing to set PaperTrail.config.track_associations will no longer produce
   a warning. The default (false) will remain the same.
-- The `warn_about_not_setting_whodunnit` controller method will be removed.
-  Remove callbacks like `skip_after_action :warn_about_not_setting_whodunnit`.
-- [#997](https://github.com/airblade/paper_trail/pull/997) -
-  where_object_changes reading YAML from a text column
+- Removed `warn_about_not_setting_whodunnit` controller method. Please remove
+  callbacks like `skip_after_action :warn_about_not_setting_whodunnit`.
+- Using where_object_changes to read YAML from a text column will now raise
+  error, was deprecated in 8.1.0.
 
 ### Added
 

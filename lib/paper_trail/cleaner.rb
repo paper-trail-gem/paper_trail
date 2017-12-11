@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module PaperTrail
   # Utilities for deleting version records.
   module Cleaner

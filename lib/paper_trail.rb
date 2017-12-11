@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "active_support"
 require "request_store"
 require "paper_trail/cleaner"
@@ -156,7 +158,7 @@ module PaperTrail
 
     # @api public
     def transaction?
-      ::ActiveRecord::Base.connection.open_transactions > 0
+      ::ActiveRecord::Base.connection.open_transactions.positive?
     end
 
     # @api public

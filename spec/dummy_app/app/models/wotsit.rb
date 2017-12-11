@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Wotsit < ActiveRecord::Base
   has_paper_trail
 
