@@ -26,6 +26,21 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 - None
 
+## 8.1.1 (2017-12-10)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- [#1018](https://github.com/airblade/paper_trail/pull/1018)
+  Serializing postgres arrays
+
 ## 8.1.0 (2017-11-30)
 
 ### Breaking Changes
