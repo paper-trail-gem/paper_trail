@@ -15,7 +15,7 @@ has been destroyed.
   EOS
   s.homepage = "https://github.com/airblade/paper_trail"
   s.authors = ["Andy Stewart", "Ben Atkins", "Jared Beck"]
-  s.email = "batkinz@gmail.com"
+  s.email = "jared@jaredbeck.com"
   s.license = "MIT"
 
   s.files = `git ls-files -z`.split("\x0").select { |f|

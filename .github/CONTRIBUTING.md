@@ -13,6 +13,13 @@ On github, we appreciate bug reports, feature suggestions, and pull requests.
 
 Please use our [bug report template][1].
 
+## Reporting Security Vulnerabilities
+
+Please email jared@jaredbeck.com, batkinz@gmail.com
+
+We will respond as soon as we can. Thank you for responsibly disclosing
+security vulnerabilities.
+
 ## Development
 
 Install gems with `bundle exec appraisal install`.
