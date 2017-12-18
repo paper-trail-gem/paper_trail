@@ -217,6 +217,7 @@ module PaperTrail
     # @api private
     def data_for_create
       data = {
+        item_sub_type: @record.class != @record.class.base_class ? @record.class.name : nil,
         event: @record.paper_trail_event || "create",
         whodunnit: PaperTrail.whodunnit
       }
@@ -250,6 +251,7 @@ module PaperTrail
       data = {
         item_id: @record.id,
         item_type: @record.class.base_class.name,
+        item_sub_type: @record.class != @record.class.base_class ? @record.class.name : nil,
         event: @record.paper_trail_event || "destroy",
         object: recordable_object,
         whodunnit: PaperTrail.whodunnit
@@ -286,6 +288,7 @@ module PaperTrail
     # @api private
     def data_for_update
       data = {
+        item_sub_type: @record.class != @record.class.base_class ? @record.class.name : nil,
         event: @record.paper_trail_event || "update",
         object: recordable_object,
         whodunnit: PaperTrail.whodunnit

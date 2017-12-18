@@ -72,6 +72,7 @@ class SetUpTestTables < (
 
     create_table :versions, versions_table_options do |t|
       t.string   :item_type, item_type_options
+      t.string   :item_sub_type
       t.integer  :item_id,   null: false
       t.string   :event,     null: false
       t.string   :whodunnit
@@ -105,6 +106,7 @@ class SetUpTestTables < (
 
     create_table :post_versions, force: true do |t|
       t.string   :item_type, null: false
+      t.string   :item_sub_type
       t.integer  :item_id,   null: false
       t.string   :event,     null: false
       t.string   :whodunnit
@@ -120,6 +122,7 @@ class SetUpTestTables < (
     if ENV["DB"] == "postgres" && ::ActiveRecord::VERSION::MAJOR >= 4
       create_table :json_versions, force: true do |t|
         t.string   :item_type, null: false
+        t.string   :item_sub_type
         t.integer  :item_id,   null: false
         t.string   :event,     null: false
         t.string   :whodunnit
@@ -140,6 +143,7 @@ class SetUpTestTables < (
 
     create_table :banana_versions, force: true do |t|
       t.string   :item_type, null: false
+      t.string   :item_sub_type
       t.integer  :item_id,   null: false
       t.string   :event,     null: false
       t.string   :whodunnit
@@ -317,6 +321,7 @@ class SetUpTestTables < (
     # and custom_primary_key_record_versions stores the uuid in item_id, a string
     create_table :custom_primary_key_record_versions, force: true do |t|
       t.string   :item_type, null: false
+      t.string   :item_sub_type
       t.string   :item_id,   null: false
       t.string   :event,     null: false
       t.string   :whodunnit

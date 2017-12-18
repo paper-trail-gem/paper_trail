@@ -73,7 +73,11 @@ module PaperTrail
         def load_versions_for_hmt_association(assoc, ids, tx_id, version_at)
           version_id_subquery = assoc.klass.paper_trail.version_class.
             select("MIN(id)").
-            where("item_type = ?", assoc.klass.name).
+            where("item_type = ?", assoc.klass.base_class.name)
+          if assoc.klass != assoc.klass.base_class
+            version_id_subquery = version_id_subquery.where("item_sub_type = ?", assoc.klass.name)
+          end
+          version_id_subquery = version_id_subquery.
             where("item_id IN (?)", ids).
             where(
               "created_at >= ? OR transaction_id = ?",

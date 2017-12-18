@@ -33,10 +33,14 @@ module PaperTrail
         # @api private
         def load_version_for_has_one(assoc, model, transaction_id, version_at)
           version_table_name = model.class.paper_trail.version_class.table_name
-          model.class.paper_trail.version_class.joins(:version_associations).
+          version_query = model.class.paper_trail.version_class.joins(:version_associations).
             where("version_associations.foreign_key_name = ?", assoc.foreign_key).
             where("version_associations.foreign_key_id = ?", model.id).
-            where("#{version_table_name}.item_type = ?", assoc.klass.name).
+            where("#{version_table_name}.item_type = ?", assoc.klass.base_class.name)
+          if assoc.klass != assoc.klass.base_class
+            version_query = version_query.where("#{version_table_name}.item_sub_type = ?", assoc.klass.name)
+          end
+          version_query.
             where("created_at >= ? OR transaction_id = ?", version_at, transaction_id).
             order("#{version_table_name}.id ASC").
             first

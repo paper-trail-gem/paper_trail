@@ -31,6 +31,7 @@ ActiveRecord::Schema.define(version: 20110208155312) do
 
   create_table "banana_versions", force: :cascade do |t|
     t.string "item_type", null: false
+    t.string "item_sub_type"
     t.integer "item_id", null: false
     t.string "event", null: false
     t.string "whodunnit"
@@ -79,6 +80,7 @@ ActiveRecord::Schema.define(version: 20110208155312) do
 
   create_table "custom_primary_key_record_versions", force: :cascade do |t|
     t.string "item_type", null: false
+    t.string "item_sub_type"
     t.string "item_id", null: false
     t.string "event", null: false
     t.string "whodunnit"
@@ -192,6 +194,7 @@ ActiveRecord::Schema.define(version: 20110208155312) do
 
   create_table "post_versions", force: :cascade do |t|
     t.string "item_type", null: false
+    t.string "item_sub_type"
     t.integer "item_id", null: false
     t.string "event", null: false
     t.string "whodunnit"
@@ -261,6 +264,7 @@ ActiveRecord::Schema.define(version: 20110208155312) do
 
   create_table "versions", force: :cascade do |t|
     t.string "item_type", null: false
+    t.string "item_sub_type"
     t.integer "item_id", null: false
     t.string "event", null: false
     t.string "whodunnit"
