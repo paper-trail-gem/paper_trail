@@ -38,7 +38,7 @@ module PaperTrail
           model.class.paper_trail.version_class.joins(:version_associations).
             where("version_associations.foreign_key_name = ?", assoc.foreign_key).
             where("version_associations.foreign_key_id = ?", model.id).
-            where("#{version_table_name}.item_type = ?", assoc.klass.name).
+            where("#{version_table_name}.item_type = ?", assoc.klass.base_class.name).
             where("created_at >= ? OR transaction_id = ?", version_at, transaction_id).
             order("#{version_table_name}.id ASC").
             first
