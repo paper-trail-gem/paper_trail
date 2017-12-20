@@ -38,8 +38,12 @@ module PaperTrail
         # from the point in time identified by `transaction_id` or `version_at`.
         # @api private
         def load_version(assoc, id, transaction_id, version_at)
-          assoc.klass.paper_trail.version_class.
-            where("item_type = ?", assoc.klass.name).
+          version_query = assoc.klass.paper_trail.version_class.
+            where("item_type = ?", assoc.klass.name)
+          if PaperTrail.config.track_item_sub_type? && assoc.klass != assoc.klass.base_class
+            version_query = version_query.where("item_sub_type = ?", assoc.klass.name)
+          end
+          version_query.
             where("item_id = ?", id).
             where("created_at >= ? OR transaction_id = ?", version_at, transaction_id).
             order("id").

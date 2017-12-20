@@ -29,6 +29,12 @@ module PaperTrail
       default: false,
       desc: "Store transactional IDs to support association restoration"
     )
+    class_option(
+      :with_sub_types,
+      type: :boolean,
+      default: false,
+      desc: "Store item sub type to support polymorphic items correctly"
+    )
 
     desc "Generates (but does not run) a migration to add a versions table." \
          "  Also generates an initializer file for configuring PaperTrail"
@@ -40,12 +46,16 @@ module PaperTrail
         add_paper_trail_migration("create_version_associations")
         add_paper_trail_migration("add_transaction_id_column_to_versions")
       end
+      if options.with_sub_types?
+        add_paper_trail_migration("create_item_sub_type_column_to_versions")
+      end
     end
 
     def create_initializer
       create_file(
         "config/initializers/paper_trail.rb",
-        "PaperTrail.config.track_associations = #{!!options.with_associations?}\n"
+        "PaperTrail.config.track_associations = #{!!options.with_associations?}\n" +
+        "PaperTrail.config.track_item_sub_type = #{!!options.with_sub_types?}\n"
       )
     end
 

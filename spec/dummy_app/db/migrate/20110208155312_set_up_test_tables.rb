@@ -74,6 +74,7 @@ class SetUpTestTables < (
 
     create_table :versions, versions_table_options do |t|
       t.string   :item_type, item_type_options
+      t.string   :item_sub_type
       t.integer  :item_id,   null: false
       t.string   :event,     null: false
       t.string   :whodunnit
@@ -94,6 +95,7 @@ class SetUpTestTables < (
       t.string :user_agent
     end
     add_index :versions, %i[item_type item_id]
+    add_index :versions, %i[item_sub_type]
 
     create_table :version_associations do |t|
       t.integer  :version_id
@@ -107,6 +109,7 @@ class SetUpTestTables < (
 
     create_table :post_versions, force: true do |t|
       t.string   :item_type, null: false
+      t.string   :item_sub_type
       t.integer  :item_id,   null: false
       t.string   :event,     null: false
       t.string   :whodunnit
@@ -118,10 +121,12 @@ class SetUpTestTables < (
       t.string :user_agent
     end
     add_index :post_versions, %i[item_type item_id]
+    add_index :post_versions, %i[item_sub_type]
 
     if ENV["DB"] == "postgres" && ::ActiveRecord::VERSION::MAJOR >= 4
       create_table :json_versions, force: true do |t|
         t.string   :item_type, null: false
+        t.string   :item_sub_type
         t.integer  :item_id,   null: false
         t.string   :event,     null: false
         t.string   :whodunnit
@@ -130,6 +135,7 @@ class SetUpTestTables < (
         t.datetime :created_at
       end
       add_index :json_versions, %i[item_type item_id]
+      add_index :json_versions, %i[item_sub_type]
     end
 
     create_table :not_on_updates, force: true do |t|
@@ -142,6 +148,7 @@ class SetUpTestTables < (
 
     create_table :banana_versions, force: true do |t|
       t.string   :item_type, null: false
+      t.string   :item_sub_type
       t.integer  :item_id,   null: false
       t.string   :event,     null: false
       t.string   :whodunnit
@@ -149,6 +156,7 @@ class SetUpTestTables < (
       t.datetime :created_at
     end
     add_index :banana_versions, %i[item_type item_id]
+    add_index :banana_versions, %i[item_sub_type]
 
     create_table :wotsits, force: true do |t|
       t.integer :widget_id
@@ -319,6 +327,7 @@ class SetUpTestTables < (
     # and custom_primary_key_record_versions stores the uuid in item_id, a string
     create_table :custom_primary_key_record_versions, force: true do |t|
       t.string   :item_type, null: false
+      t.string   :item_sub_type
       t.string   :item_id,   null: false
       t.string   :event,     null: false
       t.string   :whodunnit
@@ -326,6 +335,7 @@ class SetUpTestTables < (
       t.datetime :created_at
     end
     add_index :custom_primary_key_record_versions, %i[item_type item_id], name: "idx_cust_pk_item"
+    add_index :custom_primary_key_record_versions, %i[item_sub_type], name: "idx_cust_pk_item_s_t"
 
     create_table :family_lines do |t|
       t.integer :parent_id

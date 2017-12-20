@@ -55,6 +55,7 @@ require "paper_trail/config"
 
 # STEP THREE: Configure PaperTrail as you would in your initializer
 PaperTrail::Config.instance.track_associations = true
+PaperTrail::Config.instance.track_item_sub_type = true
 
 require "paper_trail"
 
