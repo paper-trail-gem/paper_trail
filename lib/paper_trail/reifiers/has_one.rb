@@ -37,7 +37,7 @@ module PaperTrail
             where("version_associations.foreign_key_name = ?", assoc.foreign_key).
             where("version_associations.foreign_key_id = ?", model.id).
             where("#{version_table_name}.item_type = ?", assoc.klass.base_class.name)
-          if assoc.klass != assoc.klass.base_class
+          if PaperTrail.config.track_item_sub_type? && assoc.klass != assoc.klass.base_class
             version_query = version_query.where("#{version_table_name}.item_sub_type = ?", assoc.klass.name)
           end
           version_query.

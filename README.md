@@ -1053,8 +1053,8 @@ class Banana < Fruit
 end
 ```
 
-However, there is a known issue when reifying [associations](#associations),
-see https://github.com/airblade/paper_trail/issues/594
+To reify polymorphic associations correctly you need to set `track_item_sub_type` to `true`.
+See https://github.com/airblade/paper_trail/issues/594 Create the needed column `item_sub_type` of type string via migration.
 
 ### 5.b. Configuring the `versions` Association
 
@@ -1088,6 +1088,7 @@ Usage:
 Options:
   [--with-changes], [--no-with-changes]            # Store changeset (diff) with each version
   [--with-associations], [--no-with-associations]  # Store transactional IDs to support association restoration
+  [--with-track-item-sub-type], [--no-with-track-item-sub-type]  # Store item sub type to support polymorphic association reification
 
 Runtime options:
   -f, [--force]                    # Overwrite files that already exist

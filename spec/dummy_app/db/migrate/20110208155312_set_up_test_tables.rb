@@ -93,6 +93,7 @@ class SetUpTestTables < (
       t.string :user_agent
     end
     add_index :versions, %i[item_type item_id]
+    add_index :versions, %i[item_sub_type]
 
     create_table :version_associations do |t|
       t.integer  :version_id
@@ -118,6 +119,7 @@ class SetUpTestTables < (
       t.string :user_agent
     end
     add_index :post_versions, %i[item_type item_id]
+    add_index :post_versions, %i[item_sub_type]
 
     if ENV["DB"] == "postgres" && ::ActiveRecord::VERSION::MAJOR >= 4
       create_table :json_versions, force: true do |t|
@@ -131,6 +133,7 @@ class SetUpTestTables < (
         t.datetime :created_at
       end
       add_index :json_versions, %i[item_type item_id]
+      add_index :json_versions, %i[item_sub_type]
     end
 
     create_table :not_on_updates, force: true do |t|
@@ -151,6 +154,7 @@ class SetUpTestTables < (
       t.datetime :created_at
     end
     add_index :banana_versions, %i[item_type item_id]
+    add_index :banana_versions, %i[item_sub_type]
 
     create_table :wotsits, force: true do |t|
       t.integer :widget_id
@@ -329,6 +333,7 @@ class SetUpTestTables < (
       t.datetime :created_at
     end
     add_index :custom_primary_key_record_versions, %i[item_type item_id], name: "idx_cust_pk_item"
+    add_index :custom_primary_key_record_versions, %i[item_sub_type], name: "idx_cust_pk_item_s_t"
 
     create_table :family_lines do |t|
       t.integer :parent_id

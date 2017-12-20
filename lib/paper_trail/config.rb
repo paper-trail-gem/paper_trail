@@ -8,6 +8,7 @@ module PaperTrail
     include Singleton
     attr_accessor :serializer, :version_limit
     attr_writer :track_associations
+    attr_writer :track_item_sub_type
 
     def initialize
       # Variables which affect all threads, whose access is synchronized.
@@ -33,6 +34,19 @@ module PaperTrail
         false
       else
         @track_associations
+      end
+    end
+
+    def track_item_sub_type?
+      if @track_item_sub_type.nil?
+        ActiveSupport::Deprecation.warn <<-EOS.strip_heredoc.gsub(/\s+/, " ")
+          PaperTrail.config.track_item_sub_type has not been set. Tracking item sub type is an experimental feature so
+          we recommend setting PaperTrail.config.track_item_sub_type = false in
+          your config/initializers/paper_trail.rb
+        EOS
+        false
+      else
+        @track_item_sub_type
       end
     end
 

@@ -38,7 +38,7 @@ module PaperTrail
         def load_version(assoc, id, transaction_id, version_at)
           version_query = assoc.klass.paper_trail.version_class.
             where("item_type = ?", assoc.klass.name)
-          if assoc.klass != assoc.klass.base_class
+          if PaperTrail.config.track_item_sub_type? && assoc.klass != assoc.klass.base_class
             version_query = version_query.where("item_sub_type = ?", assoc.klass.name)
           end
           version_query.

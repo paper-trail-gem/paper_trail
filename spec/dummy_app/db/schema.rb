@@ -38,6 +38,7 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.text "object"
     t.datetime "created_at"
     t.index ["item_type", "item_id"], name: "index_banana_versions_on_item_type_and_item_id"
+    t.index ["item_sub_type"], name: "index_versions_on_item_sub_type"
   end
 
   create_table "bananas", force: :cascade do |t|
@@ -87,6 +88,7 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.text "object"
     t.datetime "created_at"
     t.index ["item_type", "item_id"], name: "idx_cust_pk_item"
+    t.index ["item_sub_type"], name: "idx_cust_pk_item_s_t"
   end
 
   create_table "custom_primary_key_records", primary_key: "uuid", id: :string, force: :cascade do |t|
@@ -203,6 +205,7 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.string "ip"
     t.string "user_agent"
     t.index ["item_type", "item_id"], name: "index_post_versions_on_item_type_and_item_id"
+    t.index ["item_sub_type"], name: "index_post_versions_on_item_sub_type"
   end
 
   create_table "post_with_statuses", force: :cascade do |t|
@@ -280,6 +283,7 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.string "ip"
     t.string "user_agent"
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
+    t.index ["item_sub_type"], name: "index_versions_on_item_sub_type"
   end
 
   create_table "whatchamajiggers", force: :cascade do |t|

@@ -1,0 +1,13 @@
+# This migration and AddItemSubTypeColumnToVersions provide the necessary
+# schema for tracking types of polymorphic correctly.
+class AddItemSubTypeColumnToVersions < ActiveRecord::Migration<%= migration_version %>
+  def self.up
+    add_column :versions, :item_sub_type, :string
+    add_index :versions, [:item_sub_type]
+  end
+
+  def self.down
+    remove_index :versions, [:item_sub_type]
+    remove_column :versions, :item_sub_type
+  end
+end

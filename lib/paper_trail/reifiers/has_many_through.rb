@@ -74,7 +74,7 @@ module PaperTrail
           version_id_subquery = assoc.klass.paper_trail.version_class.
             select("MIN(id)").
             where("item_type = ?", assoc.klass.base_class.name)
-          if assoc.klass != assoc.klass.base_class
+          if PaperTrail.config.track_item_sub_type? && assoc.klass != assoc.klass.base_class
             version_id_subquery = version_id_subquery.where("item_sub_type = ?", assoc.klass.name)
           end
           version_id_subquery = version_id_subquery.

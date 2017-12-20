@@ -26,6 +26,21 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 - None
 
+## 8.2.0
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- Add option `track_item_sub_type` to save the direct class name instead of base class names for correct reification of polymorphic associations. Column `item_sub_type` of type string needed.
+
+### Fixed
+
+- [#594](https://github.com/airblade/paper_trail/pull/594)
+  Reifying polymorphic associations
+
 ## 8.1.1 (2017-12-10)
 
 ### Breaking Changes

@@ -29,10 +29,12 @@ RSpec.describe Animal, type: :model, versioning: true do
     expect(dog_versions.count).to(eq(4))
     expect(dog_versions.first.reify).to(be_nil)
     expect(dog_versions.map { |v| v.reify.class.name }).to eq(%w[NilClass Dog Dog Dog])
+    expect(dog_versions.map { |v| v.item_sub_type }).to eq(%w[Dog Dog Dog Dog])
     cat_versions = PaperTrail::Version.where(item_id: cat.id).order(:created_at)
     expect(cat_versions.count).to(eq(4))
     expect(cat_versions.first.reify).to(be_nil)
     expect(cat_versions.map { |v| v.reify.class.name }).to eq(%w[NilClass Cat Cat Cat])
+    expect(cat_versions.map { |v| v.item_sub_type }).to eq(%w[Cat Cat Cat Cat])
   end
 
   it "allows the inheritance_column (species) to be updated" do

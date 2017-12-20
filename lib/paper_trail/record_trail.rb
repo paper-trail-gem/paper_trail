@@ -217,7 +217,6 @@ module PaperTrail
     # @api private
     def data_for_create
       data = {
-        item_sub_type: @record.class != @record.class.base_class ? @record.class.name : nil,
         event: @record.paper_trail_event || "create",
         whodunnit: PaperTrail.whodunnit
       }
@@ -228,6 +227,7 @@ module PaperTrail
         data[:object_changes] = recordable_object_changes
       end
       add_transaction_id_to(data)
+      add_sub_type_to(data)
       merge_metadata_into(data)
     end
 
@@ -251,12 +251,12 @@ module PaperTrail
       data = {
         item_id: @record.id,
         item_type: @record.class.base_class.name,
-        item_sub_type: @record.class != @record.class.base_class ? @record.class.name : nil,
         event: @record.paper_trail_event || "destroy",
         object: recordable_object,
         whodunnit: PaperTrail.whodunnit
       }
       add_transaction_id_to(data)
+      add_sub_type_to(data)
       merge_metadata_into(data)
     end
 
@@ -288,7 +288,6 @@ module PaperTrail
     # @api private
     def data_for_update
       data = {
-        item_sub_type: @record.class != @record.class.base_class ? @record.class.name : nil,
         event: @record.paper_trail_event || "update",
         object: recordable_object,
         whodunnit: PaperTrail.whodunnit
@@ -300,6 +299,7 @@ module PaperTrail
         data[:object_changes] = recordable_object_changes
       end
       add_transaction_id_to(data)
+      add_sub_type_to(data)
       merge_metadata_into(data)
     end
 
@@ -451,6 +451,11 @@ module PaperTrail
     end
 
     private
+
+    def add_sub_type_to(data)
+      return unless PaperTrail.config.track_item_sub_type? && @record.class != @record.class.base_class
+      data[:item_sub_type] = @record.class.name
+    end
 
     def add_transaction_id_to(data)
       return unless @record.class.paper_trail.version_class.column_names.include?("transaction_id")
