@@ -35,13 +35,13 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.string "event", null: false
     t.string "whodunnit"
     t.text "object"
-    t.datetime "created_at"
+    t.datetime "created_at", limit: 6
     t.index ["item_type", "item_id"], name: "index_banana_versions_on_item_type_and_item_id"
   end
 
   create_table "bananas", force: :cascade do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", limit: 6
+    t.datetime "updated_at", limit: 6
   end
 
   create_table "bar_habtms", force: :cascade do |t|
@@ -83,15 +83,15 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.string "event", null: false
     t.string "whodunnit"
     t.text "object"
-    t.datetime "created_at"
+    t.datetime "created_at", limit: 6
     t.index ["item_type", "item_id"], name: "idx_cust_pk_item"
   end
 
   create_table "custom_primary_key_records", primary_key: "uuid", id: :string, force: :cascade do |t|
     t.string "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
     t.index ["uuid"], unique: true
+    t.datetime "created_at", limit: 6
+    t.datetime "updated_at", limit: 6
   end
 
   create_table "customers", force: :cascade do |t|
@@ -139,8 +139,8 @@ ActiveRecord::Schema.define(version: 20110208155312) do
   create_table "gadgets", force: :cascade do |t|
     t.string "name"
     t.string "brand"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", limit: 6
+    t.datetime "updated_at", limit: 6
   end
 
   create_table "legacy_widgets", force: :cascade do |t|
@@ -154,8 +154,8 @@ ActiveRecord::Schema.define(version: 20110208155312) do
   end
 
   create_table "not_on_updates", force: :cascade do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", limit: 6
+    t.datetime "updated_at", limit: 6
   end
 
   create_table "on_create", force: :cascade do |t|
@@ -196,7 +196,7 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.string "event", null: false
     t.string "whodunnit"
     t.text "object"
-    t.datetime "created_at"
+    t.datetime "created_at", limit: 6
     t.string "ip"
     t.string "user_agent"
     t.index ["item_type", "item_id"], name: "index_post_versions_on_item_type_and_item_id"
@@ -204,8 +204,8 @@ ActiveRecord::Schema.define(version: 20110208155312) do
 
   create_table "post_with_statuses", force: :cascade do |t|
     t.integer "status"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", null: false, limit: 6
+    t.datetime "updated_at", null: false, limit: 6
   end
 
   create_table "posts", force: :cascade do |t|
@@ -224,9 +224,9 @@ ActiveRecord::Schema.define(version: 20110208155312) do
 
   create_table "skippers", force: :cascade do |t|
     t.string "name"
-    t.datetime "another_timestamp"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "another_timestamp", limit: 6
+    t.datetime "created_at", limit: 6
+    t.datetime "updated_at", limit: 6
   end
 
   create_table "songs", force: :cascade do |t|
@@ -247,8 +247,8 @@ ActiveRecord::Schema.define(version: 20110208155312) do
   create_table "vehicles", force: :cascade do |t|
     t.string "name", null: false
     t.string "type", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", null: false, limit: 6
+    t.datetime "updated_at", null: false, limit: 6
   end
 
   create_table "version_associations", force: :cascade do |t|
@@ -267,7 +267,7 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.text "object", limit: 1073741823
     t.text "object_changes", limit: 1073741823
     t.integer "transaction_id"
-    t.datetime "created_at"
+    t.datetime "created_at", limit: 6
     t.integer "answer"
     t.string "action"
     t.string "question"
@@ -290,20 +290,20 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.integer "an_integer"
     t.float "a_float"
     t.decimal "a_decimal", precision: 6, scale: 4
-    t.datetime "a_datetime"
+    t.datetime "a_datetime", limit: 6
     t.time "a_time"
     t.date "a_date"
     t.boolean "a_boolean"
     t.string "type"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", limit: 6
+    t.datetime "updated_at", limit: 6
   end
 
   create_table "wotsits", force: :cascade do |t|
     t.integer "widget_id"
     t.string "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", limit: 6
+    t.datetime "updated_at", limit: 6
   end
 
 end
