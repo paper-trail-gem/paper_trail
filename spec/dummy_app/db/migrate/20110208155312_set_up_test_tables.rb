@@ -41,13 +41,13 @@ class SetUpTestTables < (
       t.string :name, null: false
       t.string :type, null: false
       t.integer :owner_id
-      t.timestamps null: false
+      t.timestamps null: false, limit: 6
     end
 
     create_table :skippers, force: true do |t|
       t.string     :name
       t.datetime   :another_timestamp, limit: 6
-      t.timestamps null: true
+      t.timestamps null: true, limit: 6
     end
 
     create_table :widgets, force: true do |t|
@@ -61,7 +61,7 @@ class SetUpTestTables < (
       t.date      :a_date
       t.boolean   :a_boolean
       t.string    :type
-      t.timestamps null: true
+      t.timestamps null: true, limit: 6
     end
 
     if ENV["DB"] == "postgres"
@@ -69,7 +69,7 @@ class SetUpTestTables < (
         t.string     :name
         t.integer    :post_ids,    array: true
         t.datetime   :login_times, array: true, limit: 6
-        t.timestamps null: true
+        t.timestamps null: true, limit: 6
       end
     end
 
@@ -134,11 +134,11 @@ class SetUpTestTables < (
     end
 
     create_table :not_on_updates, force: true do |t|
-      t.timestamps null: true
+      t.timestamps null: true, limit: 6
     end
 
     create_table :bananas, force: true do |t|
-      t.timestamps null: true
+      t.timestamps null: true, limit: 6
     end
 
     create_table :banana_versions, force: true do |t|
@@ -154,7 +154,7 @@ class SetUpTestTables < (
     create_table :wotsits, force: true do |t|
       t.integer :widget_id
       t.string  :name
-      t.timestamps null: true
+      t.timestamps null: true, limit: 6
     end
 
     create_table :fluxors, force: true do |t|
@@ -210,7 +210,7 @@ class SetUpTestTables < (
 
     create_table :post_with_statuses, force: true do |t|
       t.integer :status
-      t.timestamps null: false
+      t.timestamps null: false, limit: 6
     end
 
     create_table :animals, force: true do |t|
@@ -246,7 +246,7 @@ class SetUpTestTables < (
     create_table :gadgets, force: true do |t|
       t.string    :name
       t.string    :brand
-      t.timestamps null: true
+      t.timestamps null: true, limit: 6
     end
 
     create_table :customers, force: true do |t|
@@ -319,7 +319,7 @@ class SetUpTestTables < (
     create_table :custom_primary_key_records, id: false, force: true do |t|
       t.column :uuid, :string, primary_key: true
       t.string :name
-      t.timestamps null: true
+      t.timestamps null: true, limit: 6
     end
 
     # and custom_primary_key_record_versions stores the uuid in item_id, a string
