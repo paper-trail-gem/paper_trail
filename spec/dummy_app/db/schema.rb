@@ -35,7 +35,7 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.string "event", null: false
     t.string "whodunnit"
     t.text "object"
-    t.datetime "created_at"
+    t.datetime "created_at", precision: 6
     t.index ["item_type", "item_id"], name: "index_banana_versions_on_item_type_and_item_id"
   end
 
@@ -83,7 +83,7 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.string "event", null: false
     t.string "whodunnit"
     t.text "object"
-    t.datetime "created_at"
+    t.datetime "created_at", precision: 6
     t.index ["item_type", "item_id"], name: "idx_cust_pk_item"
   end
 
@@ -201,7 +201,7 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.string "event", null: false
     t.string "whodunnit"
     t.text "object"
-    t.datetime "created_at"
+    t.datetime "created_at", precision: 6
     t.string "ip"
     t.string "user_agent"
     t.index ["item_type", "item_id"], name: "index_post_versions_on_item_type_and_item_id"
@@ -229,7 +229,7 @@ ActiveRecord::Schema.define(version: 20110208155312) do
 
   create_table "skippers", force: :cascade do |t|
     t.string "name"
-    t.datetime "another_timestamp"
+    t.datetime "another_timestamp", precision: 6
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -252,6 +252,7 @@ ActiveRecord::Schema.define(version: 20110208155312) do
   create_table "vehicles", force: :cascade do |t|
     t.string "name", null: false
     t.string "type", null: false
+    t.integer "owner_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -272,7 +273,7 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.text "object", limit: 1073741823
     t.text "object_changes", limit: 1073741823
     t.integer "transaction_id"
-    t.datetime "created_at"
+    t.datetime "created_at", precision: 6
     t.integer "answer"
     t.string "action"
     t.string "question"
@@ -295,7 +296,7 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.integer "an_integer"
     t.float "a_float"
     t.decimal "a_decimal", precision: 6, scale: 4
-    t.datetime "a_datetime"
+    t.datetime "a_datetime", precision: 6
     t.time "a_time"
     t.date "a_date"
     t.boolean "a_boolean"

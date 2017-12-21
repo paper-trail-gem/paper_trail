@@ -36,7 +36,7 @@ class SetUpTestTables < (
       t.string :name, null: false
     end
 
-    # Classes: Vehicle, Car, Truck
+    # Classes: Vehicle, Car, Bicycle, Truck
     create_table :vehicles, force: true do |t|
       t.string :name, null: false
       t.string :type, null: false
@@ -46,7 +46,7 @@ class SetUpTestTables < (
 
     create_table :skippers, force: true do |t|
       t.string     :name
-      t.datetime   :another_timestamp
+      t.datetime   :another_timestamp, limit: 6
       t.timestamps null: true
     end
 
@@ -56,7 +56,7 @@ class SetUpTestTables < (
       t.integer   :an_integer
       t.float     :a_float
       t.decimal   :a_decimal, precision: 6, scale: 4
-      t.datetime  :a_datetime
+      t.datetime  :a_datetime, limit: 6
       t.time      :a_time
       t.date      :a_date
       t.boolean   :a_boolean
@@ -68,7 +68,7 @@ class SetUpTestTables < (
       create_table :postgres_users, force: true do |t|
         t.string     :name
         t.integer    :post_ids,    array: true
-        t.datetime   :login_times, array: true
+        t.datetime   :login_times, array: true, limit: 6
         t.timestamps null: true
       end
     end
@@ -81,7 +81,7 @@ class SetUpTestTables < (
       t.text     :object, limit: TEXT_BYTES
       t.text     :object_changes, limit: TEXT_BYTES
       t.integer  :transaction_id
-      t.datetime :created_at
+      t.datetime :created_at, limit: 6
 
       # Metadata columns.
       t.integer :answer
@@ -112,7 +112,7 @@ class SetUpTestTables < (
       t.string   :event,     null: false
       t.string   :whodunnit
       t.text     :object
-      t.datetime :created_at
+      t.datetime :created_at, limit: 6
 
       # Controller info columns.
       t.string :ip
@@ -128,7 +128,7 @@ class SetUpTestTables < (
         t.string   :whodunnit
         t.json     :object
         t.json     :object_changes
-        t.datetime :created_at
+        t.datetime :created_at, limit: 6
       end
       add_index :json_versions, %i[item_type item_id]
     end
@@ -147,7 +147,7 @@ class SetUpTestTables < (
       t.string   :event,     null: false
       t.string   :whodunnit
       t.text     :object
-      t.datetime :created_at
+      t.datetime :created_at, limit: 6
     end
     add_index :banana_versions, %i[item_type item_id]
 
@@ -329,7 +329,7 @@ class SetUpTestTables < (
       t.string   :event,     null: false
       t.string   :whodunnit
       t.text     :object
-      t.datetime :created_at
+      t.datetime :created_at, limit: 6
     end
     add_index :custom_primary_key_record_versions, %i[item_type item_id], name: "idx_cust_pk_item"
 
