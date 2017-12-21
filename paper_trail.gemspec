@@ -33,7 +33,6 @@ has been destroyed.
 
   s.add_development_dependency "appraisal", "~> 2.2"
   s.add_development_dependency "byebug", "~> 9.1"
-  s.add_development_dependency "database_cleaner", "~> 1.6"
   s.add_development_dependency "ffaker", "~> 2.7"
   s.add_development_dependency "generator_spec", "~> 0.9.4"
   s.add_development_dependency "mysql2", "~> 0.4.10"
