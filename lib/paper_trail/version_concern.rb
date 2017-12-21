@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "active_support/concern"
 require "paper_trail/attribute_serializers/object_changes_attribute"
 require "paper_trail/queries/versions/where_object"
@@ -228,11 +230,6 @@ module PaperTrail
     # Returns who put the item into the state stored in this version.
     def paper_trail_originator
       @paper_trail_originator ||= previous.try(:whodunnit)
-    end
-
-    def originator
-      ::ActiveSupport::Deprecation.warn "Use paper_trail_originator instead of originator."
-      paper_trail_originator
     end
 
     # Returns who changed the item from the state it had in this version. This

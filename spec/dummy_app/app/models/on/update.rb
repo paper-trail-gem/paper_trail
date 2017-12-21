@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module On
   class Update < ActiveRecord::Base
     self.table_name = :on_update

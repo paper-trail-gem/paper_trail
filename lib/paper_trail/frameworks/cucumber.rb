@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # before hook for Cucumber
 Before do
   PaperTrail.enabled = false

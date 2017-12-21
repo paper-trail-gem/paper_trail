@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module OverrideSongAttributesTheRails4Way
   def attributes
     if name

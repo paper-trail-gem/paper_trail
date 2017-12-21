@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "paper_trail/attribute_serializers/object_attribute"
 require "paper_trail/reifiers/belongs_to"
 require "paper_trail/reifiers/has_and_belongs_to_many"

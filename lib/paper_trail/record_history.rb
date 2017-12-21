@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module PaperTrail
   # Represents the history of a single record.
   # @api private

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module PaperTrail
   module Reifiers
     # Reify a single HABTM association of `model`.
@@ -37,7 +39,7 @@ module PaperTrail
         # @api private
         def load_version(assoc, id, transaction_id, version_at)
           assoc.klass.paper_trail.version_class.
-            where("item_type = ?", assoc.klass.name).
+            where("item_type = ?", assoc.klass.base_class.name).
             where("item_id = ?", id).
             where("created_at >= ? OR transaction_id = ?", version_at, transaction_id).
             order("id").

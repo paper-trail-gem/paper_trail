@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module PaperTrail
   # The version number of the paper_trail gem. Not to be confused with
   # `PaperTrail::Version`. Ruby constants are case-sensitive, apparently,

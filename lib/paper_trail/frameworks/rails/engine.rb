@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module PaperTrail
   module Rails
     # See http://guides.rubyonrails.org/engines.html

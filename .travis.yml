@@ -2,7 +2,7 @@ language: ruby
 cache: bundler
 rvm:
   - 2.4.2
-  - 2.2.8
+  - 2.3.5
 env:
   global:
     - TRAVIS=true

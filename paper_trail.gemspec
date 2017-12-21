@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 $LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
 require "paper_trail/version_number"
 
@@ -13,7 +15,7 @@ has been destroyed.
   EOS
   s.homepage = "https://github.com/airblade/paper_trail"
   s.authors = ["Andy Stewart", "Ben Atkins", "Jared Beck"]
-  s.email = "batkinz@gmail.com"
+  s.email = "jared@jaredbeck.com"
   s.license = "MIT"
 
   s.files = `git ls-files -z`.split("\x0").select { |f|
@@ -23,7 +25,7 @@ has been destroyed.
   s.require_paths = ["lib"]
 
   s.required_rubygems_version = ">= 1.3.6"
-  s.required_ruby_version = ">= 2.2.0"
+  s.required_ruby_version = ">= 2.3.0"
 
   # Rails does not follow semver, makes breaking changes in minor versions.
   s.add_dependency "activerecord", [">= 4.2", "< 5.2"]

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 # The `json_versions` table tests postgres' `json` data type. So, that

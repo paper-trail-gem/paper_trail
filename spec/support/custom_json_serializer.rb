@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This custom serializer excludes nil values
 module CustomJsonSerializer
   extend PaperTrail::Serializers::JSON

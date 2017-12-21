@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Demonstrates the `only` and `ignore` attributes, among other things.
 class Article < ActiveRecord::Base
   has_paper_trail(

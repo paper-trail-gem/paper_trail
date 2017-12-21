@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Family
   class Family < ActiveRecord::Base
     has_paper_trail

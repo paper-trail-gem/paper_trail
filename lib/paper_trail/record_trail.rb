@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module PaperTrail
   # Represents the "paper trail" for a single record.
   class RecordTrail
@@ -500,7 +502,7 @@ module PaperTrail
     end
 
     def log_version_errors(version, action)
-      version.logger && version.logger.warn(
+      version.logger&.warn(
         "Unable to create version for #{action} of #{@record.class.name}" +
           "##{@record.id}: " + version.errors.full_messages.join(", ")
       )
