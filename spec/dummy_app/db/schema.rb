@@ -89,6 +89,7 @@ ActiveRecord::Schema.define(version: 20110208155312) do
 
   create_table "custom_primary_key_records", primary_key: "uuid", id: :string, force: :cascade do |t|
     t.string "name"
+    t.index ["uuid"], unique: true
     t.datetime "created_at", precision: 6
     t.datetime "updated_at", precision: 6
   end
