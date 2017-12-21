@@ -18,12 +18,6 @@ class Person < ActiveRecord::Base
     belongs_to :mentor, class_name: "Person", foreign_key: :mentor_id
   end
 
-  if ActiveRecord.gem_version >= Gem::Version.new("5.0")
-    belongs_to :vehicle, class_name: "Vehicle", foreign_key: :vehicle_id, optional: true
-  else
-    belongs_to :vehicle, class_name: "Vehicle", foreign_key: :vehicle_id
-  end
-
   has_paper_trail
 
   # Convert strings to TimeZone objects when assigned
