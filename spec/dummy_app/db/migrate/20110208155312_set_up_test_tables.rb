@@ -40,6 +40,7 @@ class SetUpTestTables < (
     create_table :vehicles, force: true do |t|
       t.string :name, null: false
       t.string :type, null: false
+      t.integer :owner_id
       t.timestamps null: false, limit: 6
     end
 
@@ -215,6 +216,11 @@ class SetUpTestTables < (
     create_table :animals, force: true do |t|
       t.string :name
       t.string :species # single table inheritance column
+    end
+
+    create_table :pets, force: true do |t|
+      t.integer :owner_id
+      t.integer :animal_id
     end
 
     create_table :documents, force: true do |t|

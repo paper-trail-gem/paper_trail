@@ -21,6 +21,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
   error, was deprecated in 8.1.0.
 - Tests will now use fractional second precision on datetime columns to
   enable testing of versioned associations.
+- Reifying associations will now use base class name instead of class name
+  to reify STI models corrrectly.
 
 ### Added
 

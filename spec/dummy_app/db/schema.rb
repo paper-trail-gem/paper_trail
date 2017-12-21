@@ -190,6 +190,11 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.integer "mentor_id"
   end
 
+  create_table "pets", force: :cascade do |t|
+    t.integer "owner_id"
+    t.integer "animal_id"
+  end
+
   create_table "post_versions", force: :cascade do |t|
     t.string "item_type", null: false
     t.integer "item_id", null: false
@@ -247,6 +252,7 @@ ActiveRecord::Schema.define(version: 20110208155312) do
   create_table "vehicles", force: :cascade do |t|
     t.string "name", null: false
     t.string "type", null: false
+    t.integer "owner_id"
     t.datetime "created_at", null: false, limit: 6
     t.datetime "updated_at", null: false, limit: 6
   end
