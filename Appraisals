@@ -11,6 +11,7 @@
 
 appraise "ar-4.2" do
   gem "activerecord", "~> 4.2.10"
+  gem "database_cleaner", "~> 1.6"
 end
 
 appraise "ar-5.0" do
