@@ -26,6 +26,23 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 - None
 
+## 8.2.0
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- Tests will now use fractional second precision on datetime columns to
+  enable testing of versioned associations.
+- Reifying associations will now use base class name instead of class name
+  to reify STI models corrrectly.
+
+### Fixed
+
+- None
+
 ## 8.1.1 (2017-12-10)
 
 ### Breaking Changes

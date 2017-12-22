@@ -2,6 +2,14 @@ class Person < ActiveRecord::Base
   has_many :authorships, foreign_key: :author_id, dependent: :destroy
   has_many :books, through: :authorships
 
+  has_many :pets, foreign_key: :owner_id, dependent: :destroy
+  has_many :animals, through: :pets
+  has_many :dogs, class_name: "Dog", through: :pets, source: :animal
+  has_many :cats, class_name: "Cat", through: :pets, source: :animal
+
+  has_one :car, foreign_key: :owner_id
+  has_one :bicycle, foreign_key: :owner_id
+
   if ActiveRecord.gem_version >= Gem::Version.new("5.0")
     belongs_to :mentor, class_name: "Person", foreign_key: :mentor_id, optional: true
   else
