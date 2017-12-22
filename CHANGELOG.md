@@ -3,7 +3,7 @@
 This project follows [semver 2.0.0](http://semver.org/spec/v2.0.0.html) and the
 recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
-## 8.2.0
+## Unreleased
 
 ### Breaking Changes
 
@@ -11,14 +11,27 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
-- Tests will now use fractional second precision on datetime columns to
-  enable testing of versioned associations.
-- Reifying associations will now use base class name instead of class name
-  to reify STI models corrrectly.
+- None
 
 ### Fixed
 
 - None
+
+## 8.1.2 (2017-12-22)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- [#1028](https://github.com/airblade/paper_trail/pull/1028) Reifying
+  associations will now use `base_class` name instead of class name
+  to reify STI models corrrectly.
 
 ## 8.1.1 (2017-12-10)
 
