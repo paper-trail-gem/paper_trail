@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "active_support"
-require "request_store"
 require "paper_trail/cleaner"
 require "paper_trail/config"
 require "paper_trail/has_paper_trail"
@@ -34,7 +33,11 @@ module PaperTrail
   class << self
     # @api private
     def clear_transaction_id
-      request.transaction_id = nil
+      ::ActiveSupport::Deprecation.warn(
+        "PaperTrail.clear_transaction_id is deprecated, " \
+        "use PaperTrail.request.clear_transaction_id"
+      )
+      request.clear_transaction_id
     end
 
     # Switches PaperTrail on or off.
@@ -53,42 +56,57 @@ module PaperTrail
     # See PaperTrail::Request for information
     # @api public
     def enabled_for_controller=(value)
+      ::ActiveSupport::Deprecation.warn(
+        "PaperTrail.enabled_for_controller= is deprecated, " \
+        "use PaperTrail.request.enabled_for_controller="
+      )
       request.enabled_for_controller = value
     end
 
     # See PaperTrail::Request for information
     # @api public
     def enabled_for_controller?
+      ::ActiveSupport::Deprecation.warn(
+        "PaperTrail.enabled_for_controller? is deprecated, " \
+        "use PaperTrail.request.enabled_for_controller?"
+      )
       request.enabled_for_controller?
     end
 
     # See PaperTrail::Request for information
     # @api public
     def enabled_for_model(model, value)
+      ::ActiveSupport::Deprecation.warn(
+        "PaperTrail.enabled_for_model is deprecated, " \
+        "use PaperTrail.request.enabled_for_model"
+      )
       request.enabled_for_model(model, value)
     end
 
     # See PaperTrail::Request for information
     # @api public
     def enabled_for_model?(model)
+      ::ActiveSupport::Deprecation.warn(
+        "PaperTrail.enabled_for_model? is deprecated, " \
+        "use PaperTrail.request.enabled_for_model?"
+      )
       request.enabled_for_model?(model)
     end
 
-    # Returns the PaperTrail::Request object for setting keys for a single request
     # All methods that handle request-level configuration and are now handled
-    # by PaperTrail::Request
-    #
-    # We will add deprecation notices for these methods in a later version
-    # For now, please refer to PaperTrail::Request for method documentation
+    # by PaperTrail::Request.
     # @api public
     def request(options = nil)
-      if options
-        old_request = @request
-        @request ||= PaperTrail::Request.new
-        yield
-        @request = old_request
+      if options.nil?
+        Request
       else
-        @request ||= PaperTrail::Request.new
+        begin
+          before = Request.to_h
+          Request.set(options)
+          yield
+        ensure
+          Request.set(before)
+        end
       end
     end
 
@@ -108,24 +126,50 @@ module PaperTrail
     # See PaperTrail::Request for information
     # @api public
     def whodunnit=(value)
+      ::ActiveSupport::Deprecation.warn(
+        "PaperTrail.whodunnit= is deprecated, use PaperTrail.request.whodunnit="
+      )
       request.whodunnit = value
     end
 
     # See PaperTrail::Request for information
     # @api public
-    def whodunnit(value = nil, &block)
-      request.whodunnit(value, &block)
+    def whodunnit(value = nil)
+      if value.nil?
+        ::ActiveSupport::Deprecation.warn(
+          "PaperTrail.whodunnit is deprecated, use PaperTrail.request.whodunnit"
+        )
+        request.whodunnit
+      else
+        ::ActiveSupport::Deprecation.warn(
+          "Passing a block to PaperTrail.whodunnit is deprecated, " \
+          'use PaperTrail.request(whodunnit: "John") do .. end'
+        )
+        before = request.whodunnit
+        request.whodunnit = value
+        begin
+          yield
+        ensure
+          request.whodunnit = before
+        end
+      end
     end
 
     # See PaperTrail::Request for information
     # @api public
     def controller_info=(value)
+      ::ActiveSupport::Deprecation.warn(
+        "PaperTrail.controller_info= is deprecated, use PaperTrail.request.controller_info="
+      )
       request.controller_info = value
     end
 
     # See PaperTrail::Request for information
     # @api public
     def controller_info(value = nil, &block)
+      ::ActiveSupport::Deprecation.warn(
+        "PaperTrail.controller_info is deprecated, use PaperTrail.request.controller_info"
+      )
       request.controller_info(value, &block)
     end
 
@@ -145,15 +189,19 @@ module PaperTrail
       ::ActiveRecord::Base.connection.open_transactions.positive?
     end
 
-    # See PaperTrail::Request for information
-    # @api public
+    # @api private
     def transaction_id
+      ::ActiveSupport::Deprecation.warn(
+        "PaperTrail.transaction_id is deprecated, use PaperTrail.request.transaction_id"
+      )
       request.transaction_id
     end
 
-    # See PaperTrail::Request for information
-    # @api public
+    # @api private
     def transaction_id=(id)
+      ::ActiveSupport::Deprecation.warn(
+        "PaperTrail.transaction_id= is deprecated, use PaperTrail.request.transaction_id="
+      )
       request.transaction_id = id
     end
 
