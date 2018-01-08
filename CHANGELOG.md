@@ -32,6 +32,22 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 - None
 
+## 8.1.2 (2017-12-22)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- [#1028](https://github.com/airblade/paper_trail/pull/1028) Reifying
+  associations will now use `base_class` name instead of class name
+  to reify STI models corrrectly.
+
 ## 8.1.1 (2017-12-10)
 
 ### Breaking Changes
