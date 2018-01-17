@@ -143,7 +143,3 @@ Style/ModuleFunction:
 # performance implications. Double quotes are slightly easier to read.
 Style/StringLiterals:
   EnforcedStyle: double_quotes
-
-Style/MethodCallWithoutArgsParentheses:
-  Exclude:
-    - lib/paper_trail/record_trail.rb

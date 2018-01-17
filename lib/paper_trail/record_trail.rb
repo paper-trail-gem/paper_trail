@@ -226,7 +226,7 @@ module PaperTrail
         data[:created_at] = @record.updated_at
       end
       if record_object_changes? && changed_notably?
-        data[:object_changes] = recordable_object_changes
+        data[:object_changes] = recordable_object_changes(changes)
       end
       add_transaction_id_to(data)
       merge_metadata_into(data)
@@ -300,7 +300,7 @@ module PaperTrail
         data[:created_at] = @record.updated_at
       end
       if record_object_changes?
-        data[:object_changes] = recordable_object_changes
+        data[:object_changes] = recordable_object_changes(changes)
       end
       add_transaction_id_to(data)
       merge_metadata_into(data)
@@ -348,7 +348,7 @@ module PaperTrail
     # otherwise the column is a `text` column, and we must perform the
     # serialization here, using `PaperTrail.serializer`.
     # @api private
-    def recordable_object_changes(changes = changes())
+    def recordable_object_changes(changes)
       if @record.class.paper_trail.version_class.object_changes_col_is_json?
         changes
       else
