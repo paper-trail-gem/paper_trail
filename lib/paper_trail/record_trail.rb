@@ -271,21 +271,17 @@ module PaperTrail
     def record_update(force)
       @in_after_callback = true
       if enabled? && (force || changed_notably?)
-        create_update_version(data_for_update)
+        versions_assoc = @record.send(@record.class.versions_association_name)
+        version = versions_assoc.create(data_for_update)
+        if version.errors.any?
+          log_version_errors(version, :update)
+        else
+          update_transaction_id(version)
+          save_associations(version)
+        end
       end
     ensure
       @in_after_callback = false
-    end
-
-    def create_update_version(data)
-      versions_assoc = @record.send(@record.class.versions_association_name)
-      version = versions_assoc.create(data)
-      if version.errors.any?
-        log_version_errors(version, :update)
-      else
-        update_transaction_id(version)
-        save_associations(version)
-      end
     end
 
     # Returns data for record_update
@@ -308,7 +304,14 @@ module PaperTrail
 
     def record_update_columns(changes)
       if enabled?
-        create_update_version(data_for_update_columns(changes))
+        versions_assoc = @record.send(@record.class.versions_association_name)
+        version = versions_assoc.create(data_for_update_columns(changes))
+        if version.errors.any?
+          log_version_errors(version, :update)
+        else
+          update_transaction_id(version)
+          save_associations(version)
+        end
       end
     end
 
