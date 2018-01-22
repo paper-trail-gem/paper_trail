@@ -289,13 +289,13 @@ RSpec.describe Widget, type: :model do
     it "creates a version record" do
       widget = Widget.create
       expect(widget.versions.count).to eq(1)
-      Timecop.travel 1.second.since # because MySQL lacks fractional seconds precision
-      widget.paper_trail.update_columns(name: "Bugle")
-      # widget.update_attributes(name: "Bugle")
-      expect(widget.versions.count).to eq(2)
-      expect(widget.versions.last.event).to(eq("update"))
-      expect(widget.versions.last.changeset[:name]).to eq([nil, "Bugle"])
-      expect(widget.versions.last.created_at.to_i).to eq(Time.now.to_i)
+      Timecop.freeze Time.now do
+        widget.paper_trail.update_columns(name: "Bugle")
+        expect(widget.versions.count).to eq(2)
+        expect(widget.versions.last.event).to(eq("update"))
+        expect(widget.versions.last.changeset[:name]).to eq([nil, "Bugle"])
+        expect(widget.versions.last.created_at.to_i).to eq(Time.now.to_i)
+      end
     end
   end
 

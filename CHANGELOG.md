@@ -26,7 +26,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
-- None
+- [#1037](https://github.com/airblade/paper_trail/pull/1037) Add `paper_trail.update_columns`
 
 ### Fixed
 

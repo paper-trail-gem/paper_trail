@@ -302,16 +302,16 @@ module PaperTrail
       merge_metadata_into(data)
     end
 
+    # @api private
     def record_update_columns(changes)
-      if enabled?
-        versions_assoc = @record.send(@record.class.versions_association_name)
-        version = versions_assoc.create(data_for_update_columns(changes))
-        if version.errors.any?
-          log_version_errors(version, :update)
-        else
-          update_transaction_id(version)
-          save_associations(version)
-        end
+      return unless enabled?
+      versions_assoc = @record.send(@record.class.versions_association_name)
+      version = versions_assoc.create(data_for_update_columns(changes))
+      if version.errors.any?
+        log_version_errors(version, :update)
+      else
+        update_transaction_id(version)
+        save_associations(version)
       end
     end
 
@@ -323,7 +323,6 @@ module PaperTrail
         object: recordable_object,
         whodunnit: PaperTrail.whodunnit
       }
-      data[:created_at] = Time.now
       if record_object_changes?
         data[:object_changes] = recordable_object_changes(changes)
       end
@@ -437,13 +436,18 @@ module PaperTrail
 
     # Like the `update_column` method from `ActiveRecord::Persistence`, but also
     # creates a version to record those changes.
+    # @api public
     def update_column(name, value)
       update_columns(name => value)
     end
 
     # Like the `update_columns` method from `ActiveRecord::Persistence`, but also
     # creates a version to record those changes.
+    # @api public
     def update_columns(attributes)
+      # `@record.update_columns` skips dirty tracking, so we can't just use `@record.changes` or
+      # @record.saved_changes` from `ActiveModel::Dirty`. We need to build our own hash with the
+      # changes that will be made directly to the database.
       changes = {}
       attributes.each do |k, v|
         changes[k] = [@record[k], v]
