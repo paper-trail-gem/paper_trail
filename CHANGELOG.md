@@ -26,7 +26,9 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
-- None
+- [#961](https://github.com/airblade/paper_trail/issues/961) - Instead of
+  crashing when misconfigured Custom Version Classes are used, an error will be
+  raised earlier, with a much more helpful message.
 
 ### Fixed
 
