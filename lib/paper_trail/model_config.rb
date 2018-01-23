@@ -12,6 +12,16 @@ module PaperTrail
       or disable belongs_to_required_by_default.
     STR
 
+    E_HPT_ABSTRACT_CLASS = <<~STR.squish.freeze
+      An application model (%s) has been configured to use PaperTrail (via
+      `has_paper_trail`), but the version model it has been told to use (%s) is
+      an `abstract_class`. This could happen when an advanced feature called
+      Custom Version Classes (http://bit.ly/2G4ch0G) is misconfigured. When all
+      version classes are custom, PaperTrail::Version is configured to be an
+      `abstract_class`. This is fine, but all application models must be
+      configured to use concrete (not abstract) version models.
+    STR
+
     def initialize(model_class)
       @model_class = model_class
     end
@@ -98,6 +108,14 @@ module PaperTrail
       Gem::Version.new(ActiveRecord::VERSION::STRING)
     end
 
+    # Raises an error if the provided class is an `abstract_class`.
+    # @api private
+    def assert_concrete_activerecord_class(class_name)
+      if class_name.constantize.abstract_class?
+        raise format(E_HPT_ABSTRACT_CLASS, @model_class, class_name)
+      end
+    end
+
     def cannot_record_after_destroy?
       Gem::Version.new(ActiveRecord::VERSION::STRING).release >= Gem::Version.new("5") &&
         ::ActiveRecord::Base.belongs_to_required_by_default
@@ -122,6 +140,8 @@ module PaperTrail
       @model_class.versions_association_name = options[:versions] || :versions
 
       @model_class.send :attr_accessor, :paper_trail_event
+
+      assert_concrete_activerecord_class(@model_class.version_class_name)
 
       @model_class.has_many(
         @model_class.versions_association_name,
