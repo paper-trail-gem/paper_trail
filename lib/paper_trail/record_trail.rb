@@ -226,7 +226,7 @@ module PaperTrail
         data[:created_at] = @record.updated_at
       end
       if record_object_changes? && changed_notably?
-        data[:object_changes] = recordable_object_changes
+        data[:object_changes] = recordable_object_changes(changes)
       end
       add_transaction_id_to(data)
       merge_metadata_into(data)
@@ -284,7 +284,7 @@ module PaperTrail
       @in_after_callback = false
     end
 
-    # Returns data for record update
+    # Returns data for record_update
     # @api private
     def data_for_update
       data = {
@@ -296,7 +296,35 @@ module PaperTrail
         data[:created_at] = @record.updated_at
       end
       if record_object_changes?
-        data[:object_changes] = recordable_object_changes
+        data[:object_changes] = recordable_object_changes(changes)
+      end
+      add_transaction_id_to(data)
+      merge_metadata_into(data)
+    end
+
+    # @api private
+    def record_update_columns(changes)
+      return unless enabled?
+      versions_assoc = @record.send(@record.class.versions_association_name)
+      version = versions_assoc.create(data_for_update_columns(changes))
+      if version.errors.any?
+        log_version_errors(version, :update)
+      else
+        update_transaction_id(version)
+        save_associations(version)
+      end
+    end
+
+    # Returns data for record_update_columns
+    # @api private
+    def data_for_update_columns(changes)
+      data = {
+        event: @record.paper_trail_event || "update",
+        object: recordable_object,
+        whodunnit: PaperTrail.whodunnit
+      }
+      if record_object_changes?
+        data[:object_changes] = recordable_object_changes(changes)
       end
       add_transaction_id_to(data)
       merge_metadata_into(data)
@@ -322,7 +350,7 @@ module PaperTrail
     # otherwise the column is a `text` column, and we must perform the
     # serialization here, using `PaperTrail.serializer`.
     # @api private
-    def recordable_object_changes
+    def recordable_object_changes(changes)
       if @record.class.paper_trail.version_class.object_changes_col_is_json?
         changes
       else
@@ -404,6 +432,28 @@ module PaperTrail
       }
       record_update(true) unless will_record_after_update?
       @record.save!(validate: false)
+    end
+
+    # Like the `update_column` method from `ActiveRecord::Persistence`, but also
+    # creates a version to record those changes.
+    # @api public
+    def update_column(name, value)
+      update_columns(name => value)
+    end
+
+    # Like the `update_columns` method from `ActiveRecord::Persistence`, but also
+    # creates a version to record those changes.
+    # @api public
+    def update_columns(attributes)
+      # `@record.update_columns` skips dirty tracking, so we can't just use `@record.changes` or
+      # @record.saved_changes` from `ActiveModel::Dirty`. We need to build our own hash with the
+      # changes that will be made directly to the database.
+      changes = {}
+      attributes.each do |k, v|
+        changes[k] = [@record[k], v]
+      end
+      @record.update_columns(attributes)
+      record_update_columns(changes)
     end
 
     # Returns the object (not a Version) as it was at the given timestamp.

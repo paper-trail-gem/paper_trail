@@ -26,6 +26,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
+- [#1037](https://github.com/airblade/paper_trail/pull/1037) Add `paper_trail.update_columns`
 - [#961](https://github.com/airblade/paper_trail/issues/961) - Instead of
   crashing when misconfigured Custom Version Classes are used, an error will be
   raised earlier, with a much more helpful message.

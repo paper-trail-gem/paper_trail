@@ -21,6 +21,15 @@ module On
       end
     end
 
+    describe ".paper_trail.update_columns" do
+      it "creates a version record" do
+        widget = Widget.create
+        assert_equal 1, widget.versions.length
+        widget.paper_trail.update_columns(name: "Bugle")
+        assert_equal 2, widget.versions.length
+      end
+    end
+
     describe "#update_attributes" do
       it "does not create any version records" do
         record = described_class.create(name: "Alice")
