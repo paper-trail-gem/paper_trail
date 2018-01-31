@@ -1,6 +1,19 @@
 # frozen_string_literal: true
 
-require "active_support"
+# AR does not require all of AS, but PT does. PT uses core_ext like
+# `String#squish`, so we require `active_support/all`. Instead of eagerly
+# loading all of AS here, we could put specific `require`s in only the various
+# PT files that need them, but this seems easier to troubleshoot, though it may
+# add a few milliseconds to rails boot time. If that becomes a pain point, we
+# can revisit this decision.
+require "active_support/all"
+
+# AR is required for, eg. has_paper_trail.rb, so we could put this `require` in
+# all of those files, but it seems easier to troubleshoot if we just make sure
+# AR is loaded here before loading *any* of PT. See discussion of
+# performance/simplicity tradeoff for activesupport above.
+require "active_record"
+
 require "request_store"
 require "paper_trail/cleaner"
 require "paper_trail/config"

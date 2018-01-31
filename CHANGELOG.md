@@ -33,7 +33,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- None
+- [#1042](https://github.com/airblade/paper_trail/issues/1042) - A rare issue
+  with load order when using PT outside of rails
 
 ## 8.1.2 (2017-12-22)
 

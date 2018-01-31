@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "active_support/core_ext"
-
 module PaperTrail
   # Configures an ActiveRecord model, mostly at application boot time, but also
   # sometimes mid-request, with methods like enable/disable.
