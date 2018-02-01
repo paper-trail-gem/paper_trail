@@ -3,9 +3,9 @@
 # before hook for Cucumber
 Before do
   PaperTrail.enabled = false
-  PaperTrail.enabled_for_controller = true
-  PaperTrail.whodunnit = nil
-  PaperTrail.controller_info = {} if defined? Rails
+  PaperTrail.request.enabled_for_controller = true
+  PaperTrail.request.whodunnit = nil
+  PaperTrail.request.controller_info = {} if defined?(::Rails)
 end
 
 module PaperTrail

@@ -3,6 +3,10 @@
 module PaperTrail
   # Represents the "paper trail" for a single record.
   class RecordTrail
+    DPR_WHODUNNIT = <<-STR.squish.freeze
+      my_model_instance.paper_trail.whodunnit('John') is deprecated,
+      please use PaperTrail.request(whodunnit: 'John')
+    STR
     RAILS_GTE_5_1 = ::ActiveRecord.gem_version >= ::Gem::Version.new("5.1.0.beta1")
 
     def initialize(record)
@@ -98,12 +102,24 @@ module PaperTrail
       notable_changes.to_hash
     end
 
+    # Is PT enabled for this particular record?
+    # @api private
     def enabled?
-      PaperTrail.enabled? && PaperTrail.enabled_for_controller? && enabled_for_model?
+      PaperTrail.enabled? &&
+        PaperTrail.request.enabled_for_controller? &&
+        PaperTrail.request.enabled_for_model?(@record.class)
     end
 
+    # Not sure why, but this method was mentioned in the README in the past,
+    # so we need to deprecate it properly.
+    # @deprecated
     def enabled_for_model?
-      @record.class.paper_trail.enabled?
+      ::ActiveSupport::Deprecation.warn(
+        "MyModel#paper_trail.enabled_for_model? is deprecated, use " \
+        "PaperTrail.request.enabled_for_model?(MyModel) instead.",
+        caller(1)
+      )
+      PaperTrail.request.enabled_for_model?(@record.class)
     end
 
     # An attributed is "ignored" if it is listed in the `:ignore` option
@@ -130,7 +146,7 @@ module PaperTrail
     # Updates `data` from `controller_info`.
     # @api private
     def merge_metadata_from_controller_into(data)
-      data.merge(PaperTrail.controller_info || {})
+      data.merge(PaperTrail.request.controller_info || {})
     end
 
     # Updates `data` from the model's `meta` option.
@@ -220,7 +236,7 @@ module PaperTrail
     def data_for_create
       data = {
         event: @record.paper_trail_event || "create",
-        whodunnit: PaperTrail.whodunnit
+        whodunnit: PaperTrail.request.whodunnit
       }
       if @record.respond_to?(:updated_at)
         data[:created_at] = @record.updated_at
@@ -254,7 +270,7 @@ module PaperTrail
         item_type: @record.class.base_class.name,
         event: @record.paper_trail_event || "destroy",
         object: recordable_object,
-        whodunnit: PaperTrail.whodunnit
+        whodunnit: PaperTrail.request.whodunnit
       }
       add_transaction_id_to(data)
       merge_metadata_into(data)
@@ -290,7 +306,7 @@ module PaperTrail
       data = {
         event: @record.paper_trail_event || "update",
         object: recordable_object,
-        whodunnit: PaperTrail.whodunnit
+        whodunnit: PaperTrail.request.whodunnit
       }
       if @record.respond_to?(:updated_at)
         data[:created_at] = @record.updated_at
@@ -321,7 +337,7 @@ module PaperTrail
       data = {
         event: @record.paper_trail_event || "update",
         object: recordable_object,
-        whodunnit: PaperTrail.whodunnit
+        whodunnit: PaperTrail.request.whodunnit
       }
       if record_object_changes?
         data[:object_changes] = recordable_object_changes(changes)
@@ -473,8 +489,8 @@ module PaperTrail
 
     # Executes the given method or block without creating a new version.
     def without_versioning(method = nil)
-      paper_trail_was_enabled = enabled_for_model?
-      @record.class.paper_trail.disable
+      paper_trail_was_enabled = PaperTrail.request.enabled_for_model?(@record.class)
+      PaperTrail.request.disable_model(@record.class)
       if method
         if respond_to?(method)
           public_send(method)
@@ -485,25 +501,23 @@ module PaperTrail
         yield @record
       end
     ensure
-      @record.class.paper_trail.enable if paper_trail_was_enabled
+      PaperTrail.request.enable_model(@record.class) if paper_trail_was_enabled
     end
 
-    # Temporarily overwrites the value of whodunnit and then executes the
-    # provided block.
+    # @deprecated
     def whodunnit(value)
       raise ArgumentError, "expected to receive a block" unless block_given?
-      current_whodunnit = PaperTrail.whodunnit
-      PaperTrail.whodunnit = value
-      yield @record
-    ensure
-      PaperTrail.whodunnit = current_whodunnit
+      ::ActiveSupport::Deprecation.warn(DPR_WHODUNNIT, caller(1))
+      ::PaperTrail.request(whodunnit: value) do
+        yield @record
+      end
     end
 
     private
 
     def add_transaction_id_to(data)
       return unless @record.class.paper_trail.version_class.column_names.include?("transaction_id")
-      data[:transaction_id] = PaperTrail.transaction_id
+      data[:transaction_id] = PaperTrail.request.transaction_id
     end
 
     # @api private
@@ -568,10 +582,10 @@ module PaperTrail
 
       if assoc.options[:polymorphic]
         associated_record = @record.send(assoc.name) if @record.send(assoc.foreign_type)
-        if associated_record && associated_record.class.paper_trail.enabled?
+        if associated_record && PaperTrail.request.enabled_for_model?(associated_record.class)
           assoc_version_args[:foreign_key_id] = associated_record.id
         end
-      elsif assoc.klass.paper_trail.enabled?
+      elsif PaperTrail.request.enabled_for_model?(assoc.klass)
         assoc_version_args[:foreign_key_id] = @record.send(assoc.foreign_key)
       end
 
@@ -584,7 +598,7 @@ module PaperTrail
     # @api private
     def save_habtm_association?(assoc)
       @record.class.paper_trail_save_join_tables.include?(assoc.name) ||
-        assoc.klass.paper_trail.enabled?
+        PaperTrail.request.enabled_for_model?(assoc.klass)
     end
 
     # Returns true if `save` will cause `record_update`
@@ -596,8 +610,8 @@ module PaperTrail
 
     def update_transaction_id(version)
       return unless @record.class.paper_trail.version_class.column_names.include?("transaction_id")
-      if PaperTrail.transaction? && PaperTrail.transaction_id.nil?
-        PaperTrail.transaction_id = version.id
+      if PaperTrail.transaction? && PaperTrail.request.transaction_id.nil?
+        PaperTrail.request.transaction_id = version.id
         version.transaction_id = version.id
         version.save
       end

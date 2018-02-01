@@ -20,11 +20,11 @@ RSpec.describe WidgetsController, type: :controller, versioning: true do
       it "controller metadata methods should get evaluated" do
         request.env["HTTP_USER_AGENT"] = "User-Agent"
         post :create, params_wrapper(widget: { name: "Flugel" })
-        expect(PaperTrail.enabled_for_controller?).to(eq(true))
-        expect(PaperTrail.whodunnit).to(eq(153))
-        expect(PaperTrail.controller_info.present?).to(eq(true))
-        expect(PaperTrail.controller_info.keys.include?(:ip)).to(eq(true))
-        expect(PaperTrail.controller_info.keys.include?(:user_agent)).to(eq(true))
+        expect(PaperTrail.request.enabled_for_controller?).to(eq(true))
+        expect(PaperTrail.request.whodunnit).to(eq(153))
+        expect(PaperTrail.request.controller_info.present?).to(eq(true))
+        expect(PaperTrail.request.controller_info.keys.include?(:ip)).to(eq(true))
+        expect(PaperTrail.request.controller_info.keys.include?(:user_agent)).to(eq(true))
       end
     end
 
@@ -33,9 +33,9 @@ RSpec.describe WidgetsController, type: :controller, versioning: true do
         request.env["HTTP_USER_AGENT"] = "Disable User-Agent"
         post :create, params_wrapper(widget: { name: "Flugel" })
         expect(assigns(:widget).versions.length).to(eq(0))
-        expect(PaperTrail).not_to be_enabled_for_controller
-        expect(PaperTrail.whodunnit).to be_nil
-        expect(PaperTrail.controller_info).to eq({})
+        expect(PaperTrail.request).not_to be_enabled_for_controller
+        expect(PaperTrail.request.whodunnit).to be_nil
+        expect(PaperTrail.request.controller_info).to eq({})
       end
     end
   end
