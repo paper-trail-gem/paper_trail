@@ -5,24 +5,22 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ## 9.0.0 (Unreleased)
 
-### Breaking Changes
+### Breaking Changes, Major
 
 - Drop support for ruby 2.2, [whose EoL is the end of March,
   2018](https://www.ruby-lang.org/en/news/2017/09/14/ruby-2-2-8-released/)
-- Assume that all strings returned by PaperTrail are frozen.
+- PaperTrail now uses `frozen_string_literal`, so you should assume that all
+  strings it returns are frozen.
+- Using `where_object_changes` to read YAML from a text column will now raise
+  error, was deprecated in 8.1.0.
+
+### Breaking Changes, Minor
+
 - Removed deprecated `Version#originator`, use `#paper_trail_originator`
 - Using paper_trail.on_destroy(:after) with ActiveRecord's
   belongs_to_required_by_default will produce an error instead of a warning.
-- Failing to set PaperTrail.config.track_associations will no longer produce
-  a warning. The default (false) will remain the same.
 - Removed `warn_about_not_setting_whodunnit` controller method. Please remove
   callbacks like `skip_after_action :warn_about_not_setting_whodunnit`.
-- Using where_object_changes to read YAML from a text column will now raise
-  error, was deprecated in 8.1.0.
-- Tests will now use fractional second precision on datetime columns to
-  enable testing of versioned associations.
-- Reifying associations will now use base class name instead of class name
-  to reify STI models corrrectly.
 
 ### Added
 
@@ -30,6 +28,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 - [#961](https://github.com/airblade/paper_trail/issues/961) - Instead of
   crashing when misconfigured Custom Version Classes are used, an error will be
   raised earlier, with a much more helpful message.
+- Failing to set PaperTrail.config.track_associations will no longer produce
+  a warning. The default (false) will remain the same.
 
 ### Fixed
 
