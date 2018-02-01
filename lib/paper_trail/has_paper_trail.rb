@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "active_support/core_ext/object" # provides the `try` method
 require "paper_trail/attribute_serializers/object_attribute"
 require "paper_trail/attribute_serializers/object_changes_attribute"
 require "paper_trail/model_config"
