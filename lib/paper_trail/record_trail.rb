@@ -518,7 +518,8 @@ module PaperTrail
     # @api private
     def attribute_in_previous_version(attr_name)
       if @in_after_callback && RAILS_GTE_5_1
-        @record.attribute_in_database(attr_name.to_s)
+        # attribute_before_last_save can be nil so use attribute_in_database as a fallback
+        @record.attribute_before_last_save(attr_name.to_s) || @record.attribute_in_database(attr_name.to_s)
       else
         @record.attribute_was(attr_name.to_s)
       end
