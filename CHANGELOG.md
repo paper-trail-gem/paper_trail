@@ -26,11 +26,31 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
+- [#1037](https://github.com/airblade/paper_trail/pull/1037) Add `paper_trail.update_columns`
+- [#961](https://github.com/airblade/paper_trail/issues/961) - Instead of
+  crashing when misconfigured Custom Version Classes are used, an error will be
+  raised earlier, with a much more helpful message.
+
+### Fixed
+
+- [#1042](https://github.com/airblade/paper_trail/issues/1042) - A rare issue
+  with load order when using PT outside of rails
+
+## 8.1.2 (2017-12-22)
+
+### Breaking Changes
+
+- None
+
+### Added
+
 - None
 
 ### Fixed
 
-- None
+- [#1028](https://github.com/airblade/paper_trail/pull/1028) Reifying
+  associations will now use `base_class` name instead of class name
+  to reify STI models corrrectly.
 
 ## 8.1.1 (2017-12-10)
 

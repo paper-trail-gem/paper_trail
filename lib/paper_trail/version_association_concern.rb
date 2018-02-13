@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "active_support/concern"
-
 module PaperTrail
   # Functionality for `PaperTrail::VersionAssociation`. Exists in a module
   # for the same reasons outlined in version_concern.rb.

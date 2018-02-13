@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "active_support/json"
-
 module PaperTrail
   module Serializers
     # An alternate serializer for, e.g. `versions.object`.
