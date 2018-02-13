@@ -24,8 +24,17 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 - Reifying associations will now use base class name instead of class name
   to reify STI models corrrectly.
 
+### Deprecated
+
+- [#1033](https://github.com/airblade/paper_trail/pull/1033) - Request variables
+  are now set using eg. `PaperTrail.request.whodunnit=` and the old way,
+  `PaperTrail.whodunnit=` is deprecated.
+
 ### Added
 
+- [#1033](https://github.com/airblade/paper_trail/pull/1033) -
+  Set request variables temporarily using a block, eg.
+  `PaperTrail.request(whodunnit: 'Jared') do .. end`
 - [#1037](https://github.com/airblade/paper_trail/pull/1037) Add `paper_trail.update_columns`
 - [#961](https://github.com/airblade/paper_trail/issues/961) - Instead of
   crashing when misconfigured Custom Version Classes are used, an error will be
