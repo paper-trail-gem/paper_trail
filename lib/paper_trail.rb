@@ -15,7 +15,6 @@ require "active_support/all"
 require "active_record"
 
 require "request_store"
-
 require "paper_trail/cleaner"
 require "paper_trail/config"
 require "paper_trail/has_paper_trail"
@@ -55,21 +54,20 @@ module PaperTrail
       request.clear_transaction_id
     end
 
-    # Switches PaperTrail on or off.
+    # Switches PaperTrail on or off, for all threads.
     # @api public
     def enabled=(value)
       PaperTrail.config.enabled = value
     end
 
-    # Returns `true` if PaperTrail is on, `false` otherwise.
-    # PaperTrail is enabled by default.
+    # Returns `true` if PaperTrail is on, `false` otherwise. This is the
+    # on/off switch that affects all threads. Enabled by default.
     # @api public
     def enabled?
       !!PaperTrail.config.enabled
     end
 
-    # See PaperTrail::Request for information
-    # @api public
+    # @deprecated
     def enabled_for_controller=(value)
       ::ActiveSupport::Deprecation.warn(
         "PaperTrail.enabled_for_controller= is deprecated, " \
@@ -78,8 +76,7 @@ module PaperTrail
       request.enabled_for_controller = value
     end
 
-    # See PaperTrail::Request for information
-    # @api public
+    # @deprecated
     def enabled_for_controller?
       ::ActiveSupport::Deprecation.warn(
         "PaperTrail.enabled_for_controller? is deprecated, " \
@@ -88,8 +85,7 @@ module PaperTrail
       request.enabled_for_controller?
     end
 
-    # See PaperTrail::Request for information
-    # @api public
+    # @deprecated
     def enabled_for_model(model, value)
       ::ActiveSupport::Deprecation.warn(
         "PaperTrail.enabled_for_model is deprecated, " \
@@ -98,8 +94,7 @@ module PaperTrail
       request.enabled_for_model(model, value)
     end
 
-    # See PaperTrail::Request for information
-    # @api public
+    # @deprecated
     def enabled_for_model?(model)
       ::ActiveSupport::Deprecation.warn(
         "PaperTrail.enabled_for_model? is deprecated, " \
@@ -108,28 +103,35 @@ module PaperTrail
       request.enabled_for_model?(model)
     end
 
-    # All methods that handle request-level configuration and are now handled
-    # by PaperTrail::Request.
-    # @api public
-    def request(options = nil)
-      if options.nil?
-        Request
-      else
-        begin
-          before = Request.to_h
-          Request.set(options)
-          yield
-        ensure
-          Request.set(before)
-        end
-      end
-    end
-
-    # Returns a `::Gem::Version`, convenient for comparisons. This is
+    # Returns PaperTrail's `::Gem::Version`, convenient for comparisons. This is
     # recommended over `::PaperTrail::VERSION::STRING`.
     # @api public
     def gem_version
       ::Gem::Version.new(VERSION::STRING)
+    end
+
+    # Set variables for the current request, eg. whodunnit.
+    #
+    # All request-level variables are now managed here, as of PT 9. Having the
+    # word "request" right there in your application code will remind you that
+    # these variables only affect the current request, not all threads.
+    #
+    # Given a block, temporarily sets the given `options` and execute the block.
+    #
+    # Without a block, this currently just returns `PaperTrail::Request`.
+    # However, please do not use `PaperTrail::Request` directly. Currently,
+    # `Request` is a `Module`, but in the future it is quite possible we may
+    # make it a `Class`. If we make such a choice, we will not provide any
+    # warning and will not treat it as a breaking change. You've been warned :)
+    #
+    # @api public
+    def request(options = nil, &block)
+      if options.nil? && !block_given?
+        Request
+      else
+        Request.with(options, &block)
+        nil
+      end
     end
 
     # Set the field which records when a version was created.
@@ -138,8 +140,7 @@ module PaperTrail
       raise(E_TIMESTAMP_FIELD_CONFIG)
     end
 
-    # See PaperTrail::Request for information
-    # @api public
+    # @deprecated
     def whodunnit=(value)
       ::ActiveSupport::Deprecation.warn(
         "PaperTrail.whodunnit= is deprecated, use PaperTrail.request.whodunnit="
@@ -147,31 +148,25 @@ module PaperTrail
       request.whodunnit = value
     end
 
-    # See PaperTrail::Request for information
-    # @api public
-    def whodunnit(value = nil)
+    # @deprecated
+    def whodunnit(value = nil, &block)
       if value.nil?
         ::ActiveSupport::Deprecation.warn(
           "PaperTrail.whodunnit is deprecated, use PaperTrail.request.whodunnit"
         )
         request.whodunnit
-      else
+      elsif block_given?
         ::ActiveSupport::Deprecation.warn(
           "Passing a block to PaperTrail.whodunnit is deprecated, " \
           'use PaperTrail.request(whodunnit: "John") do .. end'
         )
-        before = request.whodunnit
-        request.whodunnit = value
-        begin
-          yield
-        ensure
-          request.whodunnit = before
-        end
+        request(whodunnit: value, &block)
+      else
+        raise ArgumentError, "Invalid arguments"
       end
     end
 
-    # See PaperTrail::Request for information
-    # @api public
+    # @deprecated
     def controller_info=(value)
       ::ActiveSupport::Deprecation.warn(
         "PaperTrail.controller_info= is deprecated, use PaperTrail.request.controller_info="
@@ -179,21 +174,21 @@ module PaperTrail
       request.controller_info = value
     end
 
-    # See PaperTrail::Request for information
-    # @api public
-    def controller_info(value = nil, &block)
+    # @deprecated
+    def controller_info
       ::ActiveSupport::Deprecation.warn(
         "PaperTrail.controller_info is deprecated, use PaperTrail.request.controller_info"
       )
-      request.controller_info(value, &block)
+      request.controller_info
     end
 
-    # Getter and Setter for PaperTrail Serializer
+    # Set the PaperTrail serializer. This setting affects all threads.
     # @api public
     def serializer=(value)
       PaperTrail.config.serializer = value
     end
 
+    # Get the PaperTrail serializer used by all threads.
     # @api public
     def serializer
       PaperTrail.config.serializer
@@ -204,23 +199,24 @@ module PaperTrail
       ::ActiveRecord::Base.connection.open_transactions.positive?
     end
 
-    # @api private
+    # @deprecated
     def transaction_id
       ::ActiveSupport::Deprecation.warn(
-        "PaperTrail.transaction_id is deprecated, use PaperTrail.request.transaction_id"
+        "PaperTrail.transaction_id is deprecated without replacement."
       )
       request.transaction_id
     end
 
-    # @api private
+    # @deprecated
     def transaction_id=(id)
       ::ActiveSupport::Deprecation.warn(
-        "PaperTrail.transaction_id= is deprecated, use PaperTrail.request.transaction_id="
+        "PaperTrail.transaction_id= is deprecated without replacement."
       )
       request.transaction_id = id
     end
 
-    # Returns PaperTrail's configuration object.
+    # Returns PaperTrail's global configuration object, a singleton. These
+    # settings affect all threads.
     # @api private
     def config
       @config ||= PaperTrail::Config.instance

@@ -4,7 +4,17 @@ require "request_store"
 
 module PaperTrail
   # Manages variables that affect the current HTTP request, such as `whodunnit`.
+  #
+  # Please do not use `PaperTrail::Request` directly, use `PaperTrail.request`.
+  # Currently, `Request` is a `Module`, but in the future it is quite possible
+  # we may make it a `Class`. If we make such a choice, we will not provide any
+  # warning and will not treat it as a breaking change. You've been warned :)
+  #
+  # @api private
   module Request
+    class InvalidOption < RuntimeError
+    end
+
     class << self
       # @api private
       def clear_transaction_id
@@ -31,6 +41,18 @@ module PaperTrail
       # @api public
       def controller_info
         store[:controller_info]
+      end
+
+      # Switches PaperTrail off for the given model.
+      # @api public
+      def disable_model(model_class)
+        enabled_for_model(model_class, false)
+      end
+
+      # Switches PaperTrail on for the given model.
+      # @api public
+      def enable_model(model_class)
+        enabled_for_model(model_class, true)
       end
 
       # Sets whether PaperTrail is enabled or disabled for the current request.
@@ -62,18 +84,25 @@ module PaperTrail
       end
 
       # @api private
-      def set(options)
-        options.each do |k, v|
+      def merge(options)
+        options.to_h.each do |k, v|
           store[k] = v
         end
       end
 
-      # Returns a deep copy of the internal hash from our RequestStore.
-      # Keys are all symbols. Values are mostly primitives, but
-      # whodunnit can be a Proc.
+      # @api private
+      def set(options)
+        store.clear
+        merge(options)
+      end
+
+      # Returns a deep copy of the internal hash from our RequestStore. Keys are
+      # all symbols. Values are mostly primitives, but whodunnit can be a Proc.
+      # We cannot use Marshal.dump here because it doesn't support Proc. It is
+      # unclear exactly how `deep_dup` handles a Proc, but it doesn't complain.
       # @api private
       def to_h
-        store.store.deep_dup
+        store.deep_dup
       end
 
       # @api private
@@ -81,9 +110,21 @@ module PaperTrail
         store[:transaction_id]
       end
 
-      # @api public
+      # @api private
       def transaction_id=(id)
         store[:transaction_id] = id
+      end
+
+      # Temporarily set `options` and execute a block.
+      # @api private
+      def with(options)
+        return unless block_given?
+        validate_public_options(options)
+        before = to_h
+        merge(options)
+        yield
+      ensure
+        set(before)
       end
 
       # Sets who is responsible for any changes that occur during request. You
@@ -110,13 +151,32 @@ module PaperTrail
 
       private
 
-      # Thread-safe hash to hold PaperTrail's data. Initializing with needed
-      # default values.
+      # Returns a Hash, initializing with default values if necessary.
       # @api private
       def store
         RequestStore.store[:paper_trail] ||= {
           request_enabled_for_controller: true
         }
+      end
+
+      # Provide a helpful error message if someone has a typo in one of their
+      # option keys. We don't validate option values here. That's traditionally
+      # been handled with casting (`to_s`, `!!`) in the accessor method.
+      # @api private
+      def validate_public_options(options)
+        options.each do |k, _v|
+          case k
+          when :controller_info,
+              /enabled_for_/,
+              :request_enabled_for_controller,
+              :whodunnit
+            next
+          when :transaction_id
+            raise InvalidOption, "Cannot set private option: #{k}"
+          else
+            raise InvalidOption, "Invalid option: #{k}"
+          end
+        end
       end
     end
   end

@@ -4,12 +4,23 @@ module PaperTrail
   # Configures an ActiveRecord model, mostly at application boot time, but also
   # sometimes mid-request, with methods like enable/disable.
   class ModelConfig
+    DPR_DISABLE = <<-STR.squish.freeze
+      MyModel.paper_trail.disable is deprecated, use
+      PaperTrail.request.disable_model(MyModel). This new API makes it clear
+      that only the current request is affected, not all threads. Also, all
+      other request-variables now go through the same `request` method.
+    STR
+    DPR_ENABLE = <<-STR.squish.freeze
+      MyModel.paper_trail.enable is deprecated, use
+      PaperTrail.request.enable_model(MyModel). This new API makes it clear
+      that only the current request is affected, not all threads. Also, all
+      other request-variables now go through the same `request` method.
+    STR
     E_CANNOT_RECORD_AFTER_DESTROY = <<-STR.strip_heredoc.freeze
       paper_trail.on_destroy(:after) is incompatible with ActiveRecord's
       belongs_to_required_by_default. Use on_destroy(:before)
       or disable belongs_to_required_by_default.
     STR
-
     E_HPT_ABSTRACT_CLASS = <<~STR.squish.freeze
       An application model (%s) has been configured to use PaperTrail (via
       `has_paper_trail`), but the version model it has been told to use (%s) is
@@ -24,14 +35,16 @@ module PaperTrail
       @model_class = model_class
     end
 
-    # Switches PaperTrail off for this class.
+    # @deprecated
     def disable
-      ::PaperTrail.request.enabled_for_model(@model_class, false)
+      ::ActiveSupport::Deprecation.warn(DPR_DISABLE)
+      ::PaperTrail.request.disable_model(@model_class)
     end
 
-    # Switches PaperTrail on for this class.
+    # @deprecated
     def enable
-      ::PaperTrail.request.enabled_for_model(@model_class, true)
+      ::ActiveSupport::Deprecation.warn(DPR_ENABLE)
+      ::PaperTrail.request.enable_model(@model_class)
     end
 
     def enabled?
