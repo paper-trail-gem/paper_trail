@@ -1,9 +1,13 @@
 language: ruby
 cache: bundler
+
+# For ruby compatibility, we test the highest and lowest minor versions only.
+# For example, if our gemspec says `required_ruby_version = ">= 2.3.0"`, and
+# ruby 2.5.0 has just been released, then we test 2.3 and 2.5, but not 2.4.
 rvm:
   - 2.5.0
-  - 2.4.3
   - 2.3.6
+
 env:
   global:
     - TRAVIS=true
