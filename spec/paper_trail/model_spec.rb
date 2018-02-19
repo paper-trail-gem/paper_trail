@@ -324,11 +324,13 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
     context "with its paper trail turned off" do
       before do
-        Widget.paper_trail.disable
+        PaperTrail.request.disable_model(Widget)
         @count = @widget.versions.length
       end
 
-      after { Widget.paper_trail.enable }
+      after do
+        PaperTrail.request.enable_model(Widget)
+      end
 
       context "when updated" do
         before { @widget.update_attributes(name: "Beeblebrox") }
@@ -346,7 +348,9 @@ RSpec.describe(::PaperTrail, versioning: true) do
       end
 
       context "and then its paper trail turned on" do
-        before { Widget.paper_trail.enable }
+        before do
+          PaperTrail.request.enable_model(Widget)
+        end
 
         context "when updated" do
           before { @widget.update_attributes(name: "Ford") }
@@ -371,7 +375,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
           end
 
           it "enable paper trail after call" do
-            expect(Widget.paper_trail.enabled?).to(eq(true))
+            expect(PaperTrail.request.enabled_for_model?(Widget)).to eq(true)
           end
         end
 

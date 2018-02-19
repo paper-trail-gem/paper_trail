@@ -94,37 +94,8 @@ RSpec.describe PaperTrail do
   end
 
   describe ".version" do
-    it { expect(described_class).to respond_to(:version) }
-    it { expect(described_class.version).to eq(described_class::VERSION::STRING) }
-  end
-
-  describe ".whodunnit" do
-    context "with block passed" do
-      it "sets whodunnit only for the block passed" do
-        described_class.whodunnit("foo") do
-          expect(described_class.whodunnit).to eq("foo")
-        end
-
-        expect(described_class.whodunnit).to be_nil
-      end
-
-      it "sets whodunnit only for the current thread" do
-        described_class.whodunnit("foo") do
-          expect(described_class.whodunnit).to eq("foo")
-          Thread.new { expect(described_class.whodunnit).to be_nil }.join
-        end
-
-        expect(described_class.whodunnit).to be_nil
-      end
-    end
-
-    context "when set to a proc" do
-      it "evaluates the proc each time a version is made" do
-        call_count = 0
-        described_class.whodunnit = proc { call_count += 1 }
-        expect(described_class.whodunnit).to eq(1)
-        expect(described_class.whodunnit).to eq(2)
-      end
+    it "returns the expected String" do
+      expect(described_class.version).to eq(described_class::VERSION::STRING)
     end
   end
 end

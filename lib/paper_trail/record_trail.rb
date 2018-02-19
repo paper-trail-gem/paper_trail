@@ -321,7 +321,7 @@ module PaperTrail
       data = {
         event: @record.paper_trail_event || "update",
         object: recordable_object,
-        whodunnit: PaperTrail.whodunnit
+        whodunnit: PaperTrail.request.whodunnit
       }
       if record_object_changes?
         data[:object_changes] = recordable_object_changes(changes)
@@ -474,7 +474,7 @@ module PaperTrail
     # Executes the given method or block without creating a new version.
     def without_versioning(method = nil)
       paper_trail_was_enabled = enabled_for_model?
-      @record.class.paper_trail.disable
+      PaperTrail.request.disable_model(@record.class)
       if method
         if respond_to?(method)
           public_send(method)
@@ -485,7 +485,7 @@ module PaperTrail
         yield @record
       end
     ensure
-      @record.class.paper_trail.enable if paper_trail_was_enabled
+      PaperTrail.request.enable_model(@record.class) if paper_trail_was_enabled
     end
 
     # Temporarily overwrites the value of whodunnit and then executes the
