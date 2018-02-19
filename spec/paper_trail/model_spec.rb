@@ -343,7 +343,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
       context "when destroyed \"without versioning\"" do
         it "leave paper trail off after call" do
           @widget.paper_trail.without_versioning(:destroy)
-          expect(Widget.paper_trail.enabled?).to(eq(false))
+          expect(::PaperTrail.request.enabled_for_model?(Widget)).to eq(false)
         end
       end
 
@@ -379,15 +379,11 @@ RSpec.describe(::PaperTrail, versioning: true) do
           end
         end
 
-        context "when receiving a method name as an argument" do
-          before { @widget.paper_trail.without_versioning(:touch_with_version) }
-
-          it "not create new version" do
+        context "given a symbol, specifying a method name" do
+          it "does not create a new version" do
+            @widget.paper_trail.without_versioning(:touch_with_version)
             expect(@widget.versions.length).to(eq(@count))
-          end
-
-          it "enable paper trail after call" do
-            expect(Widget.paper_trail.enabled?).to(eq(true))
+            expect(::PaperTrail.request.enabled_for_model?(Widget)).to eq(true)
           end
         end
       end

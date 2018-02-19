@@ -8,13 +8,22 @@ module PaperTrail
       MyModel.paper_trail.disable is deprecated, use
       PaperTrail.request.disable_model(MyModel). This new API makes it clear
       that only the current request is affected, not all threads. Also, all
-      other request-variables now go through the same `request` method.
+      other request-variables now go through the same `request` method, so this
+      new API is more consistent.
     STR
     DPR_ENABLE = <<-STR.squish.freeze
       MyModel.paper_trail.enable is deprecated, use
       PaperTrail.request.enable_model(MyModel). This new API makes it clear
       that only the current request is affected, not all threads. Also, all
-      other request-variables now go through the same `request` method.
+      other request-variables now go through the same `request` method, so this
+      new API is more consistent.
+    STR
+    DPR_ENABLED = <<-STR.squish.freeze
+      MyModel.paper_trail.enabled? is deprecated, use
+      PaperTrail.request.enabled_for_model?(MyModel). This new API makes it clear
+      that this is a setting specific to the current request, not all threads.
+      Also, all other request-variables now go through the same `request`
+      method, so this new API is more consistent.
     STR
     E_CANNOT_RECORD_AFTER_DESTROY = <<-STR.strip_heredoc.freeze
       paper_trail.on_destroy(:after) is incompatible with ActiveRecord's
@@ -47,8 +56,9 @@ module PaperTrail
       ::PaperTrail.request.enable_model(@model_class)
     end
 
+    # @deprecated
     def enabled?
-      return false unless @model_class.include?(::PaperTrail::Model::InstanceMethods)
+      ::ActiveSupport::Deprecation.warn(DPR_ENABLED, caller(1))
       ::PaperTrail.request.enabled_for_model?(@model_class)
     end
 

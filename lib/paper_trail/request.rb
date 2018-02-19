@@ -80,7 +80,8 @@ module PaperTrail
       # request, `false` otherwise.
       # @api public
       def enabled_for_model?(model)
-        !!store.fetch(:"enabled_for_#{model}", true)
+        model.include?(::PaperTrail::Model::InstanceMethods) &&
+          !!store.fetch(:"enabled_for_#{model}", true)
       end
 
       # @api private

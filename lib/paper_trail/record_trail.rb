@@ -98,12 +98,24 @@ module PaperTrail
       notable_changes.to_hash
     end
 
+    # Is PT enabled for this particular record?
+    # @api private
     def enabled?
-      PaperTrail.enabled? && PaperTrail.request.enabled_for_controller? && enabled_for_model?
+      PaperTrail.enabled? &&
+        PaperTrail.request.enabled_for_controller? &&
+        PaperTrail.request.enabled_for_model?(@record.class)
     end
 
+    # Not sure why, but this method was mentioned in the README in the past,
+    # so we need to deprecate it properly.
+    # @deprecated
     def enabled_for_model?
-      @record.class.paper_trail.enabled?
+      ::ActiveSupport::Deprecation.warn(
+        "MyModel#paper_trail.enabled_for_model? is deprecated, use " \
+        "PaperTrail.request.enabled_for_model?(MyModel) instead.",
+        caller(1)
+      )
+      PaperTrail.request.enabled_for_model?(@record.class)
     end
 
     # An attributed is "ignored" if it is listed in the `:ignore` option
@@ -473,7 +485,7 @@ module PaperTrail
 
     # Executes the given method or block without creating a new version.
     def without_versioning(method = nil)
-      paper_trail_was_enabled = enabled_for_model?
+      paper_trail_was_enabled = PaperTrail.request.enabled_for_model?(@record.class)
       PaperTrail.request.disable_model(@record.class)
       if method
         if respond_to?(method)
@@ -568,10 +580,10 @@ module PaperTrail
 
       if assoc.options[:polymorphic]
         associated_record = @record.send(assoc.name) if @record.send(assoc.foreign_type)
-        if associated_record && associated_record.class.paper_trail.enabled?
+        if associated_record && PaperTrail.request.enabled_for_model?(associated_record.class)
           assoc_version_args[:foreign_key_id] = associated_record.id
         end
-      elsif assoc.klass.paper_trail.enabled?
+      elsif PaperTrail.request.enabled_for_model?(assoc.klass)
         assoc_version_args[:foreign_key_id] = @record.send(assoc.foreign_key)
       end
 
@@ -584,7 +596,7 @@ module PaperTrail
     # @api private
     def save_habtm_association?(assoc)
       @record.class.paper_trail_save_join_tables.include?(assoc.name) ||
-        assoc.klass.paper_trail.enabled?
+        PaperTrail.request.enabled_for_model?(assoc.klass)
     end
 
     # Returns true if `save` will cause `record_update`
