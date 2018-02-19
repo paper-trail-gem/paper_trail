@@ -49,7 +49,8 @@ module PaperTrail
     def clear_transaction_id
       ::ActiveSupport::Deprecation.warn(
         "PaperTrail.clear_transaction_id is deprecated, " \
-        "use PaperTrail.request.clear_transaction_id"
+        "use PaperTrail.request.clear_transaction_id",
+        caller(1)
       )
       request.clear_transaction_id
     end
@@ -71,7 +72,8 @@ module PaperTrail
     def enabled_for_controller=(value)
       ::ActiveSupport::Deprecation.warn(
         "PaperTrail.enabled_for_controller= is deprecated, " \
-        "use PaperTrail.request.enabled_for_controller="
+        "use PaperTrail.request.enabled_for_controller=",
+        caller(1)
       )
       request.enabled_for_controller = value
     end
@@ -80,7 +82,8 @@ module PaperTrail
     def enabled_for_controller?
       ::ActiveSupport::Deprecation.warn(
         "PaperTrail.enabled_for_controller? is deprecated, " \
-        "use PaperTrail.request.enabled_for_controller?"
+        "use PaperTrail.request.enabled_for_controller?",
+        caller(1)
       )
       request.enabled_for_controller?
     end
@@ -89,7 +92,8 @@ module PaperTrail
     def enabled_for_model(model, value)
       ::ActiveSupport::Deprecation.warn(
         "PaperTrail.enabled_for_model is deprecated, " \
-        "use PaperTrail.request.enabled_for_model"
+        "use PaperTrail.request.enabled_for_model",
+        caller(1)
       )
       request.enabled_for_model(model, value)
     end
@@ -98,7 +102,8 @@ module PaperTrail
     def enabled_for_model?(model)
       ::ActiveSupport::Deprecation.warn(
         "PaperTrail.enabled_for_model? is deprecated, " \
-        "use PaperTrail.request.enabled_for_model?"
+        "use PaperTrail.request.enabled_for_model?",
+        caller(1)
       )
       request.enabled_for_model?(model)
     end
@@ -143,7 +148,8 @@ module PaperTrail
     # @deprecated
     def whodunnit=(value)
       ::ActiveSupport::Deprecation.warn(
-        "PaperTrail.whodunnit= is deprecated, use PaperTrail.request.whodunnit="
+        "PaperTrail.whodunnit= is deprecated, use PaperTrail.request.whodunnit=",
+        caller(1)
       )
       request.whodunnit = value
     end
@@ -152,13 +158,15 @@ module PaperTrail
     def whodunnit(value = nil, &block)
       if value.nil?
         ::ActiveSupport::Deprecation.warn(
-          "PaperTrail.whodunnit is deprecated, use PaperTrail.request.whodunnit"
+          "PaperTrail.whodunnit is deprecated, use PaperTrail.request.whodunnit",
+          caller(1)
         )
         request.whodunnit
       elsif block_given?
         ::ActiveSupport::Deprecation.warn(
           "Passing a block to PaperTrail.whodunnit is deprecated, " \
-          'use PaperTrail.request(whodunnit: "John") do .. end'
+          'use PaperTrail.request(whodunnit: "John") do .. end',
+          caller(1)
         )
         request(whodunnit: value, &block)
       else
@@ -169,7 +177,8 @@ module PaperTrail
     # @deprecated
     def controller_info=(value)
       ::ActiveSupport::Deprecation.warn(
-        "PaperTrail.controller_info= is deprecated, use PaperTrail.request.controller_info="
+        "PaperTrail.controller_info= is deprecated, use PaperTrail.request.controller_info=",
+        caller(1)
       )
       request.controller_info = value
     end
@@ -177,7 +186,8 @@ module PaperTrail
     # @deprecated
     def controller_info
       ::ActiveSupport::Deprecation.warn(
-        "PaperTrail.controller_info is deprecated, use PaperTrail.request.controller_info"
+        "PaperTrail.controller_info is deprecated, use PaperTrail.request.controller_info",
+        caller(1)
       )
       request.controller_info
     end
@@ -202,7 +212,8 @@ module PaperTrail
     # @deprecated
     def transaction_id
       ::ActiveSupport::Deprecation.warn(
-        "PaperTrail.transaction_id is deprecated without replacement."
+        "PaperTrail.transaction_id is deprecated without replacement.",
+        caller(1)
       )
       request.transaction_id
     end
@@ -210,7 +221,8 @@ module PaperTrail
     # @deprecated
     def transaction_id=(id)
       ::ActiveSupport::Deprecation.warn(
-        "PaperTrail.transaction_id= is deprecated without replacement."
+        "PaperTrail.transaction_id= is deprecated without replacement.",
+        caller(1)
       )
       request.transaction_id = id
     end

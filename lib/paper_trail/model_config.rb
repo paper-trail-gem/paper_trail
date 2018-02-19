@@ -37,13 +37,13 @@ module PaperTrail
 
     # @deprecated
     def disable
-      ::ActiveSupport::Deprecation.warn(DPR_DISABLE)
+      ::ActiveSupport::Deprecation.warn(DPR_DISABLE, caller(1))
       ::PaperTrail.request.disable_model(@model_class)
     end
 
     # @deprecated
     def enable
-      ::ActiveSupport::Deprecation.warn(DPR_ENABLE)
+      ::ActiveSupport::Deprecation.warn(DPR_ENABLE, caller(1))
       ::PaperTrail.request.enable_model(@model_class)
     end
 
