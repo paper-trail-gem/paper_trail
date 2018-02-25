@@ -98,4 +98,47 @@ RSpec.describe PaperTrail do
       expect(described_class.version).to eq(described_class::VERSION::STRING)
     end
   end
+
+  describe 'deprecated methods' do
+    shared_examples 'it delegates to request' do |method, args|
+      it do
+        expect(ActiveSupport::Deprecation).to receive(:warn)
+        arguments = args || [no_args]
+        expect(PaperTrail.request).to receive(method).with(*arguments)
+        PaperTrail.public_send(method, *args)
+      end
+    end
+
+    it_behaves_like 'it delegates to request', :clear_transaction_id, nil
+    it_behaves_like 'it delegates to request', :enabled_for_controller=, [true]
+    it_behaves_like 'it delegates to request', :enabled_for_model, [Widget, true]
+    it_behaves_like 'it delegates to request', :enabled_for_model?, [Widget]
+    it_behaves_like 'it delegates to request', :whodunnit=, [:some_whodunnit]
+    it_behaves_like 'it delegates to request', :whodunnit, nil
+    it_behaves_like 'it delegates to request', :controller_info=, [:some_whodunnit]
+    it_behaves_like 'it delegates to request', :controller_info, nil
+    it_behaves_like 'it delegates to request', :transaction_id=, 123
+    it_behaves_like 'it delegates to request', :transaction_id, nil
+
+    describe 'whodunnit' do
+      context 'with block' do
+        it 'delegates to request' do
+          expect(ActiveSupport::Deprecation).to receive(:warn)
+          expect(PaperTrail.request).to receive(:with) do |*args, &block|
+            expect(args).to eq([{:whodunnit=>:some_whodunnit}])
+            expect(block.call).to eq :some_block
+          end
+          PaperTrail.whodunnit(:some_whodunnit) { :some_block }
+        end
+      end
+
+      context 'invalid arguments' do
+        it 'raises an error' do
+          expect{PaperTrail.whodunnit(:some_whodunnit)}.to raise_error(ArgumentError) do |e|
+            expect(e.message).to eq "Invalid arguments"
+          end
+        end
+      end
+    end
+  end
 end

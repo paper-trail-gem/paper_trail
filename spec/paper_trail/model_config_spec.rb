@@ -15,5 +15,33 @@ module PaperTrail
         )
       end
     end
+
+    describe 'deprecated methods' do
+      let(:config) { PaperTrail::ModelConfig.new(:some_model_class) }
+
+      describe 'disable' do
+        it 'delegates to request' do
+          expect(ActiveSupport::Deprecation).to receive(:warn)
+          expect(PaperTrail.request).to receive(:disable_model).with(:some_model_class)
+          config.disable
+        end
+      end
+
+      describe 'enable' do
+        it 'delegates to request' do
+          expect(ActiveSupport::Deprecation).to receive(:warn)
+          expect(PaperTrail.request).to receive(:enable_model).with(:some_model_class)
+          config.enable
+        end
+      end
+
+      describe 'enabled?' do
+        it 'delegates to request' do
+          expect(ActiveSupport::Deprecation).to receive(:warn)
+          expect(PaperTrail.request).to receive(:enabled_for_model?).with(:some_model_class)
+          config.enabled?
+        end
+      end
+    end
   end
 end
