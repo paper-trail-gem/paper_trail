@@ -62,8 +62,8 @@ module PaperTrail
 
     describe ".controller_info=" do
       it "sets controller_info" do
-        PaperTrail.request.controller_info = {foo: :bar}
-        expect(PaperTrail.request.controller_info).to eq({foo: :bar})
+        PaperTrail.request.controller_info = { foo: :bar }
+        expect(PaperTrail.request.controller_info).to eq(foo: :bar)
       end
 
       after do
@@ -104,22 +104,21 @@ module PaperTrail
 
     describe ".with" do
       context "block given" do
-        context 'all allowed options' do
+        context "all allowed options" do
           it "sets options only for the block passed" do
-            described_class.whodunnit = 'some_whodunnit'
+            described_class.whodunnit = "some_whodunnit"
             described_class.enabled_for_model(Widget, true)
 
             described_class.with(whodunnit: "foo", enabled_for_Widget: false) do
               expect(described_class.whodunnit).to eq("foo")
               expect(described_class.enabled_for_model?(Widget)).to eq false
             end
-            expect(described_class.whodunnit).to eq 'some_whodunnit'
+            expect(described_class.whodunnit).to eq "some_whodunnit"
             expect(described_class.enabled_for_model?(Widget)).to eq true
           end
 
-
           it "sets options only for the current thread" do
-            described_class.whodunnit = 'some_whodunnit'
+            described_class.whodunnit = "some_whodunnit"
             described_class.enabled_for_model(Widget, true)
 
             described_class.with(whodunnit: "foo", enabled_for_Widget: false) do
@@ -128,48 +127,48 @@ module PaperTrail
               Thread.new { expect(described_class.whodunnit).to be_nil }.join
               Thread.new { expect(described_class.enabled_for_model?(Widget)).to eq true }.join
             end
-            expect(described_class.whodunnit).to eq 'some_whodunnit'
+            expect(described_class.whodunnit).to eq "some_whodunnit"
             expect(described_class.enabled_for_model?(Widget)).to eq true
           end
         end
 
-        context 'some invalid options' do
-          it 'raises an invalid option error' do
+        context "some invalid options" do
+          it "raises an invalid option error" do
             subject = proc do
-              described_class.with(whodunnit: 'blah', invalid_option: "foo") do
+              described_class.with(whodunnit: "blah", invalid_option: "foo") do
                 raise "This block should not be reached"
               end
             end
 
-            expect{subject.call}.to raise_error(PaperTrail::Request::InvalidOption) do |e|
+            expect { subject.call }.to raise_error(PaperTrail::Request::InvalidOption) do |e|
               expect(e.message).to eq "Invalid option: invalid_option"
             end
           end
         end
 
-        context 'all invalid options' do
-          it 'raises an invalid option error' do
+        context "all invalid options" do
+          it "raises an invalid option error" do
             subject = proc do
-              described_class.with(invalid_option: "foo", other_invalid_option: 'blah') do
+              described_class.with(invalid_option: "foo", other_invalid_option: "blah") do
                 raise "This block should not be reached"
               end
             end
 
-            expect{subject.call}.to raise_error(PaperTrail::Request::InvalidOption) do |e|
+            expect { subject.call }.to raise_error(PaperTrail::Request::InvalidOption) do |e|
               expect(e.message).to eq "Invalid option: invalid_option"
             end
           end
         end
 
-        context 'private options' do
-          it 'raises an invalid option error' do
+        context "private options" do
+          it "raises an invalid option error" do
             subject = proc do
-              described_class.with(transaction_id: 'blah') do
+              described_class.with(transaction_id: "blah") do
                 raise "This block should not be reached"
               end
             end
 
-            expect{subject.call}.to raise_error(PaperTrail::Request::InvalidOption) do |e|
+            expect { subject.call }.to raise_error(PaperTrail::Request::InvalidOption) do |e|
               expect(e.message).to eq "Cannot set private option: transaction_id"
             end
           end
