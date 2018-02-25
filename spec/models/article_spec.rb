@@ -174,6 +174,14 @@ RSpec.describe Article, type: :model, versioning: true do
         ).to(eq("Some text here."))
       end
     end
+
+    it "creates a version with touch_with_version & :only option combined" do
+      article = described_class.create
+
+      expect { article.paper_trail.touch_with_version }.to change {
+        PaperTrail::Version.count
+      }.by(+1)
+    end
   end
 
   context "#destroy" do
