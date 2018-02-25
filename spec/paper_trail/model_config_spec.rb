@@ -25,6 +25,7 @@ module PaperTrail
 
       describe "disable" do
         it "delegates to request" do
+          allow(PaperTrail.request).to receive(:disable_model)
           config.disable
           expect(PaperTrail.request).to have_received(:disable_model).with(:some_model_class)
           expect(ActiveSupport::Deprecation).to have_received(:warn)
@@ -33,6 +34,7 @@ module PaperTrail
 
       describe "enable" do
         it "delegates to request" do
+          allow(PaperTrail.request).to receive(:enable_model)
           config.enable
           expect(PaperTrail.request).to have_received(:enable_model).with(:some_model_class)
           expect(ActiveSupport::Deprecation).to have_received(:warn)
@@ -41,6 +43,7 @@ module PaperTrail
 
       describe "enabled?" do
         it "delegates to request" do
+          allow(PaperTrail.request).to receive(:enabled_for_model?)
           config.enabled?
           expect(PaperTrail.request).to have_received(:enabled_for_model?).with(:some_model_class)
           expect(ActiveSupport::Deprecation).to have_received(:warn)

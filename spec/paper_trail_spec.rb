@@ -107,6 +107,7 @@ RSpec.describe PaperTrail do
     shared_examples "it delegates to request" do |method, args|
       it do
         arguments = args || [no_args]
+        allow(described_class.request).to receive(method)
         described_class.public_send(method, *args)
         expect(described_class.request).to have_received(method).with(*arguments)
         expect(ActiveSupport::Deprecation).to have_received(:warn)
@@ -126,6 +127,7 @@ RSpec.describe PaperTrail do
 
     describe "whodunnit with block" do
       it "delegates to request" do
+        allow(described_class.request).to receive(:with)
         described_class.whodunnit(:some_whodunnit) { :some_block }
         expect(ActiveSupport::Deprecation).to have_received(:warn)
         expect(described_class.request).to have_received(:with) do |*args, &block|
