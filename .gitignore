@@ -1,9 +1,11 @@
 *.gem
+*.sqlite3-journal
 .bundle
 .byebug_history
 .idea
 .rbenv-gemsets
 .rbenv-version
+.rspec_results
 .ruby-gemset
 .ruby-version
 .rvmrc

@@ -4,12 +4,32 @@ module PaperTrail
   # Configures an ActiveRecord model, mostly at application boot time, but also
   # sometimes mid-request, with methods like enable/disable.
   class ModelConfig
+    DPR_DISABLE = <<-STR.squish.freeze
+      MyModel.paper_trail.disable is deprecated, use
+      PaperTrail.request.disable_model(MyModel). This new API makes it clear
+      that only the current request is affected, not all threads. Also, all
+      other request-variables now go through the same `request` method, so this
+      new API is more consistent.
+    STR
+    DPR_ENABLE = <<-STR.squish.freeze
+      MyModel.paper_trail.enable is deprecated, use
+      PaperTrail.request.enable_model(MyModel). This new API makes it clear
+      that only the current request is affected, not all threads. Also, all
+      other request-variables now go through the same `request` method, so this
+      new API is more consistent.
+    STR
+    DPR_ENABLED = <<-STR.squish.freeze
+      MyModel.paper_trail.enabled? is deprecated, use
+      PaperTrail.request.enabled_for_model?(MyModel). This new API makes it clear
+      that this is a setting specific to the current request, not all threads.
+      Also, all other request-variables now go through the same `request`
+      method, so this new API is more consistent.
+    STR
     E_CANNOT_RECORD_AFTER_DESTROY = <<-STR.strip_heredoc.freeze
       paper_trail.on_destroy(:after) is incompatible with ActiveRecord's
       belongs_to_required_by_default. Use on_destroy(:before)
       or disable belongs_to_required_by_default.
     STR
-
     E_HPT_ABSTRACT_CLASS = <<~STR.squish.freeze
       An application model (%s) has been configured to use PaperTrail (via
       `has_paper_trail`), but the version model it has been told to use (%s) is
@@ -24,19 +44,22 @@ module PaperTrail
       @model_class = model_class
     end
 
-    # Switches PaperTrail off for this class.
+    # @deprecated
     def disable
-      ::PaperTrail.enabled_for_model(@model_class, false)
+      ::ActiveSupport::Deprecation.warn(DPR_DISABLE, caller(1))
+      ::PaperTrail.request.disable_model(@model_class)
     end
 
-    # Switches PaperTrail on for this class.
+    # @deprecated
     def enable
-      ::PaperTrail.enabled_for_model(@model_class, true)
+      ::ActiveSupport::Deprecation.warn(DPR_ENABLE, caller(1))
+      ::PaperTrail.request.enable_model(@model_class)
     end
 
+    # @deprecated
     def enabled?
-      return false unless @model_class.include?(::PaperTrail::Model::InstanceMethods)
-      ::PaperTrail.enabled_for_model?(@model_class)
+      ::ActiveSupport::Deprecation.warn(DPR_ENABLED, caller(1))
+      ::PaperTrail.request.enabled_for_model?(@model_class)
     end
 
     # Adds a callback that records a version after a "create" event.
@@ -195,8 +218,8 @@ module PaperTrail
 
     # Reset the transaction id when the transaction is closed.
     def setup_transaction_callbacks
-      @model_class.after_commit { PaperTrail.clear_transaction_id }
-      @model_class.after_rollback { PaperTrail.clear_transaction_id }
+      @model_class.after_commit { PaperTrail.request.clear_transaction_id }
+      @model_class.after_rollback { PaperTrail.request.clear_transaction_id }
       @model_class.after_rollback { paper_trail.clear_rolled_back_versions }
     end
 
