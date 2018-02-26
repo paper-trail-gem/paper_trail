@@ -14,12 +14,16 @@ Metrics/PerceivedComplexity:
 
 RSpec/InstanceVariable:
   Exclude:
-    - spec/paper_trail/associations_spec.rb
+    - spec/paper_trail/associations/belongs_to_spec.rb
+    - spec/paper_trail/associations/habtm_spec.rb
+    - spec/paper_trail/associations/has_many_through_spec.rb
     - spec/paper_trail/model_spec.rb
 
 RSpec/NestedGroups:
   Exclude:
-    - spec/paper_trail/associations_spec.rb
+    - spec/paper_trail/associations/belongs_to_spec.rb
+    - spec/paper_trail/associations/habtm_spec.rb
+    - spec/paper_trail/associations/has_many_through_spec.rb
     - spec/paper_trail/model_spec.rb
 
 # It may be possible for us to use safe_load, but we'd have to pass the
