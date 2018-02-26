@@ -117,7 +117,7 @@ module PaperTrail
       end
 
       # Temporarily set `options` and execute a block.
-      # @api private
+      # @api public
       def with(options)
         return unless block_given?
         validate_public_options(options)

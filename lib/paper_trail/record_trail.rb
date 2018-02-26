@@ -3,6 +3,10 @@
 module PaperTrail
   # Represents the "paper trail" for a single record.
   class RecordTrail
+    DPR_WHODUNNIT = <<-STR.squish.freeze
+      my_model_instance.paper_trail.whodunnit('John') is deprecated,
+      please use PaperTrail.request(whodunnit: 'John')
+    STR
     RAILS_GTE_5_1 = ::ActiveRecord.gem_version >= ::Gem::Version.new("5.1.0.beta1")
 
     def initialize(record)
@@ -500,15 +504,13 @@ module PaperTrail
       PaperTrail.request.enable_model(@record.class) if paper_trail_was_enabled
     end
 
-    # Temporarily overwrites the value of whodunnit and then executes the
-    # provided block.
+    # @deprecated
     def whodunnit(value)
       raise ArgumentError, "expected to receive a block" unless block_given?
-      current_whodunnit = PaperTrail.request.whodunnit
-      PaperTrail.request.whodunnit = value
-      yield @record
-    ensure
-      PaperTrail.request.whodunnit = current_whodunnit
+      ::ActiveSupport::Deprecation.warn(DPR_WHODUNNIT, caller(1))
+      ::PaperTrail.request.with(whodunnit: value) do
+        yield @record
+      end
     end
 
     private

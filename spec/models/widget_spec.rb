@@ -184,8 +184,8 @@ RSpec.describe Widget, type: :model do
       it "returns the originator for the model at a given state" do
         expect(widget.paper_trail).to be_live
         expect(widget.paper_trail.originator).to eq(orig_name)
-        widget.paper_trail.whodunnit(new_name) { |w|
-          w.update_attributes(name: "Elizabeth")
+        ::PaperTrail.request.with(whodunnit: new_name) {
+          widget.update_attributes(name: "Elizabeth")
         }
         expect(widget.paper_trail.originator).to eq(new_name)
       end
@@ -221,47 +221,12 @@ RSpec.describe Widget, type: :model do
   end
 
   describe "#whodunnit", versioning: true do
-    context "no block given" do
-      it "raises an error" do
-        expect {
-          widget.paper_trail.whodunnit("Ben")
-        }.to raise_error(ArgumentError, "expected to receive a block")
-      end
-    end
-
-    context "block given" do
-      let(:orig_name) { FFaker::Name.name }
-      let(:new_name) { FFaker::Name.name }
-
-      before do
-        PaperTrail.request.whodunnit = orig_name
-        widget # persist `widget` (call the `let`)
-      end
-
-      it "modifies value of `PaperTrail.request.whodunnit` while executing the block" do
-        expect(widget.versions.last.whodunnit).to eq(orig_name)
-        widget.paper_trail.whodunnit(new_name) do
-          expect(PaperTrail.request.whodunnit).to eq(new_name)
-          widget.update_attributes(name: "Elizabeth")
-        end
-        expect(widget.versions.last.whodunnit).to eq(new_name)
-      end
-
-      it "reverts value of whodunnit to previous value after executing the block" do
-        expect(widget.versions.last.whodunnit).to eq(orig_name)
-        widget.paper_trail.whodunnit(new_name) { |w|
-          w.update_attributes(name: "Elizabeth")
-        }
-        expect(PaperTrail.request.whodunnit).to eq(orig_name)
-      end
-
-      it "reverts to previous value, even if error within block" do
-        expect(widget.versions.last.whodunnit).to eq(orig_name)
-        expect {
-          widget.paper_trail.whodunnit(new_name) { raise }
-        }.to raise_error(RuntimeError)
-        expect(PaperTrail.request.whodunnit).to eq(orig_name)
-      end
+    it "is deprecated, delegates to Request.whodunnit" do
+      allow(::ActiveSupport::Deprecation).to receive(:warn)
+      allow(::PaperTrail::Request).to receive(:with)
+      widget.paper_trail.whodunnit("Alex") {}
+      expect(::ActiveSupport::Deprecation).to have_received(:warn).once
+      expect(::PaperTrail::Request).to have_received(:with).with(whodunnit: "Alex")
     end
   end
 
