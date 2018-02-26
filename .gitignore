@@ -1,4 +1,5 @@
 *.gem
+*.sqlite3-journal
 .bundle
 .byebug_history
 .idea
