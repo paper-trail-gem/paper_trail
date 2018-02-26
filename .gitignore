@@ -4,6 +4,7 @@
 .idea
 .rbenv-gemsets
 .rbenv-version
+.rspec_results
 .ruby-gemset
 .ruby-version
 .rvmrc
