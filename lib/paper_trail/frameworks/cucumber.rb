@@ -5,7 +5,7 @@ Before do
   PaperTrail.enabled = false
   PaperTrail.request.enabled_for_controller = true
   PaperTrail.request.whodunnit = nil
-  PaperTrail.request.controller_info = {} if defined? Rails
+  PaperTrail.request.controller_info = {} if defined?(::Rails)
 end
 
 module PaperTrail
