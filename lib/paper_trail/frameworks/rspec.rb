@@ -10,9 +10,9 @@ RSpec.configure do |config|
 
   config.before(:each) do
     ::PaperTrail.enabled = false
-    ::PaperTrail.enabled_for_controller = true
-    ::PaperTrail.whodunnit = nil
-    ::PaperTrail.controller_info = {} if defined?(::Rails) && defined?(::RSpec::Rails)
+    ::PaperTrail.request.enabled_for_controller = true
+    ::PaperTrail.request.whodunnit = nil
+    ::PaperTrail.request.controller_info = {} if defined?(::Rails) && defined?(::RSpec::Rails)
   end
 
   config.before(:each, versioning: true) do

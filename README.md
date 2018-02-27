@@ -126,13 +126,10 @@ Once you have a version, you can find out what happened:
 
 ```ruby
 v = widget.versions.last
-v.event                     # 'update', 'create', or 'destroy'
-v.created_at                # When the `event` occurred
-v.whodunnit                 # If the update was via a controller and the
-                            # controller has a current_user method, returns the
-                            # id of the current user as a string.
-widget = v.reify            # The widget as it was before the update
-                            # (nil for a create event)
+v.event # 'update', 'create', 'destroy'. See also: Custom Event Names
+v.created_at
+v.whodunnit # ID of `current_user`. Requires `set_paper_trail_whodunnit` callback.
+widget = v.reify # The widget as it was before the update (nil for a create event)
 ```
 
 PaperTrail stores the pre-change version of the model, unlike some other
@@ -204,17 +201,12 @@ widget.paper_trail.next_version
 # version)
 widget.paper_trail.touch_with_version
 
-# Turn PaperTrail off for all widgets.
-Widget.paper_trail.disable
-
-# Turn PaperTrail on for all widgets.
-Widget.paper_trail.enable
+# Enable/disable PaperTrail, for Widget, for the current request (not all threads)
+PaperTrail.request.disable_model(Widget)
+PaperTrail.request.enable_model(Widget)
 
 # Is PaperTrail enabled for Widget, the class?
-Widget.paper_trail.enabled?
-
-# Is PaperTrail enabled for widget, the instance?
-widget.paper_trail.enabled_for_model?
+PaperTrail.request.enabled_for_model?(Widget)
 ```
 
 And a `PaperTrail::Version` instance (which is just an ordinary ActiveRecord
@@ -298,11 +290,12 @@ end
 other callbacks in your model, their order relative to those installed by
 PaperTrail may matter, so be aware of any potential interactions.
 
+#### Custom Event Name
+
 You may also have the `PaperTrail::Version` model save a custom string in its
 `event` field instead of the typical `create`, `update`, `destroy`. PaperTrail
-supplies a custom accessor method called `paper_trail_event`, which it will
-attempt to use to fill the `event` field before falling back on one of the
-default events.
+adds an `attr_accessor` to your model named `paper_trail_event`, and will insert
+it, if present, in the `event` column.
 
 ```ruby
 a = Article.create
@@ -480,7 +473,7 @@ Add a `paper_trail_enabled_for_controller` method to your controller.
 ```ruby
 class ApplicationController < ActionController::Base
   def paper_trail_enabled_for_controller
-    request.user_agent != 'Disable User-Agent'
+    super && request.user_agent != 'Disable User-Agent'
   end
 end
 ```
@@ -488,9 +481,12 @@ end
 #### Per Class
 
 ```ruby
-Widget.paper_trail.disable
-Widget.paper_trail.enable
+PaperTrail.request.enable_model(Widget)
+PaperTrail.request.disable_model(Widget)
 ```
+
+This setting, as with all `PaperTrail.request` settings, affects only the
+current request, not all threads.
 
 #### Per Method
 
@@ -509,7 +505,7 @@ Or a block:
 end
 ```
 
-PaperTrail is disabled for the whole model
+During `without_versioning`, PaperTrail is disabled for the whole model
 (e.g. `Widget`), not just for the instance (e.g. `@widget`).
 
 ### 2.e. Limiting the Number of Versions Created
@@ -703,34 +699,44 @@ PaperTrail::Version.delete_all ['created_at < ?', 1.week.ago]
 
 ### 4.a. Finding Out Who Was Responsible For A Change
 
-Set `PaperTrail.whodunnit=`, and that value will be stored in the version's
-`whodunnit` column.
+Set `PaperTrail.request.whodunnit=`, and that value will be stored in the
+version's `whodunnit` column.
 
 ```ruby
-PaperTrail.whodunnit = 'Andy Stewart'
+PaperTrail.request.whodunnit = 'Andy Stewart'
 widget.update_attributes name: 'Wibble'
-widget.versions.last.whodunnit              # Andy Stewart
+widget.versions.last.whodunnit # Andy Stewart
 ```
 
-`whodunnit` also accepts a block, a convenient way to temporarily set the value.
+#### Setting `whodunnit` to a `Proc`
+
+`whodunnit=` also accepts a `Proc`, in the rare case that lazy evaluation is
+required.
 
 ```ruby
-PaperTrail.whodunnit('Dorian Marié') do
-  widget.update_attributes name: 'Wibble'
-end
-```
-
-`whodunnit` also accepts a `Proc`.
-
-```ruby
-PaperTrail.whodunnit = proc do
+PaperTrail.request.whodunnit = proc do
   caller.first{ |c| c.starts_with? Rails.root.to_s }
 end
 ```
 
+Because lazy evaluation can be hard to troubleshoot, this is not
+recommended for common use.
+
+#### Setting `whodunnit` Temporarily
+
+To set whodunnit temporarily, for the duration of a block, use
+`PaperTrail.request`:
+
+```ruby
+PaperTrail.request(whodunnit: 'Dorian Marié') do
+  widget.update_attributes name: 'Wibble'
+end
+```
+
+#### Setting `whodunnit` with a controller callback
+
 If your controller has a `current_user` method, PaperTrail provides a
-`before_action` that will assign `current_user.id` to `PaperTrail.whodunnit`.
-You can add this `before_action` to your `ApplicationController`.
+callback that will assign `current_user.id` to `whodunnit`.
 
 ```ruby
 class ApplicationController
@@ -752,25 +758,13 @@ end
 
 See also: [Setting whodunnit in the rails console][33]
 
-Sometimes you want to define who is responsible for a change in a small scope
-without overwriting value of `PaperTrail.whodunnit`. It is possible to define
-the `whodunnit` value for an operation inside a block like this:
+#### Terminator and Originator
 
-```ruby
-PaperTrail.whodunnit = 'Andy Stewart'
-widget.paper_trail.whodunnit('Lucas Souza') do
-  widget.update_attributes name: 'Wibble'
-end
-widget.versions.last.whodunnit              # Lucas Souza
-widget.update_attributes name: 'Clair'
-widget.versions.last.whodunnit              # Andy Stewart
-```
-
-A version's `whodunnit` records who changed the object causing the `version` to
-be stored.  Because a version stores the object as it looked before the change
-(see the table above), `whodunnit` returns who stopped the object looking like
-this -- not who made it look like this.  Hence `whodunnit` is aliased as
-`terminator`.
+A version's `whodunnit` column tells us who changed the object, causing the
+`version` to be stored.  Because a version stores the object as it looked before
+the change (see the table above), `whodunnit` tells us who *stopped* the object
+looking like this -- not who made it look like this.  Hence `whodunnit` is
+aliased as `terminator`.
 
 To find out who made a version's object look that way, use
 `version.paper_trail_originator`.  And to find out who made a "live" object look
@@ -778,10 +772,10 @@ like it does, call `paper_trail_originator` on the object.
 
 ```ruby
 widget = Widget.find 153                    # assume widget has 0 versions
-PaperTrail.whodunnit = 'Alice'
+PaperTrail.request.whodunnit = 'Alice'
 widget.update_attributes name: 'Yankee'
 widget.paper_trail.originator               # 'Alice'
-PaperTrail.whodunnit = 'Bob'
+PaperTrail.request.whodunnit = 'Bob'
 widget.update_attributes name: 'Zulu'
 widget.paper_trail.originator               # 'Bob'
 first_version, last_version = widget.versions.first, widget.versions.last
@@ -1117,7 +1111,7 @@ module PaperTrail
 end
 ```
 
-This unsupported workaround has been tested with protected_attributes 1.0.9 /
+This *unsupported workaround* has been tested with protected_attributes 1.0.9 /
 rails 4.2.8 / paper_trail 7.0.3.
 
 ## 6. Extensibility
@@ -1392,7 +1386,7 @@ describe 'RSpec test group' do
 end
 ```
 
-The helper will also reset the `PaperTrail.whodunnit` value to `nil` before each
+The helper will also reset `whodunnit` to `nil` before each
 test to help prevent data spillover between tests. If you are using PaperTrail
 with Rails, the helper will automatically set the `PaperTrail.controller_info`
 value to `{}` as well, again, to help prevent data spillover between tests.
@@ -1489,7 +1483,7 @@ Given /I want versioning on my model/ do
 end
 ```
 
-The helper will also reset the `PaperTrail.whodunnit` value to `nil` before each
+The helper will also reset the `whodunnit` value to `nil` before each
 test to help prevent data spillover between tests. If you are using PaperTrail
 with Rails, the helper will automatically set the `PaperTrail.controller_info`
 value to `{}` as well, again, to help prevent data spillover between tests.
