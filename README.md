@@ -22,6 +22,8 @@ has been destroyed.
 
 ## Table of Contents
 
+<!-- toc -->
+
 - [1. Introduction](#1-introduction)
   - [1.a. Compatibility](#1a-compatibility)
   - [1.b. Installation](#1b-installation)
@@ -42,10 +44,9 @@ has been destroyed.
 - [4. Saving More Information About Versions](#4-saving-more-information-about-versions)
   - [4.a. Finding Out Who Was Responsible For A Change](#4a-finding-out-who-was-responsible-for-a-change)
   - [4.b. Associations](#4b-associations)
-    - [4.b.1. Known Issues](#4b1-known-issues)
-  - [4.c. Storing metadata](#4c-storing-metadata)
+  - [4.c. Storing Metadata](#4c-storing-metadata)
 - [5. ActiveRecord](#5-activerecord)
-  - [5.a. Single Table Inheritance](#5a-single-table-inheritance-sti)
+  - [5.a. Single Table Inheritance (STI)](#5a-single-table-inheritance-sti)
   - [5.b. Configuring the `versions` Association](#5b-configuring-the-versions-association)
   - [5.c. Generators](#5c-generators)
   - [5.d. Protected Attributes](#5d-protected-attributes)
@@ -53,12 +54,21 @@ has been destroyed.
   - [6.a. Custom Version Classes](#6a-custom-version-classes)
   - [6.b. Custom Serializer](#6b-custom-serializer)
 - [7. Testing](#7-testing)
-  - [7.a Minitest](#7a-minitest)
-  - [7.b RSpec](#7b-rspec)
-  - [7.c Cucumber](#7c-cucumber)
-  - [7.d Spork](#7d-spork)
-  - [7.e Zeus or Spring](#7e-zeus-or-spring)
+  - [7.a. Minitest](#7a-minitest)
+  - [7.b. RSpec](#7b-rspec)
+  - [7.c. Cucumber](#7c-cucumber)
+  - [7.d. Spork](#7d-spork)
+  - [7.e. Zeus or Spring](#7e-zeus-or-spring)
 - [8. Integration with Other Libraries](#8-integration-with-other-libraries)
+- [9. Related Libraries and Ports](#9-related-libraries-and-ports)
+- [Articles](#articles)
+- [Problems](#problems)
+- [Contributors](#contributors)
+- [Contributing](#contributing)
+- [Inspirations](#inspirations)
+- [Intellectual Property](#intellectual-property)
+
+<!-- tocstop -->
 
 ## 1. Introduction
 
