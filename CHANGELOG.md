@@ -19,8 +19,9 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 - Removed deprecated `Version#originator`, use `#paper_trail_originator`
 - Using paper_trail.on_destroy(:after) with ActiveRecord's
   belongs_to_required_by_default will produce an error instead of a warning.
-- Removed `warn_about_not_setting_whodunnit` controller method. Please remove
-  callbacks like `skip_after_action :warn_about_not_setting_whodunnit`.
+- Removed the `warn_about_not_setting_whodunnit` controller method. This will
+  only be a problem for you if you are skipping it, eg.
+  `skip_after_action :warn_about_not_setting_whodunnit`, which few people did.
 
 ### Deprecated
 

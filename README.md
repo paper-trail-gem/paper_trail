@@ -483,6 +483,7 @@ Add a `paper_trail_enabled_for_controller` method to your controller.
 ```ruby
 class ApplicationController < ActionController::Base
   def paper_trail_enabled_for_controller
+    # Don't omit `super` without a good reason.
     super && request.user_agent != 'Disable User-Agent'
   end
 end
