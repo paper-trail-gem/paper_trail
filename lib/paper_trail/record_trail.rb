@@ -27,6 +27,7 @@ module PaperTrail
     # > instead, similar to the other branch in reify_has_one.
     # > -Sean Griffin (https://github.com/airblade/paper_trail/pull/899)
     #
+    # @api private
     def appear_as_new_record
       @record.instance_eval {
         alias :old_new_record? :new_record?
@@ -137,6 +138,8 @@ module PaperTrail
     end
 
     # Updates `data` from the model's `meta` option and from `controller_info`.
+    # Metadata is always recorded; that means all three events (create, update,
+    # destroy) and `update_columns`.
     # @api private
     def merge_metadata_into(data)
       merge_metadata_from_model_into(data)
@@ -204,6 +207,8 @@ module PaperTrail
 
     # Returns hash of attributes (with appropriate attributes serialized),
     # omitting attributes to be skipped.
+    #
+    # @api private
     def object_attrs_for_paper_trail
       attrs = attributes_before_change.except(*@record.paper_trail_options[:skip])
       AttributeSerializers::ObjectAttribute.new(@record.class).serialize(attrs)
@@ -211,11 +216,15 @@ module PaperTrail
     end
 
     # Returns who put `@record` into its current state.
+    #
+    # @api public
     def originator
       (source_version || versions.last).try(:whodunnit)
     end
 
     # Returns the object (not a Version) as it was most recently.
+    #
+    # @api public
     def previous_version
       (source_version ? source_version.previous : versions.last).try(:reify)
     end
@@ -248,7 +257,11 @@ module PaperTrail
       merge_metadata_into(data)
     end
 
-    def record_destroy
+    # `recording_order` is "after" or "before". See ModelConfig#on_destroy.
+    #
+    # @api private
+    def record_destroy(recording_order)
+      @in_after_callback = recording_order == "after"
       if enabled? && !@record.new_record?
         version = @record.class.paper_trail.version_class.create(data_for_destroy)
         if version.errors.any?
@@ -260,6 +273,8 @@ module PaperTrail
           save_associations(version)
         end
       end
+    ensure
+      @in_after_callback = false
     end
 
     # Returns data for record destroy
@@ -284,8 +299,8 @@ module PaperTrail
         @record.class.paper_trail.version_class.column_names.include?("object_changes")
     end
 
-    def record_update(force)
-      @in_after_callback = true
+    def record_update(force:, in_after_callback:)
+      @in_after_callback = in_after_callback
       if enabled? && (force || changed_notably?)
         versions_assoc = @record.send(@record.class.versions_association_name)
         version = versions_assoc.create(data_for_update)
@@ -300,7 +315,9 @@ module PaperTrail
       @in_after_callback = false
     end
 
-    # Returns data for record_update
+    # Used during `record_update`, returns a hash of data suitable for an AR
+    # `create`. That is, all the attributes of the nascent `Version` record.
+    #
     # @api private
     def data_for_update
       data = {
@@ -351,6 +368,7 @@ module PaperTrail
     # column, then a hash can be used in the assignment, otherwise the column
     # is a `text` column, and we must perform the serialization here, using
     # `PaperTrail.serializer`.
+    #
     # @api private
     def recordable_object
       if @record.class.paper_trail.version_class.object_col_is_json?
@@ -365,6 +383,7 @@ module PaperTrail
     # a postgres `json` column, then a hash can be used in the assignment,
     # otherwise the column is a `text` column, and we must perform the
     # serialization here, using `PaperTrail.serializer`.
+    #
     # @api private
     def recordable_object_changes(changes)
       if @record.class.paper_trail.version_class.object_changes_col_is_json?
@@ -428,14 +447,21 @@ module PaperTrail
       version
     end
 
-    # Mimics the `touch` method from `ActiveRecord::Persistence`, but also
-    # creates a version. A version is created regardless of options such as
-    # `:on`, `:if`, or `:unless`.
+    # Mimics the `touch` method from `ActiveRecord::Persistence` (without
+    # actually calling `touch`), but also creates a version.
     #
-    # TODO: look into leveraging the `after_touch` callback from
-    # `ActiveRecord` to allow the regular `touch` method to generate a version
-    # as normal. May make sense to switch the `record_update` method to
-    # leverage an `after_update` callback anyways (likely for v4.0.0)
+    # A version is created regardless of options such as `:on`, `:if`, or
+    # `:unless`.
+    #
+    # This is an "update" event. That is, we record the same data we would in
+    # the case of a normal AR `update`.
+    #
+    # Some advanced PT users disable all callbacks (eg. `has_paper_trail(on:
+    # [])`) and use only this method, giving them complete control over when
+    # version records are inserted. It's unclear under which specific
+    # circumstances this technique should be adopted.
+    #
+    # @api public
     def touch_with_version(name = nil)
       unless @record.persisted?
         raise ::ActiveRecord::ActiveRecordError, "can not touch on a new record object"
@@ -446,7 +472,9 @@ module PaperTrail
       attributes.each { |column|
         @record.send(:write_attribute, column, current_time)
       }
-      record_update(true) unless will_record_after_update?
+      unless will_record_after_update?
+        record_update(force: true, in_after_callback: false)
+      end
       @record.save!(validate: false)
     end
 
@@ -520,6 +548,9 @@ module PaperTrail
       data[:transaction_id] = PaperTrail.request.transaction_id
     end
 
+    # Rails 5.1 changed the API of `ActiveRecord::Dirty`. See
+    # https://github.com/airblade/paper_trail/pull/899
+    #
     # @api private
     def attribute_changed_in_latest_version?(attr_name)
       if @in_after_callback && RAILS_GTE_5_1
@@ -529,15 +560,30 @@ module PaperTrail
       end
     end
 
+    # Rails 5.1 changed the API of `ActiveRecord::Dirty`. See
+    # https://github.com/airblade/paper_trail/pull/899
+    #
+    # Event can be any of the three (create, update, destroy).
+    #
     # @api private
     def attribute_in_previous_version(attr_name)
-      if @in_after_callback && RAILS_GTE_5_1
-        @record.attribute_before_last_save(attr_name.to_s)
+      if RAILS_GTE_5_1
+        if @in_after_callback
+          @record.attribute_before_last_save(attr_name.to_s)
+        else
+          # Either we are doing a `touch_with_version` or `record_destroy`.
+          # Other events, like `record_create`, can only be done in an
+          # after-callback.
+          @record.attribute_in_database(attr_name.to_s)
+        end
       else
         @record.attribute_was(attr_name.to_s)
       end
     end
 
+    # Rails 5.1 changed the API of `ActiveRecord::Dirty`. See
+    # https://github.com/airblade/paper_trail/pull/899
+    #
     # @api private
     def changed_in_latest_version
       if @in_after_callback && RAILS_GTE_5_1
@@ -547,6 +593,9 @@ module PaperTrail
       end
     end
 
+    # Rails 5.1 changed the API of `ActiveRecord::Dirty`. See
+    # https://github.com/airblade/paper_trail/pull/899
+    #
     # @api private
     def changes_in_latest_version
       if @in_after_callback && RAILS_GTE_5_1
@@ -557,6 +606,7 @@ module PaperTrail
     end
 
     # Given a HABTM association, returns an array of ids.
+    #
     # @api private
     def habtm_assoc_ids(habtm_assoc)
       current = @record.send(habtm_assoc.name).to_a.map(&:id) # TODO: `pluck` would use less memory

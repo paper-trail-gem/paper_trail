@@ -63,6 +63,8 @@ module PaperTrail
     end
 
     # Adds a callback that records a version after a "create" event.
+    #
+    # @api public
     def on_create
       @model_class.after_create { |r|
         r.paper_trail.record_create if r.paper_trail.save_version?
@@ -72,6 +74,8 @@ module PaperTrail
     end
 
     # Adds a callback that records a version before or after a "destroy" event.
+    #
+    # @api public
     def on_destroy(recording_order = "before")
       unless %w[after before].include?(recording_order.to_s)
         raise ArgumentError, 'recording order can only be "after" or "before"'
@@ -83,7 +87,10 @@ module PaperTrail
 
       @model_class.send(
         "#{recording_order}_destroy",
-        ->(r) { r.paper_trail.record_destroy if r.paper_trail.save_version? }
+        lambda do |r|
+          return unless r.paper_trail.save_version?
+          r.paper_trail.record_destroy(recording_order)
+        end
       )
 
       return if @model_class.paper_trail_options[:on].include?(:destroy)
@@ -91,12 +98,16 @@ module PaperTrail
     end
 
     # Adds a callback that records a version after an "update" event.
+    #
+    # @api public
     def on_update
       @model_class.before_save { |r|
         r.paper_trail.reset_timestamp_attrs_for_update_if_needed
       }
       @model_class.after_update { |r|
-        r.paper_trail.record_update(nil) if r.paper_trail.save_version?
+        if r.paper_trail.save_version?
+          r.paper_trail.record_update(force: false, in_after_callback: true)
+        end
       }
       @model_class.after_update { |r|
         r.paper_trail.clear_version_instance

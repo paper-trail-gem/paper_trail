@@ -17,7 +17,9 @@ module On
         record = described_class.create(name: "Alice")
         record.paper_trail.touch_with_version
         expect(record.versions.length).to(eq(1))
-        expect(record.versions.first.event).to(eq("update"))
+        v = record.versions.first
+        expect(v.event).to(eq("update"))
+        expect(v.object_deserialized.fetch("name")).to eq("Alice")
       end
     end
 

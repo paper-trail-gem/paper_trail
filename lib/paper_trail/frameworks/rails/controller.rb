@@ -20,6 +20,8 @@ module PaperTrail
       #
       # Override this method in your controller to call a different
       # method, e.g. `current_person`, or anything you like.
+      #
+      # @api public
       def user_for_paper_trail
         return unless defined?(current_user)
         ActiveSupport::VERSION::MAJOR >= 4 ? current_user.try!(:id) : current_user.try(:id)
@@ -45,6 +47,8 @@ module PaperTrail
       # Use the `:meta` option to
       # `PaperTrail::Model::ClassMethods.has_paper_trail` to store any extra
       # model-level data you need.
+      #
+      # @api public
       def info_for_paper_trail
         {}
       end
@@ -54,6 +58,15 @@ module PaperTrail
       #
       # Override this method in your controller to specify when PaperTrail
       # should be off.
+      #
+      # ```
+      # def paper_trail_enabled_for_controller
+      #   # Don't omit `super` without a good reason.
+      #   super && request.user_agent != 'Disable User-Agent'
+      # end
+      # ```
+      #
+      # @api public
       def paper_trail_enabled_for_controller
         ::PaperTrail.enabled?
       end
@@ -62,11 +75,15 @@ module PaperTrail
 
       # Tells PaperTrail whether versions should be saved in the current
       # request.
+      #
+      # @api public
       def set_paper_trail_enabled_for_controller
         ::PaperTrail.request.enabled_for_controller = paper_trail_enabled_for_controller
       end
 
       # Tells PaperTrail who is responsible for any changes that occur.
+      #
+      # @api public
       def set_paper_trail_whodunnit
         if ::PaperTrail.request.enabled_for_controller?
           ::PaperTrail.request.whodunnit = user_for_paper_trail
@@ -75,6 +92,8 @@ module PaperTrail
 
       # Tells PaperTrail any information from the controller you want to store
       # alongside any changes that occur.
+      #
+      # @api public
       def set_paper_trail_controller_info
         if ::PaperTrail.request.enabled_for_controller?
           ::PaperTrail.request.controller_info = info_for_paper_trail
