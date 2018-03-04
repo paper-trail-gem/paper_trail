@@ -43,6 +43,9 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
+- [#1047](https://github.com/airblade/paper_trail/issues/1047) - A rare issue
+  where `touch_with_version` saved less data than expected, but only when the
+  update callback was not installed, eg. `has_paper_trail(on: [])`
 - [#1042](https://github.com/airblade/paper_trail/issues/1042) - A rare issue
   with load order when using PT outside of rails
 

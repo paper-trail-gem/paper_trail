@@ -299,8 +299,8 @@ module PaperTrail
         @record.class.paper_trail.version_class.column_names.include?("object_changes")
     end
 
-    def record_update(force)
-      @in_after_callback = true
+    def record_update(force:, in_after_callback:)
+      @in_after_callback = in_after_callback
       if enabled? && (force || changed_notably?)
         versions_assoc = @record.send(@record.class.versions_association_name)
         version = versions_assoc.create(data_for_update)
@@ -447,17 +447,21 @@ module PaperTrail
       version
     end
 
-    # Mimics the `touch` method from `ActiveRecord::Persistence`, but also
-    # creates a version. A version is created regardless of options such as
-    # `:on`, `:if`, or `:unless`.
+    # Mimics the `touch` method from `ActiveRecord::Persistence` (without
+    # actually calling `touch`), but also creates a version.
+    #
+    # A version is created regardless of options such as `:on`, `:if`, or
+    # `:unless`.
     #
     # This is an "update" event. That is, we record the same data we would in
     # the case of a normal AR `update`.
     #
-    # TODO: look into leveraging the `after_touch` callback from
-    # `ActiveRecord` to allow the regular `touch` method to generate a version
-    # as normal. May make sense to switch the `record_update` method to
-    # leverage an `after_update` callback anyways (likely for v4.0.0)
+    # Some advanced PT users disable all callbacks (eg. `has_paper_trail(on:
+    # [])`) and use only this method, giving them complete control over when
+    # version records are inserted. It's unclear under which specific
+    # circumstances this technique should be adopted.
+    #
+    # @api public
     def touch_with_version(name = nil)
       unless @record.persisted?
         raise ::ActiveRecord::ActiveRecordError, "can not touch on a new record object"
@@ -468,7 +472,9 @@ module PaperTrail
       attributes.each { |column|
         @record.send(:write_attribute, column, current_time)
       }
-      record_update(true) unless will_record_after_update?
+      unless will_record_after_update?
+        record_update(force: true, in_after_callback: false)
+      end
       @record.save!(validate: false)
     end
 
@@ -556,10 +562,20 @@ module PaperTrail
 
     # Rails 5.1 changed the API of `ActiveRecord::Dirty`. See
     # https://github.com/airblade/paper_trail/pull/899
+    #
+    # Event can be any of the three (create, update, destroy).
+    #
     # @api private
     def attribute_in_previous_version(attr_name)
-      if @in_after_callback && RAILS_GTE_5_1
-        @record.attribute_before_last_save(attr_name.to_s)
+      if RAILS_GTE_5_1
+        if @in_after_callback
+          @record.attribute_before_last_save(attr_name.to_s)
+        else
+          # Either we are doing a `touch_with_version` or `record_destroy`.
+          # Other events, like `record_create`, can only be done in an
+          # after-callback.
+          @record.attribute_in_database(attr_name.to_s)
+        end
       else
         @record.attribute_was(attr_name.to_s)
       end

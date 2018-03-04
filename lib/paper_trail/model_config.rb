@@ -105,7 +105,9 @@ module PaperTrail
         r.paper_trail.reset_timestamp_attrs_for_update_if_needed
       }
       @model_class.after_update { |r|
-        r.paper_trail.record_update(nil) if r.paper_trail.save_version?
+        if r.paper_trail.save_version?
+          r.paper_trail.record_update(force: false, in_after_callback: true)
+        end
       }
       @model_class.after_update { |r|
         r.paper_trail.clear_version_instance
