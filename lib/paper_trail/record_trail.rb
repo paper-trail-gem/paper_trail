@@ -257,7 +257,11 @@ module PaperTrail
       merge_metadata_into(data)
     end
 
-    def record_destroy
+    # `recording_order` is "after" or "before". See ModelConfig#on_destroy.
+    #
+    # @api private
+    def record_destroy(recording_order)
+      @in_after_callback = recording_order == "after"
       if enabled? && !@record.new_record?
         version = @record.class.paper_trail.version_class.create(data_for_destroy)
         if version.errors.any?
@@ -269,6 +273,8 @@ module PaperTrail
           save_associations(version)
         end
       end
+    ensure
+      @in_after_callback = false
     end
 
     # Returns data for record destroy

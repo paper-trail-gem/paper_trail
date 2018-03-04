@@ -87,7 +87,10 @@ module PaperTrail
 
       @model_class.send(
         "#{recording_order}_destroy",
-        ->(r) { r.paper_trail.record_destroy if r.paper_trail.save_version? }
+        lambda do |r|
+          return unless r.paper_trail.save_version?
+          r.paper_trail.record_destroy(recording_order)
+        end
       )
 
       return if @model_class.paper_trail_options[:on].include?(:destroy)
