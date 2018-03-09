@@ -472,10 +472,10 @@ module PaperTrail
       attributes.each { |column|
         @record.send(:write_attribute, column, current_time)
       }
-      record_update(true)
       @record.paper_trail.without_versioning do
         @record.save!(validate: false)
       end
+      record_update(true)
     end
 
     # Like the `update_column` method from `ActiveRecord::Persistence`, but also
