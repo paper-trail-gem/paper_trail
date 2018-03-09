@@ -475,7 +475,7 @@ module PaperTrail
       @record.paper_trail.without_versioning do
         @record.save!(validate: false)
       end
-      record_update(true)
+      record_update(force: true, in_after_callback: false)
     end
 
     # Like the `update_column` method from `ActiveRecord::Persistence`, but also
