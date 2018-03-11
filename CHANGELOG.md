@@ -12,7 +12,6 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 - PaperTrail now uses `frozen_string_literal`, so you should assume that all
   strings it returns are frozen.
 - Using `where_object_changes` to read YAML from a text column will now raise
-- [#1051](https://github.com/airblade/paper_trail/issues/1051) Fix `touch_with_version` does not work with conditional options
   error, was deprecated in 8.1.0.
 
 ### Breaking Changes, Minor
@@ -44,6 +43,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
+- [#1051](https://github.com/airblade/paper_trail/issues/1051) - `touch_with_version`
+  should always create a version, regardles of the `:only` option
 - [#1047](https://github.com/airblade/paper_trail/issues/1047) - A rare issue
   where `touch_with_version` saved less data than expected, but only when the
   update callback was not installed, eg. `has_paper_trail(on: [])`
