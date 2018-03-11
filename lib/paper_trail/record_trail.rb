@@ -472,10 +472,10 @@ module PaperTrail
       attributes.each { |column|
         @record.send(:write_attribute, column, current_time)
       }
-      unless will_record_after_update?
-        record_update(force: true, in_after_callback: false)
+      @record.paper_trail.without_versioning do
+        @record.save!(validate: false)
       end
-      @record.save!(validate: false)
+      record_update(force: true, in_after_callback: false)
     end
 
     # Like the `update_column` method from `ActiveRecord::Persistence`, but also
@@ -649,13 +649,6 @@ module PaperTrail
     def save_habtm_association?(assoc)
       @record.class.paper_trail_save_join_tables.include?(assoc.name) ||
         PaperTrail.request.enabled_for_model?(assoc.klass)
-    end
-
-    # Returns true if `save` will cause `record_update`
-    # to be called via the `after_update` callback.
-    def will_record_after_update?
-      on = @record.paper_trail_options[:on]
-      on.nil? || on.include?(:update)
     end
 
     def update_transaction_id(version)
