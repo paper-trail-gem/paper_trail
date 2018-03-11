@@ -5,10 +5,42 @@ module PaperTrail
     # Reify a single `has_one` association of `model`.
     # @api private
     module HasOne
+      # A more helpful error message, instead of the AssociationTypeMismatch
+      # you would get if, eg. we were to try to assign a Bicycle to the :car
+      # association (before, if there were multiple records we would just take
+      # the first and hope for the best).
+      # @api private
+      class FoundMoreThanOne < RuntimeError
+        MESSAGE_FMT = <<~STR
+          Unable to reify has_one association. Expected to find one %s,
+          but found %d.
+
+          This is a known issue, and a good example of why association tracking
+          is an experimental feature that should not be used in production.
+
+          That said, this is a rare error. In spec/models/person_spec.rb we
+          reproduce it by having two STI models with the same foreign_key (Car
+          and Bicycle are both Vehicles and the FK for both is owner_id)
+
+          If you'd like to help fix this error, please read
+          https://github.com/airblade/paper_trail/issues/594
+          and see spec/models/person_spec.rb
+        STR
+
+        def initialize(base_class_name, num_records_found)
+          @base_class_name = base_class_name.to_s
+          @num_records_found = num_records_found.to_i
+        end
+
+        def message
+          format(MESSAGE_FMT, @base_class_name, @num_records_found)
+        end
+      end
+
       class << self
         # @api private
         def reify(assoc, model, options, transaction_id)
-          version = load_version_for_has_one(assoc, model, transaction_id, options[:version_at])
+          version = load_version(assoc, model, transaction_id, options[:version_at])
           return unless version
           if version.event == "create"
             create_event(assoc, model, options)
@@ -33,15 +65,29 @@ module PaperTrail
         # Given a has-one association `assoc` on `model`, return the version
         # record from the point in time identified by `transaction_id` or `version_at`.
         # @api private
-        def load_version_for_has_one(assoc, model, transaction_id, version_at)
+        def load_version(assoc, model, transaction_id, version_at)
+          base_class_name = assoc.klass.base_class.name
+          versions = load_versions(assoc, model, transaction_id, version_at, base_class_name)
+          case versions.length
+          when 0
+            nil
+          when 1
+            versions.first
+          else
+            raise FoundMoreThanOne.new(base_class_name, versions.length)
+          end
+        end
+
+        # @api private
+        def load_versions(assoc, model, transaction_id, version_at, base_class_name)
           version_table_name = model.class.paper_trail.version_class.table_name
           model.class.paper_trail.version_class.joins(:version_associations).
             where("version_associations.foreign_key_name = ?", assoc.foreign_key).
             where("version_associations.foreign_key_id = ?", model.id).
-            where("#{version_table_name}.item_type = ?", assoc.klass.base_class.name).
+            where("#{version_table_name}.item_type = ?", base_class_name).
             where("created_at >= ? OR transaction_id = ?", version_at, transaction_id).
             order("#{version_table_name}.id ASC").
-            first
+            load
         end
 
         # @api private

@@ -50,6 +50,10 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
   update callback was not installed, eg. `has_paper_trail(on: [])`
 - [#1042](https://github.com/airblade/paper_trail/issues/1042) - A rare issue
   with load order when using PT outside of rails
+- [#594](https://github.com/airblade/paper_trail/issues/594) - Improved the
+  error message for a very rare issue in the experimentatl association tracking
+  feature involving two has_one associations, referencing STI models with the
+  same base class, and the same foreign_key.
 
 ## 8.1.2 (2017-12-22)
 
