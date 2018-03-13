@@ -56,15 +56,15 @@ RSpec.describe(::PaperTrail, versioning: true) do
     context "and then updated without any changes" do
       before { @widget.touch }
 
-      it "not have a new version" do
-        expect(@widget.versions.length).to(eq(1))
+      it "to have two previous versions" do
+        expect(@widget.versions.length).to(eq(2))
       end
     end
 
     context "and then updated with changes" do
       before { @widget.update_attributes(name: "Harry") }
 
-      it "have two previous versions" do
+      it "have three previous versions" do
         expect(@widget.versions.length).to(eq(2))
       end
 

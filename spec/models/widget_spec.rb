@@ -250,6 +250,14 @@ RSpec.describe Widget, type: :model do
     end
   end
 
+  describe "touch", versioning: true do
+    it "creates a version" do
+      expect { widget.touch }.to change {
+        widget.versions.count
+      }.by(+1)
+    end
+  end
+
   describe ".paper_trail.update_columns", versioning: true do
     it "creates a version record" do
       widget = Widget.create
