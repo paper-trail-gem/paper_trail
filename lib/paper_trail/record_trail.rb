@@ -570,7 +570,7 @@ module PaperTrail
     # Rails 5.1 changed the API of `ActiveRecord::Dirty`. See
     # https://github.com/airblade/paper_trail/pull/899
     #
-    # Event can be any of the following (create, update, destroy, touch).
+    # Event can be any of the three (create, update, destroy).
     #
     # @api private
     def attribute_in_previous_version(attr_name)

@@ -263,8 +263,9 @@ RSpec.describe Widget, type: :model do
     it "does not create a version using without_versioning" do
       count = widget.versions.count
       widget.paper_trail.without_versioning do
-        expect(count).to eq(count)
+        widget.touch
       end
+      expect(count).to eq(count)
     end
   end
 

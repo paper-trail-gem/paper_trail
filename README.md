@@ -711,7 +711,9 @@ At some point you may want to trigger a new version to be created. To do this we
 widget.touch
 ```
 
-Note if you are using the `:on` option in your model you must specify the `touch` event also. For example:
+The new versions event will be saved as `update`.
+
+If you are using the `:on` option in your model you must specify the `touch` event also. For example:
 
 ```ruby
 has_paper_trail on: [:update, :destroy, :touch]
