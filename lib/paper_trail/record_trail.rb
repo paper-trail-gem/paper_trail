@@ -7,6 +7,12 @@ module PaperTrail
       my_model_instance.paper_trail.whodunnit('John') is deprecated,
       please use PaperTrail.request(whodunnit: 'John')
     STR
+
+    DPR_TOUCH_WITH_VERSION = <<-STR.squish.freeze
+      my_model_instance.paper_trail.touch_with_version is deprecated,
+      please use my_model_instance.touch
+    STR
+
     RAILS_GTE_5_1 = ::ActiveRecord.gem_version >= ::Gem::Version.new("5.1.0.beta1")
 
     def initialize(record)
@@ -461,8 +467,9 @@ module PaperTrail
     # version records are inserted. It's unclear under which specific
     # circumstances this technique should be adopted.
     #
-    # @api public
+    # @deprecated
     def touch_with_version(name = nil)
+      ::ActiveSupport::Deprecation.warn(DPR_TOUCH_WITH_VERSION, caller(1))
       unless @record.persisted?
         raise ::ActiveRecord::ActiveRecordError, "can not touch on a new record object"
       end
@@ -563,7 +570,7 @@ module PaperTrail
     # Rails 5.1 changed the API of `ActiveRecord::Dirty`. See
     # https://github.com/airblade/paper_trail/pull/899
     #
-    # Event can be any of the three (create, update, destroy).
+    # Event can be any of the following (create, update, destroy, touch).
     #
     # @api private
     def attribute_in_previous_version(attr_name)
@@ -571,9 +578,8 @@ module PaperTrail
         if @in_after_callback
           @record.attribute_before_last_save(attr_name.to_s)
         else
-          # Either we are doing a `touch_with_version` or `record_destroy`.
-          # Other events, like `record_create`, can only be done in an
-          # after-callback.
+          # We are performing a `record_destroy`. Other events,
+          # like `record_create`, can only be done in an after-callback.
           @record.attribute_in_database(attr_name.to_s)
         end
       else

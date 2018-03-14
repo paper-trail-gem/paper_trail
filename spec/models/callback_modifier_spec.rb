@@ -67,7 +67,7 @@ RSpec.describe CallbackModifier, type: :model, versioning: true do
   context "when no callback-method used" do
     it "sets paper_trail_options[:on] to [:create, :update, :destroy]" do
       modifier = DefaultModifier.create!(some_content: FFaker::Lorem.sentence)
-      expect(modifier.paper_trail_options[:on]).to eq %i[create update destroy]
+      expect(modifier.paper_trail_options[:on]).to eq %i[create update destroy touch]
     end
 
     it "tracks destroy" do

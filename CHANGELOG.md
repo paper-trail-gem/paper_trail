@@ -25,12 +25,14 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Deprecated
 
+- [#1063](https://github.com/airblade/paper_trail/pull/1063) - `touch_with_version` is deprecated in favor of using the original AR `touch` method
 - [#1033](https://github.com/airblade/paper_trail/pull/1033) - Request variables
   are now set using eg. `PaperTrail.request.whodunnit=` and the old way,
   `PaperTrail.whodunnit=` is deprecated.
 
 ### Added
 
+- [#1063](https://github.com/airblade/paper_trail/pull/1063) - AR `touch` method now creates a version if the `:on` option includes `touch`. By default it also includes the `touch` event now.
 - [#1033](https://github.com/airblade/paper_trail/pull/1033) -
   Set request variables temporarily using a block, eg.
   `PaperTrail.request(whodunnit: 'Jared') do .. end`
