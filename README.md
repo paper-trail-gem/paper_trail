@@ -502,18 +502,16 @@ PaperTrail.request.enable_model(Widget)
 PaperTrail.request.disable_model(Widget)
 ```
 
-This setting, as with all `PaperTrail.request` settings, affects only the
-current request, not all threads.
-
-#### Per Method
-
-You can call a method without creating a new version using `without_versioning`.
+Or in a block by using `without_versioning`
 
 ```ruby
 Widget.paper_trail.without_versioning do
   @widget.update_attributes name: 'Ford'
 end
 ```
+
+These methods (including `without_versioning`), as with all `PaperTrail.request` 
+settings, affects only the current request, not all threads.
 
 ### 2.e. Limiting the Number of Versions Created
 
