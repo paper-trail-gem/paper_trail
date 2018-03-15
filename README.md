@@ -508,13 +508,6 @@ current request, not all threads.
 #### Per Method
 
 You can call a method without creating a new version using `without_versioning`.
- It takes either a method name as a symbol:
-
-```ruby
-Widget.paper_trail.without_versioning :destroy
-```
-
-Or a block:
 
 ```ruby
 Widget.paper_trail.without_versioning do
