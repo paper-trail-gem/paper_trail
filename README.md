@@ -511,19 +511,16 @@ You can call a method without creating a new version using `without_versioning`.
  It takes either a method name as a symbol:
 
 ```ruby
-@widget.paper_trail.without_versioning :destroy
+Widget.paper_trail.without_versioning :destroy
 ```
 
 Or a block:
 
 ```ruby
-@widget.paper_trail.without_versioning do
+Widget.paper_trail.without_versioning do
   @widget.update_attributes name: 'Ford'
 end
 ```
-
-During `without_versioning`, PaperTrail is disabled for the whole model
-(e.g. `Widget`), not just for the instance (e.g. `@widget`).
 
 ### 2.e. Limiting the Number of Versions Created
 

@@ -150,6 +150,25 @@ module PaperTrail
         who.respond_to?(:call) ? who.call : who
       end
 
+      # Executes the given method or block without creating a new version.
+      #
+      # @api public
+      def without_versioning(method = nil)
+        paper_trail_was_enabled = PaperTrail.request.enabled?
+        PaperTrail.request.disable_all
+        if method
+          if respond_to?(method)
+            public_send(method)
+          else
+            @record.send(method)
+          end
+        else
+          yield @record
+        end
+      ensure
+        PaperTrail.request.enable_all if paper_trail_was_enabled
+      end
+
       private
 
       # Returns a Hash, initializing with default values if necessary.

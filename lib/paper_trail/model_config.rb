@@ -142,6 +142,18 @@ module PaperTrail
       @_version_class ||= @model_class.version_class_name.constantize
     end
 
+    # Executes the given block without creating any new versions for that model.
+    #
+    # @api public
+    def without_versioning
+      paper_trail_was_enabled = PaperTrail.request.enabled_for_model?(@model_class)
+      PaperTrail.request.disable_model(@model_class)
+
+      yield
+    ensure
+      PaperTrail.request.enable_model(@model_class) if paper_trail_was_enabled
+    end
+
     private
 
     def active_record_gem_version
