@@ -478,6 +478,8 @@ config.paper_trail.enabled = false
 
 #### Per Request
 
+##### For Controllers
+
 Add a `paper_trail_enabled_for_controller` method to your controller.
 
 ```ruby
@@ -489,7 +491,23 @@ class ApplicationController < ActionController::Base
 end
 ```
 
-#### Per Class
+##### For All Models
+
+```ruby
+PaperTrail.request.enable_all_models
+PaperTrail.request.disable_all_models
+```
+
+Or a within a block using `without_versioning`:
+
+```ruby
+PaperTrail.request.without_versioning do
+  @widget.update_attributes(name: 'Ford')
+  @post.update_attributes(name: "Chevy vs Ford")
+end
+```
+
+##### Per Class
 
 ```ruby
 PaperTrail.request.enable_model(Widget)
@@ -499,7 +517,7 @@ PaperTrail.request.disable_model(Widget)
 This setting, as with all `PaperTrail.request` settings, affects only the
 current request, not all threads.
 
-#### Per Method
+##### Per Method
 
 You can call a method without creating a new version using `without_versioning`.
  It takes either a method name as a symbol:
