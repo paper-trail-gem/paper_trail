@@ -37,7 +37,9 @@ RSpec.describe PostWithStatus, type: :model do
         expect(post.versions.count).to eq(1)
         expect(post.status).to eq("draft")
         Timecop.travel 1.second.since # because MySQL lacks fractional seconds precision
+        allow(::ActiveSupport::Deprecation).to receive(:warn)
         post.paper_trail.touch_with_version
+        expect(::ActiveSupport::Deprecation).to have_received(:warn).once
         expect(post.versions.count).to eq(2)
         expect(post.versions.last[:object]).to include("status: 0")
         expect(post.paper_trail.previous_version.status).to eq("draft")

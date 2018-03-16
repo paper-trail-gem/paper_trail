@@ -15,7 +15,9 @@ module On
     describe "#touch_with_version" do
       it "creates a version record" do
         record = described_class.create(name: "Alice")
+        allow(::ActiveSupport::Deprecation).to receive(:warn)
         record.paper_trail.touch_with_version
+        expect(::ActiveSupport::Deprecation).to have_received(:warn).once
         expect(record.versions.length).to(eq(1))
         v = record.versions.first
         expect(v.event).to(eq("update"))

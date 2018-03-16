@@ -25,5 +25,13 @@ module On
         expect(record.versions.last.event).to(eq("banana"))
       end
     end
+
+    describe "#touch" do
+      it "does not create a version for the touch event" do
+        record = described_class.create(name: "Alice")
+        count = record.versions.count
+        expect(count).to eq(count)
+      end
+    end
   end
 end

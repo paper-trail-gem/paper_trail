@@ -189,9 +189,12 @@ RSpec.describe Article, type: :model, versioning: true do
   describe "#touch_with_version" do
     it "creates a version, ignoring the :only option" do
       article = described_class.create
+
+      allow(::ActiveSupport::Deprecation).to receive(:warn)
       expect { article.paper_trail.touch_with_version }.to change {
         ::PaperTrail::Version.count
       }.by(+1)
+      expect(::ActiveSupport::Deprecation).to have_received(:warn).once
     end
   end
 end

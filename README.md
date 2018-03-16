@@ -207,10 +207,6 @@ widget.paper_trail.previous_version
 # Returns the widget (not a version) as it became next.
 widget.paper_trail.next_version
 
-# Generates a version for a `touch` event (`widget.touch` does NOT generate a
-# version)
-widget.paper_trail.touch_with_version
-
 # Enable/disable PaperTrail, for Widget, for the current request (not all threads)
 PaperTrail.request.disable_model(Widget)
 PaperTrail.request.enable_model(Widget)
@@ -292,7 +288,7 @@ ignore `create` events:
 
 ```ruby
 class Article < ActiveRecord::Base
-  has_paper_trail on: [:update, :destroy]
+  has_paper_trail on: [:update, :destroy, :touch]
 end
 ```
 
@@ -337,6 +333,7 @@ class Article < ActiveRecord::Base
   paper_trail.on_destroy    # add destroy callback
   paper_trail.on_update     # etc.
   paper_trail.on_create
+  paper_trail.on_touch
 end
 ```
 
@@ -704,6 +701,22 @@ sql> delete from versions where created_at < 2010-06-01;
 
 ```ruby
 PaperTrail::Version.delete_all ['created_at < ?', 1.week.ago]
+```
+
+### 3.e. Trigger Version creation
+
+At some point you may want to trigger a new version to be created. To do this we utilize the AR `touch` method.
+
+```ruby
+widget.touch
+```
+
+The new versions event will be saved as `update`.
+
+If you are using the `:on` option in your model you must specify the `touch` event also. For example:
+
+```ruby
+has_paper_trail on: [:update, :destroy, :touch]
 ```
 
 ## 4. Saving More Information About Versions

@@ -116,11 +116,19 @@ module PaperTrail
       @model_class.paper_trail_options[:on] << :update
     end
 
+    # Adds a callback that records a version after a "touch" event.
+    # @api public
+    def on_touch
+      @model_class.after_touch { |r|
+        r.paper_trail.record_update(force: true, in_after_callback: true)
+      }
+    end
+
     # Set up `@model_class` for PaperTrail. Installs callbacks, associations,
     # "class attributes", instance methods, and more.
     # @api private
     def setup(options = {})
-      options[:on] ||= %i[create update destroy]
+      options[:on] ||= %i[create update destroy touch]
       options[:on] = Array(options[:on]) # Support single symbol
       @model_class.send :include, ::PaperTrail::Model::InstanceMethods
       setup_options(options)
