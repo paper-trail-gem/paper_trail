@@ -76,7 +76,7 @@ has been destroyed.
 
 | paper_trail    | branch     | tags   | ruby     | activerecord  |
 | -------------- | ---------- | ------ | -------- | ------------- |
-| unreleased     | master     |        | >= 2.2.0 | >= 4.2, < 6   |
+| unreleased     | master     |        | >= 2.3.0 | >= 4.2, < 6   |
 | 8              | master     | v8.x   | >= 2.2.0 | >= 4.2, < 6   |
 | 7              | 7-stable   | v7.x   | >= 2.1.0 | >= 4.0, < 6   |
 | 6              | 6-stable   | v6.x   | >= 1.9.3 | >= 4.0, < 6   |
@@ -283,20 +283,29 @@ configuration file such as `config/environments/test.rb`.
 
 ### 2.a. Choosing Lifecycle Events To Monitor
 
-You can choose which events to track with the `on` option.  For example, to
-ignore `create` events:
+You can choose which events to track with the `on` option.  For example, if
+you only want to track `update` events:
 
 ```ruby
 class Article < ActiveRecord::Base
-  has_paper_trail on: [:update, :destroy, :touch]
+  has_paper_trail on: [:update]
 end
 ```
 
-`has_paper_trail` installs callbacks for these lifecycle events. If there are
-other callbacks in your model, their order relative to those installed by
-PaperTrail may matter, so be aware of any potential interactions.
+`has_paper_trail` installs [callbacks][52] for the specified lifecycle events.
 
-#### Custom Event Name
+There are four potential callbacks, and the default is to install all four, ie.
+`on: [:create, :destroy, :touch, :update]`.
+
+#### The `versions.event` Column
+
+Your `versions` table has an `event` column with three possible values:
+
+| *event* | *callback*    |
+| ------- | ------------- |
+| create  | create        |
+| destroy | destroy       |
+| update  | touch, update |
 
 You may also have the `PaperTrail::Version` model save a custom string in its
 `event` field instead of the typical `create`, `update`, `destroy`. PaperTrail
@@ -319,13 +328,13 @@ a.versions.last.event                     # 'update'
 
 #### Controlling the Order of AR Callbacks
 
-The `has_paper_trail` method installs AR callbacks. If you need to control
+If there are other callbacks in your model, their order relative to those
+installed by `has_paper_trail` may matter. If you need to control
 their order, use the `paper_trail_on_*` methods.
 
 ```ruby
 class Article < ActiveRecord::Base
-
-  # Include PaperTrail, but do not add any callbacks yet. Passing the
+  # Include PaperTrail, but do not install any callbacks. Passing the
   # empty array to `:on` omits callbacks.
   has_paper_trail on: []
 
@@ -701,22 +710,6 @@ sql> delete from versions where created_at < 2010-06-01;
 
 ```ruby
 PaperTrail::Version.delete_all ['created_at < ?', 1.week.ago]
-```
-
-### 3.e. Trigger Version creation
-
-At some point you may want to trigger a new version to be created. To do this we utilize the AR `touch` method.
-
-```ruby
-widget.touch
-```
-
-The new versions event will be saved as `update`.
-
-If you are using the `:on` option in your model you must specify the `touch` event also. For example:
-
-```ruby
-has_paper_trail on: [:update, :destroy, :touch]
 ```
 
 ## 4. Saving More Information About Versions
@@ -1657,3 +1650,4 @@ Released under the MIT licence.
 [49]: https://github.com/ankit1910/paper_trail-globalid
 [50]: https://github.com/izelnakri/paper_trail
 [51]: https://github.com/rikkipitt/rails_admin_history_rollback
+[52]: http://guides.rubyonrails.org/active_record_callbacks.html

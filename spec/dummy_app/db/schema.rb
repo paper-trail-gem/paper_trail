@@ -170,6 +170,10 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.string "name", null: false
   end
 
+  create_table "on_touch", force: :cascade do |t|
+    t.string "name", null: false
+  end
+
   create_table "on_update", force: :cascade do |t|
     t.string "name", null: false
   end
