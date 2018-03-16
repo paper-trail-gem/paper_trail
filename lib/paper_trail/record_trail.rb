@@ -114,6 +114,7 @@ module PaperTrail
     def enabled?
       PaperTrail.enabled? &&
         PaperTrail.request.enabled_for_controller? &&
+        PaperTrail.request.enabled_for_all_models? &&
         PaperTrail.request.enabled_for_model?(@record.class)
     end
 

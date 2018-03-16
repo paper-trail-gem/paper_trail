@@ -84,6 +84,43 @@ module PaperTrail
           !!store.fetch(:"enabled_for_#{model}", true)
       end
 
+      # Switches PaperTrail off for all models in the curent request.
+      # @api public
+      def disable_all_models
+        enabled_for_all_models(false)
+      end
+
+      # Switches PaperTrail on for all models in the current request.
+      # @api public
+      def enable_all_models
+        enabled_for_all_models(true)
+      end
+
+      # Sets whether PaperTrail is enabled or disabled for all models in the
+      # current request.
+      # @api public
+      def enabled_for_all_models(value)
+        store[:enabled_for_all_models] = value
+      end
+
+      # Returns `true` if PaperTrail is enabled for all models in this current
+      # request, `false` otherwise.
+      # @api public
+      def enabled_for_all_models?
+        !!store.fetch(:enabled_for_all_models, true)
+      end
+
+      # Executes the given block without creating any new versions for all models.
+      # @api public
+      def without_versioning
+        paper_trail_was_enabled = PaperTrail.request.enabled_for_all_models?
+        PaperTrail.request.disable_all_models
+
+        yield
+      ensure
+        PaperTrail.request.enable_all_models if paper_trail_was_enabled
+      end
+
       # @api private
       def merge(options)
         options.to_h.each do |k, v|

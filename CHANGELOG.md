@@ -36,6 +36,9 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
+- [#1065](https://github.com/airblade/paper_trail/pull/1065) - `without_versioning` has
+  now been added to the request eg. `PaperTrail.request.without_versioning do .. end`
+- [#1065](https://github.com/airblade/paper_trail/pull/1065) - `enabled_for_all_models?`, `enabled_for_all_models(bool)`, `enable_for_all_models`, `disable_for_all_models` have now been added to the request eg. `PaperTrail.request.enabled_for_all_models?` etc.
 - [#1033](https://github.com/airblade/paper_trail/pull/1033) -
   Set request variables temporarily using a block, eg.
   `PaperTrail.request(whodunnit: 'Jared') do .. end`

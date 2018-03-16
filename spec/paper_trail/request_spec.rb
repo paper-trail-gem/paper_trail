@@ -35,6 +35,37 @@ module PaperTrail
       end
     end
 
+    describe ".enabled_for_all_models?" do
+      it "returns true" do
+        expect(PaperTrail.request.enabled_for_all_models?).to eq(true)
+      end
+    end
+
+    describe ".disable_all_models" do
+      it "sets enabled_for_all_models? to false" do
+        expect(PaperTrail.request.enabled_for_all_models?).to eq(true)
+        PaperTrail.request.disable_all_models
+        expect(PaperTrail.request.enabled_for_all_models?).to eq(false)
+      end
+
+      after do
+        PaperTrail.request.enable_all_models
+      end
+    end
+
+    describe ".enabled_for_all_models" do
+      it "sets enabled_for_all_models? to true" do
+        PaperTrail.request.enabled_for_all_models(false)
+        expect(PaperTrail.request.enabled_for_all_models?).to eq(false)
+        PaperTrail.request.enabled_for_all_models(true)
+        expect(PaperTrail.request.enabled_for_all_models?).to eq(true)
+      end
+
+      after do
+        PaperTrail.request.enable_all_models
+      end
+    end
+
     describe ".enabled_for_controller?" do
       it "returns true" do
         expect(PaperTrail.request.enabled_for_controller?).to eq(true)
@@ -173,6 +204,29 @@ module PaperTrail
             end
           end
         end
+      end
+    end
+
+    describe "#without_versioning" do
+      it "is thread-safe" do
+        enabled = nil
+        t1 = Thread.new do
+          PaperTrail.request.without_versioning do
+            sleep(0.01)
+            enabled = PaperTrail.request.enabled_for_all_models?
+            sleep(0.01)
+          end
+          enabled
+        end
+        # A second thread is timed so that it runs during the first thread's
+        # `without_versioning` block.
+        t2 = Thread.new do
+          sleep(0.005)
+          PaperTrail.request.enabled_for_all_models?
+        end
+        expect(t1.value).to eq(false)
+        expect(t2.value).to eq(true) # see? unaffected by t1
+        expect(PaperTrail.request.enabled_for_all_models?).to eq(true)
       end
     end
   end
