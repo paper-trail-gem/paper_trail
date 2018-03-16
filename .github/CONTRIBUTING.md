@@ -139,6 +139,15 @@ cd ../..
 
 Don't forget to commit changes to `schema.rb`.
 
+## Documentation
+
+### Generate the Table of Contents
+
+```
+yarn global add markdown-toc
+markdown-toc -i --maxdepth 3 --bullets='-' README.md
+```
+
 ## Releases
 
 1. Set the version in lib/paper_trail/version_number.rb

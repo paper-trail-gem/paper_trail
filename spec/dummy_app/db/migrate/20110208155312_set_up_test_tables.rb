@@ -32,6 +32,10 @@ class SetUpTestTables < (
       t.string :name, null: false
     end
 
+    create_table :on_touch, force: true do |t|
+      t.string :name, null: false
+    end
+
     create_table :on_update, force: true do |t|
       t.string :name, null: false
     end

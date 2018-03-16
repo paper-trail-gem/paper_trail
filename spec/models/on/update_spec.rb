@@ -27,10 +27,11 @@ module On
     end
 
     describe "#touch" do
-      it "does not create a version for the touch event" do
+      it "does not create a version" do
         record = described_class.create(name: "Alice")
-        count = record.versions.count
-        expect(count).to eq(count)
+        expect { record.touch }.not_to(
+          change { record.versions.count }
+        )
       end
     end
   end

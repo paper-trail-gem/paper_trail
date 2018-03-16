@@ -7,6 +7,9 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Breaking Changes, Major
 
+- [#1063](https://github.com/airblade/paper_trail/pull/1063) - `touch` will now
+  create a version. This can be configured with the `:on` option. See
+  documentation section 2.a. "Choosing Lifecycle Events To Monitor".
 - Drop support for ruby 2.2, [whose EoL is the end of March,
   2018](https://www.ruby-lang.org/en/news/2017/09/14/ruby-2-2-8-released/)
 - PaperTrail now uses `frozen_string_literal`, so you should assume that all
@@ -25,14 +28,14 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Deprecated
 
-- [#1063](https://github.com/airblade/paper_trail/pull/1063) - `touch_with_version` is deprecated in favor of using the original AR `touch` method
+- [#1063](https://github.com/airblade/paper_trail/pull/1063) -
+  `paper_trail.touch_with_version` is deprecated in favor of `touch`.
 - [#1033](https://github.com/airblade/paper_trail/pull/1033) - Request variables
   are now set using eg. `PaperTrail.request.whodunnit=` and the old way,
   `PaperTrail.whodunnit=` is deprecated.
 
 ### Added
 
-- [#1063](https://github.com/airblade/paper_trail/pull/1063) - AR `touch` method now creates a version if the `:on` option includes `touch`. By default it also includes the `touch` event now.
 - [#1033](https://github.com/airblade/paper_trail/pull/1033) -
   Set request variables temporarily using a block, eg.
   `PaperTrail.request(whodunnit: 'Jared') do .. end`
