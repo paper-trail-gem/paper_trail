@@ -27,7 +27,7 @@ RSpec.describe PaperTrail do
     it "is thread-safe" do
       enabled = nil
       t1 = Thread.new do
-        Widget.new.paper_trail.without_versioning do
+        Widget.paper_trail.without_versioning do
           sleep(0.01)
           enabled = described_class.request.enabled_for_model?(Widget)
           sleep(0.01)

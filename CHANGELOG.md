@@ -28,6 +28,10 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Deprecated
 
+- [#1064](https://github.com/airblade/paper_trail/pull/1064) - `without_versioning` has
+  now been moved to the model eg. `MyModel.paper_trail.without_versioning` and the old way,
+  `my_instance.paper_trail.without_versioning` is deprecated. Behaviour remains unchanged except 
+  that it no longer accepts a method name, it only accepts a block.
 - [#1063](https://github.com/airblade/paper_trail/pull/1063) -
   `paper_trail.touch_with_version` is deprecated in favor of `touch`.
 - [#1033](https://github.com/airblade/paper_trail/pull/1033) - Request variables
@@ -36,6 +40,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
+- [#1064](https://github.com/airblade/paper_trail/pull/1064) - `without_versioning` has
+  now been added to the model eg. `MyModel.paper_trail.without_versioning`
 - [#1033](https://github.com/airblade/paper_trail/pull/1033) -
   Set request variables temporarily using a block, eg.
   `PaperTrail.request(whodunnit: 'Jared') do .. end`

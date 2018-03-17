@@ -7,12 +7,14 @@ module PaperTrail
       my_model_instance.paper_trail.whodunnit('John') is deprecated,
       please use PaperTrail.request(whodunnit: 'John')
     STR
-
     DPR_TOUCH_WITH_VERSION = <<-STR.squish.freeze
       my_model_instance.paper_trail.touch_with_version is deprecated,
       please use my_model_instance.touch
     STR
-
+    DPR_WITHOUT_VERSIONING = <<-STR.squish.freeze
+      my_model_instance.paper_trail.without_versioning is deprecated,
+      please use MyModel.paper_trail.without_versioning
+    STR
     RAILS_GTE_5_1 = ::ActiveRecord.gem_version >= ::Gem::Version.new("5.1.0.beta1")
 
     def initialize(record)
@@ -479,7 +481,7 @@ module PaperTrail
       attributes.each { |column|
         @record.send(:write_attribute, column, current_time)
       }
-      @record.paper_trail.without_versioning do
+      @record.class.paper_trail.without_versioning do
         @record.save!(validate: false)
       end
       record_update(force: true, in_after_callback: false)
@@ -524,6 +526,7 @@ module PaperTrail
 
     # Executes the given method or block without creating a new version.
     def without_versioning(method = nil)
+      ::ActiveSupport::Deprecation.warn(DPR_WITHOUT_VERSIONING, caller(1))
       paper_trail_was_enabled = PaperTrail.request.enabled_for_model?(@record.class)
       PaperTrail.request.disable_model(@record.class)
       if method
