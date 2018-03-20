@@ -32,6 +32,7 @@ gemfile:
   - gemfiles/ar_4.2.gemfile
   - gemfiles/ar_5.0.gemfile
   - gemfiles/ar_5.1.gemfile
+  - gemfiles/ar_5.2.gemfile
 
 matrix:
   fast_finish: true
