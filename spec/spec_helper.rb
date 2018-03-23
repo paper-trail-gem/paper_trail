@@ -61,8 +61,11 @@ require "paper_trail/frameworks/rspec"
 require "ffaker"
 require "timecop"
 
-# Run any available migration
-ActiveRecord::Migrator.migrate File.expand_path("dummy_app/db/migrate/", __dir__)
+# Migrate
+require_relative "support/paper_trail_spec_migrator"
+::PaperTrailSpecMigrator.
+  new(::File.expand_path("dummy_app/db/migrate/", __dir__)).
+  migrate
 
 RSpec.configure do |config|
   config.fixture_path = "#{::Rails.root}/spec/fixtures"

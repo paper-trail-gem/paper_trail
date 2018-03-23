@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "paper_trail_spec_migrator"
+
 # This file copies the test database into locations for the `Foo` and `Bar`
 # namespace, then defines those namespaces, then establishes the sqlite3
 # connection for the namespaces to simulate an application with multiple
@@ -34,7 +36,8 @@ end
 Foo::Base.configurations = configs
 Foo::Base.establish_connection(:foo)
 ActiveRecord::Base.establish_connection(:foo)
-ActiveRecord::Migrator.migrate File.expand_path("#{db_directory}/migrate/", __FILE__)
+paper_trail_migrations_path = File.expand_path("#{db_directory}/migrate/", __FILE__)
+::PaperTrailSpecMigrator.new(paper_trail_migrations_path).migrate
 
 module Bar
   class Base < ActiveRecord::Base
@@ -53,5 +56,4 @@ end
 Bar::Base.configurations = configs
 Bar::Base.establish_connection(:bar)
 ActiveRecord::Base.establish_connection(:bar)
-
-ActiveRecord::Migrator.migrate File.expand_path("#{db_directory}/migrate/", __FILE__)
+::PaperTrailSpecMigrator.new(paper_trail_migrations_path).migrate
