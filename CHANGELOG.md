@@ -36,6 +36,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
+- [#1067](https://github.com/airblade/paper_trail/pull/1033) -
+  Add support to Rails 5.2.
 - [#1033](https://github.com/airblade/paper_trail/pull/1033) -
   Set request variables temporarily using a block, eg.
   `PaperTrail.request(whodunnit: 'Jared') do .. end`
