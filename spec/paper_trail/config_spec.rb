@@ -25,7 +25,9 @@ module PaperTrail
         end
 
         after do
-          PaperTrail.config.track_associations = true
+          ::ActiveSupport::Deprecation.silence do
+            PaperTrail.config.track_associations = true
+          end
         end
       end
     end

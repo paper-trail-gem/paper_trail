@@ -1,3 +1,5 @@
 # frozen_string_literal: true
 
-PaperTrail.config.track_associations = true
+::ActiveSupport::Deprecation.silence do
+  ::PaperTrail.config.track_associations = true
+end
