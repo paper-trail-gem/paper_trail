@@ -9,15 +9,10 @@ RSpec.describe "Articles management", type: :request, order: :defined do
     specify { expect(PaperTrail).not_to be_enabled }
 
     it "does not create a version" do
-      expect(PaperTrail.request).to be_enabled_for_controller
+      expect(PaperTrail.request).to be_enabled
       expect {
         post articles_path, params_wrapper(valid_params)
       }.not_to change(PaperTrail::Version, :count)
-    end
-
-    it "does not leak the state of the `PaperTrail.request.enabled_for_controller?` \
-        into the next test" do
-      expect(PaperTrail.request).to be_enabled_for_controller
     end
   end
 

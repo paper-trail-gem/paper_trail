@@ -57,16 +57,15 @@ module PaperTrail
 
       # Sets whether PaperTrail is enabled or disabled for the current request.
       # @api public
-      def enabled_for_controller=(value)
-        store[:request_enabled_for_controller] = value
+      def enabled=(value)
+        store[:enabled] = value
       end
 
       # Returns `true` if PaperTrail is enabled for the request, `false` otherwise.
-      #
       # See `PaperTrail::Rails::Controller#paper_trail_enabled_for_controller`.
       # @api public
-      def enabled_for_controller?
-        !!store[:request_enabled_for_controller]
+      def enabled?
+        !!store[:enabled]
       end
 
       # Sets whether PaperTrail is enabled or disabled for this model in the
@@ -156,7 +155,7 @@ module PaperTrail
       # @api private
       def store
         RequestStore.store[:paper_trail] ||= {
-          request_enabled_for_controller: true
+          enabled: true
         }
       end
 
@@ -169,7 +168,7 @@ module PaperTrail
           case k
           when :controller_info,
               /enabled_for_/,
-              :request_enabled_for_controller,
+              :enabled,
               :whodunnit
             next
           when :transaction_id

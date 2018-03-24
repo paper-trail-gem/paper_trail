@@ -113,7 +113,7 @@ module PaperTrail
     # @api private
     def enabled?
       PaperTrail.enabled? &&
-        PaperTrail.request.enabled_for_controller? &&
+        PaperTrail.request.enabled? &&
         PaperTrail.request.enabled_for_model?(@record.class)
     end
 

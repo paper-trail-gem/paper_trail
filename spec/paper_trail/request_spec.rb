@@ -35,22 +35,22 @@ module PaperTrail
       end
     end
 
-    describe ".enabled_for_controller?" do
+    describe ".enabled?" do
       it "returns true" do
-        expect(PaperTrail.request.enabled_for_controller?).to eq(true)
+        expect(PaperTrail.request.enabled?).to eq(true)
       end
     end
 
-    describe ".enabled_for_controller=" do
-      it "sets enabled_for_controller? to true" do
-        PaperTrail.request.enabled_for_controller = true
-        expect(PaperTrail.request.enabled_for_controller?).to eq(true)
-        PaperTrail.request.enabled_for_controller = false
-        expect(PaperTrail.request.enabled_for_controller?).to eq(false)
+    describe ".enabled=" do
+      it "sets enabled? to true" do
+        PaperTrail.request.enabled = true
+        expect(PaperTrail.request.enabled?).to eq(true)
+        PaperTrail.request.enabled = false
+        expect(PaperTrail.request.enabled?).to eq(false)
       end
 
       after do
-        PaperTrail.request.enabled_for_controller = true
+        PaperTrail.request.enabled = true
       end
     end
 
