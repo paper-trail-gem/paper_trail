@@ -176,6 +176,8 @@ auditing/versioning plugins store the After row.
 
 ### 1.d. API Summary
 
+An introductory sample of common features.
+
 When you declare `has_paper_trail` in your model, you get these methods:
 
 ```ruby
@@ -206,17 +208,10 @@ widget.paper_trail.previous_version
 
 # Returns the widget (not a version) as it became next.
 widget.paper_trail.next_version
-
-# Enable/disable PaperTrail, for Widget, for the current request (not all threads)
-PaperTrail.request.disable_model(Widget)
-PaperTrail.request.enable_model(Widget)
-
-# Is PaperTrail enabled for Widget, the class?
-PaperTrail.request.enabled_for_model?(Widget)
 ```
 
 And a `PaperTrail::Version` instance (which is just an ordinary ActiveRecord
-instance, with all the usual methods) adds these methods:
+instance, with all the usual methods) has methods such as:
 
 ```ruby
 # Returns the item restored from this version.
@@ -244,28 +239,9 @@ version.index
 
 # Returns the event that caused this version (create|update|destroy).
 version.event
-
-# Query the `versions.object` column (or `object_changes` column), by
-# attributes, using the SQL LIKE operator.
-#
-# Known issue: `where_object_changes` with the default YAML serializer and
-# an `object_changes` text column may return incorrect results for numeric values
-# due to limitations of SQL wildcard matchers against the serialized objects.
-PaperTrail::Version.where_object(attr1: val1, attr2: val2)
-PaperTrail::Version.where_object_changes(attr1: val1)
 ```
 
-In your controllers you can override these methods:
-
-```ruby
-# Returns the user who is responsible for any changes that occur.
-# Defaults to current_user.
-user_for_paper_trail
-
-# Returns any information about the controller or request that you want
-# PaperTrail to store alongside any changes that occur.
-info_for_paper_trail
-```
+This is just a sample of common features. Keep reading for more.
 
 ### 1.e. Configuration
 
@@ -467,13 +443,16 @@ PaperTrail is on by default, but sometimes you don't want to record versions.
 
 #### Per Process
 
-Turn PaperTrail off for all threads in a `ruby` process.
+Turn PaperTrail off for **all threads** in a `ruby` process.
 
 ```ruby
 PaperTrail.enabled = false
 ```
 
-This is commonly used to speed up tests. See [Testing](#7-testing) below.
+**Do not use this in production** unless you have a good understanding of
+threads vs. processes.
+
+A legitimate use case is to speed up tests. See [Testing](#7-testing) below.
 
 There is also a rails config option that does the same thing.
 
@@ -482,9 +461,31 @@ There is also a rails config option that does the same thing.
 config.paper_trail.enabled = false
 ```
 
-#### Per Request
+#### Per HTTP Request
 
-Add a `paper_trail_enabled_for_controller` method to your controller.
+```ruby
+PaperTrail.request(enabled: false) do
+  # no versions created
+end
+```
+
+This should satisfy most needs. In the rare case that you need to disable
+versioning for one model while keeping versioning enabled for other models, use:
+
+```ruby
+PaperTrail.request.disable_model(Banana)
+# ...
+PaperTrail.request.enable_model(Banana)
+PaperTrail.request.enabled_for_model?(Banana) # => true
+```
+
+For this rare use case, there is no convenient way to pass a block.
+
+##### In a Rails Controller Callback (Not Recommended)
+
+PaperTrail installs a callback in your rails controllers. The installed
+callback will call `paper_trail_enabled_for_controller`, which you can
+override.
 
 ```ruby
 class ApplicationController < ActionController::Base
@@ -494,6 +495,12 @@ class ApplicationController < ActionController::Base
   end
 end
 ```
+
+Because you are unable to controll the order of callback execution, this
+technique is not recommended, but is preserved for backwards compatability.
+
+It would be better to install your own callback and use
+`PaperTrail.request.enabled=` as you see fit.
 
 #### Per Class
 
@@ -629,9 +636,15 @@ widget.live?                        # false
 And you can perform `WHERE` queries for object versions based on attributes:
 
 ```ruby
-# All versions that meet these criteria.
+# Find versions that meet these criteria.
 PaperTrail::Version.where_object(content: 'Hello', title: 'Article')
+
+# Find versions before and after attribute `atr` had value `v`:
+PaperTrail::Version.where_object_changes(atr: 'v')
 ```
+
+Using `where_object_changes` to read YAML from a text column was deprecated in
+8.1.0, and will now raise an error.
 
 ### 3.c. Diffing Versions
 

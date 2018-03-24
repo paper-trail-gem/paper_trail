@@ -58,7 +58,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 - [#1042](https://github.com/airblade/paper_trail/issues/1042) - A rare issue
   with load order when using PT outside of rails
 - [#594](https://github.com/airblade/paper_trail/issues/594) - Improved the
-  error message for a very rare issue in the experimentatl association tracking
+  error message for a very rare issue in the experimental association tracking
   feature involving two has_one associations, referencing STI models with the
   same base class, and the same foreign_key.
 
