@@ -342,8 +342,10 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
       context "when destroyed \"without versioning\"" do
         it "leave paper trail off after call" do
+          allow(::ActiveSupport::Deprecation).to receive(:warn)
           @widget.paper_trail.without_versioning(:destroy)
           expect(::PaperTrail.request.enabled_for_model?(Widget)).to eq(false)
+          expect(::ActiveSupport::Deprecation).to have_received(:warn).once
         end
       end
 
@@ -361,28 +363,24 @@ RSpec.describe(::PaperTrail, versioning: true) do
         end
 
         context "when updated \"without versioning\"" do
-          before do
+          it "does not create new version" do
+            allow(::ActiveSupport::Deprecation).to receive(:warn)
             @widget.paper_trail.without_versioning do
               @widget.update_attributes(name: "Ford")
             end
             @widget.paper_trail.without_versioning do |w|
               w.update_attributes(name: "Nixon")
             end
-          end
-
-          it "not create new version" do
             expect(@widget.versions.length).to(eq(@count))
-          end
-
-          it "enable paper trail after call" do
             expect(PaperTrail.request.enabled_for_model?(Widget)).to eq(true)
+            expect(::ActiveSupport::Deprecation).to have_received(:warn).twice
           end
         end
 
         context "given a symbol, specifying a method name" do
           it "does not create a new version" do
             allow(::ActiveSupport::Deprecation).to receive(:warn)
-            @widget.paper_trail.without_versioning(:touch_with_version)
+            @widget.paper_trail.without_versioning(:touch)
             expect(::ActiveSupport::Deprecation).to have_received(:warn).once
             expect(@widget.versions.length).to(eq(@count))
             expect(::PaperTrail.request.enabled_for_model?(Widget)).to eq(true)

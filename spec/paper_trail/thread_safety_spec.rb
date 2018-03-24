@@ -25,6 +25,7 @@ RSpec.describe PaperTrail do
 
   describe "#without_versioning" do
     it "is thread-safe" do
+      allow(::ActiveSupport::Deprecation).to receive(:warn)
       enabled = nil
       t1 = Thread.new do
         Widget.new.paper_trail.without_versioning do
@@ -43,6 +44,7 @@ RSpec.describe PaperTrail do
       expect(t1.value).to eq(false)
       expect(t2.value).to eq(true) # see? unaffected by t1
       expect(described_class.request.enabled_for_model?(Widget)).to eq(true)
+      expect(::ActiveSupport::Deprecation).to have_received(:warn).once
     end
   end
 end
