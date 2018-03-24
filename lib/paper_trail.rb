@@ -72,20 +72,20 @@ module PaperTrail
     def enabled_for_controller=(value)
       ::ActiveSupport::Deprecation.warn(
         "PaperTrail.enabled_for_controller= is deprecated, " \
-        "use PaperTrail.request.enabled_for_controller=",
+        "use PaperTrail.request.enabled=",
         caller(1)
       )
-      request.enabled_for_controller = value
+      request.enabled = value
     end
 
     # @deprecated
     def enabled_for_controller?
       ::ActiveSupport::Deprecation.warn(
         "PaperTrail.enabled_for_controller? is deprecated, " \
-        "use PaperTrail.request.enabled_for_controller?",
+        "use PaperTrail.request.enabled?",
         caller(1)
       )
-      request.enabled_for_controller?
+      request.enabled?
     end
 
     # @deprecated

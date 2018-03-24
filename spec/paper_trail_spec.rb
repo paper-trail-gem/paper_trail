@@ -115,7 +115,6 @@ RSpec.describe PaperTrail do
     end
 
     it_behaves_like "it delegates to request", :clear_transaction_id, nil
-    it_behaves_like "it delegates to request", :enabled_for_controller=, [true]
     it_behaves_like "it delegates to request", :enabled_for_model, [Widget, true]
     it_behaves_like "it delegates to request", :enabled_for_model?, [Widget]
     it_behaves_like "it delegates to request", :whodunnit=, [:some_whodunnit]
@@ -124,6 +123,14 @@ RSpec.describe PaperTrail do
     it_behaves_like "it delegates to request", :controller_info, nil
     it_behaves_like "it delegates to request", :transaction_id=, 123
     it_behaves_like "it delegates to request", :transaction_id, nil
+
+    describe "#enabled_for_controller=" do
+      it "is deprecated" do
+        allow(::PaperTrail.request).to receive(:enabled=)
+        ::PaperTrail.enabled_for_controller = true
+        expect(::PaperTrail.request).to have_received(:enabled=).with(true)
+      end
+    end
 
     describe "whodunnit with block" do
       it "delegates to request" do

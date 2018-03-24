@@ -3,7 +3,7 @@
 # before hook for Cucumber
 Before do
   PaperTrail.enabled = false
-  PaperTrail.request.enabled_for_controller = true
+  PaperTrail.request.enabled = true
   PaperTrail.request.whodunnit = nil
   PaperTrail.request.controller_info = {} if defined?(::Rails)
 end

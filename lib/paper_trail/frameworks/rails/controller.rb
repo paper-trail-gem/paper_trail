@@ -4,7 +4,8 @@ module PaperTrail
   module Rails
     # Extensions to rails controllers. Provides convenient ways to pass certain
     # information to the model layer, with `controller_info` and `whodunnit`.
-    # Also includes a convenient on/off switch, `enabled_for_controller`.
+    # Also includes a convenient on/off switch,
+    # `paper_trail_enabled_for_controller`.
     module Controller
       def self.included(controller)
         controller.before_action(
@@ -78,14 +79,14 @@ module PaperTrail
       #
       # @api public
       def set_paper_trail_enabled_for_controller
-        ::PaperTrail.request.enabled_for_controller = paper_trail_enabled_for_controller
+        ::PaperTrail.request.enabled = paper_trail_enabled_for_controller
       end
 
       # Tells PaperTrail who is responsible for any changes that occur.
       #
       # @api public
       def set_paper_trail_whodunnit
-        if ::PaperTrail.request.enabled_for_controller?
+        if ::PaperTrail.request.enabled?
           ::PaperTrail.request.whodunnit = user_for_paper_trail
         end
       end
@@ -95,7 +96,7 @@ module PaperTrail
       #
       # @api public
       def set_paper_trail_controller_info
-        if ::PaperTrail.request.enabled_for_controller?
+        if ::PaperTrail.request.enabled?
           ::PaperTrail.request.controller_info = info_for_paper_trail
         end
       end

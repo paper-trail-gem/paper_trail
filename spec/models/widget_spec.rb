@@ -260,12 +260,14 @@ RSpec.describe Widget, type: :model do
       }.by(+1)
     end
 
-    it "does not create a version using without_versioning" do
-      count = widget.versions.count
-      widget.paper_trail.without_versioning do
-        widget.touch
+    context "request is disabled" do
+      it "does not create a version" do
+        count = widget.versions.count
+        PaperTrail.request(enabled: false) do
+          widget.touch
+        end
+        expect(count).to eq(count)
       end
-      expect(count).to eq(count)
     end
   end
 
