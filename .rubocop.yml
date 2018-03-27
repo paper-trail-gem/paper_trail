@@ -58,7 +58,7 @@ Metrics/ClassLength:
 
 # The Ruby Style Guide recommends to "Limit lines to 80 characters."
 # (https://github.com/bbatsov/ruby-style-guide#80-character-limits)
-# but 100 is also reasonable.
+# Please aim for 80, but up to 100 is OK.
 Metrics/LineLength:
   Max: 100
 
@@ -76,9 +76,13 @@ Naming/FileName:
   Exclude:
     - Appraisals
 
-# It is a decades-old convention to use EOS as a heredoc delimiter. There is
-# not enough value in changinge this convention. SQL should still be used as
-# a delimiter when appropriate.
+# Heredocs are usually assigned to a variable or constant, which already has a
+# name, so naming the heredoc doesn't add much value. Feel free to name
+# heredocs that are used as anonymous values (not a variable, constant, or
+# named parameter).
+#
+# All heredocs containing SQL should be named SQL, to support editor syntax
+# highlighting.
 Naming/HeredocDelimiterNaming:
   Enabled: false
 
