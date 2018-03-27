@@ -37,6 +37,3 @@ Security/YAMLLoad:
 
 Style/ExpandPathArguments:
   Enabled: false
-
-Style/RandomWithOffset:
-  Enabled: false

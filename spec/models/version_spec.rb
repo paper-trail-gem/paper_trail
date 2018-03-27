@@ -98,7 +98,7 @@ module PaperTrail
         context "with a #{column_datatype_override || 'text'} column" do
           let(:widget) { Widget.new }
           let(:name) { FFaker::Name.first_name }
-          let(:int) { column_datatype_override ? 1 : rand(5) + 2 }
+          let(:int) { column_datatype_override ? 1 : rand(2..6) }
 
           before do
             if column_datatype_override
