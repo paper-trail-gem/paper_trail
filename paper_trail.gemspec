@@ -37,7 +37,6 @@ has been destroyed.
   s.add_development_dependency "generator_spec", "~> 0.9.4"
   s.add_development_dependency "mysql2", "~> 0.4.10"
   s.add_development_dependency "pg", "~> 0.21.0"
-  s.add_development_dependency "rack-test", [">= 0.6.3", "< 0.9"]
   s.add_development_dependency "rake", "~> 12.3"
   s.add_development_dependency "rspec-rails", "~> 3.7.2"
   s.add_development_dependency "rubocop", "~> 0.54.0"
