@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-$LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
+$LOAD_PATH.unshift File.expand_path("lib", __dir__)
 require "paper_trail/version_number"
 
 Gem::Specification.new do |s|

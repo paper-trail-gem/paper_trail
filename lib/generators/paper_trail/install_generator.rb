@@ -16,7 +16,7 @@ module PaperTrail
       "ActiveRecord::ConnectionAdapters::Mysql2Adapter"
     ].freeze
 
-    source_root File.expand_path("../templates", __FILE__)
+    source_root File.expand_path("templates", __dir__)
     class_option(
       :with_changes,
       type: :boolean,
