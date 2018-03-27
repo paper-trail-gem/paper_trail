@@ -12,6 +12,9 @@ Metrics/CyclomaticComplexity:
 Metrics/PerceivedComplexity:
   Max: 9 # Goal: 7
 
+Naming/MemoizedInstanceVariableName:
+  Enabled: false
+
 RSpec/InstanceVariable:
   Exclude:
     - spec/paper_trail/associations/belongs_to_spec.rb
@@ -30,4 +33,10 @@ RSpec/NestedGroups:
 # safelists, like `whitelist_classes` into our serializer, and the serializer
 # interface is a public API, so that would be a breaking change.
 Security/YAMLLoad:
+  Enabled: false
+
+Style/ExpandPathArguments:
+  Enabled: false
+
+Style/RandomWithOffset:
   Enabled: false
