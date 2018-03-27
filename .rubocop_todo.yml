@@ -15,6 +15,9 @@ Metrics/PerceivedComplexity:
 Naming/MemoizedInstanceVariableName:
   Enabled: false
 
+RSpec/ContextWording:
+  Enabled: false
+
 RSpec/InstanceVariable:
   Exclude:
     - spec/paper_trail/associations/belongs_to_spec.rb
