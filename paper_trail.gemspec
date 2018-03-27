@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-$LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
+$LOAD_PATH.unshift File.expand_path("lib", __dir__)
 require "paper_trail/version_number"
 
 Gem::Specification.new do |s|
@@ -32,16 +32,15 @@ has been destroyed.
   s.add_dependency "request_store", "~> 1.1"
 
   s.add_development_dependency "appraisal", "~> 2.2"
-  s.add_development_dependency "byebug", "~> 9.1"
-  s.add_development_dependency "ffaker", "~> 2.7"
+  s.add_development_dependency "byebug", "~> 10.0"
+  s.add_development_dependency "ffaker", "~> 2.8"
   s.add_development_dependency "generator_spec", "~> 0.9.4"
   s.add_development_dependency "mysql2", "~> 0.4.10"
   s.add_development_dependency "pg", "~> 0.21.0"
-  s.add_development_dependency "rack-test", [">= 0.6.3", "< 0.9"]
   s.add_development_dependency "rake", "~> 12.3"
   s.add_development_dependency "rspec-rails", "~> 3.7.2"
-  s.add_development_dependency "rubocop", "~> 0.51.0"
-  s.add_development_dependency "rubocop-rspec", "~> 1.19.0"
+  s.add_development_dependency "rubocop", "~> 0.54.0"
+  s.add_development_dependency "rubocop-rspec", "~> 1.24.0"
   s.add_development_dependency "sqlite3", "~> 1.3"
   s.add_development_dependency "timecop", "~> 0.9.1"
 end

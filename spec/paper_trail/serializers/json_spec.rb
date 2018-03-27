@@ -8,7 +8,7 @@ module PaperTrail
       let(:word_hash) {
         (1..4).each_with_object({}) { |i, a| a["key#{i}"] = ::FFaker::Lorem.word }
       }
-      let(:word_array) { [].fill(0, rand(5) + 4) { ::FFaker::Lorem.word } }
+      let(:word_array) { [].fill(0, rand(4..8)) { ::FFaker::Lorem.word } }
 
       describe ".load" do
         it "deserialize JSON to Ruby" do

@@ -2,10 +2,10 @@
 
 source "https://rubygems.org"
 
-gem "activerecord", "~> 5.2.0.rc1"
+gem "activerecord", "~> 5.2.0.rc2"
 gem "rails-controller-testing"
-gem "activesupport", "~> 5.2.0.rc1"
-gem "actionpack", "~> 5.2.0.rc1"
-gem "railties", "~> 5.2.0.rc1"
+gem "activesupport", "~> 5.2.0.rc2"
+gem "actionpack", "~> 5.2.0.rc2"
+gem "railties", "~> 5.2.0.rc2"
 
 gemspec path: "../"

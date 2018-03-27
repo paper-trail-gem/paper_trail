@@ -12,6 +12,12 @@ Metrics/CyclomaticComplexity:
 Metrics/PerceivedComplexity:
   Max: 9 # Goal: 7
 
+Naming/MemoizedInstanceVariableName:
+  Enabled: false
+
+RSpec/ContextWording:
+  Enabled: false
+
 RSpec/InstanceVariable:
   Exclude:
     - spec/paper_trail/associations/belongs_to_spec.rb
