@@ -135,15 +135,6 @@ Style/GuardClause:
 Style/IfUnlessModifier:
   Enabled: false
 
-# The Ruby Style Guide says:
-#
-# > Use \ instead of + or << to concatenate two string literals at line end.
-#
-# but in my experience the `\` style is rarely used and less readable. Please
-# concatenate multiline strings with `+` or use a HEREDOC.
-Style/LineEndConcatenation:
-  Enabled: false
-
 # Using `module_function` instead of `extend self` would make the instance
 # methods in these modules private. That would be a breaking change, so these
 # modules are excluded. See discussion in:
