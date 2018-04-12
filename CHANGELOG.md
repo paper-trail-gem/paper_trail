@@ -11,7 +11,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
-- None
+- [#1074](https://github.com/airblade/paper_trail/pull/1074)
+  `PaperTrail.request do ... end` now returns the value the given block.
 
 ### Fixed
 
