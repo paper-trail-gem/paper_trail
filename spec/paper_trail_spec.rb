@@ -4,7 +4,7 @@ require "spec_helper"
 
 RSpec.describe PaperTrail do
   describe ".request" do
-    it "returns the value returned by the block"
+    it "returns the value returned by the block" do
       expect(described_class.request { "A test" }).to eq("A test")
     end
   end
