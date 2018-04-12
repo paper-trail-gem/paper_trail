@@ -7,7 +7,13 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Breaking Changes
 
-- None
+- `PaperTrail.request do ... end` now returns whatever value is returned from the given block. For example:
+``` ruby
+raise PaperTrail.request(whodunnit: "Michael Bay") do
+  ApplicationError
+end
+# => ApplicationError has been raised!
+```
 
 ### Added
 
