@@ -1019,36 +1019,28 @@ See [issue 113][16] for a discussion about this.
 
 ### 4.c. Storing Metadata
 
-You can store arbitrary model-level metadata alongside each version like this:
+You can add your own custom columns to your `versions` table. Values can be
+given using **Model Metadata** or **Controller Metadata**.
+
+#### Model Metadata
+
+You can specify metadata in the model using `has_paper_trail(meta:)`.
 
 ```ruby
 class Article < ActiveRecord::Base
   belongs_to :author
-  has_paper_trail meta: { author_id:  :author_id,
-                          word_count: :count_words,
-                          answer:     42 }
+  has_paper_trail(
+    meta: {
+      author_id: :author_id, # model attribute
+      word_count: :count_words, # arbitrary model method
+      answer: 42, # scalar value
+      editor: proc { |article| article.editor.full_name } # a Proc
+    }
+  )
   def count_words
     153
   end
 end
-```
-
-PaperTrail will call your proc with the current article and store the result in
-the `author_id` column of the `versions` table.
-Don't forget to add any such columns to your `versions` table.
-
-#### Advantages of Metadata
-
-Why would you do this?  In this example, `author_id` is an attribute of
-`Article` and PaperTrail will store it anyway in a serialized form in the
-`object` column of the `version` record.  But let's say you wanted to pull out
-all versions for a particular author; without the metadata you would have to
-deserialize (reify) each `version` object to see if belonged to the author in
-question.  Clearly this is inefficient.  Using the metadata you can find just
-those versions you want:
-
-```ruby
-PaperTrail::Version.where(author_id: author_id)
 ```
 
 #### Metadata from Controllers
@@ -1064,6 +1056,34 @@ class ApplicationController
   end
 end
 ```
+
+#### Advantages of Metadata
+
+Why would you do this?  In this example, `author_id` is an attribute of
+`Article` and PaperTrail will store it anyway in a serialized form in the
+`object` column of the `version` record.  But let's say you wanted to pull out
+all versions for a particular author; without the metadata you would have to
+deserialize (reify) each `version` object to see if belonged to the author in
+question.  Clearly this is inefficient.  Using the metadata you can find just
+those versions you want:
+
+```ruby
+PaperTrail::Version.where(author_id: author_id)
+```
+
+#### Metadata can Override PaperTrail Columns
+
+**Experts only**. Metadata will override the normal values that PT would have
+inserted into its own columns.
+
+| *PT Column*    | *How bad of an idea?* | *Alternative*                 |
+| -------------- | --------------------- | ----------------------------- |
+| item_type      | terrible idea         |                               |
+| item_id        | terrible idea         |                               |
+| event          | meh                   | paper_trail_event             |
+| whodunnit      | meh                   | PaperTrail.request.whodunnit= |
+| object         | a little dangerous    |                               |
+| object_changes | a little dangerous    |                               |
 
 ## 5. ActiveRecord
 
