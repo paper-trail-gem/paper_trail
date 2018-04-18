@@ -135,7 +135,6 @@ module PaperTrail
         Request
       else
         Request.with(options, &block)
-        nil
       end
     end
 

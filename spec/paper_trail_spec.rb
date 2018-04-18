@@ -3,6 +3,12 @@
 require "spec_helper"
 
 RSpec.describe PaperTrail do
+  describe ".request" do
+    it "returns the value returned by the block" do
+      expect(described_class.request(whodunnit: "abe lincoln") { "A test" }).to eq("A test")
+    end
+  end
+
   describe "#config", versioning: true do
     it "allows for config values to be set" do
       expect(described_class.config.enabled).to eq(true)

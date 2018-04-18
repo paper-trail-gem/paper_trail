@@ -7,7 +7,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Breaking Changes
 
-- None
+- `PaperTrail.request do ... end` now returns whatever value is returned from the given block. 
 
 ### Added
 
