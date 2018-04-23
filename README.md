@@ -345,8 +345,22 @@ end
 #### Choosing Based on Changed Attributes
 
 Starting with PaperTrail 4.0, versions are saved during an after-callback. If
-you decide whether to save a new version based on changed attributes, please
+you decide whether to save a new version based on changed attributes,
 use attribute_name_was instead of attribute_name.
+
+#### Saving a New Version Manually
+
+You may want to save a new version regardless of options like `:on`, `:if`, or
+`:unless`. Or, in rare situations, you may want to save a new version even if
+the record has not changed.
+
+```ruby
+my_model.paper_trail.save_with_version
+```
+
+There is a similar method, `touch_with_version`, which was deprecated in
+9.0.0 and will be removed. `save_with_version` serves a similar purpose, but
+it's a save, not a touch.
 
 ### 2.c. Choosing Attributes To Monitor
 
