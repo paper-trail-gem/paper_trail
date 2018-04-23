@@ -11,6 +11,20 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
+- None
+
+### Fixed
+
+- None
+
+## 9.0.1 (2018-04-23)
+
+### Breaking Changes
+
+- None
+
+### Added
+
 - [#1076](https://github.com/airblade/paper_trail/issues/1076)
   Add `save_with_version`, a replacement for deprecated method
   `touch_with_version`. Not exactly the same, it's a save, not a touch.
