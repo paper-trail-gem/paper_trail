@@ -1,6 +1,6 @@
 # PaperTrail
 
-[![Build Status][4]][5] [![Dependency Status][6]][7]
+[![Build Status][4]][5]
 
 Track changes to your models, for auditing or versioning. See how a model looked
 at any stage in its lifecycle, revert it to any version, or restore it after it
@@ -1657,8 +1657,6 @@ Released under the MIT licence.
 [3]: http://railscasts.com/episodes/255-undo-with-paper-trail
 [4]: https://api.travis-ci.org/airblade/paper_trail.svg?branch=master
 [5]: https://travis-ci.org/airblade/paper_trail
-[6]: https://img.shields.io/gemnasium/airblade/paper_trail.svg
-[7]: https://gemnasium.com/airblade/paper_trail
 [9]: https://github.com/airblade/paper_trail/tree/3.0-stable
 [10]: https://github.com/airblade/paper_trail/tree/2.7-stable
 [11]: https://github.com/airblade/paper_trail/tree/rails2
