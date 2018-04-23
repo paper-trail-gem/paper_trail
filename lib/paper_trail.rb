@@ -121,7 +121,8 @@ module PaperTrail
     # word "request" right there in your application code will remind you that
     # these variables only affect the current request, not all threads.
     #
-    # Given a block, temporarily sets the given `options` and execute the block.
+    # Given a block, temporarily sets the given `options`, executes the block,
+    # and returns the value of the block.
     #
     # Without a block, this currently just returns `PaperTrail::Request`.
     # However, please do not use `PaperTrail::Request` directly. Currently,
@@ -135,7 +136,6 @@ module PaperTrail
         Request
       else
         Request.with(options, &block)
-        nil
       end
     end
 
