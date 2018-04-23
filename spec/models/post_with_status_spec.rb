@@ -45,5 +45,17 @@ RSpec.describe PostWithStatus, type: :model do
         expect(post.paper_trail.previous_version.status).to eq("draft")
       end
     end
+
+    describe "#save_with_version" do
+      it "preserves the enum value (and all other attributes)" do
+        post = described_class.create(status: :draft)
+        expect(post.versions.count).to eq(1)
+        expect(post.status).to eq("draft")
+        post.paper_trail.save_with_version
+        expect(post.versions.count).to eq(2)
+        expect(post.versions.last[:object]).to include("status: 0")
+        expect(post.paper_trail.previous_version.status).to eq("draft")
+      end
+    end
   end
 end

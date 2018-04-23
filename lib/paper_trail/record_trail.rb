@@ -4,8 +4,10 @@ module PaperTrail
   # Represents the "paper trail" for a single record.
   class RecordTrail
     DPR_TOUCH_WITH_VERSION = <<-STR.squish.freeze
-      my_model_instance.paper_trail.touch_with_version is deprecated,
-      please use my_model_instance.touch
+      my_model.paper_trail.touch_with_version is deprecated, please use
+      my_model.paper_trail.save_with_version, which is slightly different. It's
+      a save, not a touch, so make sure you understand the difference by reading
+      the ActiveRecord documentation for both.
     STR
     DPR_WHODUNNIT = <<-STR.squish.freeze
       my_model_instance.paper_trail.whodunnit('John') is deprecated,
@@ -504,6 +506,26 @@ module PaperTrail
       }
       ::PaperTrail.request(enabled: false) do
         @record.save!(validate: false)
+      end
+      record_update(force: true, in_after_callback: false)
+    end
+
+    # Save, and create a version record regardless of options such as `:on`,
+    # `:if`, or `:unless`.
+    #
+    # Arguments are passed to `save`.
+    #
+    # This is an "update" event. That is, we record the same data we would in
+    # the case of a normal AR `update`.
+    #
+    # In older versions of PaperTrail, a method named `touch_with_version` was
+    # used for this purpose. `save_with_version` is not exactly the same.
+    # First, the arguments are different. It passes all arguments to `save`.
+    # Second, it doesn't set any timestamp attributes prior to the `save` the
+    # way `touch_with_version` did.
+    def save_with_version(*args)
+      ::PaperTrail.request(enabled: false) do
+        @record.save(*args)
       end
       record_update(force: true, in_after_callback: false)
     end

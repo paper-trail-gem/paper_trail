@@ -11,6 +11,9 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
+- [#1076](https://github.com/airblade/paper_trail/issues/1076)
+  Add `save_with_version`, a replacement for deprecated method
+  `touch_with_version`. Not exactly the same, it's a save, not a touch.
 - [#1074](https://github.com/airblade/paper_trail/pull/1074)
   `PaperTrail.request do ... end` now returns the value the given block.
 
