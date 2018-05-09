@@ -164,4 +164,4 @@ markdown-toc -i --maxdepth 3 --bullets='-' README.md
 1. gem build paper_trail.gemspec
 1. gem push paper_trail-5.0.0.gem
 
-[1]: https://github.com/airblade/paper_trail/blob/master/doc/bug_report_template.rb
+[1]: https://github.com/paper-trail-gem/paper_trail/blob/master/doc/bug_report_template.rb

@@ -56,7 +56,7 @@ module PaperTrail
     # > something) from running. By also stubbing out persisted? we can
     # > actually prevent those. A more stable option might be to use suppress
     # > instead, similar to the other branch in reify_has_one.
-    # > -Sean Griffin (https://github.com/airblade/paper_trail/pull/899)
+    # > -Sean Griffin (https://github.com/paper-trail-gem/paper_trail/pull/899)
     #
     # @api private
     def appear_as_new_record
@@ -603,7 +603,7 @@ module PaperTrail
     end
 
     # Rails 5.1 changed the API of `ActiveRecord::Dirty`. See
-    # https://github.com/airblade/paper_trail/pull/899
+    # https://github.com/paper-trail-gem/paper_trail/pull/899
     #
     # @api private
     def attribute_changed_in_latest_version?(attr_name)
@@ -615,7 +615,7 @@ module PaperTrail
     end
 
     # Rails 5.1 changed the API of `ActiveRecord::Dirty`. See
-    # https://github.com/airblade/paper_trail/pull/899
+    # https://github.com/paper-trail-gem/paper_trail/pull/899
     #
     # Event can be any of the three (create, update, destroy).
     #
@@ -635,7 +635,7 @@ module PaperTrail
     end
 
     # Rails 5.1 changed the API of `ActiveRecord::Dirty`. See
-    # https://github.com/airblade/paper_trail/pull/899
+    # https://github.com/paper-trail-gem/paper_trail/pull/899
     #
     # @api private
     def changed_in_latest_version
@@ -647,7 +647,7 @@ module PaperTrail
     end
 
     # Rails 5.1 changed the API of `ActiveRecord::Dirty`. See
-    # https://github.com/airblade/paper_trail/pull/899
+    # https://github.com/paper-trail-gem/paper_trail/pull/899
     #
     # @api private
     def changes_in_latest_version

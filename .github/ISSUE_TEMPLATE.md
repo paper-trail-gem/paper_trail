@@ -5,9 +5,9 @@ Please ask *usage questions* on StackOverflow:
 https://stackoverflow.com/tags/paper-trail-gem
 
 Bug reports must use this template:
-https://github.com/airblade/paper_trail/blob/master/doc/bug_report_template.rb
+https://github.com/paper-trail-gem/paper_trail/blob/master/doc/bug_report_template.rb
 
 For other questions, please see our contributing guide:
-https://github.com/airblade/paper_trail/blob/master/.github/CONTRIBUTING.md
+https://github.com/paper-trail-gem/paper_trail/blob/master/.github/CONTRIBUTING.md
 
 Thanks for your contribution!
