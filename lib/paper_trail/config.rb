@@ -11,13 +11,13 @@ module PaperTrail
       Association tracking is an endangered feature. For the past three or four
       years it has been an experimental feature, not recommended for production.
       It has a long list of known issues
-      (https://github.com/airblade/paper_trail#4b1-known-issues) and has no
+      (https://github.com/paper-trail-gem/paper_trail#4b1-known-issues) and has no
       regular volunteers caring for it.
 
       If you don't use this feature, I strongly recommend disabling it.
 
       If you do use this feature, please head over to
-      https://github.com/airblade/paper_trail/issues/1070 and volunteer to work
+      https://github.com/paper-trail-gem/paper_trail/issues/1070 and volunteer to work
       on the known issues.
 
       If we can't make a serious dent in the list of known issues over the next

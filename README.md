@@ -10,16 +10,16 @@ has been destroyed.
 
 | Version        | Documentation |
 | -------------- | ------------- |
-| Unreleased     | https://github.com/airblade/paper_trail/blob/master/README.md |
-| 9.0.1          | https://github.com/airblade/paper_trail/blob/v9.0.1/README.md |
-| 8.1.2          | https://github.com/airblade/paper_trail/blob/v8.1.2/README.md |
-| 7.1.3          | https://github.com/airblade/paper_trail/blob/v7.1.3/README.md |
-| 6.0.2          | https://github.com/airblade/paper_trail/blob/v6.0.2/README.md |
-| 5.2.3          | https://github.com/airblade/paper_trail/blob/v5.2.3/README.md |
-| 4.2.0          | https://github.com/airblade/paper_trail/blob/v4.2.0/README.md |
-| 3.0.9          | https://github.com/airblade/paper_trail/blob/v3.0.9/README.md |
-| 2.7.2          | https://github.com/airblade/paper_trail/blob/v2.7.2/README.md |
-| 1.6.5          | https://github.com/airblade/paper_trail/blob/v1.6.5/README.md |
+| Unreleased     | https://github.com/paper-trail-gem/paper_trail/blob/master/README.md |
+| 9.0.1          | https://github.com/paper-trail-gem/paper_trail/blob/v9.0.1/README.md |
+| 8.1.2          | https://github.com/paper-trail-gem/paper_trail/blob/v8.1.2/README.md |
+| 7.1.3          | https://github.com/paper-trail-gem/paper_trail/blob/v7.1.3/README.md |
+| 6.0.2          | https://github.com/paper-trail-gem/paper_trail/blob/v6.0.2/README.md |
+| 5.2.3          | https://github.com/paper-trail-gem/paper_trail/blob/v5.2.3/README.md |
+| 4.2.0          | https://github.com/paper-trail-gem/paper_trail/blob/v4.2.0/README.md |
+| 3.0.9          | https://github.com/paper-trail-gem/paper_trail/blob/v3.0.9/README.md |
+| 2.7.2          | https://github.com/paper-trail-gem/paper_trail/blob/v2.7.2/README.md |
+| 1.6.5          | https://github.com/paper-trail-gem/paper_trail/blob/v1.6.5/README.md |
 
 ## Table of Contents
 
@@ -327,7 +327,7 @@ end
 The `paper_trail.on_destroy` method can be further configured to happen
 `:before` or `:after` the destroy event. In PaperTrail 4, the default is
 `:after`. In PaperTrail 5, the default will be `:before`, to support
-ActiveRecord 5. (see https://github.com/airblade/paper_trail/pull/683)
+ActiveRecord 5. (see https://github.com/paper-trail-gem/paper_trail/pull/683)
 
 ### 2.b. Choosing When To Save New Versions
 
@@ -950,7 +950,7 @@ issues, in order of descending importance.
 1. PaperTrail only reifies the first level of associations.
 1. Does not fully support STI (For example, see `spec/models/person_spec.rb` and
    `PaperTrail::Reifiers::HasOne::FoundMoreThanOne` error)
-1. [#542](https://github.com/airblade/paper_trail/issues/542) -
+1. [#542](https://github.com/paper-trail-gem/paper_trail/issues/542) -
    Not compatible with [transactional tests][34], aka. transactional fixtures.
 1. Requires database timestamp columns with fractional second precision.
    - Sqlite and postgres timestamps have fractional second precision by default.
@@ -1116,7 +1116,7 @@ end
 ```
 
 However, there is a known issue when reifying [associations](#associations),
-see https://github.com/airblade/paper_trail/issues/594
+see https://github.com/paper-trail-gem/paper_trail/issues/594
 
 ### 5.b. Configuring the `versions` Association
 
@@ -1521,7 +1521,7 @@ end
 ```
 
 For more examples of the RSpec matchers, see the
-[Widget spec](https://github.com/airblade/paper_trail/blob/master/spec/models/widget_spec.rb)
+[Widget spec](https://github.com/paper-trail-gem/paper_trail/blob/master/spec/models/widget_spec.rb)
 
 ### 7.c. Cucumber
 
@@ -1629,14 +1629,14 @@ require 'paper_trail/frameworks/rspec'
 
 ## Problems
 
-Please use GitHub's [issue tracker](http://github.com/airblade/paper_trail/issues).
+Please use GitHub's [issue tracker](https://github.com/paper-trail-gem/paper_trail/issues).
 
 ## Contributors
 
 Created by Andy Stewart in 2010, maintained since 2012 by Ben Atkins, since 2015
 by Jared Beck, with contributions by over 150 people.
 
-https://github.com/airblade/paper_trail/graphs/contributors
+https://github.com/paper-trail-gem/paper_trail/graphs/contributors
 
 ## Contributing
 
@@ -1653,15 +1653,15 @@ Copyright (c) 2011 Andy Stewart (boss@airbladesoftware.com).
 Released under the MIT licence.
 
 [1]: http://api.rubyonrails.org/classes/ActiveRecord/Locking/Optimistic.html
-[2]: https://github.com/airblade/paper_trail/issues/163
+[2]: https://github.com/paper-trail-gem/paper_trail/issues/163
 [3]: http://railscasts.com/episodes/255-undo-with-paper-trail
-[4]: https://api.travis-ci.org/airblade/paper_trail.svg?branch=master
-[5]: https://travis-ci.org/airblade/paper_trail
-[9]: https://github.com/airblade/paper_trail/tree/3.0-stable
-[10]: https://github.com/airblade/paper_trail/tree/2.7-stable
-[11]: https://github.com/airblade/paper_trail/tree/rails2
-[14]: https://raw.github.com/airblade/paper_trail/master/lib/generators/paper_trail/templates/create_versions.rb
-[16]: https://github.com/airblade/paper_trail/issues/113
+[4]: https://api.travis-ci.org/paper-trail-gem/paper_trail.svg?branch=master
+[5]: https://travis-ci.org/paper-trail-gem/paper_trail
+[9]: https://github.com/paper-trail-gem/paper_trail/tree/3.0-stable
+[10]: https://github.com/paper-trail-gem/paper_trail/tree/2.7-stable
+[11]: https://github.com/paper-trail-gem/paper_trail/tree/rails2
+[14]: https://raw.github.com/paper-trail-gem/paper_trail/master/lib/generators/paper_trail/templates/create_versions.rb
+[16]: https://github.com/paper-trail-gem/paper_trail/issues/113
 [17]: https://github.com/rails/protected_attributes
 [18]: https://github.com/rails/strong_parameters
 [19]: http://github.com/myobie/htmldiff
@@ -1669,8 +1669,8 @@ Released under the MIT licence.
 [21]: https://github.com/halostatue/diff-lcs
 [22]: http://github.com/jeremyw/paper_trail/blob/master/lib/paper_trail/has_paper_trail.rb#L151-156
 [23]: http://github.com/tim/activerecord-diff
-[24]: https://github.com/airblade/paper_trail/blob/master/lib/paper_trail/serializers/yaml.rb
-[25]: https://github.com/airblade/paper_trail/blob/master/lib/paper_trail/serializers/json.rb
+[24]: https://github.com/paper-trail-gem/paper_trail/blob/master/lib/paper_trail/serializers/yaml.rb
+[25]: https://github.com/paper-trail-gem/paper_trail/blob/master/lib/paper_trail/serializers/json.rb
 [26]: http://www.postgresql.org/docs/9.4/static/datatype-json.html
 [27]: https://github.com/rspec/rspec
 [28]: http://cukes.info
@@ -1678,7 +1678,7 @@ Released under the MIT licence.
 [30]: https://github.com/burke/zeus
 [31]: https://github.com/rails/spring
 [32]: http://api.rubyonrails.org/classes/ActiveRecord/AutosaveAssociation.html#method-i-mark_for_destruction
-[33]: https://github.com/airblade/paper_trail/wiki/Setting-whodunnit-in-the-rails-console
+[33]: https://github.com/paper-trail-gem/paper_trail/wiki/Setting-whodunnit-in-the-rails-console
 [34]: https://github.com/rails/rails/blob/591a0bb87fff7583e01156696fbbf929d48d3e54/activerecord/lib/active_record/fixtures.rb#L142
 [35]: https://dev.mysql.com/doc/refman/5.6/en/fractional-seconds.html
 [36]: http://www.postgresql.org/docs/9.4/interactive/ddl.html
@@ -1688,7 +1688,7 @@ Released under the MIT licence.
 [40]: http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html#module-ActiveRecord::Associations::ClassMethods-label-Polymorphic+Associations
 [41]: https://github.com/jaredbeck/paper_trail-sinatra
 [42]: https://github.com/activeadmin/activeadmin/wiki/Auditing-via-paper_trail-%28change-history%29
-[43]: https://github.com/airblade/paper_trail/blob/master/.github/CONTRIBUTING.md
+[43]: https://github.com/paper-trail-gem/paper_trail/blob/master/.github/CONTRIBUTING.md
 [44]: https://github.com/globalize/globalize-versioning
 [45]: https://github.com/globalize/globalize
 [46]: https://github.com/fusion94/paper_trail_manager

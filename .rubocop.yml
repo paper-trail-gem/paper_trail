@@ -142,7 +142,7 @@ Style/IfUnlessModifier:
 # Using `module_function` instead of `extend self` would make the instance
 # methods in these modules private. That would be a breaking change, so these
 # modules are excluded. See discussion in:
-# - https://github.com/airblade/paper_trail/pull/756
+# - https://github.com/paper-trail-gem/paper_trail/pull/756
 # - https://github.com/bbatsov/ruby-style-guide/issues/556
 Style/ModuleFunction:
   Exclude:
