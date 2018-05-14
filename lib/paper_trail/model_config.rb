@@ -120,7 +120,7 @@ module PaperTrail
     # @api public
     def on_touch
       @model_class.after_touch { |r|
-        r.paper_trail.record_update(force: true, in_after_callback: true)
+        r.paper_trail.record_update(force: true, in_after_callback: false)
       }
     end
 
