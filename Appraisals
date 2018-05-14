@@ -14,11 +14,6 @@ appraise "ar-4.2" do
   gem "database_cleaner", "~> 1.6"
 end
 
-appraise "ar-5.0" do
-  gem "activerecord", "~> 5.0.6"
-  gem "rails-controller-testing"
-end
-
 appraise "ar-5.1" do
   gem "activerecord", "~> 5.1.5"
   gem "rails-controller-testing"

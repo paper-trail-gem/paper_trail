@@ -17,6 +17,12 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 - None
 
+### Other
+
+- Stop testing against rails 5.0, which reached EoL on 2018-04-15, when 5.2
+  was released, per the [rails maintenance
+  policy](http://guides.rubyonrails.org/maintenance_policy.html)
+
 ## 9.0.1 (2018-04-23)
 
 ### Breaking Changes
