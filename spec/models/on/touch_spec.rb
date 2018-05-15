@@ -20,6 +20,12 @@ module On
         )
         expect(record.versions.last.event).to eq("update")
       end
+
+      it "saves a object" do
+        record = described_class.create(name: "Alice")
+        record.touch
+        expect(record.versions.last.reify.name).to eq("Alice")
+      end
     end
 
     describe "#update" do

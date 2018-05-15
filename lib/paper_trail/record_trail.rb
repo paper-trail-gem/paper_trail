@@ -73,10 +73,10 @@ module PaperTrail
       }
     end
 
-    def attributes_before_change
+    def attributes_before_change(is_touch)
       Hash[@record.attributes.map do |k, v|
         if @record.class.column_names.include?(k)
-          [k, attribute_in_previous_version(k)]
+          [k, attribute_in_previous_version(k, is_touch)]
         else
           [k, v]
         end
@@ -204,7 +204,7 @@ module PaperTrail
         if event != "create" &&
             @record.has_attribute?(value) &&
             attribute_changed_in_latest_version?(value)
-          attribute_in_previous_version(value)
+          attribute_in_previous_version(value, false)
         else
           @record.send(value)
         end
@@ -240,8 +240,9 @@ module PaperTrail
     # omitting attributes to be skipped.
     #
     # @api private
-    def object_attrs_for_paper_trail
-      attrs = attributes_before_change.except(*@record.paper_trail_options[:skip])
+    def object_attrs_for_paper_trail(is_touch)
+      attrs = attributes_before_change(is_touch).
+        except(*@record.paper_trail_options[:skip])
       AttributeSerializers::ObjectAttribute.new(@record.class).serialize(attrs)
       attrs
     end
@@ -315,7 +316,7 @@ module PaperTrail
         item_id: @record.id,
         item_type: @record.class.base_class.name,
         event: @record.paper_trail_event || "destroy",
-        object: recordable_object,
+        object: recordable_object(false),
         whodunnit: PaperTrail.request.whodunnit
       }
       add_transaction_id_to(data)
@@ -330,11 +331,11 @@ module PaperTrail
         @record.class.paper_trail.version_class.column_names.include?("object_changes")
     end
 
-    def record_update(force:, in_after_callback:)
+    def record_update(force:, in_after_callback:, is_touch:)
       @in_after_callback = in_after_callback
       if enabled? && (force || changed_notably?)
         versions_assoc = @record.send(@record.class.versions_association_name)
-        version = versions_assoc.create(data_for_update)
+        version = versions_assoc.create(data_for_update(is_touch))
         if version.errors.any?
           log_version_errors(version, :update)
         else
@@ -350,10 +351,10 @@ module PaperTrail
     # `create`. That is, all the attributes of the nascent `Version` record.
     #
     # @api private
-    def data_for_update
+    def data_for_update(is_touch)
       data = {
         event: @record.paper_trail_event || "update",
-        object: recordable_object,
+        object: recordable_object(is_touch),
         whodunnit: PaperTrail.request.whodunnit
       }
       if @record.respond_to?(:updated_at)
@@ -384,7 +385,7 @@ module PaperTrail
     def data_for_update_columns(changes)
       data = {
         event: @record.paper_trail_event || "update",
-        object: recordable_object,
+        object: recordable_object(false),
         whodunnit: PaperTrail.request.whodunnit
       }
       if record_object_changes?
@@ -401,11 +402,11 @@ module PaperTrail
     # `PaperTrail.serializer`.
     #
     # @api private
-    def recordable_object
+    def recordable_object(is_touch)
       if @record.class.paper_trail.version_class.object_col_is_json?
-        object_attrs_for_paper_trail
+        object_attrs_for_paper_trail(is_touch)
       else
-        PaperTrail.serializer.dump(object_attrs_for_paper_trail)
+        PaperTrail.serializer.dump(object_attrs_for_paper_trail(is_touch))
       end
     end
 
@@ -507,7 +508,7 @@ module PaperTrail
       ::PaperTrail.request(enabled: false) do
         @record.save!(validate: false)
       end
-      record_update(force: true, in_after_callback: false)
+      record_update(force: true, in_after_callback: false, is_touch: false)
     end
 
     # Save, and create a version record regardless of options such as `:on`,
@@ -527,7 +528,7 @@ module PaperTrail
       ::PaperTrail.request(enabled: false) do
         @record.save(*args)
       end
-      record_update(force: true, in_after_callback: false)
+      record_update(force: true, in_after_callback: false, is_touch: false)
     end
 
     # Like the `update_column` method from `ActiveRecord::Persistence`, but also
@@ -620,13 +621,15 @@ module PaperTrail
     # Event can be any of the three (create, update, destroy).
     #
     # @api private
-    def attribute_in_previous_version(attr_name)
+    def attribute_in_previous_version(attr_name, is_touch)
       if RAILS_GTE_5_1
-        if @in_after_callback
+        if @in_after_callback && !is_touch
+          # For most events, we want the original value of the attribute, before
+          # the last save.
           @record.attribute_before_last_save(attr_name.to_s)
         else
-          # We are performing a `record_destroy`. Other events,
-          # like `record_create`, can only be done in an after-callback.
+          # We are either performing a `record_destroy` or a
+          # `record_update(is_touch: true)`.
           @record.attribute_in_database(attr_name.to_s)
         end
       else
