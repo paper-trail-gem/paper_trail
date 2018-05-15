@@ -15,6 +15,20 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
+- None
+
+## 9.0.2 (2018-05-14)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
 - [#1084](https://github.com/paper-trail-gem/paper_trail/pull/1084)
   The `touch` callback (added in 9.0.0) now inserts the correct value into
   the `versions.object` column.

@@ -110,6 +110,9 @@ module PaperTrail
 
     # Returns PaperTrail's `::Gem::Version`, convenient for comparisons. This is
     # recommended over `::PaperTrail::VERSION::STRING`.
+    #
+    # Added in 7.0.0
+    #
     # @api public
     def gem_version
       ::Gem::Version.new(VERSION::STRING)
