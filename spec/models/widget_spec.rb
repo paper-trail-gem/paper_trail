@@ -271,7 +271,6 @@ RSpec.describe Widget, type: :model do
       expect(widget.versions.count).to eq(2)
       expect(widget.versions.last.event).to(eq("update"))
       expect(widget.versions.last.changeset[:name]).to eq([nil, "Bugle"])
-      expect(widget.versions.last.created_at.to_i).to eq(Time.now.to_i)
     end
   end
 
