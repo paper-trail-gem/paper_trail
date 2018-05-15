@@ -40,7 +40,7 @@ has been destroyed.
   s.add_development_dependency "rake", "~> 12.3"
   s.add_development_dependency "rspec-rails", "~> 3.7.2"
   s.add_development_dependency "rubocop", "~> 0.56.0"
-  s.add_development_dependency "rubocop-rspec", "~> 1.24.0"
+  s.add_development_dependency "rubocop-rspec", "~> 1.25.1"
   s.add_development_dependency "sqlite3", "~> 1.3"
   s.add_development_dependency "timecop", "~> 0.9.1"
 end
