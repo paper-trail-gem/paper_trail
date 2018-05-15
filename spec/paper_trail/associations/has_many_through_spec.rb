@@ -18,10 +18,6 @@ RSpec.describe(::PaperTrail, versioning: true) do
     "Alice's Evidence"
   ].freeze
 
-  after do
-    Timecop.return
-  end
-
   context "Books, Authors, and Authorships" do
     before { @book = Book.create(title: "book_0") }
 
@@ -61,7 +57,6 @@ RSpec.describe(::PaperTrail, versioning: true) do
     context "updated before it is associated with an existing one" do
       before do
         person_existing = Person.create(name: "person_existing")
-        Timecop.travel(1.second.since)
         @book.update_attributes!(title: "book_1")
         (@book.authors << person_existing)
       end
@@ -93,7 +88,6 @@ RSpec.describe(::PaperTrail, versioning: true) do
       before do
         @author = @book.authors.create!(name: "author_0")
         @person_existing = Person.create(name: "person_existing")
-        Timecop.travel(1.second.since)
         @book.update_attributes!(title: "book_1")
       end
 
@@ -109,7 +103,6 @@ RSpec.describe(::PaperTrail, versioning: true) do
         before do
           @author.update_attributes(name: "author_1")
           @author.update_attributes(name: "author_2")
-          Timecop.travel(1.second.since)
           @book.update_attributes(title: "book_2")
           @author.update_attributes(name: "author_3")
         end
@@ -154,7 +147,6 @@ RSpec.describe(::PaperTrail, versioning: true) do
       context "and then the associated is destroyed between model versions" do
         before do
           @author.destroy
-          Timecop.travel(1.second.since)
           @book.update_attributes(title: "book_2")
         end
 
@@ -170,7 +162,6 @@ RSpec.describe(::PaperTrail, versioning: true) do
       context "and then the associated is dissociated between model versions" do
         before do
           @book.authors = []
-          Timecop.travel(1.second.since)
           @book.update_attributes(title: "book_2")
         end
 
@@ -281,13 +272,9 @@ RSpec.describe(::PaperTrail, versioning: true) do
     context "after the first has_many through relationship is created" do
       before do
         @chapter.update_attributes(name: CHAPTER_NAMES[1])
-        Timecop.travel(1.second.since)
         @chapter.sections.create(name: "section 1")
-        Timecop.travel(1.second.since)
         @chapter.sections.first.update_attributes(name: "section 2")
-        Timecop.travel(1.second.since)
         @chapter.update_attributes(name: CHAPTER_NAMES[2])
-        Timecop.travel(1.second.since)
         @chapter.sections.first.update_attributes(name: "section 3")
       end
 
@@ -310,9 +297,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
       context "version 2, before the section was destroyed" do
         before do
           @chapter.update_attributes(name: CHAPTER_NAMES[2])
-          Timecop.travel(1.second.since)
           @chapter.sections.destroy_all
-          Timecop.travel(1.second.since)
         end
 
         it "have the one section" do
@@ -324,9 +309,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
       context "version 3, after the section was destroyed" do
         before do
           @chapter.sections.destroy_all
-          Timecop.travel(1.second.since)
           @chapter.update_attributes(name: CHAPTER_NAMES[3])
-          Timecop.travel(1.second.since)
         end
 
         it "have no sections" do
@@ -338,7 +321,6 @@ RSpec.describe(::PaperTrail, versioning: true) do
       context "after creating a paragraph" do
         before do
           @section = @chapter.sections.first
-          Timecop.travel(1.second.since)
           @paragraph = @section.paragraphs.create(name: "para1")
         end
 
@@ -346,10 +328,8 @@ RSpec.describe(::PaperTrail, versioning: true) do
           it "have one paragraph" do
             initial_section_name = @section.name
             initial_paragraph_name = @paragraph.name
-            Timecop.travel(1.second.since)
             @chapter.update_attributes(name: CHAPTER_NAMES[4])
             expect(@chapter.versions.size).to(eq(4))
-            Timecop.travel(1.second.since)
             @paragraph.update_attributes(name: "para3")
             chapter_v3 = @chapter.versions[3].reify(has_many: true)
             expect(chapter_v3.sections.map(&:name)).to(eq([initial_section_name]))
@@ -361,10 +341,8 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
         context "the version before a section is destroyed" do
           it "have the section and paragraph" do
-            Timecop.travel(1.second.since)
             @chapter.update_attributes(name: CHAPTER_NAMES[3])
             expect(@chapter.versions.size).to(eq(4))
-            Timecop.travel(1.second.since)
             @section.destroy
             expect(@chapter.versions.size).to(eq(4))
             chapter_v3 = @chapter.versions[3].reify(has_many: true)
@@ -378,7 +356,6 @@ RSpec.describe(::PaperTrail, versioning: true) do
         context "the version after a section is destroyed" do
           it "not have any sections or paragraphs" do
             @section.destroy
-            Timecop.travel(1.second.since)
             @chapter.update_attributes(name: CHAPTER_NAMES[5])
             expect(@chapter.versions.size).to(eq(4))
             chapter_v3 = @chapter.versions[3].reify(has_many: true)
@@ -390,9 +367,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
         context "the version before a paragraph is destroyed" do
           it "have the one paragraph" do
             initial_paragraph_name = @section.paragraphs.first.name
-            Timecop.travel(1.second.since)
             @chapter.update_attributes(name: CHAPTER_NAMES[5])
-            Timecop.travel(1.second.since)
             @paragraph.destroy
             chapter_v3 = @chapter.versions[3].reify(has_many: true)
             paragraphs = chapter_v3.sections.first.paragraphs
@@ -404,7 +379,6 @@ RSpec.describe(::PaperTrail, versioning: true) do
         context "the version after a paragraph is destroyed" do
           it "have no paragraphs" do
             @paragraph.destroy
-            Timecop.travel(1.second.since)
             @chapter.update_attributes(name: CHAPTER_NAMES[5])
             chapter_v3 = @chapter.versions[3].reify(has_many: true)
             expect(chapter_v3.paragraphs.size).to(eq(0))
@@ -421,7 +395,6 @@ RSpec.describe(::PaperTrail, versioning: true) do
         paragraph = Paragraph.create(name: "Paragraph One", section: section)
         quotation = Quotation.create(chapter: chapter)
         citation = Citation.create(quotation: quotation)
-        Timecop.travel(1.second.since)
         chapter.update_attributes(name: CHAPTER_NAMES[1])
         expect(chapter.versions.count).to(eq(2))
         paragraph.destroy

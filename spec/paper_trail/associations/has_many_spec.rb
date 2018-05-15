@@ -3,10 +3,6 @@
 require "spec_helper"
 
 RSpec.describe(::PaperTrail, versioning: true) do
-  after do
-    Timecop.return
-  end
-
   describe "customer, reified from version before order created" do
     it "has no orders" do
       customer = Customer.create(name: "customer_0")
@@ -32,7 +28,6 @@ RSpec.describe(::PaperTrail, versioning: true) do
     it "has the expected order" do
       customer = Customer.create(name: "customer_0")
       customer.orders.create!(order_date: "order_date_0")
-      Timecop.travel(1.second.since)
       customer.update_attributes(name: "customer_1")
       customer0 = customer.versions.last.reify(has_many: true)
       expect(customer0.orders.map(&:order_date)).to(eq(["order_date_0"]))
@@ -43,7 +38,6 @@ RSpec.describe(::PaperTrail, versioning: true) do
     it "has the expected line item" do
       customer = Customer.create(name: "customer_0")
       order = customer.orders.create!(order_date: "order_date_0")
-      Timecop.travel(1.second.since)
       customer.update_attributes(name: "customer_1")
       order.line_items.create!(product: "product_0")
       customer0 = customer.versions.last.reify(has_many: true)
@@ -55,11 +49,9 @@ RSpec.describe(::PaperTrail, versioning: true) do
     it "has the updated order_date" do
       customer = Customer.create(name: "customer_0")
       order = customer.orders.create!(order_date: "order_date_0")
-      Timecop.travel(1.second.since)
       customer.update_attributes(name: "customer_1")
       order.update_attributes(order_date: "order_date_1")
       order.update_attributes(order_date: "order_date_2")
-      Timecop.travel(1.second.since)
       customer.update_attributes(name: "customer_2")
       order.update_attributes(order_date: "order_date_3")
       customer1 = customer.versions.last.reify(has_many: true)
@@ -73,11 +65,9 @@ RSpec.describe(::PaperTrail, versioning: true) do
       # TODO: This can be tested with fewer db records
       customer = Customer.create(name: "customer_0")
       order = customer.orders.create!(order_date: "order_date_0")
-      Timecop.travel(1.second.since)
       customer.update_attributes(name: "customer_1")
       order.update_attributes(order_date: "order_date_1")
       order.update_attributes(order_date: "order_date_2")
-      Timecop.travel(1.second.since)
       customer.update_attributes(name: "customer_2")
       order.update_attributes(order_date: "order_date_3")
       customer1 = customer.versions.last.reify(has_many: false)
@@ -90,11 +80,9 @@ RSpec.describe(::PaperTrail, versioning: true) do
       # TODO: This can be tested with fewer db records
       customer = Customer.create(name: "customer_0")
       order = customer.orders.create!(order_date: "order_date_0")
-      Timecop.travel(1.second.since)
       customer.update_attributes(name: "customer_1")
       order.update_attributes(order_date: "order_date_1")
       order.update_attributes(order_date: "order_date_2")
-      Timecop.travel(1.second.since)
       customer.update_attributes(name: "customer_2")
       order.update_attributes(order_date: "order_date_3")
       order.destroy
@@ -108,7 +96,6 @@ RSpec.describe(::PaperTrail, versioning: true) do
     it "has the order" do
       customer = Customer.create(name: "customer_0")
       order = customer.orders.create!(order_date: "order_date_0")
-      Timecop.travel(1.second.since)
       customer.update_attributes(name: "customer_1")
       order.destroy
       customer1 = customer.versions.last.reify(has_many: true)
@@ -121,10 +108,8 @@ RSpec.describe(::PaperTrail, versioning: true) do
     it "does not have the order" do
       customer = Customer.create(name: "customer_0")
       order = customer.orders.create!(order_date: "order_date_0")
-      Timecop.travel(1.second.since)
       customer.update_attributes(name: "customer_1")
       order.destroy
-      Timecop.travel(1.second.since)
       customer.update_attributes(name: "customer_2")
       customer1 = customer.versions.last.reify(has_many: true)
       expect(customer1.orders).to(eq([]))
@@ -135,7 +120,6 @@ RSpec.describe(::PaperTrail, versioning: true) do
     it "has the old order_date" do
       customer = Customer.create(name: "customer_0")
       customer.orders.create!(order_date: "order_date_0")
-      Timecop.travel(1.second.since)
       customer.update_attributes(name: "customer_1")
       customer.orders.create!(order_date: "order_date_1")
       customer0 = customer.versions.last.reify(has_many: true)
@@ -150,7 +134,6 @@ RSpec.describe(::PaperTrail, versioning: true) do
     it "has both orders, and the second is marked for destruction" do
       customer = Customer.create(name: "customer_0")
       customer.orders.create!(order_date: "order_date_0")
-      Timecop.travel(1.second.since)
       customer.update_attributes(name: "customer_1")
       customer.orders.create!(order_date: "order_date_1")
       customer0 = customer.versions.last.reify(has_many: true, mark_for_destruction: true)

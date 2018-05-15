@@ -3,17 +3,12 @@
 require "spec_helper"
 
 RSpec.describe(::PaperTrail, versioning: true) do
-  after do
-    Timecop.return
-  end
-
   context "wotsit belongs_to widget" do
     before { @widget = Widget.create(name: "widget_0") }
 
     context "where the association is created between model versions" do
       before do
         @wotsit = Wotsit.create(name: "wotsit_0")
-        Timecop.travel(1.second.since)
         @wotsit.update_attributes(widget_id: @widget.id, name: "wotsit_1")
       end
 
@@ -33,7 +28,6 @@ RSpec.describe(::PaperTrail, versioning: true) do
         before do
           @widget.update_attributes(name: "widget_1")
           @widget.update_attributes(name: "widget_2")
-          Timecop.travel(1.second.since)
           @wotsit.update_attributes(name: "wotsit_2")
           @widget.update_attributes(name: "widget_3")
         end
@@ -92,7 +86,6 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
         context "and then the model is updated" do
           before do
-            Timecop.travel(1.second.since)
             @wotsit.update_attributes(name: "wotsit_3")
           end
 
@@ -110,7 +103,6 @@ RSpec.describe(::PaperTrail, versioning: true) do
     context "where the association is changed between model versions" do
       before do
         @wotsit = @widget.create_wotsit(name: "wotsit_0")
-        Timecop.travel(1.second.since)
         @new_widget = Widget.create(name: "new_widget")
         @wotsit.update_attributes(widget_id: @new_widget.id, name: "wotsit_1")
       end

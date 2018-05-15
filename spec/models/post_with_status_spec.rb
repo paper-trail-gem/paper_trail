@@ -36,7 +36,6 @@ RSpec.describe PostWithStatus, type: :model do
         post = described_class.create(status: :draft)
         expect(post.versions.count).to eq(1)
         expect(post.status).to eq("draft")
-        Timecop.travel 1.second.since # because MySQL lacks fractional seconds precision
         allow(::ActiveSupport::Deprecation).to receive(:warn)
         post.paper_trail.touch_with_version
         expect(::ActiveSupport::Deprecation).to have_received(:warn).once

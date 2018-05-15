@@ -42,10 +42,7 @@ RSpec.describe Widget, type: :model do
       it "resets value for timestamp attrs for update so that value gets updated properly" do
         widget.update_attributes!(name: "Foobar")
         w = widget.versions.last.reify
-        # Travel 1 second because MySQL lacks sub-second resolution
-        Timecop.travel(1) do
-          expect { w.save! }.to change(w, :updated_at)
-        end
+        expect { w.save! }.to change(w, :updated_at)
       end
     end
 
@@ -234,9 +231,7 @@ RSpec.describe Widget, type: :model do
     it "creates a version" do
       allow(::ActiveSupport::Deprecation).to receive(:warn)
       count = widget.versions.size
-      Timecop.travel(1) do
-        widget.paper_trail.touch_with_version
-      end
+      widget.paper_trail.touch_with_version
       expect(widget.versions.size).to eq(count + 1)
       expect(::ActiveSupport::Deprecation).to have_received(:warn).once
     end
@@ -244,10 +239,7 @@ RSpec.describe Widget, type: :model do
     it "increments the `:updated_at` timestamp" do
       allow(::ActiveSupport::Deprecation).to receive(:warn)
       time_was = widget.updated_at
-      # Travel 1 second because MySQL lacks sub-second resolution
-      Timecop.travel(1) do
-        widget.paper_trail.touch_with_version
-      end
+      widget.paper_trail.touch_with_version
       expect(widget.updated_at).to be > time_was
       expect(::ActiveSupport::Deprecation).to have_received(:warn).once
     end
@@ -275,13 +267,11 @@ RSpec.describe Widget, type: :model do
     it "creates a version record" do
       widget = Widget.create
       expect(widget.versions.count).to eq(1)
-      Timecop.freeze Time.now do
-        widget.paper_trail.update_columns(name: "Bugle")
-        expect(widget.versions.count).to eq(2)
-        expect(widget.versions.last.event).to(eq("update"))
-        expect(widget.versions.last.changeset[:name]).to eq([nil, "Bugle"])
-        expect(widget.versions.last.created_at.to_i).to eq(Time.now.to_i)
-      end
+      widget.paper_trail.update_columns(name: "Bugle")
+      expect(widget.versions.count).to eq(2)
+      expect(widget.versions.last.event).to(eq("update"))
+      expect(widget.versions.last.changeset[:name]).to eq([nil, "Bugle"])
+      expect(widget.versions.last.created_at.to_i).to eq(Time.now.to_i)
     end
   end
 
