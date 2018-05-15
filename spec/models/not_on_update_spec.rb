@@ -27,10 +27,7 @@ RSpec.describe NotOnUpdate, type: :model do
     it "increments the `:updated_at` timestamp" do
       before = record.updated_at
       allow(::ActiveSupport::Deprecation).to receive(:warn)
-      # Travel 1 second because MySQL lacks sub-second resolution
-      Timecop.travel(1) do
-        record.paper_trail.touch_with_version
-      end
+      record.paper_trail.touch_with_version
       expect(::ActiveSupport::Deprecation).to have_received(:warn).once
       expect(record.updated_at).to be > before
     end

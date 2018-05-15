@@ -3,14 +3,9 @@
 require "spec_helper"
 
 RSpec.describe(::PaperTrail, versioning: true) do
-  after do
-    Timecop.return
-  end
-
   context "foo and bar" do
     before do
       @foo = FooHabtm.create(name: "foo")
-      Timecop.travel(1.second.since)
     end
 
     context "where the association is created between model versions" do
@@ -36,7 +31,6 @@ RSpec.describe(::PaperTrail, versioning: true) do
     context "where the association is changed between model versions" do
       before do
         @foo.update_attributes(name: "foo2", bar_habtms: [BarHabtm.create(name: "bar2")])
-        Timecop.travel(1.second.since)
         @foo.update_attributes(name: "foo3", bar_habtms: [BarHabtm.create(name: "bar3")])
       end
 
@@ -66,7 +60,6 @@ RSpec.describe(::PaperTrail, versioning: true) do
     context "where the association is destroyed between model versions" do
       before do
         @foo.update_attributes(name: "foo2", bar_habtms: [BarHabtm.create(name: "bar2")])
-        Timecop.travel(1.second.since)
         @foo.update_attributes(name: "foo3", bar_habtms: [])
       end
 
@@ -89,9 +82,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
       before do
         @bar = BarHabtm.create(name: "bar2")
         @foo.update_attributes(name: "foo2", bar_habtms: [@bar])
-        Timecop.travel(1.second.since)
         @foo.update_attributes(name: "foo3", bar_habtms: [BarHabtm.create(name: "bar4")])
-        Timecop.travel(1.second.since)
         @bar.update_attributes(name: "bar3")
       end
 
@@ -114,7 +105,6 @@ RSpec.describe(::PaperTrail, versioning: true) do
   context "updated via nested attributes" do
     before do
       @foo = FooHabtm.create(name: "foo", bar_habtms_attributes: [{ name: "bar" }])
-      Timecop.travel(1.second.since)
       @foo.update_attributes(
         name: "foo2",
         bar_habtms_attributes: [{ id: @foo.bar_habtms.first.id, name: "bar2" }]

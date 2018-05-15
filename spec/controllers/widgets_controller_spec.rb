@@ -23,8 +23,8 @@ RSpec.describe WidgetsController, type: :controller, versioning: true do
         expect(PaperTrail.request.enabled?).to eq(true)
         expect(PaperTrail.request.whodunnit).to(eq(153))
         expect(PaperTrail.request.controller_info.present?).to(eq(true))
-        expect(PaperTrail.request.controller_info.keys.include?(:ip)).to(eq(true))
-        expect(PaperTrail.request.controller_info.keys.include?(:user_agent)).to(eq(true))
+        expect(PaperTrail.request.controller_info.key?(:ip)).to(eq(true))
+        expect(PaperTrail.request.controller_info.key?(:user_agent)).to(eq(true))
       end
     end
 

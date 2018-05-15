@@ -10,7 +10,6 @@ module Family
           parent = described_class.new(name: "parent1")
           parent.children.build(name: "child1")
           parent.save!
-          Timecop.travel(1.second.since)
           parent.update_attributes!(
             name: "parent2",
             children_attributes: { id: parent.children.first.id, name: "child2" }
@@ -29,7 +28,6 @@ module Family
           parent = described_class.new(name: "parent1")
           parent.children.build(name: "child1")
           parent.save!
-          Timecop.travel(1.second.since)
           parent.name = "parent2"
           parent.children.build(name: "child2")
           parent.save!
@@ -48,7 +46,6 @@ module Family
           parent = described_class.new(name: "parent1")
           parent.grandsons.build(name: "grandson1")
           parent.save!
-          Timecop.travel(1.second.since)
           parent.name = "parent2"
           parent.grandsons.build(name: "grandson2")
           parent.save!
@@ -67,7 +64,6 @@ module Family
           parent = described_class.new(name: "parent1")
           parent.build_mentee(name: "partner1")
           parent.save!
-          Timecop.travel(1.second.since)
           parent.update_attributes(
             name: "parent2",
             mentee_attributes: { id: parent.mentee.id, name: "partner2" }

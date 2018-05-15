@@ -66,7 +66,7 @@ DB=sqlite bundle exec rake prepare
 # We can't use `appraisal` inside the dummy app, so we must set `BUNDLE_GEMFILE`.
 # See spec/dummy_app/config/boot.rb for a complete explanation.
 cd spec/dummy_app
-export BUNDLE_GEMFILE=../../gemfiles/ar_5.0.gemfile
+export BUNDLE_GEMFILE=../../gemfiles/ar_5.2.gemfile
 RAILS_ENV=test bundle exec rake db:environment:set db:setup
 RAILS_ENV=foo bundle exec rake db:environment:set db:setup
 RAILS_ENV=bar bundle exec rake db:environment:set db:setup
@@ -74,7 +74,7 @@ unset BUNDLE_GEMFILE
 cd ../..
 
 # Run tests
-DB=sqlite bundle exec appraisal ar-5.0 rake
+DB=sqlite bundle exec appraisal ar-5.2 rake
 ```
 
 ### Test mysql, AR 5
@@ -88,15 +88,15 @@ DB=mysql bundle exec rake prepare
 # We can't use `appraisal` inside the dummy app, so we must set `BUNDLE_GEMFILE`.
 # See spec/dummy_app/config/boot.rb for a complete explanation.
 cd spec/dummy_app
-export BUNDLE_GEMFILE=../../gemfiles/ar_5.0.gemfile
-RAILS_ENV=test bundle exec rake db:environment:set db:setup
-RAILS_ENV=foo bundle exec rake db:environment:set db:setup
-RAILS_ENV=bar bundle exec rake db:environment:set db:setup
+export BUNDLE_GEMFILE=../../gemfiles/ar_5.2.gemfile
+RAILS_ENV=test bundle exec rake db:setup db:environment:set
+RAILS_ENV=foo bundle exec rake db:setup db:environment:set
+RAILS_ENV=bar bundle exec rake db:setup db:environment:set
 unset BUNDLE_GEMFILE
 cd ../..
 
 # Run tests
-DB=mysql bundle exec appraisal ar-5.0 rake
+DB=mysql bundle exec appraisal ar-5.2 rake
 ```
 
 ### Test postgres, AR 5
@@ -111,7 +111,7 @@ DB=postgres bundle exec rake prepare
 # We can't use `appraisal` inside the dummy app, so we must set `BUNDLE_GEMFILE`.
 # See spec/dummy_app/config/boot.rb for a complete explanation.
 cd spec/dummy_app
-export BUNDLE_GEMFILE=../../gemfiles/ar_5.0.gemfile
+export BUNDLE_GEMFILE=../../gemfiles/ar_5.2.gemfile
 DB=postgres RAILS_ENV=test bundle exec rake db:environment:set db:drop db:create db:migrate
 DB=postgres RAILS_ENV=foo bundle exec rake db:environment:set db:drop db:create db:migrate
 DB=postgres RAILS_ENV=bar bundle exec rake db:environment:set db:drop db:create db:migrate
@@ -120,7 +120,7 @@ cd ../..
 
 # Run tests
 DB=postgres bundle exec rake
-DB=postgres bundle exec appraisal ar-5.0 rake
+DB=postgres bundle exec appraisal ar-5.2 rake
 ```
 
 ## Editing the migration

@@ -59,7 +59,6 @@ require File.expand_path("dummy_app/config/environment", __dir__)
 require "rspec/rails"
 require "paper_trail/frameworks/rspec"
 require "ffaker"
-require "timecop"
 
 # Migrate
 require_relative "support/paper_trail_spec_migrator"
