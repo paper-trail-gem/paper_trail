@@ -74,7 +74,18 @@ module PaperTrail
           when 1
             versions.first
           else
-            raise FoundMoreThanOne.new(base_class_name, versions.length)
+            case PaperTrail.config.association_reify_error_behaviour.to_s
+            when "warn"
+              version = versions.first
+              version.logger&.warn(
+                format(FoundMoreThanOne::MESSAGE_FMT, base_class_name, versions.length)
+              )
+              version
+            when "ignore"
+              versions.first
+            else # "error"
+              raise FoundMoreThanOne.new(base_class_name, versions.length)
+            end
           end
         end
 
