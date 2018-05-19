@@ -3,5 +3,9 @@
 class Thing < ActiveRecord::Base
   has_paper_trail save_changes: false
 
-  belongs_to :person, optional: true
+  if ActiveRecord.gem_version >= Gem::Version.new("5.0")
+    belongs_to :person, optional: true
+  else
+    belongs_to :person
+  end
 end
