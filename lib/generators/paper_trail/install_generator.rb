@@ -43,13 +43,11 @@ module PaperTrail
     end
 
     def create_initializer
-      if options.with_associations?
-        create_file(
-          "config/initializers/paper_trail.rb",
-          "PaperTrail.config.track_associations = true\n",
-          "PaperTrail.config.association_reify_error_behaviour = :error"
-        )
-      end
+      create_file(
+        "config/initializers/paper_trail.rb",
+        "PaperTrail.config.track_associations = true\n",
+        "PaperTrail.config.association_reify_error_behaviour = :error"
+      )
     end
 
     def self.next_migration_number(dirname)
