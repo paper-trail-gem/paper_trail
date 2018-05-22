@@ -14,10 +14,10 @@ RSpec.describe Person, type: :model, versioning: true do
 
       person = Person.create(name: "Frank")
       thing = Thing.create(name: "BMW 325")
-      thing = Thing.create(name: "BMX 1.0")
+      thing_2 = Thing.create(name: "BMX 1.0")
 
       person.thing = thing
-      person.thing = thing
+      person.thing_2 = thing_2
       person.update_attributes(name: "Steve")
 
       thing.update_attributes(name: "BMW 330")
@@ -26,11 +26,15 @@ RSpec.describe Person, type: :model, versioning: true do
 
       expect(person.reload.versions.length).to(eq(3))
 
-      expect(person.versions.first.logger).to(
-        receive(:warn).with(/Unable to reify has_one association/).twice
-      )
+      logger = person.versions.first.logger
+
+      allow(logger).to receive(:warn)
 
       person.reload.versions.second.reify(has_one: true)
+
+      expect(logger).to(
+        have_received(:warn).with(/Unable to reify has_one association/).twice
+      )
     end
   end
 end

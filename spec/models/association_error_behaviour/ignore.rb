@@ -11,12 +11,13 @@ RSpec.describe Person, type: :model, versioning: true do
   describe "#association reify error behaviour" do
     it "association reify error behaviour = :ignore" do
       ::PaperTrail.config.association_reify_error_behaviour = :ignore
+
       person = Person.create(name: "Frank")
       thing = Thing.create(name: "BMW 325")
-      thing = Thing.create(name: "BMX 1.0")
+      thing_2 = Thing.create(name: "BMX 1.0")
 
       person.thing = thing
-      person.thing = thing
+      person.thing_2 = thing_2
       person.update_attributes(name: "Steve")
 
       thing.update_attributes(name: "BMW 330")
@@ -25,11 +26,15 @@ RSpec.describe Person, type: :model, versioning: true do
 
       expect(person.reload.versions.length).to(eq(3))
 
-      expect(person.versions.first.logger).to_not(
-        receive(:warn).with(/Unable to reify has_one association/)
-      )
+      logger = person.versions.first.logger
+
+      allow(logger).to receive(:warn)
 
       person.reload.versions.second.reify(has_one: true)
+
+      expect(logger).not_to(
+        have_received(:warn).with(/Unable to reify has_one association/)
+      )
     end
   end
 end
