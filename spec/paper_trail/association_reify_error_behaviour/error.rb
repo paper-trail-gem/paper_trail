@@ -2,13 +2,16 @@
 
 require "spec_helper"
 
-RSpec.describe Person, type: :model, versioning: true do
+RSpec.describe PaperTrail, versioning: true do
   it "baseline test setup" do
     expect(Person.new).to be_versioned
   end
 
-  describe "#cars and bicycles" do
-    it "can be reified" do
+  # See https://github.com/paper-trail-gem/paper_trail/issues/594
+  describe "#association reify error behaviour" do
+    it "association reify error behaviour = :error" do
+      ::PaperTrail.config.association_reify_error_behaviour = :error
+
       person = Person.create(name: "Frank")
       car = Car.create(name: "BMW 325")
       bicycle = Bicycle.create(name: "BMX 1.0")
@@ -23,7 +26,6 @@ RSpec.describe Person, type: :model, versioning: true do
 
       expect(person.reload.versions.length).to(eq(3))
 
-      # See https://github.com/paper-trail-gem/paper_trail/issues/594
       expect {
         person.reload.versions.second.reify(has_one: true)
       }.to(

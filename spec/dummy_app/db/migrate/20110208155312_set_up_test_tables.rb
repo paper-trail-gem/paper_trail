@@ -238,6 +238,7 @@ class SetUpTestTables < (
 
     create_table :things, force: true do |t|
       t.string    :name
+      t.references :person
     end
 
     create_table :translations, force: true do |t|

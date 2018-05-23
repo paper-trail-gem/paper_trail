@@ -948,8 +948,9 @@ Associations are an **experimental feature** and have the following known
 issues, in order of descending importance.
 
 1. PaperTrail only reifies the first level of associations.
-1. Does not fully support STI (For example, see `spec/models/person_spec.rb` and
-   `PaperTrail::Reifiers::HasOne::FoundMoreThanOne` error)
+1. Sometimes the has_one association will find more than one possible candidate and will raise a `PaperTrail::Reifiers::HasOne::FoundMoreThanOne` error. For example, see `spec/models/person_spec.rb`
+  - If you are not using STI, you may want to just assume the first result (of multiple) is the correct one and continue. Versions pre v8.1.2 and below did this without error or warning. To do so add the following line to your initializer: `PaperTrail.config.association_reify_error_behaviour = :warn`. Valid options are: `[:error, :warn, :ignore]`
+  - When using STI, even if you enable `:warn` you will likely still end up recieving an `ActiveRecord::AssociationTypeMismatch` error.
 1. [#542](https://github.com/paper-trail-gem/paper_trail/issues/542) -
    Not compatible with [transactional tests][34], aka. transactional fixtures.
 1. Requires database timestamp columns with fractional second precision.

@@ -12,6 +12,9 @@ class Person < ActiveRecord::Base
   has_one :car, foreign_key: :owner_id
   has_one :bicycle, foreign_key: :owner_id
 
+  has_one :thing
+  has_one :thing_2, class_name: "Thing"
+
   if ActiveRecord.gem_version >= Gem::Version.new("5.0")
     belongs_to :mentor, class_name: "Person", foreign_key: :mentor_id, optional: true
   else
