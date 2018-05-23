@@ -32,14 +32,6 @@ module PaperTrail
       end
     end
 
-    # describe "association_reify_error_behaviour" do
-    #   it "accepts a value" do
-    #     config = described_class.instance
-    #     config.association_reify_error_behaviour = :warn
-    #     expect(config.association_reify_error_behaviour).to eq(:warn)
-    #   end
-    # end
-
     describe ".version_limit", versioning: true do
       after { PaperTrail.config.version_limit = nil }
 

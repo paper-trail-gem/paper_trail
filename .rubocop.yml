@@ -97,9 +97,9 @@ Naming/UncommunicativeMethodParamName:
 
 RSpec/FilePath:
   Exclude:
-    - spec/models/association_error_behaviour/error.rb
-    - spec/models/association_error_behaviour/warn.rb
-    - spec/models/association_error_behaviour/ignore.rb
+    - spec/paper_trail/association_reify_error_behaviour/error.rb
+    - spec/paper_trail/association_reify_error_behaviour/warn.rb
+    - spec/paper_trail/association_reify_error_behaviour/ignore.rb
 
 # In an ideal world, each example has a single expectation. In the real world,
 # sometimes setup is a pain and you don't want to duplicate setup in multiple

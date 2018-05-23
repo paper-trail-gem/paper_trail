@@ -78,7 +78,7 @@ module PaperTrail
             when "warn"
               version = versions.first
               version.logger&.warn(
-                format(FoundMoreThanOne::MESSAGE_FMT, base_class_name, versions.length)
+                FoundMoreThanOne.new(base_class_name, versions.length).message
               )
               version
             when "ignore"

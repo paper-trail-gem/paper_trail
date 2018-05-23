@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Person, type: :model, versioning: true do
+RSpec.describe PaperTrail, versioning: true do
   it "baseline test setup" do
     expect(Person.new).to be_versioned
   end
