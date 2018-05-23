@@ -11,7 +11,7 @@ has been destroyed.
 | Version        | Documentation |
 | -------------- | ------------- |
 | Unreleased     | https://github.com/paper-trail-gem/paper_trail/blob/master/README.md |
-| 9.0.2          | https://github.com/paper-trail-gem/paper_trail/blob/v9.0.2/README.md |
+| 9.1.0          | https://github.com/paper-trail-gem/paper_trail/blob/v9.1.0/README.md |
 | 8.1.2          | https://github.com/paper-trail-gem/paper_trail/blob/v8.1.2/README.md |
 | 7.1.3          | https://github.com/paper-trail-gem/paper_trail/blob/v7.1.3/README.md |
 | 6.0.2          | https://github.com/paper-trail-gem/paper_trail/blob/v6.0.2/README.md |
@@ -948,9 +948,16 @@ Associations are an **experimental feature** and have the following known
 issues, in order of descending importance.
 
 1. PaperTrail only reifies the first level of associations.
-1. Sometimes the has_one association will find more than one possible candidate and will raise a `PaperTrail::Reifiers::HasOne::FoundMoreThanOne` error. For example, see `spec/models/person_spec.rb`
-  - If you are not using STI, you may want to just assume the first result (of multiple) is the correct one and continue. Versions pre v8.1.2 and below did this without error or warning. To do so add the following line to your initializer: `PaperTrail.config.association_reify_error_behaviour = :warn`. Valid options are: `[:error, :warn, :ignore]`
-  - When using STI, even if you enable `:warn` you will likely still end up recieving an `ActiveRecord::AssociationTypeMismatch` error.
+1. Sometimes the has_one association will find more than one possible candidate
+   and will raise a `PaperTrail::Reifiers::HasOne::FoundMoreThanOne` error. For
+   example, see `spec/models/person_spec.rb`
+  - If you are not using STI, you may want to just assume the first result (of
+    multiple) is the correct one and continue. Versions pre v8.1.2 and below did
+    this without error or warning. To do so add the following line to your
+    initializer: `PaperTrail.config.association_reify_error_behaviour = :warn`.
+    Valid options are: `[:error, :warn, :ignore]`
+  - When using STI, even if you enable `:warn` you will likely still end up
+    recieving an `ActiveRecord::AssociationTypeMismatch` error.
 1. [#542](https://github.com/paper-trail-gem/paper_trail/issues/542) -
    Not compatible with [transactional tests][34], aka. transactional fixtures.
 1. Requires database timestamp columns with fractional second precision.

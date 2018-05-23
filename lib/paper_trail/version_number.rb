@@ -8,8 +8,10 @@ module PaperTrail
   # People are encouraged to use `PaperTrail.gem_version` instead.
   module VERSION
     MAJOR = 9
-    MINOR = 0
-    TINY = 2
+    MINOR = 1
+    TINY = 0
+
+    # Set PRE to nil unless it's a pre-release (beta, rc, etc.)
     PRE = nil
 
     STRING = [MAJOR, MINOR, TINY, PRE].compact.join(".").freeze
