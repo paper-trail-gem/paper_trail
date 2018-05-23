@@ -11,7 +11,26 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
-- [#1089] Sometimes the has_one association will find more than one possible candidate and will raise a `PaperTrail::Reifiers::HasOne::FoundMoreThanOne` when NOT using STI. You may want to just assume the first result (of multiple) is the correct one and continue. Versions pre v8.1.2 and below did this without error or warning. To do so add the following line to your initializer: `PaperTrail.config.association_reify_error_behaviour = :warn`. Valid options are: `[:error, :warn, :ignore]`
+- None
+
+### Fixed
+
+- None
+
+## 9.1.0 (2018-05-23)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- [#1091](https://github.com/paper-trail-gem/paper_trail/pull/1091) -
+  `PaperTrail.config.association_reify_error_behaviour` - For users of the
+  experimental association tracking feature. Starting with PT 9.0.0, reification
+  of `has_one` associations is stricter. This option gives users some choices
+  for how to handle the `PaperTrail::Reifiers::HasOne::FoundMoreThanOne` error
+  introduced in PT 9. See README section 4.b.1. "Known Issues" for more details.
 
 ### Fixed
 
