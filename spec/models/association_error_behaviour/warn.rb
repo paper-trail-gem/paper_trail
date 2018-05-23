@@ -14,10 +14,10 @@ RSpec.describe Person, type: :model, versioning: true do
 
       person = Person.create(name: "Frank")
       thing = Thing.create(name: "BMW 325")
-      thing_2 = Thing.create(name: "BMX 1.0")
+      thing2 = Thing.create(name: "BMX 1.0")
 
       person.thing = thing
-      person.thing_2 = thing_2
+      person.thing_2 = thing2
       person.update_attributes(name: "Steve")
 
       thing.update_attributes(name: "BMW 330")
