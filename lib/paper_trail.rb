@@ -21,7 +21,6 @@ require "paper_trail/has_paper_trail"
 require "paper_trail/record_history"
 require "paper_trail/reifier"
 require "paper_trail/request"
-require "paper_trail/version_association_concern"
 require "paper_trail/version_concern"
 require "paper_trail/version_number"
 require "paper_trail/serializers/json"
@@ -45,16 +44,6 @@ module PaperTrail
   extend PaperTrail::Cleaner
 
   class << self
-    # @api private
-    def clear_transaction_id
-      ::ActiveSupport::Deprecation.warn(
-        "PaperTrail.clear_transaction_id is deprecated, " \
-        "use PaperTrail.request.clear_transaction_id",
-        caller(1)
-      )
-      request.clear_transaction_id
-    end
-
     # Switches PaperTrail on or off, for all threads.
     # @api public
     def enabled=(value)
@@ -205,29 +194,6 @@ module PaperTrail
     # @api public
     def serializer
       PaperTrail.config.serializer
-    end
-
-    # @api public
-    def transaction?
-      ::ActiveRecord::Base.connection.open_transactions.positive?
-    end
-
-    # @deprecated
-    def transaction_id
-      ::ActiveSupport::Deprecation.warn(
-        "PaperTrail.transaction_id is deprecated without replacement.",
-        caller(1)
-      )
-      request.transaction_id
-    end
-
-    # @deprecated
-    def transaction_id=(id)
-      ::ActiveSupport::Deprecation.warn(
-        "PaperTrail.transaction_id= is deprecated without replacement.",
-        caller(1)
-      )
-      request.transaction_id = id
     end
 
     # Returns PaperTrail's global configuration object, a singleton. These

@@ -120,15 +120,12 @@ RSpec.describe PaperTrail do
       end
     end
 
-    it_behaves_like "it delegates to request", :clear_transaction_id, nil
     it_behaves_like "it delegates to request", :enabled_for_model, [Widget, true]
     it_behaves_like "it delegates to request", :enabled_for_model?, [Widget]
     it_behaves_like "it delegates to request", :whodunnit=, [:some_whodunnit]
     it_behaves_like "it delegates to request", :whodunnit, nil
     it_behaves_like "it delegates to request", :controller_info=, [:some_whodunnit]
     it_behaves_like "it delegates to request", :controller_info, nil
-    it_behaves_like "it delegates to request", :transaction_id=, 123
-    it_behaves_like "it delegates to request", :transaction_id, nil
 
     describe "#enabled_for_controller=" do
       it "is deprecated" do

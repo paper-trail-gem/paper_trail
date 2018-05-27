@@ -29,6 +29,7 @@ has been destroyed.
 
   # Rails does not follow semver, makes breaking changes in minor versions.
   s.add_dependency "activerecord", [">= 4.2", "< 5.3"]
+  s.add_dependency "paper_trail-association_tracking"
   s.add_dependency "request_store", "~> 1.1"
 
   s.add_development_dependency "appraisal", "~> 2.2"
