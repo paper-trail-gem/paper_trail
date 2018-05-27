@@ -1,0 +1,19 @@
+---
+name: Feature Suggestion
+about: Suggest something that you would like to build
+
+---
+
+Due to limited volunteers, we cannot answer *usage* questions. Please ask such
+questions on [StackOverflow](https://stackoverflow.com/tags/paper-trail-gem).
+
+**Is your feature suggestion related to a problem? Please describe.**
+A clear and concise description of what the problem is. Ex. I'm always
+frustrated when [...]
+
+**Describe the solution you'd like to build**
+A clear and concise description of what you want to build.
+
+**Describe alternatives you've considered**
+A clear and concise description of any alternative solutions or features you've
+considered.
