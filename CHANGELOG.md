@@ -11,6 +11,11 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
+- The experimental associations tracking feature has been moved to a
+  separate gem, [paper_trail-association_tracking]
+  (https://github.com/westonganger/paper_trail-association_tracking).
+  PT will, for now, have a runtime dependency on this new gem. So, assuming the
+  gem extraction goes well, no breaking changes are anticipated.
 - [#1093](https://github.com/paper-trail-gem/paper_trail/pull/1093) -
   `PaperTrail.config.object_changes_adapter` - Allows specifying an adapter that will
   determine how the changes for each version are stored in the object_changes column.

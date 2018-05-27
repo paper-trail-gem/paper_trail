@@ -159,20 +159,6 @@ module PaperTrail
             end
           end
         end
-
-        context "private options" do
-          it "raises an invalid option error" do
-            subject = proc do
-              described_class.with(transaction_id: "blah") do
-                raise "This block should not be reached"
-              end
-            end
-
-            expect { subject.call }.to raise_error(PaperTrail::Request::InvalidOption) do |e|
-              expect(e.message).to eq "Cannot set private option: transaction_id"
-            end
-          end
-        end
       end
     end
   end

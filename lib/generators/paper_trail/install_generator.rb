@@ -23,12 +23,6 @@ module PaperTrail
       default: false,
       desc: "Store changeset (diff) with each version"
     )
-    class_option(
-      :with_associations,
-      type: :boolean,
-      default: false,
-      desc: "Store transactional IDs to support association restoration"
-    )
 
     desc "Generates (but does not run) a migration to add a versions table." \
          "  Also generates an initializer file for configuring PaperTrail"
@@ -36,18 +30,6 @@ module PaperTrail
     def create_migration_file
       add_paper_trail_migration("create_versions")
       add_paper_trail_migration("add_object_changes_to_versions") if options.with_changes?
-      if options.with_associations?
-        add_paper_trail_migration("create_version_associations")
-        add_paper_trail_migration("add_transaction_id_column_to_versions")
-      end
-    end
-
-    def create_initializer
-      create_file(
-        "config/initializers/paper_trail.rb",
-        "PaperTrail.config.track_associations = #{!!options.with_associations?}\n",
-        "PaperTrail.config.association_reify_error_behaviour = :error"
-      )
     end
 
     def self.next_migration_number(dirname)

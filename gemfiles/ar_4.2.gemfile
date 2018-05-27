@@ -2,6 +2,7 @@
 
 source "https://rubygems.org"
 
+gem "paper_trail-association_tracking", github: "westonganger/paper_trail-association_tracking"
 gem "activerecord", "~> 4.2.10"
 gem "database_cleaner", "~> 1.6"
 

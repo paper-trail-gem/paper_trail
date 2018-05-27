@@ -48,27 +48,11 @@ ActiveRecord::Schema.define do
     t.string :whodunnit
     t.text :object, limit: 1_073_741_823
     t.text :object_changes, limit: 1_073_741_823
-    t.integer :transaction_id
     t.datetime :created_at
   end
   add_index :versions, %i[item_type item_id]
-  add_index :versions, [:transaction_id]
-
-  create_table :version_associations do |t|
-    t.integer  :version_id
-    t.string   :foreign_key_name, null: false
-    t.integer  :foreign_key_id
-  end
-  add_index :version_associations, [:version_id]
-  add_index :version_associations, %i[foreign_key_name foreign_key_id],
-    name: "index_version_associations_on_foreign_key"
 end
 ActiveRecord::Base.logger = Logger.new(STDOUT)
-require "paper_trail/config"
-
-# STEP THREE: Configure PaperTrail as you would in your initializer
-PaperTrail::Config.instance.track_associations = false
-
 require "paper_trail"
 
 # STEP FOUR: Define your AR models here.
