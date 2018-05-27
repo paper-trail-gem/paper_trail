@@ -19,17 +19,8 @@ module PaperTrail
         belongs_to :item, polymorphic: true
       end
 
-      # Since the test suite has test coverage for this, we want to declare
-      # the association when the test suite is running. This makes it pass when
-      # DB is not initialized prior to test runs such as when we run on Travis
-      # CI (there won't be a db in `spec/dummy_app/db/`).
-      if PaperTrail.config.track_associations?
-        has_many :version_associations, dependent: :destroy
-      end
-
       validates_presence_of :event
       after_create :enforce_version_limit!
-      scope(:within_transaction, ->(id) { where transaction_id: id })
     end
 
     # :nodoc:

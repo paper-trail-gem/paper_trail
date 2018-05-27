@@ -29,6 +29,14 @@ has been destroyed.
 
   # Rails does not follow semver, makes breaking changes in minor versions.
   s.add_dependency "activerecord", [">= 4.2", "< 5.3"]
+  # For now, we get the associations gem from git, which can't be done here;
+  # must be done in a gemfile (git is a bundler feature, not a rubygems
+  # feature). In the future, once the gem is pushed to rubygems, we can
+  # uncomment the following. The env. var. conditional makes testing easier for
+  # Weston. He is the only person who would every set this env. var.
+  # unless ENV['PT_ASSOCIATION_TRACKING'] == 'false'
+  #   gem 'paper_trail-association_tracking'
+  # end
   s.add_dependency "request_store", "~> 1.1"
 
   s.add_development_dependency "appraisal", "~> 2.2"

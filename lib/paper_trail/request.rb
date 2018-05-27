@@ -16,11 +16,6 @@ module PaperTrail
     end
 
     class << self
-      # @api private
-      def clear_transaction_id
-        self.transaction_id = nil
-      end
-
       # Sets any data from the controller that you want PaperTrail to store.
       # See also `PaperTrail::Rails::Controller#info_for_paper_trail`.
       #
@@ -105,16 +100,6 @@ module PaperTrail
         store.deep_dup
       end
 
-      # @api private
-      def transaction_id
-        store[:transaction_id]
-      end
-
-      # @api private
-      def transaction_id=(id)
-        store[:transaction_id] = id
-      end
-
       # Temporarily set `options` and execute a block.
       # @api private
       def with(options)
@@ -171,8 +156,6 @@ module PaperTrail
               :enabled,
               :whodunnit
             next
-          when :transaction_id
-            raise InvalidOption, "Cannot set private option: #{k}"
           else
             raise InvalidOption, "Invalid option: #{k}"
           end

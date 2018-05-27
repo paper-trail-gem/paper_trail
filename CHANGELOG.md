@@ -11,7 +11,11 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
-- None
+- The experimental associations tracking feature has been moved to a
+  separate gem, [paper_trail-association_tracking]
+  (https://github.com/westonganger/paper_trail-association_tracking).
+  PT will, for now, have a runtime dependency on this new gem. Assuming the
+  gem extraction goes well, no breaking changes are anticipated.
 
 ### Fixed
 
