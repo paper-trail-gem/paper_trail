@@ -84,6 +84,7 @@ class SetUpTestTables < (
       t.string   :whodunnit
       t.text     :object, limit: TEXT_BYTES
       t.text     :object_changes, limit: TEXT_BYTES
+      t.integer  :transaction_id
       t.datetime :created_at, limit: 6
 
       # Metadata columns.
@@ -98,6 +99,16 @@ class SetUpTestTables < (
       t.string :user_agent
     end
     add_index :versions, %i[item_type item_id]
+
+    create_table :version_associations do |t|
+      t.integer  :version_id
+      t.string   :foreign_key_name, null: false
+      t.integer  :foreign_key_id
+    end
+    add_index :version_associations, [:version_id]
+    add_index :version_associations,
+      %i[foreign_key_name foreign_key_id],
+      name: "index_version_associations_on_foreign_key"
 
     create_table :post_versions, force: true do |t|
       t.string   :item_type, null: false

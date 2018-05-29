@@ -261,6 +261,14 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.datetime "updated_at", null: false, limit: 6
   end
 
+  create_table "version_associations", force: :cascade do |t|
+    t.integer "version_id"
+    t.string "foreign_key_name", null: false
+    t.integer "foreign_key_id"
+    t.index ["foreign_key_name", "foreign_key_id"], name: "index_version_associations_on_foreign_key"
+    t.index ["version_id"], name: "index_version_associations_on_version_id"
+  end
+
   create_table "versions", force: :cascade do |t|
     t.string "item_type", null: false
     t.integer "item_id", null: false
@@ -268,6 +276,7 @@ ActiveRecord::Schema.define(version: 20110208155312) do
     t.string "whodunnit"
     t.text "object", limit: 1073741823
     t.text "object_changes", limit: 1073741823
+    t.integer "transaction_id"
     t.datetime "created_at", limit: 6
     t.integer "answer"
     t.string "action"
