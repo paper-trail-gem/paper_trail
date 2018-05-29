@@ -270,6 +270,8 @@ module PaperTrail
         else
           @record.send("#{@record.class.version_association_name}=", version)
           @record.send(@record.class.versions_association_name).reset
+
+          # we return the version so plugins can utilize it (ie. paper_trail-association_tracking)
           version
         end
       end
@@ -306,6 +308,7 @@ module PaperTrail
         if version.errors.any?
           log_version_errors(version, :update)
         else
+          # we return the version so plugins can utilize it (ie. paper_trail-association_tracking)
           version
         end
       end
@@ -340,6 +343,7 @@ module PaperTrail
       if version.errors.any?
         log_version_errors(version, :update)
       else
+        # we return the version so plugins can utilize it (ie. paper_trail-association_tracking)
         version
       end
     end
