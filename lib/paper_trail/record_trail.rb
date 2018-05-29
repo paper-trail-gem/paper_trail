@@ -270,6 +270,7 @@ module PaperTrail
         else
           @record.send("#{@record.class.version_association_name}=", version)
           @record.send(@record.class.versions_association_name).reset
+          version
         end
       end
     ensure
@@ -304,6 +305,8 @@ module PaperTrail
         version = versions_assoc.create(data_for_update(is_touch))
         if version.errors.any?
           log_version_errors(version, :update)
+        else
+          version
         end
       end
     ensure
@@ -336,6 +339,8 @@ module PaperTrail
       version = versions_assoc.create(data_for_update_columns(changes))
       if version.errors.any?
         log_version_errors(version, :update)
+      else
+        version
       end
     end
 
