@@ -17,6 +17,21 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 - None
 
+## 9.1.1 (2018-05-30)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- [#1098](https://github.com/paper-trail-gem/paper_trail/pull/1098) - Fix
+  regression in 9.1.0 re: generator `--with-associations`
+
 ## 9.1.0 (2018-05-23)
 
 ### Breaking Changes

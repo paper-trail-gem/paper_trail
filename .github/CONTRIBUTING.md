@@ -162,9 +162,11 @@ markdown-toc -i --maxdepth 3 --bullets='-' README.md
   - documentation links table
   - compatability table (major versions only)
 1. Commit
-1. git tag -a -m "v5.0.0" "v5.0.0" # or whatever number
-1. git push --tags origin 5-stable # or whatever branch
+1. git push origin 5-stable # or whatever branch
+1. Wait for CI to pass
 1. gem build paper_trail.gemspec
 1. gem push paper_trail-5.0.0.gem
+1. git tag -a -m "v5.0.0" "v5.0.0" # or whatever number
+1. git push --tags origin
 
 [1]: https://github.com/paper-trail-gem/paper_trail/blob/master/doc/bug_report_template.rb
