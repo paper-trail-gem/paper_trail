@@ -61,8 +61,9 @@ has been destroyed.
   - [7.c. Cucumber](#7c-cucumber)
   - [7.d. Spork](#7d-spork)
   - [7.e. Zeus or Spring](#7e-zeus-or-spring)
-- [8. Integration with Other Libraries](#8-integration-with-other-libraries)
-- [9. Related Libraries and Ports](#9-related-libraries-and-ports)
+- [8. PaperTrail Plugins](#8-papertrail-plugins)
+- [9. Integration with Other Libraries](#9-integration-with-other-libraries)
+- [10. Related Libraries and Ports](#10-related-libraries-and-ports)
 - [Articles](#articles)
 - [Problems](#problems)
 - [Contributors](#contributors)
@@ -841,15 +842,16 @@ string, please try the [paper_trail-globalid][37] gem.
 
 ### 4.b. Associations
 
-Discussed as early as 2009, and first implemented in late 2014, association
-tracking was maintained until 2018 as an experimental feature, not recommended
-for production. During that time a steady stream of issues were reported, there
-were not enough volunteers fixing them, and the list of known issues grew. In
-2018, the feature was moved to a separate gem,
-[paper_trail-association_tracking][6].
+To track and reify associations, use [paper_trail-association_tracking][6] (PT-AT).
 
-To avoid breaking changes, `paper_trail` will have a runtime dependency on
-`paper_trail-association_tracking` and keep running the existing tests related
+From 2014 to 2018, association tracking was part of PT core as an experimental
+feature, but many issues were discovered. To attract new volunteers to address
+these issues, PT-AT was extracted (see
+https://github.com/paper-trail-gem/paper_trail/issues/1070).
+
+Even though this has always been an experimental feature, we don't want the
+extraction of PT-AT to be a breaking change. So, `paper_trail` will have a
+runtime dependency on this gem and will keep running the existing tests related
 to association tracking. This arrangement will be maintained for a few years, if
 practical.
 
@@ -1433,7 +1435,11 @@ require 'rspec/rails'
 require 'paper_trail/frameworks/rspec'
 ```
 
-## 8. Integration with Other Libraries
+## 8. PaperTrail Plugins
+- [paper_trail-association_tracking][6] - track and reify associations
+- [paper_trail-globalid][49] - enhances whodunnit by adding an `actor`
+
+## 9. Integration with Other Libraries
 
 - [ActiveAdmin][42]
 - [paper_trail_manager][46] - Browse, subscribe, view and revert changes to
@@ -1442,11 +1448,10 @@ require 'paper_trail/frameworks/rspec'
 - Sinatra - [paper_trail-sinatra][41]
 - [globalize][45] - [globalize-versioning][44]
 - [solidus_papertrail][47] - PT integration for Solidus
-- [paper_trail-globalid][49] - enhances whodunnint by adding an `actor`
   method to instances of PaperTrail::Version that returns the ActiveRecord
   object who was responsible for change
 
-## 9. Related Libraries and Ports
+## 10. Related Libraries and Ports
 
 - [izelnakri/paper_trail][50] - An Ecto library, inspired by PT.
 - [sequelize-paper-trail][48] - A JS library, inspired by PT. A sequelize
