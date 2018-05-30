@@ -60,8 +60,9 @@ has been destroyed.
   - [7.c. Cucumber](#7c-cucumber)
   - [7.d. Spork](#7d-spork)
   - [7.e. Zeus or Spring](#7e-zeus-or-spring)
-- [8. Integration with Other Libraries](#8-integration-with-other-libraries)
-- [9. Related Libraries and Ports](#9-related-libraries-and-ports)
+- [8. PaperTrail Plugins](#8-papertrail-plugins)
+- [9. Integration with Other Libraries](#9-integration-with-other-libraries)
+- [10. Related Libraries and Ports](#10-related-libraries-and-ports)
 - [Articles](#articles)
 - [Problems](#problems)
 - [Contributors](#contributors)
@@ -1415,7 +1416,11 @@ require 'rspec/rails'
 require 'paper_trail/frameworks/rspec'
 ```
 
-## 8. Integration with Other Libraries
+## 8. PaperTrail Plugins
+- [paper_trail-association_tracking][6] - track and reify associations 
+- [paper_trail-globalid][49] - enhances whodunnit by adding an `actor`
+
+## 9. Integration with Other Libraries
 
 - [ActiveAdmin][42]
 - [paper_trail_manager][46] - Browse, subscribe, view and revert changes to
@@ -1424,11 +1429,10 @@ require 'paper_trail/frameworks/rspec'
 - Sinatra - [paper_trail-sinatra][41]
 - [globalize][45] - [globalize-versioning][44]
 - [solidus_papertrail][47] - PT integration for Solidus
-- [paper_trail-globalid][49] - enhances whodunnint by adding an `actor`
   method to instances of PaperTrail::Version that returns the ActiveRecord
   object who was responsible for change
 
-## 9. Related Libraries and Ports
+## 10. Related Libraries and Ports
 
 - [izelnakri/paper_trail][50] - An Ecto library, inspired by PT.
 - [sequelize-paper-trail][48] - A JS library, inspired by PT. A sequelize
