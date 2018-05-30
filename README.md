@@ -840,17 +840,15 @@ string, please try the [paper_trail-globalid][37] gem.
 
 ### 4.b. Associations
 
-Discussed as early as 2009, and first implemented in late 2014, association
-tracking was maintained until 2018 as an experimental feature, not recommended
-for production. During that time a steady stream of issues were reported, there
-were not enough volunteers fixing them, and the list of known issues grew. In
-2018, the feature was moved to a separate gem,
-[paper_trail-association_tracking][6].
+If you would like to track and reify associations you can utilize the following PT plugin: [paper_trail-association_tracking][6]
 
-To avoid breaking changes, `paper_trail` will have a runtime dependency on
-`paper_trail-association_tracking` and keep running the existing tests related
-to association tracking. This arrangement will be maintained for a few years, if
-practical.
+A little history lesson, discussed as early as 2009, and first implemented in late 2014, association
+tracking was part of PT core until 2018 as an experimental feature and was use at your own risk. The gem now
+maintains a list of known issues and we hope the community can help remove some of them via PR's.
+
+In PaperTrail v10, the association tracking feature was extracted to a gem to simplify things in PaperTrail and 
+association tracking seperately. To avoid breaking changes, `paper_trail` has a runtime dependency on this gem and will keep 
+running the existing tests related to association tracking. This arrangement will be maintained for a few years, if practical.
 
 ### 4.c. Storing Metadata
 
