@@ -1,13 +1,15 @@
 ---
 name: Bug Report
-about: You will be asked to provide a script that reproduces the bug, based on our template.
+about: >
+  You will be asked to provide a script that reproduces the bug, based on our
+  template.
 
 ---
 
 Due to limited volunteers, we cannot answer *usage* questions. Please ask such
 questions on [StackOverflow](https://stackoverflow.com/tags/paper-trail-gem).
 
-Use the following template to report bugs:
+Bug reports must use the following template:
 
 ```ruby
 # frozen_string_literal: true
