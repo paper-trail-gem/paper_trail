@@ -33,6 +33,8 @@ Testing is a little awkward because the test suite:
 ### Test sqlite, AR 4.2
 
 ```
+rm spec/dummy_app/db/*.sqlite3
+
 # Create the appropriate database config. file
 rm spec/dummy_app/config/database.yml
 DB=sqlite bundle exec rake prepare
@@ -58,6 +60,8 @@ DB=sqlite bundle exec appraisal ar-4.2 rspec spec/paper_trail/serializers/json_s
 ### Test sqlite, AR 5
 
 ```
+rm spec/dummy_app/db/*.sqlite3
+
 # Create the appropriate database config. file
 rm spec/dummy_app/config/database.yml
 DB=sqlite bundle exec rake prepare
@@ -151,7 +155,6 @@ markdown-toc -i --maxdepth 3 --bullets='-' README.md
 ## Releases
 
 1. Set the version in lib/paper_trail/version_number.rb
-  - Set PRE to nil unless it's a pre-release (beta, rc, etc.)
 1. In the changelog,
   - Replace "Unreleased" with the date in iso-8601 format
   - Add a new "Unreleased" section
@@ -159,9 +162,11 @@ markdown-toc -i --maxdepth 3 --bullets='-' README.md
   - documentation links table
   - compatability table (major versions only)
 1. Commit
-1. git tag -a -m "v5.0.0" "v5.0.0" # or whatever number
-1. git push --tags origin 5-stable # or whatever branch
+1. git push origin 5-stable # or whatever branch
+1. Wait for CI to pass
 1. gem build paper_trail.gemspec
 1. gem push paper_trail-5.0.0.gem
+1. git tag -a -m "v5.0.0" "v5.0.0" # or whatever number
+1. git push --tags origin
 
 [1]: https://github.com/paper-trail-gem/paper_trail/blob/master/doc/bug_report_template.rb

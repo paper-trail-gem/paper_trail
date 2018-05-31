@@ -17,6 +17,40 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 - None
 
+## 9.1.1 (2018-05-30)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- [#1098](https://github.com/paper-trail-gem/paper_trail/pull/1098) - Fix
+  regression in 9.1.0 re: generator `--with-associations`
+
+## 9.1.0 (2018-05-23)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- [#1091](https://github.com/paper-trail-gem/paper_trail/pull/1091) -
+  `PaperTrail.config.association_reify_error_behaviour` - For users of the
+  experimental association tracking feature. Starting with PT 9.0.0, reification
+  of `has_one` associations is stricter. This option gives users some choices
+  for how to handle the `PaperTrail::Reifiers::HasOne::FoundMoreThanOne` error
+  introduced in PT 9. See README section 4.b.1. "Known Issues" for more details.
+
+### Fixed
+
+- None
+
 ## 9.0.2 (2018-05-14)
 
 ### Breaking Changes
