@@ -51,8 +51,14 @@ module PaperTrail
 
         # @api private
         def jsonb
-          @attributes.each { |field, value| @attributes[field] = [value] }
-          @version_model_class.where("object_changes @> ?", @attributes.to_json)
+          if PaperTrail.config.object_diff_adapter
+            PaperTrail.config.object_diff_adapter.where_object_changes(
+              @version_model_class, @attributes
+            )
+          else
+            @attributes.each { |field, value| @attributes[field] = [value] }
+            @version_model_class.where("object_changes @> ?", @attributes.to_json)
+          end
         end
 
         # @api private
