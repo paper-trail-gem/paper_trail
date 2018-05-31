@@ -26,7 +26,7 @@ module PaperTrail
     STR
 
     include Singleton
-    attr_accessor :serializer, :version_limit, :diff_changes
+    attr_accessor :serializer, :version_limit, :object_diff_adapter
 
     def initialize
       # Variables which affect all threads, whose access is synchronized.
