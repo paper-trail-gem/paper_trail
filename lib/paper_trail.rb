@@ -26,7 +26,6 @@ require "paper_trail/version_concern"
 require "paper_trail/version_number"
 require "paper_trail/serializers/json"
 require "paper_trail/serializers/yaml"
-require "paper_trail/object_diff_adapters/hash_diff_adapter"
 
 # An ActiveRecord extension that tracks changes to your models, for auditing or
 # versioning.

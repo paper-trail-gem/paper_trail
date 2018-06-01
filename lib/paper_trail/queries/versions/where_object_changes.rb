@@ -23,6 +23,11 @@ module PaperTrail
 
         # @api private
         def execute
+          if PaperTrail.config.object_diff_adapter
+            return PaperTrail.config.object_diff_adapter.where_object_changes(
+              @version_model_class, @attributes
+            )
+          end
           case @version_model_class.columns_hash["object_changes"].type
           when :jsonb
             jsonb
@@ -51,14 +56,8 @@ module PaperTrail
 
         # @api private
         def jsonb
-          if PaperTrail.config.object_diff_adapter
-            PaperTrail.config.object_diff_adapter.where_object_changes(
-              @version_model_class, @attributes
-            )
-          else
-            @attributes.each { |field, value| @attributes[field] = [value] }
-            @version_model_class.where("object_changes @> ?", @attributes.to_json)
-          end
+          @attributes.each { |field, value| @attributes[field] = [value] }
+          @version_model_class.where("object_changes @> ?", @attributes.to_json)
         end
 
         # @api private
