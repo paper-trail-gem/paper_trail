@@ -2,7 +2,6 @@
 
 source "https://rubygems.org"
 
-gem "paper_trail-association_tracking", github: "westonganger/paper_trail-association_tracking"
 gem "activerecord", "~> 5.2.0.rc2"
 gem "rails-controller-testing"
 gem "activesupport", "~> 5.2.0.rc2"
