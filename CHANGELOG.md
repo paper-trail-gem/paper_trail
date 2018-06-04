@@ -15,7 +15,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
   `PaperTrail.config.object_changes_adapter` - Allows specifying an adapter that will
   determine how the changes for each version are stored in the object_changes column.
   An example of this implementation using the hashdiff gem can be found here:
-  [paper_trail-hashdiff](https://github.com/paper-trail-gem/paper_trail)
+  [paper_trail-hashdiff](https://github.com/hashwin/paper_trail-hashdiff)
 
 ### Fixed
 
