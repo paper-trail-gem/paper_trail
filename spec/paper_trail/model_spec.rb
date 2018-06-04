@@ -51,6 +51,28 @@ RSpec.describe(::PaperTrail, versioning: true) do
         expect(changeset["updated_at"][0]).to be_nil
         expect(changeset["updated_at"][1].to_i).to eq(@widget.updated_at.to_i)
       end
+
+      context "custom object_changes_adapter" do
+        let(:adapter) { instance_spy("CustomObjectChangesAdapter") }
+
+        before do
+          PaperTrail.config.object_changes_adapter = adapter
+          allow(adapter).to(
+            receive(:load_changeset).with(@widget.versions.last).and_return(a: "b", c: "d")
+          )
+        end
+
+        after do
+          PaperTrail.config.object_changes_adapter = nil
+        end
+
+        it "calls the adapter's load_changeset method" do
+          changeset = @widget.versions.last.changeset
+          expect(changeset[:a]).to eq("b")
+          expect(changeset[:c]).to eq("d")
+          expect(adapter).to have_received(:load_changeset)
+        end
+      end
     end
 
     context "and then updated without any changes" do
