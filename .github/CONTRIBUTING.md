@@ -30,118 +30,40 @@ Testing is a little awkward because the test suite:
 1. Contains a "dummy" rails app with three databases (test, foo, and bar)
 1. Supports three different RDBMS': sqlite, mysql, and postgres
 
-### Test sqlite, AR 4.2
+### Test sqlite, AR 4
 
 ```
-rm spec/dummy_app/db/*.sqlite3
-
-# Create the appropriate database config. file
-rm spec/dummy_app/config/database.yml
-DB=sqlite bundle exec rake prepare
-
-# If this is the first test run ever, create databases.
-# We can't use `appraisal` inside the dummy app, so we must set `BUNDLE_GEMFILE`.
-# See spec/dummy_app/config/boot.rb for a complete explanation.
-cd spec/dummy_app
-export BUNDLE_GEMFILE=../../gemfiles/ar_4.2.gemfile
-RAILS_ENV=test bundle exec rake db:setup
-RAILS_ENV=foo bundle exec rake db:setup
-RAILS_ENV=bar bundle exec rake db:setup
-unset BUNDLE_GEMFILE
-cd ../..
-
-# Run tests
 DB=sqlite bundle exec appraisal ar-4.2 rake
 
 # Run a single test
-DB=sqlite bundle exec appraisal ar-4.2 rspec spec/paper_trail/serializers/json_spec.rb
+DB=sqlite bundle exec appraisal ar-4.2 rspec spec/paper_trail_spec.rb
 ```
 
 ### Test sqlite, AR 5
 
 ```
-rm spec/dummy_app/db/*.sqlite3
-
-# Create the appropriate database config. file
-rm spec/dummy_app/config/database.yml
-DB=sqlite bundle exec rake prepare
-
-# If this is the first test run ever, create databases.
-# We can't use `appraisal` inside the dummy app, so we must set `BUNDLE_GEMFILE`.
-# See spec/dummy_app/config/boot.rb for a complete explanation.
-cd spec/dummy_app
-export BUNDLE_GEMFILE=../../gemfiles/ar_5.2.gemfile
-RAILS_ENV=test bundle exec rake db:environment:set db:setup
-RAILS_ENV=foo bundle exec rake db:environment:set db:setup
-RAILS_ENV=bar bundle exec rake db:environment:set db:setup
-unset BUNDLE_GEMFILE
-cd ../..
-
-# Run tests
 DB=sqlite bundle exec appraisal ar-5.2 rake
 ```
 
 ### Test mysql, AR 5
 
 ```
-# Create the appropriate database config. file
-rm spec/dummy_app/config/database.yml
-DB=mysql bundle exec rake prepare
-
-# If this is the first test run ever, create databases.
-# We can't use `appraisal` inside the dummy app, so we must set `BUNDLE_GEMFILE`.
-# See spec/dummy_app/config/boot.rb for a complete explanation.
-cd spec/dummy_app
-export BUNDLE_GEMFILE=../../gemfiles/ar_5.2.gemfile
-RAILS_ENV=test bundle exec rake db:setup db:environment:set
-RAILS_ENV=foo bundle exec rake db:setup db:environment:set
-RAILS_ENV=bar bundle exec rake db:setup db:environment:set
-unset BUNDLE_GEMFILE
-cd ../..
-
-# Run tests
 DB=mysql bundle exec appraisal ar-5.2 rake
 ```
 
 ### Test postgres, AR 5
 
 ```
-# Create the appropriate database config. file
-rm spec/dummy_app/config/database.yml
-DB=postgres bundle exec rake prepare
-
-# If this is the first test run ever, create databases.
-# Unlike mysql, use create/migrate instead of setup.
-# We can't use `appraisal` inside the dummy app, so we must set `BUNDLE_GEMFILE`.
-# See spec/dummy_app/config/boot.rb for a complete explanation.
-cd spec/dummy_app
-export BUNDLE_GEMFILE=../../gemfiles/ar_5.2.gemfile
-DB=postgres RAILS_ENV=test bundle exec rake db:environment:set db:drop db:create db:migrate
-DB=postgres RAILS_ENV=foo bundle exec rake db:environment:set db:drop db:create db:migrate
-DB=postgres RAILS_ENV=bar bundle exec rake db:environment:set db:drop db:create db:migrate
-unset BUNDLE_GEMFILE
-cd ../..
-
-# Run tests
-DB=postgres bundle exec rake
+createuser --superuser postgres
 DB=postgres bundle exec appraisal ar-5.2 rake
 ```
 
-## Editing the migration
+## Adding new schema
 
-After editing `spec/dummy_app/db/migrate/20110208155312_set_up_test_tables.rb` ..
-
-```
-cd spec/dummy_app
-export BUNDLE_GEMFILE=../../gemfiles/ar_5.1.gemfile
-RAILS_ENV=test bundle exec rake db:environment:set db:drop db:create db:migrate
-RAILS_ENV=foo bundle exec rake db:environment:set db:drop db:create db:migrate
-RAILS_ENV=bar bundle exec rake db:environment:set db:drop db:create db:migrate
-unset BUNDLE_GEMFILE
-cd ../..
-```
-
-Don't forget to commit changes to `schema.rb`.
+Edit `spec/dummy_app/db/migrate/20110208155312_set_up_test_tables.rb`. Migration
+will be performed by `spec_helper.rb`, so you can just run rake as shown above.
+Also, `spec/dummy_app/db/schema.rb` is deliberately `.gitignore`d, we don't use
+it.
 
 ## Documentation
 
