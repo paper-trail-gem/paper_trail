@@ -141,9 +141,8 @@ module PaperTrail
       @model_class.send :include, ::PaperTrail::Model::InstanceMethods
       setup_options(options)
       setup_associations(options)
-      setup_transaction_callbacks
+      @model_class.after_rollback { paper_trail.clear_rolled_back_versions }
       setup_callbacks_from_options options[:on]
-      setup_callbacks_for_habtm options[:join_tables]
     end
 
     def version_class
@@ -167,11 +166,6 @@ module PaperTrail
     def cannot_record_after_destroy?
       Gem::Version.new(ActiveRecord::VERSION::STRING).release >= Gem::Version.new("5") &&
         ::ActiveRecord::Base.belongs_to_required_by_default
-    end
-
-    def habtm_assocs_not_skipped
-      @model_class.reflect_on_all_associations(:has_and_belongs_to_many).
-        reject { |a| @model_class.paper_trail_options[:skip].include?(a.name.to_s) }
     end
 
     def setup_associations(options)
@@ -199,30 +193,9 @@ module PaperTrail
       )
     end
 
-    # Adds callbacks to record changes to habtm associations such that on save
-    # the previous version of the association (if changed) can be reconstructed.
-    def setup_callbacks_for_habtm(join_tables)
-      @model_class.send :attr_accessor, :paper_trail_habtm
-      @model_class.class_attribute :paper_trail_save_join_tables
-      @model_class.paper_trail_save_join_tables = Array.wrap(join_tables)
-      habtm_assocs_not_skipped.each(&method(:setup_habtm_change_callbacks))
-    end
-
     def setup_callbacks_from_options(options_on = [])
       options_on.each do |event|
         public_send("on_#{event}")
-      end
-    end
-
-    def setup_habtm_change_callbacks(assoc)
-      assoc_name = assoc.name
-      %w[add remove].each do |verb|
-        @model_class.send(:"before_#{verb}_for_#{assoc_name}").send(
-          :<<,
-          lambda do |*args|
-            update_habtm_state(assoc_name, :"before_#{verb}", args[-2], args.last)
-          end
-        )
       end
     end
 
@@ -240,30 +213,6 @@ module PaperTrail
       @model_class.paper_trail_options[:meta] ||= {}
       if @model_class.paper_trail_options[:save_changes].nil?
         @model_class.paper_trail_options[:save_changes] = true
-      end
-    end
-
-    # Reset the transaction id when the transaction is closed.
-    def setup_transaction_callbacks
-      @model_class.after_commit { PaperTrail.request.clear_transaction_id }
-      @model_class.after_rollback { PaperTrail.request.clear_transaction_id }
-      @model_class.after_rollback { paper_trail.clear_rolled_back_versions }
-    end
-
-    def update_habtm_state(name, callback, model, assoc)
-      model.paper_trail_habtm ||= {}
-      model.paper_trail_habtm[name] ||= { removed: [], added: [] }
-      state = model.paper_trail_habtm[name]
-      assoc_id = assoc.id
-      case callback
-      when :before_add
-        state[:added] |= [assoc_id]
-        state[:removed] -= [assoc_id]
-      when :before_remove
-        state[:removed] |= [assoc_id]
-        state[:added] -= [assoc_id]
-      else
-        raise "Invalid callback: #{callback}"
       end
     end
   end
