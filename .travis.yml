@@ -15,26 +15,12 @@ env:
     - DB=mysql
     - DB=postgres
     - DB=sqlite
-
 sudo: false
-
-before_script:
-  - mysql --version
-  - sh -c "if [ \"$DB\" = 'mysql' ]; then mysql   -e 'create database paper_trail_test;'; fi"
-  - sh -c "if [ \"$DB\" = 'mysql' ]; then mysql   -e 'create database paper_trail_bar; '; fi"
-  - sh -c "if [ \"$DB\" = 'mysql' ]; then mysql   -e 'create database paper_trail_foo; '; fi"
-  - psql --version
-  - sh -c "if [ \"$DB\" = 'postgres' ]; then psql -c 'create database paper_trail_test;' -U postgres; fi"
-  - sh -c "if [ \"$DB\" = 'postgres' ]; then psql -c 'create database paper_trail_bar;'  -U postgres; fi"
-  - sh -c "if [ \"$DB\" = 'postgres' ]; then psql -c 'create database paper_trail_foo;'  -U postgres; fi"
-
 gemfile:
   - gemfiles/ar_4.2.gemfile
   - gemfiles/ar_5.1.gemfile
   - gemfiles/ar_5.2.gemfile
-
 matrix:
   fast_finish: true
-
 addons:
   postgresql: "9.4"
