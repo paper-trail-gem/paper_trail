@@ -54,6 +54,7 @@ has been destroyed.
 - [6. Extensibility](#6-extensibility)
   - [6.a. Custom Version Classes](#6a-custom-version-classes)
   - [6.b. Custom Serializer](#6b-custom-serializer)
+  - [6.c. Custom Object Changes](#6c-custom-object-changes)
 - [7. Testing](#7-testing)
   - [7.a. Minitest](#7a-minitest)
   - [7.b. RSpec](#7b-rspec)
@@ -1377,6 +1378,23 @@ class ConvertVersionsObjectToJson < ActiveRecord::Migration
   end
 end
 ```
+
+### 6.c. Custom Object Changes
+
+By default, PaperTrail stores object changes in a before/after array of objects
+containing keys of columns that have changed in that particular version. You can
+override this behaviour by using the object_changes_adapter config option:
+
+```ruby
+PaperTrail.config.object_changes_adapter = MyObjectChangesAdapter.new
+```
+
+A valid adapter is a class that contains the following methods:
+1. diff: Returns the changeset in the desired format given the changeset in the original format
+2. load_changeset: Returns the changeset for a given version object
+3. where_object_changes: Returns the records resulting from the given hash of attributes.
+
+For an example of such an implementation, see [paper_trail-hashdiff](https://github.com/hashwin/paper_trail-hashdiff)
 
 ## 7. Testing
 
