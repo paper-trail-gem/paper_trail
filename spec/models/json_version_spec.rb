@@ -81,28 +81,6 @@ if JsonVersion.table_exists?
               fruit.update_attributes!(name: name[2], color: color[1])
             end
 
-            context "with object_changes_adapter configured" do
-              let(:adapter) { instance_spy("CustomObjectChangesAdapter") }
-
-              before do
-                PaperTrail.config.object_changes_adapter = adapter
-                allow(adapter).to receive(:where_object_changes).with(fruit, name: name[0]) {
-                  fruit.versions[1..2]
-                }
-              end
-
-              after do
-                PaperTrail.config.object_changes_adapter = nil
-              end
-
-              it "calls the adapter's where_object_changes method" do
-                expect(
-                  fruit.versions.where_object_changes(name: name[0])
-                ).to match_array(fruit.versions[1..2])
-                expect(adapter).to have_received(:where_object_changes)
-              end
-            end
-
             it "finds versions according to their `object_changes` contents" do
               expect(
                 fruit.versions.where_object_changes(name: name[0])

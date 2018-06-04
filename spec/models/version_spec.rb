@@ -224,6 +224,29 @@ module PaperTrail
               }.to raise_error(ArgumentError)
             end
 
+            context "with object_changes_adapter configured" do
+              let(:adapter) { instance_spy("CustomObjectChangesAdapter") }
+              let(:bicycle) { Bicycle.create!(name: "abc") }
+
+              before do
+                PaperTrail.config.object_changes_adapter = adapter
+                allow(adapter).to receive(:where_object_changes).with(Version, name: "abc") {
+                  bicycle.versions[0..1]
+                }
+              end
+
+              after do
+                PaperTrail.config.object_changes_adapter = nil
+              end
+
+              it "calls the adapter's where_object_changes method" do
+                expect(
+                  bicycle.versions.where_object_changes(name: "abc")
+                ).to match_array(bicycle.versions[0..1])
+                expect(adapter).to have_received(:where_object_changes)
+              end
+            end
+
             # Only test json and jsonb columns. where_object_changes no longer
             # supports text columns.
             if column_datatype_override
