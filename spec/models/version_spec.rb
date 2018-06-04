@@ -16,6 +16,28 @@ module PaperTrail
         end
       end
 
+      context " with object_changes_adapter" do
+        let(:adapter) { instance_spy("CustomObjectChangesAdapter") }
+
+        before do
+          PaperTrail.config.object_changes_adapter = adapter
+          allow(adapter).to(
+            receive(:diff).with(
+              hash_including("name" => [nil, "Dashboard"])
+            ).and_return([["name", nil, "Dashboard"]])
+          )
+        end
+
+        after do
+          PaperTrail.config.object_changes_adapter = nil
+        end
+
+        it "creates a version with custom changes" do
+          expect(widget.versions.last.object_changes).to eq("---\n- - name\n  - \n  - Dashboard\n")
+          expect(adapter).to have_received(:diff)
+        end
+      end
+
       context "serializer is JSON" do
         before do
           PaperTrail.serializer = PaperTrail::Serializers::JSON

@@ -1386,7 +1386,7 @@ containing keys of columns that have changed in that particular version. You can
 override this behaviour by using the object_changes_adapter config option:
 
 ```ruby
-PaperTrail.object_changes_adapter = MyObjectChangesAdapter.new
+PaperTrail.config.object_changes_adapter = MyObjectChangesAdapter.new
 ```
 
 A valid adapter is a class that contains the following methods:
