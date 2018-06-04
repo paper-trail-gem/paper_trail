@@ -16,7 +16,7 @@ module PaperTrail
         end
       end
 
-      context " with object_changes_adapter" do
+      context "with object_changes_adapter" do
         let(:adapter) { instance_spy("CustomObjectChangesAdapter") }
 
         before do

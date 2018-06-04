@@ -66,7 +66,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
           PaperTrail.config.object_changes_adapter = nil
         end
 
-        it "calls the adapter's where_object_changes method" do
+        it "calls the adapter's load_changeset method" do
           changeset = @widget.versions.last.changeset
           expect(changeset[:a]).to eq("b")
           expect(changeset[:c]).to eq("d")
