@@ -265,8 +265,8 @@ module PaperTrail
 
     # @api private
     def load_changeset
-      if PaperTrail.config.object_diff_adapter
-        return PaperTrail.config.object_diff_adapter.load_changeset(self)
+      if PaperTrail.config.object_changes_adapter
+        return PaperTrail.config.object_changes_adapter.load_changeset(self)
       end
 
       # First, deserialize the `object_changes` column.

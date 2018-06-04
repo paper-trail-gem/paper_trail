@@ -418,8 +418,8 @@ module PaperTrail
     #
     # @api private
     def recordable_object_changes(changes)
-      if PaperTrail.config.object_diff_adapter
-        changes = PaperTrail.config.object_diff_adapter.diff(changes)
+      if PaperTrail.config.object_changes_adapter
+        changes = PaperTrail.config.object_changes_adapter.diff(changes)
       end
 
       if @record.class.paper_trail.version_class.object_changes_col_is_json?
