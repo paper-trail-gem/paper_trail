@@ -7,8 +7,8 @@ module Family
     describe "#reify" do
       context "belongs_to" do
         it "uses the correct item_type in queries" do
-          parent = described_class.new(name: "Jermaine Jackson",
-            path_to_stardom: "Emulating Motown greats such as the Temptations and The Supremes")
+          parent = described_class.new(name: "Jermaine Jackson")
+          parent.path_to_stardom = "Emulating Motown greats such as the Temptations and The Supremes"
           child1 = parent.children.build(name: "Jaimy Jermaine Jackson")
           parent.children.build(name: "Autumn Joy Jackson")
           parent.save!
@@ -28,8 +28,8 @@ module Family
 
       context "has_many" do
         it "uses the correct item_type in queries" do
-          parent = described_class.new(name: "Gomez Addams",
-            path_to_stardom: "Buy a Victorian house next to a sprawling graveyard, and just become super aloof.")
+          parent = described_class.new(name: "Gomez Addams")
+          parent.path_to_stardom = "Buy a Victorian house next to a sprawling graveyard, and just become super aloof."
           parent.children.build(name: "Wednesday")
           parent.save!
           parent.name = "Morticia Addams"
@@ -50,8 +50,8 @@ module Family
 
       context "has_many through" do
         it "uses the correct item_type in queries" do
-          parent = described_class.new(name: "Grandad",
-            path_to_stardom: "Took a suitcase and started running a market trading company out of it, while proclaiming, 'This time next year, we'll be millionaires!'")
+          parent = described_class.new(name: "Grandad")
+          parent.path_to_stardom = "Took a suitcase and started running a market trading company out of it, while proclaiming, 'This time next year, we'll be millionaires!'"
           parent.grandsons.build(name: "Del Boy")
           parent.save!
           parent.name = "Del"
@@ -69,8 +69,8 @@ module Family
 
       context "has_one" do
         it "uses the correct item_type in queries" do
-          parent = described_class.new(name: "parent1",
-            path_to_stardom: "")
+          parent = described_class.new(name: "parent1")
+          parent.path_to_stardom = ""
           parent.build_mentee(name: "partner1")
           parent.save!
           parent.update_attributes(

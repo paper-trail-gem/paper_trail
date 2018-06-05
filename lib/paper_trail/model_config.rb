@@ -187,7 +187,7 @@ module PaperTrail
 
       @model_class.has_many(
         @model_class.versions_association_name,
-        ->(object) do
+        lambda(object) do
           # Support Single Table Inheritance (STI) with custom inheritance columns.
           #
           # For example, imagine a `version` whose `item_type` is "Animal". The
