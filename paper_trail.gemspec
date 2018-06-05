@@ -35,7 +35,7 @@ has been destroyed.
   # set this variable. This variable may be removed in the future without
   # warning.
   unless ENV["PT_ASSOCIATION_TRACKING"] == "false"
-    s.add_dependency "paper_trail-association_tracking", "0.0.1"
+    s.add_dependency "paper_trail-association_tracking", "< 2"
   end
 
   s.add_dependency "request_store", "~> 1.1"
