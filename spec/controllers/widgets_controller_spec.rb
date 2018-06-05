@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
+require "rails-controller-testing"
 require "spec_helper"
+Rails::Controller::Testing.install
 
 RSpec.describe WidgetsController, type: :controller, versioning: true do
   before { request.env["REMOTE_ADDR"] = "127.0.0.1" }

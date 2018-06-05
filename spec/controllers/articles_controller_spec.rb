@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
+require "rails-controller-testing"
 require "spec_helper"
+Rails::Controller::Testing.install
 
 RSpec.describe ArticlesController, type: :controller do
   describe "PaperTrail.request.enabled?" do

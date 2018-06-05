@@ -187,7 +187,27 @@ module PaperTrail
 
       @model_class.has_many(
         @model_class.versions_association_name,
-        -> { order(model.timestamp_sort_order) },
+        lambda(object) do
+          # Support Single Table Inheritance (STI) with custom inheritance columns.
+          #
+          # For example, imagine a `version` whose `item_type` is "Animal". The
+          # `animals` table is an STI table (it has cats and dogs) and it has a
+          # custom inheritance column, `species`. If `attrs["species"]` is "Dog",
+          # this method returns the constant `Dog`. If `attrs["species"]` is blank,
+          # this method returns the constant `Animal`. You can see this particular
+          # example in action in `spec/models/animal_spec.rb`.
+          type_column = object.class.inheritance_column
+          base_class_name = object.class.base_class.name
+          type_name = (object.respond_to?(type_column) ?
+            object.send(type_column) : nil) || object.class.name
+          if type_name != base_class_name
+            unscope(where: :item_type).
+            where(item_type: type_name).
+            order(model.timestamp_sort_order)
+          else
+            order(model.timestamp_sort_order)
+          end
+        end,
         class_name: @model_class.version_class_name,
         as: :item
       )
