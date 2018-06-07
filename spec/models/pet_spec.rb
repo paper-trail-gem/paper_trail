@@ -7,7 +7,7 @@ RSpec.describe Pet, type: :model, versioning: true do
     expect(Pet.new).to be_versioned
   end
 
-  it "should reify successfully" do
+  it "can reify successfully" do
     person = Person.create(name: "Frank")
     dog = Dog.create(name: "Snoopy")
     cat = Cat.create(name: "Garfield")
@@ -54,7 +54,7 @@ RSpec.describe Pet, type: :model, versioning: true do
     expect(last_version.cats.first.name).to(eq("Sylvester"))
   end
 
-  it "should reify a subclassed item when item_type refers to the base_class" do
+  it "can reify a subclassed item when item_type refers to the base_class" do
     cat = Cat.create(name: "Garfield")
     cat.update_attributes(name: "Sylvester")
     cat.update_attributes(name: "Cheshire")
