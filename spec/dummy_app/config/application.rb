@@ -42,5 +42,9 @@ module Dummy
         config.active_record.time_zone_aware_types = [:datetime]
       end
     end
+
+    if ::ENV["DB"] == "sqlite" && ::Rails.gem_version >= ::Gem::Version.new("5.2")
+      config.active_record.sqlite3.represent_boolean_as_integer = true
+    end
   end
 end
