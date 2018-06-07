@@ -168,34 +168,6 @@ module PaperTrail
         ::ActiveRecord::Base.belongs_to_required_by_default
     end
 
-    def type_aware_has_many(klass)
-      klass.has_many(
-        klass.versions_association_name,
-        lambda do |object|
-          # Support Single Table Inheritance (STI) with custom inheritance columns.
-          #
-          # For example, imagine a `version` whose `item_type` is "Animal". The
-          # `animals` table is an STI table (it has cats and dogs) and it has a
-          # custom inheritance column, `species`. If `attrs["species"]` is "Dog",
-          # type_name is set to `Dog`. If `attrs["species"]` is blank, type_name
-          # is set to `Animal`. You can see this particular example in action in
-          # `spec/models/animal_spec.rb`.
-          type_column = object.class.inheritance_column
-          type_name = (object.respond_to?(type_column) ? object.send(type_column) : nil) ||
-            object.class.name
-          if type_name != object.class.base_class.name
-            unscope(where: :item_type).
-            where(item_type: type_name).
-            order(model.timestamp_sort_order)
-          else
-            order(model.timestamp_sort_order)
-          end
-        end,
-        class_name: klass.version_class_name,
-        as: :item
-      )
-    end
-
     def setup_associations(options)
       @model_class.class_attribute :version_association_name
       @model_class.version_association_name = options[:version] || :version
@@ -213,7 +185,28 @@ module PaperTrail
 
       assert_concrete_activerecord_class(@model_class.version_class_name)
 
-      type_aware_has_many(@model_class)
+      @model_class.has_many(
+        @model_class.versions_association_name,
+        lambda do |object|
+          # Support Single Table Inheritance (STI) with custom inheritance columns.
+          #
+          # For example, imagine a `version` whose `item_type` is "Animal". The
+          # `animals` table is an STI table (it has cats and dogs) and it has a
+          # custom inheritance column, `species`. If `attrs["species"]` is "Dog",
+          # type_name is set to `Dog`. If `attrs["species"]` is blank, type_name
+          # is set to `Animal`. You can see this particular example in action in
+          # `spec/models/animal_spec.rb`.
+          if object.paper_trail_type_name.blank?
+            order(model.timestamp_sort_order)
+          else
+            unscope(where: :item_type).
+            where(item_type: object.paper_trail_type_name).
+            order(model.timestamp_sort_order)
+          end
+        end,
+        class_name: @model_class.version_class_name,
+        as: :item
+      )
     end
 
     def setup_callbacks_from_options(options_on = [])
