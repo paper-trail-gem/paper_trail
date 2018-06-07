@@ -83,7 +83,7 @@ module PaperTrail
         if @paper_trail_type_name.nil?
           type_column = self.class.inheritance_column
           @paper_trail_type_name =
-            (self.respond_to?(type_column) ? self.send(type_column) : nil) ||
+            (respond_to?(type_column) ? send(type_column) : nil) ||
             self.class.name
           if @paper_trail_type_name == self.class.base_class.name
             @paper_trail_type_name = ""
