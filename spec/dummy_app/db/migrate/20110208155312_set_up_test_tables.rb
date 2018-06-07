@@ -345,6 +345,8 @@ class SetUpTestTables < (
 
     create_table :families do |t|
       t.string :name
+      t.string :type            # For STI support
+      t.string :path_to_stardom # Only used for celebrity families
       t.integer :parent_id
       t.integer :partner_id
     end

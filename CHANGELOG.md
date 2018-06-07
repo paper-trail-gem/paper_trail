@@ -11,11 +11,16 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
-- None
+- [#1108](https://github.com/paper-trail-gem/paper_trail/pull/1108) -
+  Generator `update_sti` creates a migration that updates existing `version` entries such
+  that `item_type` then refers to the specific class name instead of base_class. See
+  [5.c. Generators](https://github.com/paper-trail-gem/paper_trail/blob/master/README.md#5c-generators)
 
 ### Fixed
 
-- None
+- [#1108](https://github.com/paper-trail-gem/paper_trail/pull/1108) -
+  Properly reifying a version of a subclassed STI model requires `item_type` to represent
+  the specific class name instead of base_class. Fixes [Issue #594](https://github.com/paper-trail-gem/paper_trail/issues/594)
 
 ## 9.2.0 (2018-06-09)
 
@@ -37,6 +42,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
   object_changes column. An example of this implementation using the hashdiff
   gem can be found here:
   [paper_trail-hashdiff](https://github.com/hashwin/paper_trail-hashdiff)
+- [#1108](https://github.com/paper-trail-gem/paper_trail/pull/1108) -
+  Generator `update_sti` builds a migration to update `item_type` for existing versions.
 
 ### Fixed
 

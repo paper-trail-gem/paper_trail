@@ -49,10 +49,20 @@ require "paper_trail/frameworks/rspec"
 require "ffaker"
 
 # Migrate
+# First remove any dummy or other stray migrations built from `rails g update_sti`
 require_relative "support/paper_trail_spec_migrator"
-::PaperTrailSpecMigrator.
-  new(::File.expand_path("dummy_app/db/migrate/", __dir__)).
-  migrate
+migrator = ::PaperTrailSpecMigrator.new
+<<<<<<< HEAD
+migrator.file_lock do
+  migrator.delete("*_dummy_migration.rb")
+  migrator.delete("*_update_versions_for_sti.rb")
+  migrator.migrate
+end
+=======
+migrator.delete("*_dummy_migration.rb")
+migrator.delete("*_update_versions_for_sti.rb")
+migrator.migrate
+>>>>>>> 986ec84... Refactor generator testing
 
 RSpec.configure do |config|
   config.fixture_path = "#{::Rails.root}/spec/fixtures"

@@ -237,7 +237,9 @@ module PaperTrail
       @in_after_callback = true
       return unless enabled?
       versions_assoc = @record.send(@record.class.versions_association_name)
-      versions_assoc.create! data_for_create
+      version = versions_assoc.new data_for_create
+      version.save
+      version
     ensure
       @in_after_callback = false
     end
@@ -284,7 +286,7 @@ module PaperTrail
     def data_for_destroy
       data = {
         item_id: @record.id,
-        item_type: @record.class.base_class.name,
+        item_type: @record.class.name,
         event: @record.paper_trail_event || "destroy",
         object: recordable_object(false),
         whodunnit: PaperTrail.request.whodunnit
@@ -307,7 +309,8 @@ module PaperTrail
       @in_after_callback = in_after_callback
       if enabled? && (force || changed_notably?)
         versions_assoc = @record.send(@record.class.versions_association_name)
-        version = versions_assoc.create(data_for_update(is_touch))
+        version = versions_assoc.new(data_for_update(is_touch))
+        version.save
         if version.errors.any?
           log_version_errors(version, :update)
         else
@@ -343,7 +346,8 @@ module PaperTrail
     def record_update_columns(changes)
       return unless enabled?
       versions_assoc = @record.send(@record.class.versions_association_name)
-      version = versions_assoc.create(data_for_update_columns(changes))
+      version = versions_assoc.new data_for_update_columns(changes)
+      version.save
       if version.errors.any?
         log_version_errors(version, :update)
       else
@@ -492,6 +496,17 @@ module PaperTrail
       end
       @record.update_columns(attributes)
       record_update_columns(changes)
+    end
+
+    def versions_association_item_type
+      type_column = @record.class.inheritance_column
+      type_name = (respond_to?(type_column) ? send(type_column) : nil) ||
+        @record.class.name
+      if type_name == @record.class.base_class.name
+        ""
+      else
+        type_name
+      end
     end
 
     # Returns the object (not a Version) as it was at the given timestamp.

@@ -2,7 +2,7 @@
 
 require "spec_helper"
 require "generator_spec/test_case"
-require File.expand_path("../../../lib/generators/paper_trail/install_generator", __dir__)
+require File.expand_path("../../../lib/generators/paper_trail/install/install_generator", __dir__)
 
 RSpec.describe PaperTrail::InstallGenerator, type: :generator do
   include GeneratorSpec::TestCase
@@ -44,6 +44,23 @@ RSpec.describe PaperTrail::InstallGenerator, type: :generator do
                 contains "def change"
                 contains "create_table :versions#{expected_create_table_options}"
               }
+            }
+          }
+        }
+      )
+<<<<<<< HEAD
+<<<<<<< HEAD
+      expect(destination_root).not_to(
+=======
+      expect(destination_root).to_not(
+>>>>>>> 986ec84... Refactor generator testing
+=======
+      expect(destination_root).not_to(
+>>>>>>> 740a5f3... Rubocop prefers 'not_to'
+        have_structure {
+          directory("db") {
+            directory("migrate") {
+              migration("add_object_changes_to_versions")
             }
           }
         }
