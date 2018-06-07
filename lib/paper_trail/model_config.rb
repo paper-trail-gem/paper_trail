@@ -168,25 +168,9 @@ module PaperTrail
         ::ActiveRecord::Base.belongs_to_required_by_default
     end
 
-    def setup_associations(options)
-      @model_class.class_attribute :version_association_name
-      @model_class.version_association_name = options[:version] || :version
-
-      # The version this instance was reified from.
-      @model_class.send :attr_accessor, @model_class.version_association_name
-
-      @model_class.class_attribute :version_class_name
-      @model_class.version_class_name = options[:class_name] || "PaperTrail::Version"
-
-      @model_class.class_attribute :versions_association_name
-      @model_class.versions_association_name = options[:versions] || :versions
-
-      @model_class.send :attr_accessor, :paper_trail_event
-
-      assert_concrete_activerecord_class(@model_class.version_class_name)
-
-      @model_class.has_many(
-        @model_class.versions_association_name,
+    def type_aware_has_many(klass)
+      klass.has_many(
+        klass.versions_association_name,
         lambda do |object|
           # Support Single Table Inheritance (STI) with custom inheritance columns.
           #
@@ -204,9 +188,29 @@ module PaperTrail
             order(model.timestamp_sort_order)
           end
         end,
-        class_name: @model_class.version_class_name,
+        class_name: klass.version_class_name,
         as: :item
       )
+    end
+
+    def setup_associations(options)
+      @model_class.class_attribute :version_association_name
+      @model_class.version_association_name = options[:version] || :version
+
+      # The version this instance was reified from.
+      @model_class.send :attr_accessor, @model_class.version_association_name
+
+      @model_class.class_attribute :version_class_name
+      @model_class.version_class_name = options[:class_name] || "PaperTrail::Version"
+
+      @model_class.class_attribute :versions_association_name
+      @model_class.versions_association_name = options[:versions] || :versions
+
+      @model_class.send :attr_accessor, :paper_trail_event
+
+      assert_concrete_activerecord_class(@model_class.version_class_name)
+
+      type_aware_has_many(@model_class)
     end
 
     def setup_callbacks_from_options(options_on = [])
