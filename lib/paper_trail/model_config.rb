@@ -181,10 +181,8 @@ module PaperTrail
           # is set to `Animal`. You can see this particular example in action in
           # `spec/models/animal_spec.rb`.
           type_column = object.class.inheritance_column
-          type_name = if object.respond_to?(type_column)
-            object.send(type_column)
-          end
-          type_name ||= object.class.name
+          type_name = (object.respond_to?(type_column) ? object.send(type_column) : nil) ||
+            object.class.name
           if type_name != object.class.base_class.name
             unscope(where: :item_type).
             where(item_type: type_name).
