@@ -24,7 +24,14 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- None
+- [#594](https://github.com/paper-trail-gem/paper_trail/issues/594) -
+  In order to properly reify a version of a model using STI, item_type refers to
+  the actual class instead of base_class. The previously failing example in
+  person_spec.rb now passes, so that test has been brought back. In addition to
+  the changes here, the five reifiers in the gem [paper_trail-association_tracking]
+  that refer to base_class also need to be updated. See
+  [PT_AT #5](https://github.com/westonganger/paper_trail-association_tracking/pull/5)
+  for more details.
 
 ## 9.1.1 (2018-05-30)
 
