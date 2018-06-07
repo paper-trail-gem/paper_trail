@@ -14,60 +14,59 @@ RSpec.describe(::PaperTrail, versioning: true) do
   end
 
   context "a persisted record" do
-    before do
-      @widget = Widget.create(name: "Henry", created_at: (Time.now - 1.day))
-    end
-
     it "have one previous version" do
-      expect(@widget.versions.length).to(eq(1))
+      widget = Widget.create(name: "Henry", created_at: (Time.now - 1.day))
+      expect(widget.versions.length).to(eq(1))
     end
 
     it "be nil in its previous version" do
-      expect(@widget.versions.first.object).to(be_nil)
-      expect(@widget.versions.first.reify).to(be_nil)
+      widget = Widget.create(name: "Henry")
+      expect(widget.versions.first.object).to(be_nil)
+      expect(widget.versions.first.reify).to(be_nil)
     end
 
     it "record the correct event" do
-      expect(@widget.versions.first.event).to(match(/create/i))
+      widget = Widget.create(name: "Henry")
+      expect(widget.versions.first.event).to(match(/create/i))
     end
 
     it "be live" do
-      expect(@widget.paper_trail.live?).to(eq(true))
+      widget = Widget.create(name: "Henry")
+      expect(widget.paper_trail.live?).to(eq(true))
     end
 
     it "use the widget `updated_at` as the version's `created_at`" do
-      expect(@widget.versions.first.created_at.to_i).to(eq(@widget.updated_at.to_i))
+      widget = Widget.create(name: "Henry")
+      expect(widget.versions.first.created_at.to_i).to(eq(widget.updated_at.to_i))
     end
 
     describe "#changeset" do
       it "has expected values" do
-        changeset = @widget.versions.last.changeset
+        widget = Widget.create(name: "Henry")
+        changeset = widget.versions.last.changeset
         expect(changeset["name"]).to eq([nil, "Henry"])
-        expect(changeset["id"]).to eq([nil, @widget.id])
+        expect(changeset["id"]).to eq([nil, widget.id])
         # When comparing timestamps, round off to the nearest second, because
         # mysql doesn't do fractional seconds.
         expect(changeset["created_at"][0]).to be_nil
-        expect(changeset["created_at"][1].to_i).to eq(@widget.created_at.to_i)
+        expect(changeset["created_at"][1].to_i).to eq(widget.created_at.to_i)
         expect(changeset["updated_at"][0]).to be_nil
-        expect(changeset["updated_at"][1].to_i).to eq(@widget.updated_at.to_i)
+        expect(changeset["updated_at"][1].to_i).to eq(widget.updated_at.to_i)
       end
 
       context "custom object_changes_adapter" do
-        let(:adapter) { instance_spy("CustomObjectChangesAdapter") }
-
-        before do
-          PaperTrail.config.object_changes_adapter = adapter
-          allow(adapter).to(
-            receive(:load_changeset).with(@widget.versions.last).and_return(a: "b", c: "d")
-          )
-        end
-
         after do
           PaperTrail.config.object_changes_adapter = nil
         end
 
         it "calls the adapter's load_changeset method" do
-          changeset = @widget.versions.last.changeset
+          widget = Widget.create(name: "Henry")
+          adapter = instance_spy("CustomObjectChangesAdapter")
+          PaperTrail.config.object_changes_adapter = adapter
+          allow(adapter).to(
+            receive(:load_changeset).with(widget.versions.last).and_return(a: "b", c: "d")
+          )
+          changeset = widget.versions.last.changeset
           expect(changeset[:a]).to eq("b")
           expect(changeset[:c]).to eq("d")
           expect(adapter).to have_received(:load_changeset)
@@ -76,131 +75,150 @@ RSpec.describe(::PaperTrail, versioning: true) do
     end
 
     context "and then updated without any changes" do
-      before { @widget.touch }
-
       it "to have two previous versions" do
-        expect(@widget.versions.length).to(eq(2))
+        widget = Widget.create(name: "Henry")
+        widget.touch
+        expect(widget.versions.length).to eq(2)
       end
     end
 
     context "and then updated with changes" do
-      before { @widget.update_attributes(name: "Harry") }
-
       it "have three previous versions" do
-        expect(@widget.versions.length).to(eq(2))
+        widget = Widget.create(name: "Henry")
+        widget.update_attributes(name: "Harry")
+        expect(widget.versions.length).to(eq(2))
       end
 
       it "be available in its previous version" do
-        expect(@widget.name).to(eq("Harry"))
-        expect(@widget.versions.last.object).not_to(be_nil)
-        widget = @widget.versions.last.reify
-        expect(widget.name).to(eq("Henry"))
-        expect(@widget.name).to(eq("Harry"))
+        widget = Widget.create(name: "Henry")
+        widget.update_attributes(name: "Harry")
+        expect(widget.name).to(eq("Harry"))
+        expect(widget.versions.last.object).not_to(be_nil)
+        reified_widget = widget.versions.last.reify
+        expect(reified_widget.name).to(eq("Henry"))
+        expect(widget.name).to(eq("Harry"))
       end
 
       it "have the same ID in its previous version" do
-        expect(@widget.versions.last.reify.id).to(eq(@widget.id))
+        widget = Widget.create(name: "Henry")
+        widget.update_attributes(name: "Harry")
+        expect(widget.versions.last.reify.id).to(eq(widget.id))
       end
 
       it "record the correct event" do
-        expect(@widget.versions.last.event).to(match(/update/i))
+        widget = Widget.create(name: "Henry")
+        widget.update_attributes(name: "Harry")
+        expect(widget.versions.last.event).to(match(/update/i))
       end
 
       it "have versions that are not live" do
-        @widget.versions.map(&:reify).compact.each do |v|
+        widget = Widget.create(name: "Henry")
+        widget.update_attributes(name: "Harry")
+        widget.versions.map(&:reify).compact.each do |v|
           expect(v.paper_trail).not_to be_live
         end
       end
 
       it "have stored changes" do
-        last_obj_changes = @widget.versions.last.object_changes
+        widget = Widget.create(name: "Henry")
+        widget.update_attributes(name: "Harry")
+        last_obj_changes = widget.versions.last.object_changes
         actual = PaperTrail.serializer.load(last_obj_changes).reject do |k, _v|
           (k.to_sym == :updated_at)
         end
         expect(actual).to(eq("name" => %w[Henry Harry]))
-        actual = @widget.versions.last.changeset.reject { |k, _v| (k.to_sym == :updated_at) }
+        actual = widget.versions.last.changeset.reject { |k, _v| (k.to_sym == :updated_at) }
         expect(actual).to(eq("name" => %w[Henry Harry]))
       end
 
       it "return changes with indifferent access" do
-        expect(@widget.versions.last.changeset[:name]).to(eq(%w[Henry Harry]))
-        expect(@widget.versions.last.changeset["name"]).to(eq(%w[Henry Harry]))
+        widget = Widget.create(name: "Henry")
+        widget.update_attributes(name: "Harry")
+        expect(widget.versions.last.changeset[:name]).to(eq(%w[Henry Harry]))
+        expect(widget.versions.last.changeset["name"]).to(eq(%w[Henry Harry]))
       end
 
       context "and has one associated object" do
-        before { @wotsit = @widget.create_wotsit name: "John" }
-
         it "not copy the has_one association by default when reifying" do
-          reified_widget = @widget.versions.last.reify
-          expect(reified_widget.wotsit).to(eq(@wotsit))
-          expect(@widget.reload.wotsit).to(eq(@wotsit))
+          widget = Widget.create(name: "Henry")
+          widget.update_attributes(name: "Harry")
+          wotsit = widget.create_wotsit name: "John"
+          reified_widget = widget.versions.last.reify
+          expect(reified_widget.wotsit).to eq(wotsit)
+          expect(widget.reload.wotsit).to eq(wotsit)
         end
 
         it "copy the has_one association when reifying with :has_one => true" do
-          reified_widget = @widget.versions.last.reify(has_one: true)
+          widget = Widget.create(name: "Henry")
+          widget.update_attributes(name: "Harry")
+          wotsit = widget.create_wotsit name: "John"
+          reified_widget = widget.versions.last.reify(has_one: true)
           expect(reified_widget.wotsit).to(be_nil)
-          expect(@widget.reload.wotsit).to(eq(@wotsit))
+          expect(widget.reload.wotsit).to eq(wotsit)
         end
       end
 
       context "and has many associated objects" do
-        before do
-          @f0 = @widget.fluxors.create(name: "f-zero")
-          @f1 = @widget.fluxors.create(name: "f-one")
-          @reified_widget = @widget.versions.last.reify
-        end
-
         it "copy the has_many associations when reifying" do
-          expect(@reified_widget.fluxors.length).to(eq(@widget.fluxors.length))
-          expect(@reified_widget.fluxors).to match_array(@widget.fluxors)
-          expect(@reified_widget.versions.length).to(eq(@widget.versions.length))
-          expect(@reified_widget.versions).to match_array(@widget.versions)
+          widget = Widget.create(name: "Henry")
+          widget.update_attributes(name: "Harry")
+          widget.fluxors.create(name: "f-zero")
+          widget.fluxors.create(name: "f-one")
+          reified_widget = widget.versions.last.reify
+          expect(reified_widget.fluxors.length).to(eq(widget.fluxors.length))
+          expect(reified_widget.fluxors).to match_array(widget.fluxors)
+          expect(reified_widget.versions.length).to(eq(widget.versions.length))
+          expect(reified_widget.versions).to match_array(widget.versions)
         end
       end
 
       context "and has many associated polymorphic objects" do
-        before do
-          @f0 = @widget.whatchamajiggers.create(name: "f-zero")
-          @f1 = @widget.whatchamajiggers.create(name: "f-zero")
-          @reified_widget = @widget.versions.last.reify
-        end
-
         it "copy the has_many associations when reifying" do
-          expect(@reified_widget.whatchamajiggers.length).to eq(@widget.whatchamajiggers.length)
-          expect(@reified_widget.whatchamajiggers).to match_array(@widget.whatchamajiggers)
-          expect(@reified_widget.versions.length).to(eq(@widget.versions.length))
-          expect(@reified_widget.versions).to match_array(@widget.versions)
+          widget = Widget.create(name: "Henry")
+          widget.update_attributes(name: "Harry")
+          widget.whatchamajiggers.create(name: "f-zero")
+          widget.whatchamajiggers.create(name: "f-zero")
+          reified_widget = widget.versions.last.reify
+          expect(reified_widget.whatchamajiggers.length).to eq(widget.whatchamajiggers.length)
+          expect(reified_widget.whatchamajiggers).to match_array(widget.whatchamajiggers)
+          expect(reified_widget.versions.length).to(eq(widget.versions.length))
+          expect(reified_widget.versions).to match_array(widget.versions)
         end
       end
 
       context "polymorphic objects by themselves" do
-        before { @widget = Whatchamajigger.new(name: "f-zero") }
-
         it "not fail with a nil pointer on the polymorphic association" do
-          @widget.save!
+          widget = Widget.create(name: "Henry")
+          widget.update_attributes(name: "Harry")
+          widget = Whatchamajigger.new(name: "f-zero")
+          widget.save!
         end
       end
 
       context "and then destroyed" do
-        before do
-          @fluxor = @widget.fluxors.create(name: "flux")
-          @widget.destroy
-          @reified_widget = PaperTrail::Version.last.reify
-        end
-
         it "record the correct event" do
+          widget = Widget.create(name: "Henry")
+          widget.update_attributes(name: "Harry")
+          widget.destroy
           expect(PaperTrail::Version.last.event).to(match(/destroy/i))
         end
 
         it "have three previous versions" do
-          expect(PaperTrail::Version.with_item_keys("Widget", @widget.id).length).to(eq(3))
+          widget = Widget.create(name: "Henry")
+          widget.update_attributes(name: "Harry")
+          widget.destroy
+          expect(PaperTrail::Version.with_item_keys("Widget", widget.id).length).to(eq(3))
         end
 
         describe "#attributes" do
           it "returns the expected attributes for the reified widget" do
-            expect(@reified_widget.id).to(eq(@widget.id))
-            expected = @widget.attributes
-            actual = @reified_widget.attributes
+            widget = Widget.create(name: "Henry")
+            widget.update_attributes(name: "Harry")
+            widget.destroy
+            reified_widget = PaperTrail::Version.last.reify
+            expect(reified_widget.id).to eq(widget.id)
+            expected = widget.attributes
+            actual = reified_widget.attributes
             expect(expected["id"]).to eq(actual["id"])
             expect(expected["name"]).to eq(actual["name"])
             expect(expected["a_text"]).to eq(actual["a_text"])
@@ -212,31 +230,51 @@ RSpec.describe(::PaperTrail, versioning: true) do
             expect(expected["a_date"]).to eq(actual["a_date"])
             expect(expected["a_boolean"]).to eq(actual["a_boolean"])
             expect(expected["type"]).to eq(actual["type"])
+
+            # We are using `to_i` to truncate to the nearest second, but isn't
+            # there still a chance of this failing intermittently if
+            # ___ and ___ occured more than 0.5s apart?
             expect(expected["created_at"].to_i).to eq(actual["created_at"].to_i)
             expect(expected["updated_at"].to_i).to eq(actual["updated_at"].to_i)
           end
         end
 
         it "be re-creatable from its previous version" do
-          expect(@reified_widget.save).to(be_truthy)
+          widget = Widget.create(name: "Henry")
+          widget.update_attributes(name: "Harry")
+          widget.destroy
+          reified_widget = PaperTrail::Version.last.reify
+          expect(reified_widget.save).to(be_truthy)
         end
 
         it "restore its associations on its previous version" do
-          @reified_widget.save
-          expect(@reified_widget.fluxors.length).to(eq(1))
+          widget = Widget.create(name: "Henry")
+          widget.update_attributes(name: "Harry")
+          widget.fluxors.create(name: "flux")
+          widget.destroy
+          reified_widget = PaperTrail::Version.last.reify
+          reified_widget.save
+          expect(reified_widget.fluxors.length).to(eq(1))
         end
 
         it "have nil item for last version" do
-          expect(@widget.versions.last.item).to(be_nil)
+          widget = Widget.create(name: "Henry")
+          widget.update_attributes(name: "Harry")
+          widget.destroy
+          expect(widget.versions.last.item).to be_nil
         end
 
         it "not have changes" do
-          expect(@widget.versions.last.changeset).to(eq({}))
+          widget = Widget.create(name: "Henry")
+          widget.update_attributes(name: "Harry")
+          widget.destroy
+          expect(widget.versions.last.changeset).to eq({})
         end
       end
     end
   end
 
+  # rubocop:disable RSpec/InstanceVariable
   context "a record's papertrail" do
     before do
       @date_time = Time.now
@@ -809,206 +847,34 @@ RSpec.describe(::PaperTrail, versioning: true) do
       expect(PaperTrail::Version.last.reify.author).to(eq(@dostoyevsky))
     end
   end
+  # rubocop:enable RSpec/InstanceVariable
 
-  context "When an attribute has a custom serializer" do
-    before { @person = Person.new(time_zone: "Samoa") }
-
-    it "be an instance of ActiveSupport::TimeZone" do
-      expect(@person.time_zone.class).to(eq(ActiveSupport::TimeZone))
-    end
-
-    context "when the model is saved" do
-      before do
-        @changes_before_save = @person.changes.dup
-        @person.save!
-      end
-
-      it "version.object_changes should store long serialization of TimeZone object" do
-        len = @person.versions.last.object_changes.length
-        expect((len < 105)).to(be_truthy)
-      end
-
-      it "version.object_changes attribute should have stored the value from serializer" do
-        as_stored_in_version = HashWithIndifferentAccess[
-          YAML.load(@person.versions.last.object_changes)
-        ]
-        expect(as_stored_in_version[:time_zone]).to(eq([nil, "Samoa"]))
-        serialized_value = Person::TimeZoneSerializer.dump(@person.time_zone)
-        expect(as_stored_in_version[:time_zone].last).to(eq(serialized_value))
-      end
-
-      it "version.changeset should convert attribute to original, unserialized value" do
-        unserialized_value = Person::TimeZoneSerializer.load(@person.time_zone)
-        expect(@person.versions.last.changeset[:time_zone].last).to(eq(unserialized_value))
-      end
-
-      it "record.changes (before save) returns the original, unserialized values" do
-        expect(
-          @changes_before_save[:time_zone].map(&:class)
-        ).to(eq([NilClass, ActiveSupport::TimeZone]))
-      end
-
-      it "version.changeset should be the same as record.changes was before the save" do
-        actual = @person.versions.last.changeset.delete_if { |k, _v| (k.to_sym == :id) }
-        expect(actual).to(eq(@changes_before_save))
-        actual = @person.versions.last.changeset[:time_zone].map(&:class)
-        expect(actual).to(eq([NilClass, ActiveSupport::TimeZone]))
-      end
-
-      context "when that attribute is updated" do
-        before do
-          @attribute_value_before_change = @person.time_zone
-          @person.assign_attributes(time_zone: "Pacific Time (US & Canada)")
-          @changes_before_save = @person.changes.dup
-          @person.save!
-        end
-
-        it "object should not store long serialization of TimeZone object" do
-          len = @person.versions.last.object.length
-          expect((len < 105)).to(be_truthy)
-        end
-
-        it "object_changes should not store long serialization of TimeZone object" do
-          max_len = ActiveRecord::VERSION::MAJOR < 4 ? 105 : 118
-          len = @person.versions.last.object_changes.length
-          expect((len < max_len)).to(be_truthy)
-        end
-
-        it "version.object attribute should have stored value from serializer" do
-          as_stored_in_version = HashWithIndifferentAccess[
-            YAML.load(@person.versions.last.object)
-          ]
-          expect(as_stored_in_version[:time_zone]).to(eq("Samoa"))
-          serialized_value = Person::TimeZoneSerializer.dump(@attribute_value_before_change)
-          expect(as_stored_in_version[:time_zone]).to(eq(serialized_value))
-        end
-
-        it "version.object_changes attribute should have stored value from serializer" do
-          as_stored_in_version = HashWithIndifferentAccess[
-            YAML.load(@person.versions.last.object_changes)
-          ]
-          expect(as_stored_in_version[:time_zone]).to(eq(["Samoa", "Pacific Time (US & Canada)"]))
-          serialized_value = Person::TimeZoneSerializer.dump(@person.time_zone)
-          expect(as_stored_in_version[:time_zone].last).to(eq(serialized_value))
-        end
-
-        it "version.reify should convert attribute to original, unserialized value" do
-          unserialized_value = Person::TimeZoneSerializer.load(@attribute_value_before_change)
-          expect(@person.versions.last.reify.time_zone).to(eq(unserialized_value))
-        end
-
-        it "version.changeset should convert attribute to original, unserialized value" do
-          unserialized_value = Person::TimeZoneSerializer.load(@person.time_zone)
-          expect(@person.versions.last.changeset[:time_zone].last).to(eq(unserialized_value))
-        end
-
-        it "record.changes (before save) returns the original, unserialized values" do
-          expect(
-            @changes_before_save[:time_zone].map(&:class)
-          ).to(eq([ActiveSupport::TimeZone, ActiveSupport::TimeZone]))
-        end
-
-        it "version.changeset should be the same as record.changes was before the save" do
-          expect(@person.versions.last.changeset).to(eq(@changes_before_save))
-          expect(
-            @person.versions.last.changeset[:time_zone].map(&:class)
-          ).to(eq([ActiveSupport::TimeZone, ActiveSupport::TimeZone]))
-        end
-      end
+  context "the default accessor, length=, is overwritten" do
+    it "returns overwritten value on reified instance" do
+      song = Song.create(length: 4)
+      song.update_attributes(length: 5)
+      expect(song.length).to(eq(5))
+      expect(song.versions.last.reify.length).to(eq(4))
     end
   end
 
-  context "A new model instance which uses a custom PaperTrail::Version class" do
-    before { @post = Post.new }
-
-    context "which is then saved" do
-      before { @post.save }
-
-      it "change the number of post versions" do
-        expect(PostVersion.count).to(eq(1))
-      end
-
-      it "not change the number of versions" do
-        expect(PaperTrail::Version.count).to(eq(0))
-      end
-    end
-  end
-
-  context "An existing model instance which uses a custom PaperTrail::Version class" do
-    before { @post = Post.create }
-
-    it "have one post version" do
-      expect(PostVersion.count).to(eq(1))
-    end
-
-    context "on the first version" do
-      before { @version = @post.versions.first }
-
-      it "have the correct index" do
-        expect(@version.index).to(eq(0))
-      end
-    end
-
-    it "have versions of the custom class" do
-      expect(@post.versions.first.class.name).to(eq("PostVersion"))
-    end
-
-    context "which is modified" do
-      before { @post.update_attributes(content: "Some new content") }
-
-      it "change the number of post versions" do
-        expect(PostVersion.count).to(eq(2))
-      end
-
-      it "not change the number of versions" do
-        expect(PaperTrail::Version.count).to(eq(0))
-      end
-
-      it "not have stored changes when object_changes column doesn't exist" do
-        expect(@post.versions.last.changeset).to(be_nil)
-      end
-    end
-  end
-
-  context "An overwritten default accessor" do
-    before do
-      @song = Song.create(length: 4)
-      @song.update_attributes(length: 5)
-    end
-
-    it "return \"overwritten\" value on live instance" do
-      expect(@song.length).to(eq(5))
-    end
-
-    it "return \"overwritten\" value on reified instance" do
-      expect(@song.versions.last.reify.length).to(eq(4))
-    end
-
-    context "Has a virtual attribute injected into the ActiveModel::Dirty changes" do
-      before do
-        @song.name = "Good Vibrations"
-        @song.save
-        @song.name = "Yellow Submarine"
-      end
-
-      it "return persist the changes on the live instance properly" do
-        expect(@song.name).to(eq("Yellow Submarine"))
-      end
-
-      it "return \"overwritten\" virtual attribute on the reified instance" do
-        expect(@song.versions.last.reify.name).to(eq("Good Vibrations"))
-      end
+  context "song name is a virtual attribute (no such db column)" do
+    it "returns overwritten virtual attribute on the reified instance" do
+      song = Song.create(length: 4)
+      song.update_attributes(length: 5)
+      song.name = "Good Vibrations"
+      song.save
+      song.name = "Yellow Submarine"
+      expect(song.name).to(eq("Yellow Submarine"))
+      expect(song.versions.last.reify.name).to(eq("Good Vibrations"))
     end
   end
 
   context "An unsaved record" do
-    before do
-      @widget = Widget.new
-      @widget.destroy
-    end
-
     it "not have a version created on destroy" do
-      expect(@widget.versions.empty?).to(eq(true))
+      widget = Widget.new
+      widget.destroy
+      expect(widget.versions.empty?).to(eq(true))
     end
   end
 end
