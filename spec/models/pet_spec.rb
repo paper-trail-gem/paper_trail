@@ -62,10 +62,9 @@ RSpec.describe Pet, type: :model, versioning: true do
     animal = Animal.create
     animal.update(name: "Muppets Drummer")
 
-    # We get back a create and two updates
     versions = PaperTrail::Version.order(:id)
     # Historically ActiveRecord would cause the version's item_type to refer to the
-    # base_class, so set one of our versions to use the base_class instead of "Cat"
+    # base_class, so set one of our versions to be "Animal" instead of "Cat"
     versions.second.update(item_type: cat.class.base_class.name)
 
     # Still the reification process correctly brings back Cat since `species` is
