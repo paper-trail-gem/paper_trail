@@ -168,7 +168,7 @@ module PaperTrail
         ::ActiveRecord::Base.belongs_to_required_by_default
     end
 
-    def type_aware_has_many(klass)
+    def setup_versions_association(klass)
       klass.has_many(
         klass.versions_association_name,
         lambda do |object|
@@ -210,7 +210,7 @@ module PaperTrail
 
       assert_concrete_activerecord_class(@model_class.version_class_name)
 
-      type_aware_has_many(@model_class)
+      setup_versions_association(@model_class)
     end
 
     def setup_callbacks_from_options(options_on = [])
