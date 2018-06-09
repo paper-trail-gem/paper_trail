@@ -180,11 +180,12 @@ module PaperTrail
           # type_name is set to `Dog`. If `attrs["species"]` is blank, type_name
           # is set to `Animal`. You can see this particular example in action in
           # `spec/models/animal_spec.rb`.
-          if object.paper_trail_type_name.blank?
+          item_type = object.paper_trail.versions_association_item_type
+          if item_type.blank?
             order(model.timestamp_sort_order)
           else
             unscope(where: :item_type).
-            where(item_type: object.paper_trail_type_name).
+            where(item_type: item_type).
             order(model.timestamp_sort_order)
           end
         end,

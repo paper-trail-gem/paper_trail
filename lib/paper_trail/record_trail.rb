@@ -502,6 +502,17 @@ module PaperTrail
       record_update_columns(changes)
     end
 
+    def versions_association_item_type
+      type_column = @record.class.inheritance_column
+      type_name = (respond_to?(type_column) ? send(type_column) : nil) ||
+        @record.class.name
+      if type_name == @record.class.base_class.name
+        ""
+      else
+        type_name
+      end
+    end
+
     # Returns the object (not a Version) as it was at the given timestamp.
     def version_at(timestamp, reify_options = {})
       # Because a version stores how its object looked *before* the change,
