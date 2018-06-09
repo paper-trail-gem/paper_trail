@@ -78,19 +78,6 @@ module PaperTrail
       def paper_trail
         ::PaperTrail::RecordTrail.new(self)
       end
-
-      def paper_trail_type_name
-        if @paper_trail_type_name.nil?
-          type_column = self.class.inheritance_column
-          @paper_trail_type_name =
-            (respond_to?(type_column) ? send(type_column) : nil) ||
-            self.class.name
-          if @paper_trail_type_name == self.class.base_class.name
-            @paper_trail_type_name = ""
-          end
-        end
-        @paper_trail_type_name
-      end
     end
   end
 end
