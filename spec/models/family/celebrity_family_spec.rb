@@ -18,7 +18,7 @@ module Family
             children_attributes: { id: child1.id, name: "Jay Jackson" }
           )
           # We expect `reify` for all versions to have item_type 'Family::CelebrityFamily',
-          # not 'Family::Family'. See PR #1106
+          # not 'Family::Family'. See PR #1108
           expect(parent.versions.count).to eq(2) # A create and an update
           parent.versions.each do |parent_version|
             expect(parent_version.item_type).to eq(parent.class.name)
@@ -38,7 +38,7 @@ module Family
           parent.save!
 
           # We expect `reify` for all versions to have item_type 'Family::CelebrityFamily',
-          # not 'Family::Family'. See PR #1106
+          # not 'Family::Family'. See PR #1108
           expect(parent.versions.count).to eq(2)
           parent.versions.each do |parent_version|
             expect(parent_version.item_type).to eq(parent.class.name)
@@ -59,7 +59,7 @@ module Family
           parent.save!
 
           # We expect `reify` for all versions to have item_type 'Family::CelebrityFamily',
-          # not 'Family::Family'. See PR #1106
+          # not 'Family::Family'. See PR #1108
           expect(parent.versions.count).to eq(2)
           parent.versions.each do |parent_version|
             expect(parent_version.item_type).to eq(parent.class.name)
@@ -81,7 +81,7 @@ module Family
           )
 
           # We expect `reify` for all versions to have item_type 'Family::CelebrityFamily',
-          # not 'Family::Family'. See PR #1106
+          # not 'Family::Family'. See PR #1108
           expect(parent.versions.count).to eq(2)
           parent.versions.each do |parent_version|
             expect(parent_version.item_type).to eq(parent.class.name)
