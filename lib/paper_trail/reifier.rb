@@ -63,7 +63,12 @@ module PaperTrail
           # attempt to look for the item outside of default scope(s).
           find_cond = { klass.primary_key => version.item_id }
           if options[:dup] || (item_found = klass.unscoped.where(find_cond).first).nil?
-            model = klass.new
+            new_attrs = {}
+            inheritance_column = klass.inheritance_column
+            if attrs.include?(inheritance_column)
+              new_attrs[inheritance_column] = attrs[inheritance_column]
+            end
+            model = klass.new(new_attrs)
           elsif options[:unversioned_attributes] == :nil
             model = item_found
             init_unversioned_attrs(attrs, model)
