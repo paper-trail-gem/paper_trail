@@ -63,12 +63,7 @@ module PaperTrail
           # attempt to look for the item outside of default scope(s).
           find_cond = { klass.primary_key => version.item_id }
           if options[:dup] || (item_found = klass.unscoped.where(find_cond).first).nil?
-            new_attrs = {}
-            inheritance_column = klass.inheritance_column
-            if attrs.include?(inheritance_column)
-              new_attrs[inheritance_column] = attrs[inheritance_column]
-            end
-            model = klass.new(new_attrs)
+            model = version_reification_item(klass, attrs)
           elsif options[:unversioned_attributes] == :nil
             model = item_found
             init_unversioned_attrs(attrs, model)
@@ -113,6 +108,19 @@ module PaperTrail
         attrs.each do |k, v|
           reify_attribute(k, v, model, version)
         end
+      end
+
+      # Allow ActiveRecord to build the skeletal reified object to its liking.
+      # This method supports Single Table Inheritance (STI) with custom
+      # inheritance columns.
+      #
+      def version_reification_item(klass, attrs)
+        new_attrs = {}
+        inheritance_column = klass.inheritance_column
+        if attrs.include?(inheritance_column)
+          new_attrs[inheritance_column] = attrs[inheritance_column]
+        end
+        klass.new(new_attrs)
       end
     end
   end
