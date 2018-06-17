@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "spec_helper"
-require 'pry-byebug'
+
 RSpec.describe Pet, type: :model, versioning: true do
   it "baseline test setup" do
     expect(Pet.new).to be_versioned
