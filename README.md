@@ -1,6 +1,8 @@
 # PaperTrail
 
 [![Build Status][4]][5]
+[![Gem Version][53]][54]
+[![SemVer][55]][56]
 
 Track changes to your models, for auditing or versioning. See how a model looked
 at any stage in its lifecycle, revert it to any version, or restore it after it
@@ -1542,3 +1544,7 @@ Released under the MIT licence.
 [50]: https://github.com/izelnakri/paper_trail
 [51]: https://github.com/rikkipitt/rails_admin_history_rollback
 [52]: http://guides.rubyonrails.org/active_record_callbacks.html
+[53]: https://badge.fury.io/rb/paper_trail.svg
+[54]: https://rubygems.org/gems/paper_trail
+[55]: https://api.dependabot.com/badges/compatibility_score?dependency-name=paper_trail&package-manager=bundler&version-scheme=semver
+[56]: https://dependabot.com/compatibility-score.html?dependency-name=paper_trail&package-manager=bundler&version-scheme=semver
