@@ -48,9 +48,9 @@ module PaperTrail
       # In this situation we constantize the `item_type` to get hold of the
       # class...except when the stored object's attributes include a `type`
       # key.  If this is the case, the object we belong to is using single
-      # table inheritance (STI) and the `item_type` will be the base class,
-      # not the actual subclass. If `type` is present but empty, the class is
-      # the base class.
+      # table inheritance (STI) and the `item_type` could be either the base
+      # class or the actual subclass. Either way, we can trust ActiveRecord
+      # to know what to do by providing data in the inheritance_column.
       def init_model(attrs, options, version)
         if options[:dup] != true && version.item
           model = version.item
@@ -113,7 +113,7 @@ module PaperTrail
       # Allow ActiveRecord to build the skeletal reified object to its liking.
       # This method supports Single Table Inheritance (STI) with custom
       # inheritance columns.
-      #
+      # @api private
       def version_reification_item(klass, attrs)
         new_attrs = {}
         inheritance_column = klass.inheritance_column
