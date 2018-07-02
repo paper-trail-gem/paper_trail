@@ -1,10 +1,9 @@
 ---
 name: I want to fix a bug, but need some help
 about: >
-  You are required to provide a script that reproduces the bug, using our
-  template. You are required to fix the bug. We're here to help, but no one else
-  will fix it for you. If you don't fix the bug in a reasonable amount of time,
-  your issue will be closed. See CONTRIBUTING.md for details.
+  You must provide a script that reproduces the bug, using our template. We'll
+  help, but you must fix the bug, in a reasonable amount of time, or your issue
+  will be closed. See CONTRIBUTING.md
 
 ---
 
