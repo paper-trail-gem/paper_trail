@@ -1,6 +1,9 @@
 ---
 name: Feature Suggestion
-about: Suggest something that you would like to build
+about: >
+  Suggest something that you would like to build. We'll help, but you must build
+  it yourself, in a reasonable amount of time, or your issue will be closed. See
+  CONTRIBUTING.md
 
 ---
 
