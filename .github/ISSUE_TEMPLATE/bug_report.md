@@ -1,8 +1,10 @@
 ---
-name: Bug Report
+name: I want to fix a bug, but need some help
 about: >
-  You will be asked to provide a script that reproduces the bug, based on our
-  template.
+  You are required to provide a script that reproduces the bug, using our
+  template. You are required to fix the bug. We're here to help, but no one else
+  will fix it for you. If you don't fix the bug in a reasonable amount of time,
+  your issue will be closed. See CONTRIBUTING.md for details.
 
 ---
 
@@ -14,17 +16,18 @@ Bug reports must use the following template:
 ```ruby
 # frozen_string_literal: true
 
+# Use this template to report PaperTrail bugs.
 # Please include only the minimum code necessary to reproduce your issue.
 require "bundler/inline"
 
 # STEP ONE: What versions are you using?
 gemfile(true) do
-  ruby "2.4.2"
+  ruby "2.5.1"
   source "https://rubygems.org"
-  gem "activerecord", "5.1.4"
-  gem "minitest", "5.10.3"
-  gem "paper_trail", "9.1.0", require: false
-  gem "sqlite3"
+  gem "activerecord", "5.2.0"
+  gem "minitest", "5.11.3"
+  gem "paper_trail", "9.2.0", require: false
+  gem "sqlite3", "1.3.13"
 end
 
 require "active_record"
@@ -60,7 +63,7 @@ class User < ActiveRecord::Base
   has_paper_trail
 end
 
-# STEP FIVE: Write a test that demonstrates your issue by failing.
+# STEP FIVE: Please write a test that demonstrates your issue.
 class BugTest < ActiveSupport::TestCase
   def test_1
     assert_difference(-> { PaperTrail::Version.count }, +1) {
