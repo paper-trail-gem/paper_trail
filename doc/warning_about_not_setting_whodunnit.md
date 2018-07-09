@@ -16,7 +16,7 @@ See the PaperTrail readme for an example (https://git.io/vrsbt).
 If you no longer want to track whodunnit, you may disable this
 warning by overriding user_for_paper_trail to return nil.
 
-```
+```ruby
 # in application_controller.rb
 def user_for_paper_trail
   nil # disable whodunnit tracking
