@@ -49,6 +49,10 @@ require "paper_trail/frameworks/rspec"
 require "ffaker"
 
 # Migrate
+# First remove any stray migrations built from `rails g update_sti`
+Dir.glob(Rails.root.join("db/migrate/*_update_versions_for_sti.rb")).each do |file|
+  File.delete(file)
+end
 require_relative "support/paper_trail_spec_migrator"
 ::PaperTrailSpecMigrator.
   new(::File.expand_path("dummy_app/db/migrate/", __dir__)).
