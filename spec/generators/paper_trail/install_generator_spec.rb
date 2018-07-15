@@ -2,7 +2,7 @@
 
 require "spec_helper"
 require "generator_spec/test_case"
-require File.expand_path("../../../lib/generators/paper_trail/install_generator", __dir__)
+require File.expand_path("../../../lib/generators/paper_trail/install/install_generator", __dir__)
 
 RSpec.describe PaperTrail::InstallGenerator, type: :generator do
   include GeneratorSpec::TestCase
