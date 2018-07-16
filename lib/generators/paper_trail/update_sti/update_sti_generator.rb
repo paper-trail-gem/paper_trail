@@ -1,13 +1,10 @@
 # frozen_string_literal: true
 
-require_relative '../migration_generator'
-
-      # check_class_collision suffix: 'JobTest'
+require_relative "../migration_generator"
 
 module PaperTrail
   # Updates STI entries for PaperTrail
   class UpdateStiGenerator < MigrationGenerator
-
     source_root File.expand_path("templates", __dir__)
 
     desc "Generates (but does not run) a migration to update item_type for STI entries in an "\

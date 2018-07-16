@@ -4,6 +4,7 @@ require "rails/generators"
 require "rails/generators/active_record"
 
 module PaperTrail
+  # Basic structure to support a generator that builds a migration
   class MigrationGenerator < ::Rails::Generators::Base
     include ::Rails::Generators::Migration
 
@@ -32,6 +33,5 @@ module PaperTrail
         "[#{major}.#{ActiveRecord::VERSION::MINOR}]"
       end
     end
-
   end
 end
