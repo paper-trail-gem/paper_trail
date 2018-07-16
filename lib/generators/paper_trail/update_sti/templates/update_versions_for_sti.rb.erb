@@ -4,8 +4,6 @@ class UpdateVersionsForSti < ActiveRecord::Migration<%= migration_version %>
   include ActionView::Helpers::TextHelper
   def up
 <%=
- require 'pry-byebug'
-
   # Returns class, column, range
   def self.parse_custom_entry(text)
     parts = text.split("):")
