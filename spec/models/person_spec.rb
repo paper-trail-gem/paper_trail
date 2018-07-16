@@ -7,7 +7,6 @@ require "spec_helper"
 # - has a dozen associations of various types
 # - has a custom serializer, TimeZoneSerializer, for its `time_zone` attribute
 RSpec.describe Person, type: :model, versioning: true do
-
   it "baseline test setup" do
     expect(Person.new).to be_versioned
   end

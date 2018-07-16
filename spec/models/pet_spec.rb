@@ -58,6 +58,7 @@ RSpec.describe Pet, type: :model, versioning: true do
   context "Older version entry present where item_type refers to the base_class" do
     let(:cat) { Cat.create(name: "Garfield") }   # Index 0
     let(:animal) { Animal.create }               # Index 4
+
     before do
       # This line runs the `let` for :cat, creating two entries
       cat.update_attributes(name: "Sylvester")   # Index 1 - second
