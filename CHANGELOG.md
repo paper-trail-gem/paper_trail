@@ -21,11 +21,14 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
   determine how the changes for each version are stored in the object_changes column.
   An example of this implementation using the hashdiff gem can be found here:
   [paper_trail-hashdiff](https://github.com/hashwin/paper_trail-hashdiff)
+- [#1108](https://github.com/paper-trail-gem/paper_trail/pull/1108) -
+  Generator `update_sti` builds a migration to update `item_type` for existing versions.
 
 ### Fixed
 
 - [#1108](https://github.com/paper-trail-gem/paper_trail/pull/1108) -
-  Properly reifying a version of a subclassed STI model requires item_type to represent the actual class name instead of base_class.
+  Properly reifying a version of a subclassed STI model requires `item_type` to represent
+  the specific class name instead of base_class.
 
 ## 9.1.1 (2018-05-30)
 

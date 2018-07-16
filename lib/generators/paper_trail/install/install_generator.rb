@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
-require_relative '../migration_generator'
+require_relative "../migration_generator"
 
 module PaperTrail
   # Installs PaperTrail in a rails app.
   class InstallGenerator < MigrationGenerator
-
     # Class names of MySQL adapters.
     # - `MysqlAdapter` - Used by gems: `mysql`, `activerecord-jdbcmysql-adapter`.
     # - `Mysql2Adapter` - Used by `mysql2` gem.
@@ -26,10 +25,10 @@ module PaperTrail
          "  Also generates an initializer file for configuring PaperTrail"
 
     def create_migration_file
-      add_paper_trail_migration("create_versions", {
-        item_type_options: item_type_options,
-        versions_table_options: versions_table_options
-      })
+      add_paper_trail_migration("create_versions",
+          item_type_options: item_type_options,
+          versions_table_options: versions_table_options
+        )
       add_paper_trail_migration("add_object_changes_to_versions") if options.with_changes?
     end
 
