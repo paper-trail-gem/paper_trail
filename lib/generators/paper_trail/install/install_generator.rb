@@ -26,9 +26,8 @@ module PaperTrail
 
     def create_migration_file
       add_paper_trail_migration("create_versions",
-          item_type_options: item_type_options,
-          versions_table_options: versions_table_options
-        )
+        item_type_options: item_type_options,
+        versions_table_options: versions_table_options)
       add_paper_trail_migration("add_object_changes_to_versions") if options.with_changes?
     end
 
