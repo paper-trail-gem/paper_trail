@@ -48,7 +48,7 @@ RSpec.describe PaperTrail::InstallGenerator, type: :generator do
           }
         }
       )
-      expect(destination_root).to_not(
+      expect(destination_root).not_to(
         have_structure {
           directory("db") {
             directory("migrate") {
