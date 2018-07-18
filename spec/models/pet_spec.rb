@@ -126,7 +126,7 @@ RSpec.describe Pet, type: :model, versioning: true do
         last_version = nil
         expect do
           last_version = migrator.generate_and_migrate("paper_trail:update_sti")
-        end.to_not output(/Associated 1 record to Cat/).to_stdout
+        end.not_to output(/Associated 1 record to Cat/).to_stdout
 
         expect(cat.versions.length).to eq(3)
         # And older Cat changes remain stored as Animal.
