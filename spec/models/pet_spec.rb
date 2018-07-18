@@ -100,7 +100,7 @@ RSpec.describe Pet, type: :model, versioning: true do
       # (This is the same as running:  rails g paper_trail:update_sti; rails db:migrate)
       expect do
         migrator.generate_and_migrate("paper_trail:update_sti")
-      end.to output.to_stdout
+      end.to output(/Associated 1 record to Cat/).to_stdout
       # And now it finds all four changes
       cat_versions = cat.versions.order(:id).to_a
       expect(cat_versions.length).to eq(4)
@@ -126,7 +126,7 @@ RSpec.describe Pet, type: :model, versioning: true do
         last_version = nil
         expect do
           last_version = migrator.generate_and_migrate("paper_trail:update_sti")
-        end.to output.to_stdout
+        end.not_to output(/Associated 1 record to Cat/).to_stdout
 
         expect(cat.versions.length).to eq(3)
         # And older Cat changes remain stored as Animal.
@@ -142,7 +142,7 @@ RSpec.describe Pet, type: :model, versioning: true do
           migrator.generate_and_migrate("paper_trail:update_sti",
             ["Animal(#{old_inheritance_column}):#{cat_ids.first}..#{cat_ids.last}"],
             last_version)
-        end.to output.to_stdout
+        end.to output(/Associated 1 record to Cat/).to_stdout
 
         # And now the has_many :versions properly finds all four changes
         cat_versions = cat.versions.order(:id).to_a
