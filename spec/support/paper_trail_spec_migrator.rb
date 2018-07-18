@@ -48,6 +48,12 @@ class PaperTrailSpecMigrator
     if dummy_version
       File.delete(@migrations_path.join("#{dummy_version}_dummy_migration.rb"))
     end
+    # Wait up to 3 seconds for all migrations to complete
+    attempt = 0
+    until ActiveRecord::SchemaMigration.exists?(version: last_version)
+      sleep 0.1
+      break if (attempt += 1) == 30
+    end
     # Return the maximum version number used while doing these migrations
     last_version
   end
