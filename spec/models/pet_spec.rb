@@ -58,6 +58,7 @@ RSpec.describe Pet, type: :model, versioning: true do
   context "Older version entry present where item_type refers to the base_class" do
     let(:cat) { Cat.create(name: "Garfield") }   # Index 0
     let(:animal) { Animal.create }               # Index 4
+    let(:migrator) { ::PaperTrailSpecMigrator.new }
 
     before do
       # This line runs the `let` for :cat, creating two entries
@@ -97,7 +98,9 @@ RSpec.describe Pet, type: :model, versioning: true do
       # that examines all existing models to identify use of STI, then updates all older
       # <= v9.2 version entries so they refer to the proper subclass.
       # (This is the same as running:  rails g paper_trail:update_sti; rails db:migrate)
-      generate_and_migrate("paper_trail:update_sti")
+      expect do
+        migrator.generate_and_migrate("paper_trail:update_sti")
+      end.to output(/Associated 1 record to Cat/).to_stdout
       # And now it finds all four changes
       cat_versions = cat.versions.order(:id).to_a
       expect(cat_versions.length).to eq(4)
@@ -120,13 +123,14 @@ RSpec.describe Pet, type: :model, versioning: true do
         Animal.inheritance_column = "#{old_inheritance_column}_xyz"
         # ... then `rails g paper_trail:update_sti` is unable to determine the previous
         # inheritance_column, so the generated migration accomplishes nothing.
-        last_version = generate_and_migrate("paper_trail:update_sti")
+        last_version = nil
+        expect do
+          last_version = migrator.generate_and_migrate("paper_trail:update_sti")
+        end.to_not output(/Associated 1 record to Cat/).to_stdout
+
         expect(cat.versions.length).to eq(3)
         # And older Cat changes remain stored as Animal.
         expect(PaperTrail::Version.where(item_type: "Animal", item_id: cat.id).count).to eq(1)
-
-        # ActiveRecord::SchemaMigration.find_or_create_by!(version: version)
-        # sleep 2 # To make absolutely sure we get a fresh migration number
 
         # To solve this, you can specify custom inheritance_column settings over a range of
         # IDs so that the generated migration will properly update all your historic <= v9.2
@@ -134,9 +138,11 @@ RSpec.describe Pet, type: :model, versioning: true do
 
         # This is the same as running:
         #   rails g paper_trail:update_sti Animal(species):1..4; rails db:migrate
-        generate_and_migrate("paper_trail:update_sti",
-          ["Animal(#{old_inheritance_column}):#{cat_ids.first}..#{cat_ids.last}"],
-          last_version)
+        expect do
+          migrator.generate_and_migrate("paper_trail:update_sti",
+            ["Animal(#{old_inheritance_column}):#{cat_ids.first}..#{cat_ids.last}"],
+            last_version)
+        end.to output(/Associated 1 record to Cat/).to_stdout
 
         # And now the has_many :versions properly finds all four changes
         cat_versions = cat.versions.order(:id).to_a
@@ -153,31 +159,5 @@ RSpec.describe Pet, type: :model, versioning: true do
         Animal.inheritance_column = old_inheritance_column
       end
     end
-  end
-
-  def generate_and_migrate(generator, arguments = [], dummy_version = nil)
-    if dummy_version
-      # Create a dummy migration file with the version
-      FileUtils.touch(Rails.root.join("db/migrate/#{dummy_version}_dummy_migration.rb"))
-    end
-    files = Rails::Generators.invoke(generator, arguments, destination_root: Rails.root)
-    version = "0"
-    begin
-      files.each do |file|
-        # This is the same as running:  rails db:migrate; rm db/migrate/######_migration_name.rb
-        require Rails.root.join(file)
-        UpdateVersionsForSti.migrate(:up)
-        version = file.split("_").first.split("/").last
-      end
-    ensure
-      files.each do |file|
-        File.delete(Rails.root.join(file))
-      end
-    end
-    if dummy_version
-      File.delete(Rails.root.join("db/migrate/#{dummy_version}_dummy_migration.rb"))
-    end
-    # Return the maximum version number used while doing these migrations
-    version
   end
 end

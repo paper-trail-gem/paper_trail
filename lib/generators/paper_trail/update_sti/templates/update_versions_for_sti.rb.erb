@@ -61,7 +61,7 @@ class UpdateVersionsForSti < ActiveRecord::Migration<%= migration_version %>
           end
         end
       rescue NameError => ex
-        puts "Skipping reference to #{model_name}"
+        say "Skipping reference to #{model_name}", subitem: true
       end
     end
     changes.each do |k, v|
@@ -77,7 +77,9 @@ class UpdateVersionsForSti < ActiveRecord::Migration<%= migration_version %>
         end
       end
       num_updated += PaperTrail::Version.where(id: block_of_ids).update_all(item_type: k)
-      puts "Associated #{pluralize(num_updated, 'record')} to #{k}" if num_updated > 0
+      if num_updated > 0
+        say "Associated #{pluralize(num_updated, 'record')} to #{k}", subitem: true
+      end
     end
   end
 end
