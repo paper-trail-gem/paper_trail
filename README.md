@@ -997,7 +997,7 @@ The second generator, `paper_trail:update_sti`, also writes but does not run a m
 which scans existing data in the versions table to identify all use of STI. Upon finding each
 entry which refers to an object from a subclassed model, `item_type` is updated to reflect
 the subclass name, providing full compatibility with how the `versions` association works
-in >= v9.2. In order to more quickly update a large volume of version records, updates are
+after PR#1108. In order to more quickly update a large volume of version records, updates are
 batched to affect 100 records at a time.
 
 Hints can be used in rare cases when the STI structure is modified over time such as
@@ -1016,15 +1016,14 @@ treat the older records. For those first 500 Animal objects, the `item_type` sho
 derived from `type`, and for the rest, from `species`. We would need to research the
 ID numbers for versions that utilise `type` in the `object` and `object_changes` data.
 In this example let's say that those first 500 Animals had version IDs between 249 and 1124.
-These objects would have been created having an `item_type` of Animal prior to Paper Trail
-v9.2. Of course versions representing all manner of other changes would also be
-intermingled along with creates and updates for Animal objects. Perhaps another STI model
-exists for Car that inherits from Vehicle, and 50 Car objects were also built around the
-same timeframe as Bird and Cat objects, with various creates and updates for those being
-referened in versions with IDs from 382 to 516. For Vehicle let's say that initially the
-inheritance_column was set to `kind`, but then it changed to something else after ID 516 in
-the versions table. In this situation, to properly use the generator then these hints can be
-supplied:
+These objects would have been created having an `item_type` of Animal prior to PR#1108.
+Of course versions representing all manner of other changes would also be intermingled along
+with creates and updates for Animal objects. Perhaps another STI model exists for Car that
+inherits from Vehicle, and 50 Car objects were also built around the same timeframe as Bird
+and Cat objects, with various creates and updates for those being referened in versions with
+IDs from 382 to 516. For Vehicle let's say that initially the inheritance_column was set to
+`kind`, but then it changed to something else after ID 516 in the versions table. In this
+situation, to properly use the generator then these hints can be supplied:
 
 `rails generate update_sti Animal(type):249..1124 Vehicle(kind):382..516`
 
