@@ -49,6 +49,7 @@ require "paper_trail/frameworks/rspec"
 require "ffaker"
 
 # Migrate
+# First remove any dummy or other stray migrations built from `rails g update_sti`
 require_relative "support/paper_trail_spec_migrator"
 migrator = ::PaperTrailSpecMigrator.new
 migrator.file_lock do
