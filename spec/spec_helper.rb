@@ -49,12 +49,13 @@ require "paper_trail/frameworks/rspec"
 require "ffaker"
 
 # Migrate
-# First remove any dummy or other stray migrations built from `rails g update_sti`
 require_relative "support/paper_trail_spec_migrator"
 migrator = ::PaperTrailSpecMigrator.new
-migrator.delete("*_dummy_migration.rb")
-migrator.delete("*_update_versions_for_sti.rb")
-migrator.migrate
+migrator.file_lock do
+  migrator.delete("*_dummy_migration.rb")
+  migrator.delete("*_update_versions_for_sti.rb")
+  migrator.migrate
+end
 
 RSpec.configure do |config|
   config.fixture_path = "#{::Rails.root}/spec/fixtures"

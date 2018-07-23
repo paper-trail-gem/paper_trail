@@ -941,9 +941,9 @@ class Banana < Fruit
 end
 ```
 
-A change in what `item_type` stores for subclassed models was introduced in v9.2, recording
-the actual class name instead of refering to the base class. This simplifies reifying through
-associations, and allows for a change in PT-AT that fixes [issue 594](https://github.com/paper-trail-gem/paper_trail/issues/594).
+A change in what `item_type` stores for subclassed models was introduced in [PR#1108](https://github.com/paper-trail-gem/paper_trail/pull/1108),
+recording the actual class name instead of refering to the base class. This simplifies
+reifying through associations, and allows for a change in PT-AT that fixes [issue 594](https://github.com/paper-trail-gem/paper_trail/issues/594).
 
 For those that have existing version data from STI models, `item_type` can be updated by using
 a generator, `rails generate paper_trail:update_sti`.  More information is found in section
