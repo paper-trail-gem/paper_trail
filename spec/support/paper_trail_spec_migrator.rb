@@ -18,7 +18,6 @@ class PaperTrailSpecMigrator
     # then just take ownership, expecting something previous might have timed out.
     # (current Travis CI timeout is 10 minutes per process.)
     result = -1
-    # This puts it in the root of the project
     File.open(MUTEX_FILE, File::RDONLY | File::CREAT, 0o644) do |f|
       is_lock = true
       attempt = 0

@@ -47,9 +47,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- [#1108](https://github.com/paper-trail-gem/paper_trail/pull/1108) -
-  Properly reifying a version of a subclassed STI model requires `item_type` to represent
-  the specific class name instead of base_class.
+- None
 
 ## 9.1.1 (2018-05-30)
 
