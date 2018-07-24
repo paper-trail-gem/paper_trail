@@ -4,9 +4,7 @@ require "spec_helper"
 require "rails/generators"
 
 RSpec.describe Pet, type: :model, versioning: true do
-  it "baseline test setup" do
-    expect(Pet.new).to be_versioned
-  end
+  it { is_expected.to be_versioned }
 
   it "can be reified" do
     person = Person.create(name: "Frank")

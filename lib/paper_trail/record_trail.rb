@@ -124,8 +124,6 @@ module PaperTrail
       version = versions_assoc.new(data)
       version.save
       version
-    ensure
-      @in_after_callback = false
     end
 
     # PT-AT extends this method to add its transaction id.

@@ -4,6 +4,8 @@ require "spec_helper"
 
 module Family
   RSpec.describe CelebrityFamily, type: :model, versioning: true do
+    it { is_expected.to be_versioned }
+
     describe "#reify" do
       context "belongs_to" do
         it "uses the correct item_type in queries" do
