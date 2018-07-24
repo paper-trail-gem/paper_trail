@@ -2,20 +2,15 @@
 
 # Manage migrations including running generators to build them, and cleaning up strays
 class PaperTrailSpecMigrator
-<<<<<<< HEAD
   attr_reader :schema_version
 
   MUTEX_FILE = File.expand_path("tmp/migration.mutex", __dir__)
 
   def initialize(migrations_path = Rails.root.join("db/migrate"))
-=======
-  def initialize(migrations_path = Rails.root.join("db/migrate/"))
->>>>>>> 986ec84... Refactor generator testing
     migrations_path = Pathname.new(migrations_path) if migrations_path.is_a?(String)
     @migrations_path = migrations_path
   end
 
-<<<<<<< HEAD
   # Use an advisory lock to manage creation and destruction of migration files
   def file_lock
     return -1 unless block_given?
@@ -42,8 +37,6 @@ class PaperTrailSpecMigrator
     result
   end
 
-=======
->>>>>>> 986ec84... Refactor generator testing
   def delete(filespec)
     Dir.glob(@migrations_path.join(filespec)).each do |file|
       File.delete(file)
@@ -63,7 +56,6 @@ class PaperTrailSpecMigrator
   end
 
   def generate_and_migrate(generator, arguments = [], dummy_version = nil)
-<<<<<<< HEAD
     arguments = [] if arguments.nil?
     last_version = 0
     file_lock do
@@ -94,37 +86,5 @@ class PaperTrailSpecMigrator
 
     # Keep track of the maximum version number used while doing these migrations
     @schema_version = last_version
-=======
-    if dummy_version
-      # Create a dummy migration file with a specific schema_migration version.
-      # (Helpful to avoid trouble from the file system caching previous migrations
-      # that were created with the exact same name since they get built at the exact
-      # same second in time.)
-      File.open(@migrations_path.join("#{dummy_version}_dummy_migration.rb"), "w+") do |f|
-        f.write("class DummyMigration < ActiveRecord::Migration; end")
-      end
-    end
-    files = Rails::Generators.invoke(generator, arguments, destination_root: Rails.root)
-    last_version = files.last&.split("_")&.first&.split("/")&.last || "0"
-    # This is the same as running:  rails db:migrate; rm db/migrate/######_migration_name.rb
-    begin
-      migrate
-    ensure
-      files.each do |file|
-        File.delete(Rails.root.join(file))
-      end
-    end
-    if dummy_version
-      File.delete(@migrations_path.join("#{dummy_version}_dummy_migration.rb"))
-    end
-    # Wait up to 3 seconds for all migrations to complete
-    attempt = 0
-    until ActiveRecord::SchemaMigration.exists?(version: last_version)
-      sleep 0.1
-      break if (attempt += 1) == 30
-    end
-    # Return the maximum version number used while doing these migrations
-    last_version
->>>>>>> 986ec84... Refactor generator testing
   end
 end

@@ -48,15 +48,7 @@ RSpec.describe PaperTrail::InstallGenerator, type: :generator do
           }
         }
       )
-<<<<<<< HEAD
-<<<<<<< HEAD
       expect(destination_root).not_to(
-=======
-      expect(destination_root).to_not(
->>>>>>> 986ec84... Refactor generator testing
-=======
-      expect(destination_root).not_to(
->>>>>>> 740a5f3... Rubocop prefers 'not_to'
         have_structure {
           directory("db") {
             directory("migrate") {
