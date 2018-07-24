@@ -42,8 +42,6 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
   object_changes column. An example of this implementation using the hashdiff
   gem can be found here:
   [paper_trail-hashdiff](https://github.com/hashwin/paper_trail-hashdiff)
-- [#1108](https://github.com/paper-trail-gem/paper_trail/pull/1108) -
-  Generator `update_sti` builds a migration to update `item_type` for existing versions.
 
 ### Fixed
 
