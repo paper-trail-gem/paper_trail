@@ -17,7 +17,7 @@ module PaperTrail
       def initialize(record, in_after_callback, is_touch, force_changes)
         super(record, in_after_callback)
         @is_touch = is_touch
-        @changes = force_changes.nil? ? changes : force_changes
+        @force_changes = force_changes
       end
 
       # Return attributes of nascent `Version` record.
@@ -35,7 +35,8 @@ module PaperTrail
           data[:object] = recordable_object(@is_touch)
         end
         if record_object_changes?
-          data[:object_changes] = recordable_object_changes(@changes)
+          changes = @force_changes.nil? ? notable_changes : @force_changes
+          data[:object_changes] = prepare_object_changes(changes)
         end
         merge_metadata_into(data)
       end

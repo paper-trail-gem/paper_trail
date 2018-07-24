@@ -119,14 +119,25 @@ module PaperTrail
       end
 
       # @api private
-      def changes
-        notable_changes = changes_in_latest_version.delete_if { |k, _v|
-          !notably_changed.include?(k)
-        }
+      def prepare_object_changes(changes)
+        changes = serialize_object_changes(changes)
+        changes = recordable_object_changes(changes)
+        changes
+      end
+
+      # @api private
+      def serialize_object_changes(changes)
         AttributeSerializers::ObjectChangesAttribute.
           new(@record.class).
-          serialize(notable_changes)
-        notable_changes.to_hash
+          serialize(changes)
+        changes.to_hash
+      end
+
+      # @api private
+      def notable_changes
+        changes_in_latest_version.delete_if { |k, _v|
+          !notably_changed.include?(k)
+        }
       end
 
       # Rails 5.1 changed the API of `ActiveRecord::Dirty`. See

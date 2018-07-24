@@ -20,7 +20,8 @@ module PaperTrail
           data[:created_at] = @record.updated_at
         end
         if record_object_changes? && changed_notably?
-          data[:object_changes] = recordable_object_changes(changes)
+          changes = notable_changes
+          data[:object_changes] = prepare_object_changes(changes)
         end
         merge_metadata_into(data)
       end
