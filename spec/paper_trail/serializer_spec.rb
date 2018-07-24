@@ -7,7 +7,9 @@ RSpec.describe(PaperTrail, versioning: true) do
   context "YAML serializer" do
     it "saves the expected YAML in the object column" do
       customer = Customer.create(name: "Some text.")
-      original_attributes = customer.paper_trail.attributes_before_change(false)
+      original_attributes = PaperTrail::Events::Base.
+        new(customer, false).
+        send(:attributes_before_change, false)
       customer.update(name: "Some more text.")
       expect(customer.versions.length).to(eq(2))
       expect(customer.versions[0].reify).to(be_nil)
@@ -30,7 +32,9 @@ RSpec.describe(PaperTrail, versioning: true) do
 
     it "reify with JSON serializer" do
       customer = Customer.create(name: "Some text.")
-      original_attributes = customer.paper_trail.attributes_before_change(false)
+      original_attributes = PaperTrail::Events::Base.
+        new(customer, false).
+        send(:attributes_before_change, false)
       customer.update(name: "Some more text.")
       expect(customer.versions.length).to(eq(2))
       expect(customer.versions[0].reify).to(be_nil)
@@ -62,9 +66,9 @@ RSpec.describe(PaperTrail, versioning: true) do
 
     it "reify with custom serializer" do
       customer = Customer.create
-      original_attributes = customer.
-        paper_trail.
-        attributes_before_change(false).
+      original_attributes = PaperTrail::Events::Base.
+        new(customer, false).
+        send(:attributes_before_change, false).
         reject { |_k, v| v.nil? }
       customer.update(name: "Some more text.")
       expect(customer.versions.length).to(eq(2))
