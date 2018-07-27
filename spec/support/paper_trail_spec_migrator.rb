@@ -4,8 +4,6 @@
 class PaperTrailSpecMigrator
   attr_reader :schema_version
 
-  MUTEX_FILE = File.expand_path("tmp/migration.mutex", __dir__)
-
   def initialize(migrations_path = Rails.root.join("db/migrate"))
     migrations_path = Pathname.new(migrations_path) if migrations_path.is_a?(String)
     @migrations_path = migrations_path
