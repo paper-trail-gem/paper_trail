@@ -4,9 +4,8 @@
 class PaperTrailSpecMigrator
   attr_reader :schema_version
 
-  def initialize(migrations_path = Rails.root.join("db/migrate"))
-    migrations_path = Pathname.new(migrations_path) if migrations_path.is_a?(String)
-    @migrations_path = migrations_path
+  def initialize
+    @migrations_path = dummy_app_migrations_dir
   end
 
   # Looks like the API for programatically running migrations will change
@@ -50,5 +49,11 @@ class PaperTrailSpecMigrator
 
     # Keep track of the maximum version number used while doing these migrations
     @schema_version = last_version
+  end
+
+  private
+
+  def dummy_app_migrations_dir
+    Pathname.new(File.expand_path("../dummy_app/db/migrate", __dir__))
   end
 end
