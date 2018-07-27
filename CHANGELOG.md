@@ -7,20 +7,25 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Breaking Changes
 
-- None
+- [#1108](https://github.com/paper-trail-gem/paper_trail/pull/1108) -
+  In `versions.item_type`, we now store the specific class name instead of
+  the base_class.
+  - You are required to migrate existing `versions` records if you use
+    [STI](https://api.rubyonrails.org/v5.2.0/classes/ActiveRecord/Base.html#class-ActiveRecord::Base-label-Single+table+inheritance).
+    A migration generator has been provided. Generator `update_sti` creates a
+    migration that updates existing `version` entries such that `item_type` then
+    refers to the specific class name instead of base_class. See [5.c.
+    Generators](https://github.com/paper-trail-gem/paper_trail/blob/master/README.md#5c-generators).
+  - This change was necessary to fix a long-standing issue with reification
+    of STI subclasses. Fixes [#594](https://github.com/paper-trail-gem/paper_trail/issues/594)
 
 ### Added
 
-- [#1108](https://github.com/paper-trail-gem/paper_trail/pull/1108) -
-  Generator `update_sti` creates a migration that updates existing `version` entries such
-  that `item_type` then refers to the specific class name instead of base_class. See
-  [5.c. Generators](https://github.com/paper-trail-gem/paper_trail/blob/master/README.md#5c-generators)
+- None
 
 ### Fixed
 
-- [#1108](https://github.com/paper-trail-gem/paper_trail/pull/1108) -
-  Properly reifying a version of a subclassed STI model requires `item_type` to represent
-  the specific class name instead of base_class. Fixes [Issue #594](https://github.com/paper-trail-gem/paper_trail/issues/594)
+- None
 
 ## 9.2.0 (2018-06-09)
 
