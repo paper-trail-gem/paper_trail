@@ -132,7 +132,7 @@ module PaperTrail
 
       versions_assoc = @record.send(@record.class.versions_association_name)
       version = versions_assoc.new(data)
-      version.save
+      version.save!
       version
     end
 
