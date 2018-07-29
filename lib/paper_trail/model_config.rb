@@ -168,26 +168,25 @@ module PaperTrail
         ::ActiveRecord::Base.belongs_to_required_by_default
     end
 
+    # Define the association usually called `versions`. The name is configurable
+    # via `versions_association_name`.
+    #
+    # Single Table Inheritance (STI) is supported, with custom inheritance
+    # columns. Imagine a `version` whose `item_type` is "Animal". The `animals`
+    # table is an STI table (it has cats and dogs) and it has a custom
+    # inheritance column, `species`. If `attrs["species"]` is "Dog", `item_type`
+    # is "Dog". If `attrs["species"]` is blank, `item_type` is "Animal". See
+    # `spec/models/animal_spec.rb`.
     def setup_versions_association(klass)
       klass.has_many(
         klass.versions_association_name,
         lambda do |object|
-          # Support Single Table Inheritance (STI) with custom inheritance columns.
-          #
-          # For example, imagine a `version` whose `item_type` is "Animal". The
-          # `animals` table is an STI table (it has cats and dogs) and it has a
-          # custom inheritance column, `species`. If `attrs["species"]` is "Dog",
-          # type_name is set to `Dog`. If `attrs["species"]` is blank, type_name
-          # is set to `Animal`. You can see this particular example in action in
-          # `spec/models/animal_spec.rb`.
+          relation = order(model.timestamp_sort_order)
           item_type = object.paper_trail.versions_association_item_type
-          if item_type.blank?
-            order(model.timestamp_sort_order)
-          else
-            unscope(where: :item_type).
-            where(item_type: item_type).
-            order(model.timestamp_sort_order)
+          unless item_type.nil?
+            relation = relation.unscope(where: :item_type).where(item_type: item_type)
           end
+          relation
         end,
         class_name: klass.version_class_name,
         as: :item
