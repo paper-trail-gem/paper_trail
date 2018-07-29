@@ -1,2 +1,3 @@
 Description:
-  Generates (but does not run) a migration to add a versions table. See section 5.c. Generators in README.md for more information.
+  Generates (but does not run) a migration to add a versions table. See section
+  5.c. Generators in README.md for more information.
