@@ -41,11 +41,21 @@ module PaperTrail
       end
       ```
     STR
+    E_STI_ITEM_TYPES_NOT_UPDATED = <<~STR.squish.freeze
+      It looks like %s is an STI subclass, and you have not yet updated your
+      `item_type`s. Starting with
+      [#1108](https://github.com/paper-trail-gem/paper_trail/pull/1108), we now
+      store the subclass name instead of the base_class. You must migrate
+      existing `versions` records if you use STI. A migration generator has been
+      provided. See section 5.c. Generators in the README for instructions. This
+      warning will continue until you have thoroughly read the instructions.
+    STR
 
     RAILS_GTE_5_1 = ::ActiveRecord.gem_version >= ::Gem::Version.new("5.1.0.beta1")
 
     def initialize(record)
       @record = record
+      assert_sti_item_type_updated
     end
 
     # Invoked after rollbacks to ensure versions records are not created for
@@ -371,6 +381,23 @@ module PaperTrail
     end
 
     private
+
+    # @api private
+    def assert_sti_item_type_updated
+      # Does the user promise they have updated their `item_type`s?
+      return if ::PaperTrail.config.i_have_updated_my_existing_item_types
+
+      # Is this class an STI subclass?
+      record_class = @record.class
+      return if record_class.descends_from_active_record?
+
+      # Have we already issued this warning?
+      ::PaperTrail.config.classes_warned_about_sti_item_types ||= []
+      return if ::PaperTrail.config.classes_warned_about_sti_item_types.include?(record_class)
+
+      ::Kernel.warn(format(E_STI_ITEM_TYPES_NOT_UPDATED, record_class.name))
+      ::PaperTrail.config.classes_warned_about_sti_item_types << record_class
+    end
 
     # @api private
     def assign_and_reset_version_association(version)

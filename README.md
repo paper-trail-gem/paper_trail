@@ -1054,6 +1054,14 @@ entire STI structure is modified or is abandoned. It ultimately facilitates
 better reporting for historic subclassed items, and allows PT-AT to properly
 reify these historic objects through associations.
 
+Once you have run the migration, please inform PaperTrail, so that it won't warn
+you about this.
+
+```
+# config/initializers/paper_trail.rb
+::PaperTrail.config.i_have_updated_my_existing_item_types = true
+```
+
 ### 5.d. Protected Attributes
 
 As of version 6, PT no longer supports rails 3 or the [protected_attributes][17]

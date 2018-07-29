@@ -8,6 +8,12 @@ RSpec.describe Animal, type: :model, versioning: true do
     expect(Animal.inheritance_column).to eq("species")
   end
 
+  describe "#descends_from_active_record?" do
+    it "returns true, meaning that Animal is not an STI subclass" do
+      expect(described_class.descends_from_active_record?).to eq(true)
+    end
+  end
+
   it "works with custom STI inheritance column" do
     animal = Animal.create(name: "Animal")
     animal.update_attributes(name: "Animal from the Muppets")
