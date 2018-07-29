@@ -6,6 +6,19 @@ module Family
   RSpec.describe CelebrityFamily, type: :model, versioning: true do
     it { is_expected.to be_versioned }
 
+    describe "#create" do
+      # https://github.com/paper-trail-gem/paper_trail/pull/1108
+      it "creates a version record with item_type == class.name, not base_class" do
+        carter = described_class.create(
+          name: "Carter",
+          path_to_stardom: "Mexican radio"
+        )
+        v = carter.versions.last
+        expect(v[:event]).to eq("create")
+        expect(v[:item_type]).to eq("Family::CelebrityFamily")
+      end
+    end
+
     describe "#reify" do
       context "belongs_to" do
         it "uses the correct item_type in queries" do
@@ -89,6 +102,20 @@ module Family
             expect(parent_version.item_type).to eq(parent.class.name)
           end
         end
+      end
+    end
+
+    describe "#update" do
+      # https://github.com/paper-trail-gem/paper_trail/pull/1108
+      it "creates a version record with item_type == class.name, not base_class" do
+        carter = described_class.create(
+          name: "Carter",
+          path_to_stardom: "Mexican radio"
+        )
+        carter.update(path_to_stardom: "Johnny")
+        v = carter.versions.last
+        expect(v[:event]).to eq("update")
+        expect(v[:item_type]).to eq("Family::CelebrityFamily")
       end
     end
   end
