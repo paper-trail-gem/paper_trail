@@ -168,6 +168,31 @@ module PaperTrail
         ::ActiveRecord::Base.belongs_to_required_by_default
     end
 
+    # Define the association usually called `versions`. The name is configurable
+    # via `versions_association_name`.
+    #
+    # Single Table Inheritance (STI) is supported, with custom inheritance
+    # columns. Imagine a `version` whose `item_type` is "Animal". The `animals`
+    # table is an STI table (it has cats and dogs) and it has a custom
+    # inheritance column, `species`. If `attrs["species"]` is "Dog", `item_type`
+    # is "Dog". If `attrs["species"]` is blank, `item_type` is "Animal". See
+    # `spec/models/animal_spec.rb`.
+    def setup_versions_association(klass)
+      klass.has_many(
+        klass.versions_association_name,
+        lambda do |object|
+          relation = order(model.timestamp_sort_order)
+          item_type = object.paper_trail.versions_association_item_type
+          unless item_type.nil?
+            relation = relation.unscope(where: :item_type).where(item_type: item_type)
+          end
+          relation
+        end,
+        class_name: klass.version_class_name,
+        as: :item
+      )
+    end
+
     def setup_associations(options)
       @model_class.class_attribute :version_association_name
       @model_class.version_association_name = options[:version] || :version
@@ -185,12 +210,7 @@ module PaperTrail
 
       assert_concrete_activerecord_class(@model_class.version_class_name)
 
-      @model_class.has_many(
-        @model_class.versions_association_name,
-        -> { order(model.timestamp_sort_order) },
-        class_name: @model_class.version_class_name,
-        as: :item
-      )
+      setup_versions_association(@model_class)
     end
 
     def setup_callbacks_from_options(options_on = [])

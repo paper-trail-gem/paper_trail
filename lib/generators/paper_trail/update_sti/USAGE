@@ -1,0 +1,4 @@
+Description:
+  Generates (but does not run) a migration to update item_type for STI entries
+  in an existing versions table. See section 5.c. Generators in README.md for
+  more information.

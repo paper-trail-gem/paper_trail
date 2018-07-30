@@ -5,8 +5,10 @@ require "spec_helper"
 # The `Person` model:
 #
 # - has a dozen associations of various types
-# - has a custome serializer, TimeZoneSerializer, for its `time_zone` attribute
+# - has a custom serializer, TimeZoneSerializer, for its `time_zone` attribute
 RSpec.describe Person, type: :model, versioning: true do
+  it { is_expected.to be_versioned }
+
   describe "#time_zone" do
     it "returns an ActiveSupport::TimeZone" do
       person = Person.new(time_zone: "Samoa")
@@ -147,6 +149,29 @@ RSpec.describe Person, type: :model, versioning: true do
           person.versions.last.changeset[:time_zone].map(&:class)
         ).to(eq([ActiveSupport::TimeZone, ActiveSupport::TimeZone]))
       end
+    end
+  end
+
+  describe "#cars and bicycles" do
+    it "can be reified" do
+      person = Person.create(name: "Frank")
+      car = Car.create(name: "BMW 325")
+      bicycle = Bicycle.create(name: "BMX 1.0")
+
+      person.car = car
+      person.bicycle = bicycle
+      person.update_attributes(name: "Steve")
+
+      car.update_attributes(name: "BMW 330")
+      bicycle.update_attributes(name: "BMX 2.0")
+      person.update_attributes(name: "Peter")
+
+      expect(person.reload.versions.length).to(eq(3))
+
+      # These will work when PT-AT has PR #5 merged:
+      # second_version = person.reload.versions.second.reify(has_one: true)
+      # expect(second_version.car.name).to(eq("BMW 325"))
+      # expect(second_version.bicycle.name).to(eq("BMX 1.0"))
     end
   end
 end

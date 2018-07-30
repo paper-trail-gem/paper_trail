@@ -48,9 +48,9 @@ module PaperTrail
       # In this situation we constantize the `item_type` to get hold of the
       # class...except when the stored object's attributes include a `type`
       # key.  If this is the case, the object we belong to is using single
-      # table inheritance (STI) and the `item_type` will be the base class,
-      # not the actual subclass. If `type` is present but empty, the class is
-      # the base class.
+      # table inheritance (STI) and the `item_type` could be either the base
+      # class or the actual subclass. Either way, we can trust ActiveRecord
+      # to know what to do by providing data in the inheritance_column.
       def init_model(attrs, options, version)
         if options[:dup] != true && version.item
           model = version.item
@@ -58,12 +58,12 @@ module PaperTrail
             init_unversioned_attrs(attrs, model)
           end
         else
-          klass = version_reification_class(version, attrs)
+          klass = version.item_type.constantize
           # The `dup` option always returns a new object, otherwise we should
           # attempt to look for the item outside of default scope(s).
           find_cond = { klass.primary_key => version.item_id }
           if options[:dup] || (item_found = klass.unscoped.where(find_cond).first).nil?
-            model = klass.new
+            model = version_reification_item(klass, attrs)
           elsif options[:unversioned_attributes] == :nil
             model = item_found
             init_unversioned_attrs(attrs, model)
@@ -110,21 +110,17 @@ module PaperTrail
         end
       end
 
-      # Given a `version`, return the class to reify. This method supports
-      # Single Table Inheritance (STI) with custom inheritance columns.
-      #
-      # For example, imagine a `version` whose `item_type` is "Animal". The
-      # `animals` table is an STI table (it has cats and dogs) and it has a
-      # custom inheritance column, `species`. If `attrs["species"]` is "Dog",
-      # this method returns the constant `Dog`. If `attrs["species"]` is blank,
-      # this method returns the constant `Animal`. You can see this particular
-      # example in action in `spec/models/animal_spec.rb`.
-      #
-      def version_reification_class(version, attrs)
-        inheritance_column_name = version.item_type.constantize.inheritance_column
-        inher_col_value = attrs[inheritance_column_name]
-        class_name = inher_col_value.blank? ? version.item_type : inher_col_value
-        class_name.constantize
+      # Allow ActiveRecord to build the skeletal reified object to its liking.
+      # This method supports Single Table Inheritance (STI) with custom
+      # inheritance columns.
+      # @api private
+      def version_reification_item(klass, attrs)
+        new_attrs = {}
+        inheritance_column = klass.inheritance_column
+        if attrs.include?(inheritance_column)
+          new_attrs[inheritance_column] = attrs[inheritance_column]
+        end
+        klass.new(new_attrs)
       end
     end
   end

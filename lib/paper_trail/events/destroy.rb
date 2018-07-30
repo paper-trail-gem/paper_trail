@@ -14,7 +14,7 @@ module PaperTrail
       def data
         data = {
           item_id: @record.id,
-          item_type: @record.class.base_class.name,
+          item_type: @record.class.name,
           event: @record.paper_trail_event || "destroy",
           object: recordable_object(false),
           whodunnit: PaperTrail.request.whodunnit
