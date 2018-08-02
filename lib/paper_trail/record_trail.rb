@@ -7,12 +7,6 @@ require "paper_trail/events/update"
 module PaperTrail
   # Represents the "paper trail" for a single record.
   class RecordTrail
-    DPR_TOUCH_WITH_VERSION = <<-STR.squish.freeze
-      my_model.paper_trail.touch_with_version is deprecated, please use
-      my_model.paper_trail.save_with_version, which is slightly different. It's
-      a save, not a touch, so make sure you understand the difference by reading
-      the ActiveRecord documentation for both.
-    STR
     DPR_WHODUNNIT = <<-STR.squish.freeze
       my_model_instance.paper_trail.whodunnit('John') is deprecated,
       please use PaperTrail.request(whodunnit: 'John')
@@ -249,38 +243,6 @@ module PaperTrail
       version
     end
 
-    # Mimics the `touch` method from `ActiveRecord::Persistence` (without
-    # actually calling `touch`), but also creates a version.
-    #
-    # A version is created regardless of options such as `:on`, `:if`, or
-    # `:unless`.
-    #
-    # This is an "update" event. That is, we record the same data we would in
-    # the case of a normal AR `update`.
-    #
-    # Some advanced PT users disable all callbacks (eg. `has_paper_trail(on:
-    # [])`) and use only this method, giving them complete control over when
-    # version records are inserted. It's unclear under which specific
-    # circumstances this technique should be adopted.
-    #
-    # @deprecated
-    def touch_with_version(name = nil)
-      ::ActiveSupport::Deprecation.warn(DPR_TOUCH_WITH_VERSION, caller(1))
-      unless @record.persisted?
-        raise ::ActiveRecord::ActiveRecordError, "can not touch on a new record object"
-      end
-      attributes = @record.send :timestamp_attributes_for_update_in_model
-      attributes << name if name
-      current_time = @record.send :current_time_from_proper_timezone
-      attributes.each { |column|
-        @record.send(:write_attribute, column, current_time)
-      }
-      ::PaperTrail.request(enabled: false) do
-        @record.save!(validate: false)
-      end
-      record_update(force: true, in_after_callback: false, is_touch: false)
-    end
-
     # Save, and create a version record regardless of options such as `:on`,
     # `:if`, or `:unless`.
     #
@@ -288,12 +250,6 @@ module PaperTrail
     #
     # This is an "update" event. That is, we record the same data we would in
     # the case of a normal AR `update`.
-    #
-    # In older versions of PaperTrail, a method named `touch_with_version` was
-    # used for this purpose. `save_with_version` is not exactly the same.
-    # First, the arguments are different. It passes all arguments to `save`.
-    # Second, it doesn't set any timestamp attributes prior to the `save` the
-    # way `touch_with_version` did.
     def save_with_version(*args)
       ::PaperTrail.request(enabled: false) do
         @record.save(*args)

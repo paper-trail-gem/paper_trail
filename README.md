@@ -362,10 +362,6 @@ the record has not changed.
 my_model.paper_trail.save_with_version
 ```
 
-There is a similar method, `touch_with_version`, which was deprecated in
-9.0.0 and will be removed. `save_with_version` serves a similar purpose, but
-it's a save, not a touch.
-
 ### 2.c. Choosing Attributes To Monitor
 
 #### Ignore

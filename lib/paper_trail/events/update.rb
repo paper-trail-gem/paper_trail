@@ -10,7 +10,6 @@ module PaperTrail
     class Update < Base
       # - is_touch - [boolean] - Used in the two situations that are touch-like:
       #   - `after_touch` we call `RecordTrail#record_update`
-      #   - `RecordTrail#touch_with_version` (deprecated) calls `RecordTrail#record_update`
       # - force_changes - [Hash] - Only used by `RecordTrail#update_columns`,
       #   because there dirty tracking is off, so it has to track its own changes.
       #

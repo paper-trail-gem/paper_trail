@@ -227,24 +227,6 @@ RSpec.describe Widget, type: :model do
     end
   end
 
-  describe "#touch_with_version", versioning: true do
-    it "creates a version" do
-      allow(::ActiveSupport::Deprecation).to receive(:warn)
-      count = widget.versions.size
-      widget.paper_trail.touch_with_version
-      expect(widget.versions.size).to eq(count + 1)
-      expect(::ActiveSupport::Deprecation).to have_received(:warn).once
-    end
-
-    it "increments the `:updated_at` timestamp" do
-      allow(::ActiveSupport::Deprecation).to receive(:warn)
-      time_was = widget.updated_at
-      widget.paper_trail.touch_with_version
-      expect(widget.updated_at).to be > time_was
-      expect(::ActiveSupport::Deprecation).to have_received(:warn).once
-    end
-  end
-
   describe "touch", versioning: true do
     it "creates a version" do
       expect { widget.touch }.to change {

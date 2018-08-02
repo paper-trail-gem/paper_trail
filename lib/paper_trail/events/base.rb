@@ -11,7 +11,6 @@ module PaperTrail
     #   - `after_update` we call `RecordTrail#record_update`
     #   - `after_touch` we call `RecordTrail#record_update`
     #   - `RecordTrail#save_with_version` calls `RecordTrail#record_update`
-    #   - `RecordTrail#touch_with_version` (deprecated) calls `RecordTrail#record_update`
     #   - `RecordTrail#update_columns` is also referred to as an update, though
     #     it uses `RecordTrail#record_update_columns` rather than
     #     `RecordTrail#record_update`
