@@ -7,6 +7,10 @@ require_relative "paper_trail_spec_migrator"
 # connection for the namespaces to simulate an application with multiple
 # database connections.
 
+# This is all going to change in rails 6. See "RailsConf 2018: Keynote: The
+# Future of Rails 6: Scalable by Default by Eileen Uchitelle"
+# https://www.youtube.com/watch?v=8evXWvM4oXM
+
 # Load database yaml to use
 configs = YAML.load_file("#{Rails.root}/config/database.yml")
 
