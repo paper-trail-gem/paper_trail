@@ -268,9 +268,10 @@ module PaperTrail
     # creates a version to record those changes.
     # @api public
     def update_columns(attributes)
-      # `@record.update_columns` skips dirty tracking, so we can't just use `@record.changes` or
-      # @record.saved_changes` from `ActiveModel::Dirty`. We need to build our own hash with the
-      # changes that will be made directly to the database.
+      # `@record.update_columns` skips dirty-tracking, so we can't just use
+      # `@record.changes` or @record.saved_changes` from `ActiveModel::Dirty`.
+      # We need to build our own hash with the changes that will be made
+      # directly to the database.
       changes = {}
       attributes.each do |k, v|
         changes[k] = [@record[k], v]
