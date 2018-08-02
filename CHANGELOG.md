@@ -17,6 +17,9 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
     See [5.c. Generators][2] for instructions.
   - This change fixes a long-standing issue with reification of STI subclasses,
     [#594](https://github.com/paper-trail-gem/paper_trail/issues/594)
+- Removed `touch_with_version`, was deprecated in 9.0.0
+- [#1121](https://github.com/paper-trail-gem/paper_trail/issues/1121) -
+  `touch` now always inserts `null` in `object_changes`.
 
 ### Added
 
