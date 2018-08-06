@@ -23,7 +23,9 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
-- None
+- [#1099](https://github.com/paper-trail-gem/paper_trail/issues/1099) -
+  Ability to save ~50% storage space by making the `object` column optional.
+  Note that this disables `reify` and `where_object`.
 
 ### Fixed
 

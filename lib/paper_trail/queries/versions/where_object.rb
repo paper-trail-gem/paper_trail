@@ -18,7 +18,10 @@ module PaperTrail
 
         # @api private
         def execute
-          case @version_model_class.columns_hash["object"].type
+          column = @version_model_class.columns_hash["object"]
+          raise "where_object can't be called without an object column" unless column
+
+          case column.type
           when :jsonb
             jsonb
           when :json

@@ -205,6 +205,9 @@ module PaperTrail
     #   - `:preserve` - Attributes undefined in version record are not modified.
     #
     def reify(options = {})
+      unless self.class.column_names.include? "object"
+        raise "reify can't be called without an object column"
+      end
       return nil if object.nil?
       ::PaperTrail::Reifier.reify(self, options)
     end

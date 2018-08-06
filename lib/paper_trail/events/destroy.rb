@@ -16,9 +16,11 @@ module PaperTrail
           item_id: @record.id,
           item_type: @record.class.name,
           event: @record.paper_trail_event || "destroy",
-          object: recordable_object(false),
           whodunnit: PaperTrail.request.whodunnit
         }
+        if record_object?
+          data[:object] = recordable_object(false)
+        end
         merge_metadata_into(data)
       end
     end

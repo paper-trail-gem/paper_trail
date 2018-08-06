@@ -1285,6 +1285,12 @@ A valid adapter is a class that contains the following methods:
 
 For an example of such an implementation, see [paper_trail-hashdiff](https://github.com/hashwin/paper_trail-hashdiff)
 
+### 6.d. Excluding the Object Column
+
+The `object` column ends up storing a lot of duplicate data if you have models that have many columns,
+and that are updated many times. You can save ~50% of storage space by removing the column from the
+versions table. It's important to note that this will disable `reify` and `where_object`.
+
 ## 7. Testing
 
 You may want to turn PaperTrail off to speed up your tests.  See [Turning

@@ -253,6 +253,13 @@ module PaperTrail
           @record.class.paper_trail.version_class.column_names.include?("object_changes")
       end
 
+      # Returns a boolean indicating whether to store the original object during save.
+      #
+      # @api private
+      def record_object?
+        @record.class.paper_trail.version_class.column_names.include?("object")
+      end
+
       # Returns an object which can be assigned to the `object` attribute of a
       # nascent version record. If the `object` column is a postgres `json`
       # column, then a hash can be used in the assignment, otherwise the column
