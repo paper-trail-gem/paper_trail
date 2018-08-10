@@ -20,6 +20,10 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 - Removed `touch_with_version`, was deprecated in 9.0.0
 - [#1121](https://github.com/paper-trail-gem/paper_trail/issues/1121) -
   `touch` now always inserts `null` in `object_changes`.
+- [#1099](https://github.com/paper-trail-gem/paper_trail/issues/1099) -
+  Removed `save_changes`. For those wanting to save space, it's more effective
+  to drop the `object` column. To preserve the old behavior you can add an
+  `object_changes_adapter`.
 
 ### Added
 
