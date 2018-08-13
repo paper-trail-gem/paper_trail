@@ -30,9 +30,9 @@ RSpec.describe NoObject, versioning: true do
     h = YAML.safe_load(a["object_changes"], [::Time])
     expect(h["id"]).to eq([n.id, nil])
     expect(h["letter"]).to eq([n.letter, nil])
-    expect(h["created_at"][0]).to be_a(::Time)
+    expect(h["created_at"][0]).to be_present
     expect(h["created_at"][1]).to be_nil
-    expect(h["updated_at"][0]).to be_a(::Time)
+    expect(h["updated_at"][0]).to be_present
     expect(h["updated_at"][1]).to be_nil
   end
 
