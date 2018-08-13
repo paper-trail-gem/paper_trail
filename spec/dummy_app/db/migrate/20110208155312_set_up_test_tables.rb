@@ -124,6 +124,24 @@ class SetUpTestTables < (
     end
     add_index :post_versions, %i[item_type item_id]
 
+    # Uses custom versions table `no_object_versions`.
+    create_table :no_objects, force: true do |t|
+      t.string :letter, null: false, limit: 1
+      t.timestamps null: false, limit: 6
+    end
+
+    # This table omits the `object` column.
+    create_table :no_object_versions, force: true do |t|
+      t.string   :item_type, null: false
+      t.integer  :item_id,   null: false
+      t.string   :event,     null: false
+      t.string   :whodunnit
+      t.datetime :created_at, limit: 6
+      t.text     :object_changes, limit: TEXT_BYTES
+      t.integer  :metadatum
+    end
+    add_index :no_object_versions, %i[item_type item_id]
+
     if ENV["DB"] == "postgres"
       create_table :json_versions, force: true do |t|
         t.string   :item_type, null: false
