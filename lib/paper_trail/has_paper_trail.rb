@@ -51,8 +51,6 @@ module PaperTrail
       #   is `:versions`.
       # - :version - The name to use for the method which returns the version
       #   the instance was reified from. Default is `:version`.
-      # - :save_changes - Whether or not to save changes to the object_changes
-      #   column if it exists. Default is true
       # - :join_tables - If the model has a has_and_belongs_to_many relation
       #   with an unpapertrailed model, passing the name of the association to
       #   the join_tables option will paper trail the join table but not save
