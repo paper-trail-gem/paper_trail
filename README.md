@@ -1101,7 +1101,7 @@ path to the class (e.g. `Foo::BarVersion` if your class is inside the module
 
 1. For models which have a lot of versions, storing each model's versions in a
    separate table can improve the performance of certain database queries.
-1. Store different version [metadata](#storing-metadata) for different models.
+1. Store different version [metadata](#4c-storing-metadata) for different models.
 
 #### Configuration
 

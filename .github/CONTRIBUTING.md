@@ -74,9 +74,8 @@ DB=postgres bundle exec appraisal ar-5.2 rake
 ## Adding new schema
 
 Edit `spec/dummy_app/db/migrate/20110208155312_set_up_test_tables.rb`. Migration
-will be performed by `spec_helper.rb`, so you can just run rake as shown above.
-Also, `spec/dummy_app/db/schema.rb` is deliberately `.gitignore`d, we don't use
-it.
+will be performed by `rake`, so you can just run it as shown above. Also,
+`spec/dummy_app/db/schema.rb` is deliberately `.gitignore`d, we don't use it.
 
 ## Documentation
 

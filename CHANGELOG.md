@@ -7,6 +7,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Breaking Changes
 
+- TODO: Remove all the deprecated methods like `MyModel.paper_trail.disable`
 - [#1108](https://github.com/paper-trail-gem/paper_trail/pull/1108) -
   In `versions.item_type`, we now store the subclass name instead of
   the base_class.
