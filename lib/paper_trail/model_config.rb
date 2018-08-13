@@ -231,9 +231,6 @@ module PaperTrail
       end
 
       @model_class.paper_trail_options[:meta] ||= {}
-      if @model_class.paper_trail_options[:save_changes].nil?
-        @model_class.paper_trail_options[:save_changes] = true
-      end
     end
   end
 end

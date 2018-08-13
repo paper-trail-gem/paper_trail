@@ -249,8 +249,7 @@ module PaperTrail
       #
       # @api private
       def record_object_changes?
-        @record.paper_trail_options[:save_changes] &&
-          @record.class.paper_trail.version_class.column_names.include?("object_changes")
+        @record.class.paper_trail.version_class.column_names.include?("object_changes")
       end
 
       # Returns a boolean indicating whether to store the original object during save.

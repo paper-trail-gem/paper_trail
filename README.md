@@ -723,10 +723,6 @@ For diffing two ActiveRecord objects:
 * [activerecord-diff][23]: rather like ActiveRecord::Dirty but also allows you
   to specify which columns to compare.
 
-If you want to selectively record changes for some models but not others you
-can opt out of recording changes by passing `save_changes: false` to your
-`has_paper_trail` method declaration.
-
 ### 3.d. Deleting Old Versions
 
 Over time your `versions` table will grow to an unwieldy size.  Because each
