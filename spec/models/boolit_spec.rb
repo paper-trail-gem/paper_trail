@@ -33,6 +33,7 @@ RSpec.describe Boolit, type: :model, versioning: true do
         boolit.update_attributes!(name: nil)
         boolit.update_attributes!(name: FFaker::Name.name)
       end
+
       after { PaperTrail.serializer = PaperTrail::Serializers::YAML }
 
       it "does not overwrite that attribute during the reification process" do
