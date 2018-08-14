@@ -4,27 +4,6 @@ module PaperTrail
   # Configures an ActiveRecord model, mostly at application boot time, but also
   # sometimes mid-request, with methods like enable/disable.
   class ModelConfig
-    DPR_DISABLE = <<-STR.squish.freeze
-      MyModel.paper_trail.disable is deprecated, use
-      PaperTrail.request.disable_model(MyModel). This new API makes it clear
-      that only the current request is affected, not all threads. Also, all
-      other request-variables now go through the same `request` method, so this
-      new API is more consistent.
-    STR
-    DPR_ENABLE = <<-STR.squish.freeze
-      MyModel.paper_trail.enable is deprecated, use
-      PaperTrail.request.enable_model(MyModel). This new API makes it clear
-      that only the current request is affected, not all threads. Also, all
-      other request-variables now go through the same `request` method, so this
-      new API is more consistent.
-    STR
-    DPR_ENABLED = <<-STR.squish.freeze
-      MyModel.paper_trail.enabled? is deprecated, use
-      PaperTrail.request.enabled_for_model?(MyModel). This new API makes it clear
-      that this is a setting specific to the current request, not all threads.
-      Also, all other request-variables now go through the same `request`
-      method, so this new API is more consistent.
-    STR
     E_CANNOT_RECORD_AFTER_DESTROY = <<-STR.strip_heredoc.freeze
       paper_trail.on_destroy(:after) is incompatible with ActiveRecord's
       belongs_to_required_by_default. Use on_destroy(:before)
@@ -42,24 +21,6 @@ module PaperTrail
 
     def initialize(model_class)
       @model_class = model_class
-    end
-
-    # @deprecated
-    def disable
-      ::ActiveSupport::Deprecation.warn(DPR_DISABLE, caller(1))
-      ::PaperTrail.request.disable_model(@model_class)
-    end
-
-    # @deprecated
-    def enable
-      ::ActiveSupport::Deprecation.warn(DPR_ENABLE, caller(1))
-      ::PaperTrail.request.enable_model(@model_class)
-    end
-
-    # @deprecated
-    def enabled?
-      ::ActiveSupport::Deprecation.warn(DPR_ENABLED, caller(1))
-      ::PaperTrail.request.enabled_for_model?(@model_class)
     end
 
     # Adds a callback that records a version after a "create" event.

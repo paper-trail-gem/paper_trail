@@ -57,46 +57,6 @@ module PaperTrail
       !!PaperTrail.config.enabled
     end
 
-    # @deprecated
-    def enabled_for_controller=(value)
-      ::ActiveSupport::Deprecation.warn(
-        "PaperTrail.enabled_for_controller= is deprecated, " \
-        "use PaperTrail.request.enabled=",
-        caller(1)
-      )
-      request.enabled = value
-    end
-
-    # @deprecated
-    def enabled_for_controller?
-      ::ActiveSupport::Deprecation.warn(
-        "PaperTrail.enabled_for_controller? is deprecated, " \
-        "use PaperTrail.request.enabled?",
-        caller(1)
-      )
-      request.enabled?
-    end
-
-    # @deprecated
-    def enabled_for_model(model, value)
-      ::ActiveSupport::Deprecation.warn(
-        "PaperTrail.enabled_for_model is deprecated, " \
-        "use PaperTrail.request.enabled_for_model",
-        caller(1)
-      )
-      request.enabled_for_model(model, value)
-    end
-
-    # @deprecated
-    def enabled_for_model?(model)
-      ::ActiveSupport::Deprecation.warn(
-        "PaperTrail.enabled_for_model? is deprecated, " \
-        "use PaperTrail.request.enabled_for_model?",
-        caller(1)
-      )
-      request.enabled_for_model?(model)
-    end
-
     # Returns PaperTrail's `::Gem::Version`, convenient for comparisons. This is
     # recommended over `::PaperTrail::VERSION::STRING`.
     #
@@ -135,53 +95,6 @@ module PaperTrail
     # @api public
     def timestamp_field=(_field_name)
       raise(E_TIMESTAMP_FIELD_CONFIG)
-    end
-
-    # @deprecated
-    def whodunnit=(value)
-      ::ActiveSupport::Deprecation.warn(
-        "PaperTrail.whodunnit= is deprecated, use PaperTrail.request.whodunnit=",
-        caller(1)
-      )
-      request.whodunnit = value
-    end
-
-    # @deprecated
-    def whodunnit(value = nil, &block)
-      if value.nil?
-        ::ActiveSupport::Deprecation.warn(
-          "PaperTrail.whodunnit is deprecated, use PaperTrail.request.whodunnit",
-          caller(1)
-        )
-        request.whodunnit
-      elsif block_given?
-        ::ActiveSupport::Deprecation.warn(
-          "Passing a block to PaperTrail.whodunnit is deprecated, " \
-          'use PaperTrail.request(whodunnit: "John") do .. end',
-          caller(1)
-        )
-        request(whodunnit: value, &block)
-      else
-        raise ArgumentError, "Invalid arguments"
-      end
-    end
-
-    # @deprecated
-    def controller_info=(value)
-      ::ActiveSupport::Deprecation.warn(
-        "PaperTrail.controller_info= is deprecated, use PaperTrail.request.controller_info=",
-        caller(1)
-      )
-      request.controller_info = value
-    end
-
-    # @deprecated
-    def controller_info
-      ::ActiveSupport::Deprecation.warn(
-        "PaperTrail.controller_info is deprecated, use PaperTrail.request.controller_info",
-        caller(1)
-      )
-      request.controller_info
     end
 
     # Set the PaperTrail serializer. This setting affects all threads.
