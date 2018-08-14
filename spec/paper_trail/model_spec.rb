@@ -264,11 +264,18 @@ RSpec.describe(::PaperTrail, versioning: true) do
           expect(widget.versions.last.item).to be_nil
         end
 
-        it "not have changes" do
-          widget = Widget.create(name: "Henry")
-          widget.update_attributes(name: "Harry")
-          widget.destroy
-          expect(widget.versions.last.changeset).to eq({})
+        it "has changes" do
+          book = Book.create! title: "A"
+          changes = YAML.load book.versions.last.attributes["object_changes"]
+          expect(changes).to eq("id" => [nil, book.id], "title" => [nil, "A"])
+
+          book.update! title: "B"
+          changes = YAML.load book.versions.last.attributes["object_changes"]
+          expect(changes).to eq("title" => %w[A B])
+
+          book.destroy
+          changes = YAML.load book.versions.last.attributes["object_changes"]
+          expect(changes).to eq("id" => [book.id, nil], "title" => ["B", nil])
         end
       end
     end
