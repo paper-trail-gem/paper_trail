@@ -29,15 +29,6 @@ has been destroyed.
 
   # Rails does not follow semver, makes breaking changes in minor versions.
   s.add_dependency "activerecord", [">= 4.2", "< 5.3"]
-
-  # This `PT_ASSOCIATION_TRACKING` variable is convenient for the test suite of
-  # `paper_trail-association_tracking`. Normal users of paper_trail should not
-  # set this variable. This variable may be removed in the future without
-  # warning.
-  unless ENV["PT_ASSOCIATION_TRACKING"] == "false"
-    s.add_dependency "paper_trail-association_tracking", "< 2"
-  end
-
   s.add_dependency "request_store", "~> 1.1"
 
   s.add_development_dependency "appraisal", "~> 2.2"
@@ -45,6 +36,7 @@ has been destroyed.
   s.add_development_dependency "ffaker", "~> 2.8"
   s.add_development_dependency "generator_spec", "~> 0.9.4"
   s.add_development_dependency "mysql2", "~> 0.4.10"
+  s.add_development_dependency "paper_trail-association_tracking", "< 2"
   s.add_development_dependency "pg", "~> 0.21.0"
   s.add_development_dependency "rake", "~> 12.3"
   s.add_development_dependency "rspec-rails", "~> 3.7.2"

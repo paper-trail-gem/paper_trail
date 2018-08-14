@@ -8,6 +8,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 ### Breaking Changes
 
 - Remove all methods deprecated in PT 9
+- `paper_trail-association_tracking` is no longer a runtime dependency. If you
+  use it, you must now add it to your own `Gemfile`.
 - [#1108](https://github.com/paper-trail-gem/paper_trail/pull/1108) -
   In `versions.item_type`, we now store the subclass name instead of
   the base_class.
