@@ -95,6 +95,16 @@ Naming/PredicateName:
 Naming/UncommunicativeMethodParamName:
   Enabled: false
 
+# This cop does not work correctly in rubocop-rspec 1.27.0
+RSpec/EmptyLineAfterExampleGroup:
+  Enabled: false
+
+# Yes, ideally examples would be short. Is it possible to pick a limit and say,
+# "no example will ever be longer than this"? Hard to say. Sometimes they're
+# quite long.
+RSpec/ExampleLength:
+  Enabled: false
+
 RSpec/FilePath:
   Exclude:
     - spec/paper_trail/association_reify_error_behaviour/error.rb
@@ -106,12 +116,6 @@ RSpec/FilePath:
 # examples, or make the specs more confusing with many nested `context`s, and
 # the practical thing is to have multiple expectations.
 RSpec/MultipleExpectations:
-  Enabled: false
-
-# Yes, ideally examples would be short. Is it possible to pick a limit and say,
-# "no example will ever be longer than this"? Hard to say. Sometimes they're
-# quite long.
-RSpec/ExampleLength:
   Enabled: false
 
 # Please use semantic style, e.g. `do` when there's a side-effect, else `{}`.

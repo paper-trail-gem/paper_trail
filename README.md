@@ -844,10 +844,11 @@ these issues, PT-AT was extracted (see
 https://github.com/paper-trail-gem/paper_trail/issues/1070).
 
 Even though this has always been an experimental feature, we don't want the
-extraction of PT-AT to be a breaking change. So, `paper_trail` will have a
-runtime dependency on this gem and will keep running the existing tests related
-to association tracking. This arrangement will be maintained for a few years, if
-practical.
+extraction of PT-AT to be a breaking change. In PT 9, PT-AT was kept as a
+runtime dependency. In PT 10, it is a development dependency, so if you use it
+you must add it to your own `Gemfile`. We will keep PT-AT as a development
+dependency and continue running the existing tests related to association
+tracking for as long as is practical.
 
 ### 4.c. Storing Metadata
 
