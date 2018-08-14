@@ -217,16 +217,6 @@ RSpec.describe Widget, type: :model do
     end
   end
 
-  describe "#whodunnit", versioning: true do
-    it "is deprecated, delegates to Request.whodunnit" do
-      allow(::ActiveSupport::Deprecation).to receive(:warn)
-      allow(::PaperTrail::Request).to receive(:with)
-      widget.paper_trail.whodunnit("Alex") {}
-      expect(::ActiveSupport::Deprecation).to have_received(:warn).once
-      expect(::PaperTrail::Request).to have_received(:with).with(whodunnit: "Alex")
-    end
-  end
-
   describe "touch", versioning: true do
     it "creates a version" do
       expect { widget.touch }.to change {

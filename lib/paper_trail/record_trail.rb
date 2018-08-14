@@ -7,34 +7,6 @@ require "paper_trail/events/update"
 module PaperTrail
   # Represents the "paper trail" for a single record.
   class RecordTrail
-    DPR_WHODUNNIT = <<-STR.squish.freeze
-      my_model_instance.paper_trail.whodunnit('John') is deprecated,
-      please use PaperTrail.request(whodunnit: 'John')
-    STR
-    DPR_WITHOUT_VERSIONING = <<-STR
-      my_model_instance.paper_trail.without_versioning is deprecated, without
-      an exact replacement. To disable versioning for a particular model,
-
-      ```
-      PaperTrail.request.disable_model(Banana)
-      # changes to Banana model do not create versions,
-      # but eg. changes to Kiwi model do.
-      PaperTrail.request.enable_model(Banana)
-      ```
-
-      Or, you may want to disable all models,
-
-      ```
-      PaperTrail.request.enabled = false
-      # no versions created
-      PaperTrail.request.enabled = true
-
-      # or, with a block,
-      PaperTrail.request(enabled: false) do
-        # no versions created
-      end
-      ```
-    STR
     E_STI_ITEM_TYPES_NOT_UPDATED = <<~STR.squish.freeze
       It looks like %s is an STI subclass, and you have not yet updated your
       `item_type`s. Starting with
@@ -72,18 +44,6 @@ module PaperTrail
       PaperTrail.enabled? &&
         PaperTrail.request.enabled? &&
         PaperTrail.request.enabled_for_model?(@record.class)
-    end
-
-    # Not sure why, but this method was mentioned in the README in the past,
-    # so we need to deprecate it properly.
-    # @deprecated
-    def enabled_for_model?
-      ::ActiveSupport::Deprecation.warn(
-        "MyModel#paper_trail.enabled_for_model? is deprecated, use " \
-        "PaperTrail.request.enabled_for_model?(MyModel) instead.",
-        caller(1)
-      )
-      PaperTrail.request.enabled_for_model?(@record.class)
     end
 
     # Returns true if this instance is the current, live one;
@@ -307,34 +267,6 @@ module PaperTrail
     def versions_between(start_time, end_time)
       versions = send(@record.class.versions_association_name).between(start_time, end_time)
       versions.collect { |version| version_at(version.created_at) }
-    end
-
-    # Executes the given method or block without creating a new version.
-    # @deprecated
-    def without_versioning(method = nil)
-      ::ActiveSupport::Deprecation.warn(DPR_WITHOUT_VERSIONING, caller(1))
-      paper_trail_was_enabled = PaperTrail.request.enabled_for_model?(@record.class)
-      PaperTrail.request.disable_model(@record.class)
-      if method
-        if respond_to?(method)
-          public_send(method)
-        else
-          @record.send(method)
-        end
-      else
-        yield @record
-      end
-    ensure
-      PaperTrail.request.enable_model(@record.class) if paper_trail_was_enabled
-    end
-
-    # @deprecated
-    def whodunnit(value)
-      raise ArgumentError, "expected to receive a block" unless block_given?
-      ::ActiveSupport::Deprecation.warn(DPR_WHODUNNIT, caller(1))
-      ::PaperTrail.request(whodunnit: value) do
-        yield @record
-      end
     end
 
     private
