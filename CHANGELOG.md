@@ -3,13 +3,23 @@
 This project follows [semver 2.0.0](http://semver.org/spec/v2.0.0.html) and the
 recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
-## Unreleased
+## 10.0.0 (Unreleased)
 
-### Breaking Changes
+PT 10 tackles some tough issues that required breaking changes. We fixed a
+long-standing issue with STI, and saved major disk space in databases with tens
+of millions of version records. Special thanks to @lorint and @seanlinsley,
+respectively.
 
-- Remove all methods deprecated in PT 9
+### Breaking changes affecting most people
+
+- [#1132](https://github.com/paper-trail-gem/paper_trail/pull/1132) - Removed a
+  dozen methods deprecated in PT 9. Make sure you've addressed all deprecation
+  warnings before upgrading.
+
+### Breaking changes affecting fewer people
+
 - `paper_trail-association_tracking` is no longer a runtime dependency. If you
-  use it, you must now add it to your own `Gemfile`.
+  use it (`track_associations = true`) you must now add it to your own `Gemfile`.
 - [#1108](https://github.com/paper-trail-gem/paper_trail/pull/1108) -
   In `versions.item_type`, we now store the subclass name instead of
   the base_class.
@@ -18,28 +28,32 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
     creates a migration that updates existing `version` entries such that
     `item_type` then refers to the specific class name instead of base_class.
     See [5.c. Generators][2] for instructions.
-  - This change fixes a long-standing issue with reification of STI subclasses,
-    [#594](https://github.com/paper-trail-gem/paper_trail/issues/594)
-- Removed `touch_with_version`, was deprecated in 9.0.0
+- [#1130](https://github.com/paper-trail-gem/paper_trail/pull/1130) -
+  Removed `save_changes`. For those wanting to save space, it's more effective
+  to drop the `object` column. If you need ultimate control over the
+  `object_changes` column, you can write your own `object_changes_adapter`.
+
+### Breaking changes most people won't care about
+
 - [#1121](https://github.com/paper-trail-gem/paper_trail/issues/1121) -
   `touch` now always inserts `null` in `object_changes`.
-- [#1099](https://github.com/paper-trail-gem/paper_trail/issues/1099) -
-  Removed `save_changes`. For those wanting to save space, it's more effective
-  to drop the `object` column. To preserve the old behavior you can add an
-  `object_changes_adapter`.
+- [#1123](https://github.com/paper-trail-gem/paper_trail/pull/1123) -
+  `object_changes` is now populated on destroy in order to make
+  `where_object_changes` usable when you've dropped the `object` column.
+  Sean is working on an optional backport migration and will post about it in
+  [#1099](https://github.com/paper-trail-gem/paper_trail/issues/1099) when
+  he's done.
 
 ### Added
 
 - [#1099](https://github.com/paper-trail-gem/paper_trail/issues/1099) -
   Ability to save ~50% storage space by making the `object` column optional.
   Note that this disables `reify` and `where_object`.
-  - `object_changes` is now populated on destroy in order to make
-    `where_object_changes` usable when you've dropped the `object` column.
-    See the issue for a backport migration.
 
 ### Fixed
 
-- None
+- [#594](https://github.com/paper-trail-gem/paper_trail/issues/594) -
+  A long-standing issue with reification of STI subclasses
 
 ## 9.2.0 (2018-06-09)
 
