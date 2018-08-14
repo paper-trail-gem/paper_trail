@@ -141,7 +141,3 @@ if defined?(::Rails)
 else
   require "paper_trail/frameworks/active_record"
 end
-
-# https://github.com/paper-trail-gem/paper_trail/issues/1070
-# https://github.com/westonganger/paper_trail-association_tracking/issues/2
-require "paper_trail-association_tracking"
