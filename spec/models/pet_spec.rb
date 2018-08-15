@@ -112,7 +112,7 @@ RSpec.describe Pet, type: :model, versioning: true do
 
     # After creating a bunch of records above, we change the inheritance_column
     # so that we can demonstrate passing hints to the migration generator.
-    context "simulate a historical change to inheritance_column" do
+    xcontext "simulate a historical change to inheritance_column" do
       before do
         Animal.inheritance_column = "species_xyz"
       end

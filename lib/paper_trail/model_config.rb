@@ -110,6 +110,14 @@ module PaperTrail
       @_version_class ||= @model_class.version_class_name.constantize
     end
 
+    def versions_association_item_type
+      if @model_class.descends_from_active_record?
+        @model_class.base_class.name
+      else
+        @model_class.name
+      end
+    end
+
     private
 
     def active_record_gem_version
@@ -141,17 +149,24 @@ module PaperTrail
     def setup_versions_association(klass)
       klass.has_many(
         klass.versions_association_name,
-        lambda do |object|
+        lambda do
           relation = order(model.timestamp_sort_order)
-          item_type = object.paper_trail.versions_association_item_type
-          unless item_type.nil?
-            relation = relation.unscope(where: :item_type).where(item_type: item_type)
-          end
+          item_type = klass.paper_trail.send(:versions_association_item_type)
+          relation = relation.unscope(where: :item_type).where(item_type: item_type)
           relation
         end,
         class_name: klass.version_class_name,
         as: :item
       )
+
+      # We override the assocation when STI models are created from a base class
+      # in order to use the right `item_type`.
+      klass.singleton_class.prepend(Module.new {
+        def inherited(klass)
+          super
+          paper_trail.send(:setup_versions_association, klass)
+        end
+      })
     end
 
     def setup_associations(options)

@@ -33,11 +33,11 @@ if JsonVersion.table_exists?
       context "valid arguments", versioning: true do
         it "locates versions according to their `object` contents" do
           fruit = Fruit.create!(name: "apple")
-          expect(fruit.versions.length).to eq(1)
+          expect(fruit.versions.count).to eq(1)
           fruit.update_attributes!(name: "banana", color: "aqua")
-          expect(fruit.versions.length).to eq(2)
+          expect(fruit.versions.count).to eq(2)
           fruit.update_attributes!(name: "coconut", color: "black")
-          expect(fruit.versions.length).to eq(3)
+          expect(fruit.versions.count).to eq(3)
           where_apple = described_class.where_object(name: "apple")
           expect(where_apple.to_sql).to eq(
             <<-SQL.squish

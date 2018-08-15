@@ -84,8 +84,7 @@ module PaperTrail
       # `data_for_create` but PT-AT still does.
       data = event.data.merge(data_for_create)
 
-      versions_assoc = @record.send(@record.class.versions_association_name)
-      version = versions_assoc.new(data)
+      version = @record.class.paper_trail.version_class.new(data)
       version.save!
       version
     end
@@ -139,8 +138,7 @@ module PaperTrail
       # `data_for_update` but PT-AT still does.
       data = event.data.merge(data_for_update)
 
-      versions_assoc = @record.send(@record.class.versions_association_name)
-      version = versions_assoc.new(data)
+      version = @record.class.paper_trail.version_class.new(data)
       if version.save
         version
       else
@@ -166,8 +164,7 @@ module PaperTrail
       # `data_for_update_columns` but PT-AT still does.
       data = event.data.merge(data_for_update_columns)
 
-      versions_assoc = @record.send(@record.class.versions_association_name)
-      version = versions_assoc.new(data)
+      version = @record.class.paper_trail.version_class.new(data)
       if version.save
         version
       else
@@ -238,20 +235,6 @@ module PaperTrail
       end
       @record.update_columns(attributes)
       record_update_columns(changes)
-    end
-
-    # Given `@record`, when building the query for the `versions` association,
-    # what `item_type` (if any) should we use in our query. Returning nil
-    # indicates that rails should do whatever it normally does.
-    def versions_association_item_type
-      type_column = @record.class.inheritance_column
-      item_type = (respond_to?(type_column) ? send(type_column) : nil) ||
-        @record.class.name
-      if item_type == @record.class.base_class.name
-        nil
-      else
-        item_type
-      end
     end
 
     # Returns the object (not a Version) as it was at the given timestamp.

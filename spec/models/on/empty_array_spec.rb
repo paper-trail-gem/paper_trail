@@ -15,9 +15,9 @@ module On
     describe ".paper_trail.update_columns" do
       it "creates a version record" do
         widget = Widget.create
-        assert_equal 1, widget.versions.length
+        assert_equal 1, widget.versions.count
         widget.paper_trail.update_columns(name: "Bugle")
-        assert_equal 2, widget.versions.length
+        assert_equal 2, widget.versions.count
       end
     end
 
