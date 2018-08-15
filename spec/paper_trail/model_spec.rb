@@ -850,4 +850,20 @@ RSpec.describe(::PaperTrail, versioning: true) do
       expect(widget.versions.empty?).to(eq(true))
     end
   end
+
+  context "joins" do
+    it "works" do
+      model = Song
+      model.create!
+      result = model.joins(:versions).select("songs.*, max(versions.event) as event").first
+      expect(result.event).to eq("create")
+    end
+
+    it "works on an STI model" do
+      model = Family::CelebrityFamily
+      model.create!
+      result = model.joins(:versions).select("families.*, max(versions.event) as event").first
+      expect(result.event).to eq("create")
+    end
+  end
 end
