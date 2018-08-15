@@ -9,6 +9,12 @@ require "action_controller/railtie"
 Bundler.require(:default, Rails.env)
 require "paper_trail"
 
+# As of PT 10, PT-AT is a development dependency in paper_trail.gemspec
+# https://github.com/paper-trail-gem/paper_trail/issues/1070
+# https://github.com/westonganger/paper_trail-association_tracking/issues/2
+# https://github.com/westonganger/paper_trail-association_tracking/issues/7
+require "paper_trail-association_tracking"
+
 module Dummy
   class Application < Rails::Application
     config.encoding = "utf-8"
