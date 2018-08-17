@@ -757,7 +757,7 @@ required.
 
 ```ruby
 PaperTrail.request.whodunnit = proc do
-  caller.first{ |c| c.starts_with? Rails.root.to_s }
+  caller.find { |c| c.starts_with? Rails.root.to_s }
 end
 ```
 
