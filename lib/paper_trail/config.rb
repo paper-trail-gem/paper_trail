@@ -34,5 +34,25 @@ module PaperTrail
     def enabled=(enable)
       @mutex.synchronize { @enabled = enable }
     end
+
+    def track_associations=(_)
+      raise AssociationTrackingRemovedError
+    end
+
+    def track_associations?
+      raise AssociationTrackingRemovedError
+    end
+
+    # Error for PT v10.x for when association tracking is attempted to be
+    # used without the paper_trail-association_tracking gem present
+    class AssociationTrackingRemovedError < RuntimeError
+      MESSAGE_FMT = "Association Tracking for PaperTrail has been extracted "\
+                    "to a seperate gem. Please add "\
+                    "`paper_trail-association_tracking` to your Gemfile."
+
+      def message
+        format(MESSAGE_FMT)
+      end
+    end
   end
 end
