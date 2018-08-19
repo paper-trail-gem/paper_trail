@@ -12,6 +12,13 @@
 appraise "ar-4.2" do
   gem "activerecord", "~> 4.2.10"
   gem "database_cleaner", "~> 1.6"
+
+  # not compatible with mysql2 0.5
+  # https://github.com/brianmario/mysql2/issues/950#issuecomment-376259151
+  gem "mysql2", "~> 0.4.10"
+
+  # not compatible with pg 1.0.0
+  gem "pg", "~> 0.21.0"
 end
 
 appraise "ar-5.1" do
