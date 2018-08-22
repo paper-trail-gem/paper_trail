@@ -95,10 +95,6 @@ Naming/PredicateName:
 Naming/UncommunicativeMethodParamName:
   Enabled: false
 
-# This cop does not work correctly in rubocop-rspec 1.27.0
-RSpec/EmptyLineAfterExampleGroup:
-  Enabled: false
-
 # Yes, ideally examples would be short. Is it possible to pick a limit and say,
 # "no example will ever be longer than this"? Hard to say. Sometimes they're
 # quite long.
