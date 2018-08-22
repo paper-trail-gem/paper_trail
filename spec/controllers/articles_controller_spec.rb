@@ -12,7 +12,7 @@ RSpec.describe ArticlesController, type: :controller do
         post :create, params_wrapper(article: { title: "Doh", content: FFaker::Lorem.sentence })
         expect(assigns(:article)).not_to be_nil
         expect(PaperTrail.request.enabled?).to eq(true)
-        expect(assigns(:article).versions.length).to eq(1)
+        expect(assigns(:article).versions.count).to eq(1)
       end
 
       after { PaperTrail.enabled = false }
@@ -23,7 +23,7 @@ RSpec.describe ArticlesController, type: :controller do
         expect(PaperTrail.enabled?).to eq(false)
         post :create, params_wrapper(article: { title: "Doh", content: FFaker::Lorem.sentence })
         expect(PaperTrail.request.enabled?).to eq(false)
-        expect(assigns(:article).versions.length).to eq(0)
+        expect(assigns(:article).versions.count).to eq(0)
       end
     end
   end

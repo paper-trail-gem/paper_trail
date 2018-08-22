@@ -54,11 +54,11 @@ module PaperTrail
           date = animal.versions.first.created_at.to_date
           animal.update_attribute(:name, FFaker::Name.name)
           expect(PaperTrail::Version.count).to(eq(10))
-          expect(animal.versions.size).to(eq(4))
+          expect(animal.versions.count).to(eq(4))
           expect(animal.paper_trail.versions_between(date, (date + 1.day)).size).to(eq(3))
           PaperTrail.clean_versions!(date: date)
           expect(PaperTrail::Version.count).to(eq(8))
-          expect(animal.versions.reload.size).to(eq(2))
+          expect(animal.versions.count).to(eq(2))
           expect(animal.versions.first.created_at.to_date).to(eq(date))
           # Why use `equal?` here instead of something less strict?
           # Doesn't `to_date` always produce a new date object?
@@ -100,7 +100,7 @@ module PaperTrail
             date = animal.versions.first.created_at.to_date
             expect(PaperTrail::Version.count).to(eq(11))
             [animal, dog].each do |animal|
-              expect(animal.versions.size).to(eq(4))
+              expect(animal.versions.count).to(eq(4))
               expect(animal.versions.between(date, (date + 1.day)).size).to(eq(3))
             end
           end

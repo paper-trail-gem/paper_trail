@@ -249,9 +249,9 @@ RSpec.describe Widget, type: :model do
   describe "#update", versioning: true do
     it "creates a version record" do
       widget = Widget.create
-      assert_equal 1, widget.versions.length
+      assert_equal 1, widget.versions.count
       widget.update_attributes(name: "Bugle")
-      assert_equal 2, widget.versions.length
+      assert_equal 2, widget.versions.count
     end
   end
 end

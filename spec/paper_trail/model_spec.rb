@@ -416,7 +416,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
           before { @widget.update_attributes(name: "Ford") }
 
           it "add to its trail" do
-            expect(@widget.versions.length).to(eq((@count + 1)))
+            expect(@widget.versions.count).to(eq((@count + 1)))
           end
         end
       end
@@ -858,6 +858,22 @@ RSpec.describe(::PaperTrail, versioning: true) do
       widget = Widget.new
       widget.destroy
       expect(widget.versions.empty?).to(eq(true))
+    end
+  end
+
+  context "joins" do
+    it "works" do
+      Song.create!
+      result = Song.joins(:versions).group(:id).
+        select("songs.*, max(versions.event) as event").first
+      expect(result.event).to eq("create")
+    end
+
+    it "works on an STI model" do
+      Family::CelebrityFamily.create!
+      result = Family::CelebrityFamily.joins(:versions).group(:id).
+        select("families.*, max(versions.event) as event").first
+      expect(result.event).to eq("create")
     end
   end
 end
