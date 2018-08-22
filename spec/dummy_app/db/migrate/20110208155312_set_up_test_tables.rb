@@ -78,9 +78,10 @@ class SetUpTestTables < (
     end
 
     create_table :versions, versions_table_options do |t|
-      t.string   :item_type, item_type_options
-      t.integer  :item_id,   null: false
-      t.string   :event,     null: false
+      t.string   :item_type, item_type_options(null: false)
+      t.integer  :item_id, null: false
+      t.string   :item_subtype, item_type_options(null: true)
+      t.string   :event, null: false
       t.string   :whodunnit
       t.text     :object, limit: TEXT_BYTES
       t.text     :object_changes, limit: TEXT_BYTES
@@ -377,8 +378,8 @@ class SetUpTestTables < (
 
   private
 
-  def item_type_options
-    opt = { null: false }
+  def item_type_options(null:)
+    opt = { null: null }
     opt[:limit] = 191 if mysql?
     opt
   end

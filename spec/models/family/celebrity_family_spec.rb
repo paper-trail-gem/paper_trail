@@ -3,23 +3,22 @@
 require "spec_helper"
 
 module Family
-  RSpec.describe CelebrityFamily, type: :model, skip: true, versioning: true do
+  RSpec.describe CelebrityFamily, type: :model, versioning: true do
     describe "#create" do
-      # https://github.com/paper-trail-gem/paper_trail/pull/1108
-      it "creates a version record with item_type == class.name, not base_class" do
+      it "creates version with item_subtype == class.name, not base_class" do
         carter = described_class.create(
           name: "Carter",
           path_to_stardom: "Mexican radio"
         )
         v = carter.versions.last
         expect(v[:event]).to eq("create")
-        expect(v[:item_type]).to eq("Family::CelebrityFamily")
+        expect(v[:item_subtype]).to eq("Family::CelebrityFamily")
       end
     end
 
     describe "#reify" do
       context "belongs_to" do
-        it "uses the correct item_type in queries" do
+        it "uses the correct item_subtype" do
           parent = described_class.new(name: "Jermaine Jackson")
           parent.path_to_stardom = "Emulating Motown greats such as the Temptations and "\
                                    "The Supremes"
@@ -30,12 +29,13 @@ module Family
             name: "Hazel Gordy",
             children_attributes: { id: child1.id, name: "Jay Jackson" }
           )
-          # We expect `reify` for all versions to have item_type 'Family::CelebrityFamily',
-          # not 'Family::Family'. See PR #1108
+
           expect(parent.versions.count).to eq(2) # A create and an update
           parent.versions.each do |parent_version|
-            expect(parent_version.item_type).to eq(parent.class.name)
+            expect(parent_version.item_type).to eq("Family::Family")
+            expect(parent_version.item_subtype).to eq("Family::CelebrityFamily")
           end
+          expect(parent.versions[1].reify).to be_a(::Family::CelebrityFamily)
         end
       end
 
@@ -50,11 +50,10 @@ module Family
           parent.children.build(name: "Pugsley")
           parent.save!
 
-          # We expect `reify` for all versions to have item_type 'Family::CelebrityFamily',
-          # not 'Family::Family'. See PR #1108
           expect(parent.versions.count).to eq(2)
           parent.versions.each do |parent_version|
-            expect(parent_version.item_type).to eq(parent.class.name)
+            expect(parent_version.item_type).to eq("Family::Family")
+            expect(parent_version.item_subtype).to eq("Family::CelebrityFamily")
           end
         end
       end
@@ -71,11 +70,10 @@ module Family
           parent.grandsons.build(name: "Rodney")
           parent.save!
 
-          # We expect `reify` for all versions to have item_type 'Family::CelebrityFamily',
-          # not 'Family::Family'. See PR #1108
           expect(parent.versions.count).to eq(2)
           parent.versions.each do |parent_version|
-            expect(parent_version.item_type).to eq(parent.class.name)
+            expect(parent_version.item_type).to eq("Family::Family")
+            expect(parent_version.item_subtype).to eq("Family::CelebrityFamily")
           end
         end
       end
@@ -93,19 +91,17 @@ module Family
             mentee_attributes: { id: parent.mentee.id, name: "Al Shean" }
           )
 
-          # We expect `reify` for all versions to have item_type 'Family::CelebrityFamily',
-          # not 'Family::Family'. See PR #1108
           expect(parent.versions.count).to eq(2)
           parent.versions.each do |parent_version|
-            expect(parent_version.item_type).to eq(parent.class.name)
+            expect(parent_version.item_type).to eq("Family::Family")
+            expect(parent_version.item_subtype).to eq("Family::CelebrityFamily")
           end
         end
       end
     end
 
     describe "#update" do
-      # https://github.com/paper-trail-gem/paper_trail/pull/1108
-      it "creates a version record with item_type == class.name, not base_class" do
+      it "creates version with item_subtype == class.name, not base_class" do
         carter = described_class.create(
           name: "Carter",
           path_to_stardom: "Mexican radio"
@@ -113,7 +109,8 @@ module Family
         carter.update(path_to_stardom: "Johnny")
         v = carter.versions.last
         expect(v[:event]).to eq("update")
-        expect(v[:item_type]).to eq("Family::CelebrityFamily")
+        expect(v[:item_type]).to eq("Family::Family")
+        expect(v[:item_subtype]).to eq("Family::CelebrityFamily")
       end
     end
   end
