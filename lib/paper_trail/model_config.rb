@@ -142,21 +142,35 @@ module PaperTrail
       @model_class.class_attribute :version_class_name
       @model_class.version_class_name = options[:class_name] || "PaperTrail::Version"
 
-      # @api private - versions_association_name
-      @model_class.class_attribute :versions_association_name
-      @model_class.versions_association_name = options[:versions] || :versions
+      assert_concrete_activerecord_class(@model_class.version_class_name)
 
       # @api public - paper_trail_event
       @model_class.send :attr_accessor, :paper_trail_event
 
-      assert_concrete_activerecord_class(@model_class.version_class_name)
+      setup_has_many_versions(options)
+    end
+
+    def setup_has_many_versions(options)
+      unless options[:versions].is_a?(Hash)
+        options[:versions] = {
+          name: options[:versions]
+        }
+      end
+
+      # @api private - versions_association_name
+      @model_class.class_attribute :versions_association_name
+      @model_class.versions_association_name = options[:versions].delete(:name) || :versions
+
+      scope = options[:versions].delete(:scope) || -> { order(model.timestamp_sort_order) }
+      options[:versions].assert_valid_keys(valid_keys_for_has_many)
 
       # @api public
       @model_class.has_many(
         @model_class.versions_association_name,
-        -> { order(model.timestamp_sort_order) },
+        scope,
         class_name: @model_class.version_class_name,
-        as: :item
+        as: :item,
+        **options[:versions]
       )
     end
 
@@ -181,6 +195,20 @@ module PaperTrail
       end
 
       @model_class.paper_trail_options[:meta] ||= {}
+    end
+
+    # @api private
+    def valid_keys_for_has_many
+      if ActiveRecord.gem_version >= Gem::Version.new("5.0")
+        ActiveRecord::Associations::Builder::HasMany.valid_options({})
+      else
+        %i[
+          after_add after_remove anonymous_class as autosave before_add
+          before_remove class_name counter_cache dependent extend foreign_key
+          foreign_type inverse_of join_table primary_key source source_type
+          table_name through validate
+        ]
+      end
     end
   end
 end

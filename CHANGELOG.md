@@ -11,7 +11,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
-- None
+- [#1158](https://github.com/paper-trail-gem/paper_trail/pull/1158) — Add the ability to pass
+  options, such as `scope` or `extend:` to the `has_many :versions` association macro.
 
 ### Fixed
 
