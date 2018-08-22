@@ -5,10 +5,8 @@ require "spec_helper"
 # The `Person` model:
 #
 # - has a dozen associations of various types
-# - has a custom serializer, TimeZoneSerializer, for its `time_zone` attribute
+# - has a custome serializer, TimeZoneSerializer, for its `time_zone` attribute
 RSpec.describe Person, type: :model, versioning: true do
-  it { is_expected.to be_versioned }
-
   describe "#time_zone" do
     it "returns an ActiveSupport::TimeZone" do
       person = Person.new(time_zone: "Samoa")

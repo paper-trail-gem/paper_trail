@@ -16,8 +16,6 @@ module PaperTrail
 
     attr_accessor(
       :association_reify_error_behaviour,
-      :classes_warned_about_sti_item_types,
-      :i_have_updated_my_existing_item_types,
       :object_changes_adapter,
       :serializer,
       :version_limit

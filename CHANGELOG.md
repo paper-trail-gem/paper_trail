@@ -20,14 +20,6 @@ respectively.
 
 - `paper_trail-association_tracking` is no longer a runtime dependency. If you
   use it (`track_associations = true`) you must now add it to your own `Gemfile`.
-- [#1108](https://github.com/paper-trail-gem/paper_trail/pull/1108) -
-  In `versions.item_type`, we now store the subclass name instead of
-  the base_class.
-  - You must migrate existing `versions` records if you use
-    [STI][1]. A migration generator has been provided. Generator `update_sti`
-    creates a migration that updates existing `version` entries such that
-    `item_type` then refers to the specific class name instead of base_class.
-    See [5.c. Generators][2] for instructions.
 - [#1130](https://github.com/paper-trail-gem/paper_trail/pull/1130) -
   Removed `save_changes`. For those wanting to save space, it's more effective
   to drop the `object` column. If you need ultimate control over the
@@ -1060,6 +1052,3 @@ in the `PaperTrail::Version` class through a `Rails::Engine` when the gem is use
   - [#160](https://github.com/paper-trail-gem/paper_trail/pull/160) - Fixed failing tests and resolved out of date dependency issues.
   - [#157](https://github.com/paper-trail-gem/paper_trail/pull/157) - Refactored `class_attribute` names on the `ClassMethods` module
     for names that are not obviously pertaining to PaperTrail to prevent method name collision.
-
-[1]: https://api.rubyonrails.org/v5.2.0/classes/ActiveRecord/Base.html#class-ActiveRecord::Base-label-Single+table+inheritance
-[2]: https://github.com/paper-trail-gem/paper_trail/blob/master/README.md#5c-generators
