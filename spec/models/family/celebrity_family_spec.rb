@@ -4,6 +4,18 @@ require "spec_helper"
 
 module Family
   RSpec.describe CelebrityFamily, type: :model, versioning: true do
+    describe "#joins" do
+      it "works on an STI model" do
+        described_class.create!
+        result = described_class.
+          joins(:versions).
+          select("families.id, max(versions.event) as event").
+          group("families.id").
+          first
+        expect(result.event).to eq("create")
+      end
+    end
+
     describe "#create" do
       it "creates version with item_subtype == class.name, not base_class" do
         carter = described_class.create(
