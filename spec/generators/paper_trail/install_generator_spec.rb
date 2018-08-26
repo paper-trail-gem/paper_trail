@@ -48,14 +48,14 @@ RSpec.describe PaperTrail::InstallGenerator, type: :generator do
           }
         }
       )
-      expect(destination_root).not_to(  
-        have_structure {  
-          directory("db") { 
-            directory("migrate") {  
-              migration("add_object_changes_to_versions") 
-            } 
-          } 
-        } 
+      expect(destination_root).not_to(
+        have_structure {
+          directory("db") {
+            directory("migrate") {
+              migration("add_object_changes_to_versions")
+            }
+          }
+        }
       )
     end
   end

@@ -150,7 +150,7 @@ RSpec.describe Pet, type: :model, versioning: true do
 
         # And now the has_many :versions properly finds all four changes
         cat_versions = cat.versions.order(:id).to_a
-         expect(cat_versions.length).to eq(4)
+        expect(cat_versions.length).to eq(4)
         expect(cat_versions.map(&:event)).to eq(%w[create update update destroy])
 
         # And Animal is still unaffected
