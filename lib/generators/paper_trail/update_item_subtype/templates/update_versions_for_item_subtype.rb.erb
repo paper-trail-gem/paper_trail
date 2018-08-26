@@ -1,0 +1,85 @@
+# This migration updates existing `versions` that have `item_type` that refers to
+# the base_class, and changes them to refer to the subclass instead.
+class UpdateVersionsForItemSubtype < ActiveRecord::Migration<%= migration_version %>
+  include ActionView::Helpers::TextHelper
+  def up
+<%=
+  # Returns class, column, range
+  def self.parse_custom_entry(text)
+    parts = text.split("):")
+    range = parts.last.split("..").map(&:to_i)
+    range = Range.new(range.first, range.last)
+    parts.first.split("(") + [range]
+  end
+  # Running:
+  #   rails g paper_trail:update_item_subtype Animal(species):1..4 Plant(genus):42..1337
+  # results in:
+  #   # Versions of item_type "Animal" with IDs between 1 and 4 will be updated based on `species`
+  #   # Versions of item_type "Plant" with IDs between 42 and 1337 will be updated based on `genus`
+  #   hints = {"Animal"=>{1..4=>"species"}, "Plant"=>{42..1337=>"genus"}}
+  hint_descriptions = ""
+  hints = args.inject(Hash.new{|h, k| h[k] = {}}) do |s, v|
+    klass, column, range = parse_custom_entry(v)
+    hint_descriptions << "    # Versions of item_type \"#{klass}\" with IDs between #{
+      range.first} and #{range.last} will be updated based on \`#{column}\`\n"
+    s[klass][range] = column
+    s
+  end
+
+  unless hints.empty?
+    "#{hint_descriptions}    hints = #{hints.inspect}\n"
+  end
+%>
+    # Find all ActiveRecord models mentioned in existing versions
+    changes = Hash.new { |h, k| h[k] = [] }
+    model_names = PaperTrail::Version.select(:item_type).distinct
+    model_names.map(&:item_type).each do |model_name|
+      hint = hints[model_name] if defined?(hints)
+      begin
+        klass = model_name.constantize
+        # Actually implements an inheritance_column?  (Usually "type")
+        has_inheritance_column = klass.columns.map(&:name).include?(klass.inheritance_column)
+        # Find domain of types stored in PaperTrail versions
+        PaperTrail::Version.where(item_type: model_name, item_subtype: nil).select(:id, :object, :object_changes).each do |obj|
+          if (object_detail = PaperTrail.serializer.load(obj.object || obj.object_changes))
+            is_found = false
+            subtype_name = nil
+            hint&.each do |k, v|
+              if k === obj.id && (subtype_name = object_detail[v])
+                break
+              end
+            end
+            if subtype_name.nil? && has_inheritance_column
+              subtype_name = object_detail[klass.inheritance_column]
+            end
+            if subtype_name
+              subtype_name = subtype_name.last if subtype_name.is_a?(Array)
+              if subtype_name != model_name
+                changes[subtype_name] << obj.id
+              end
+            end
+          end
+        end
+      rescue NameError => ex
+        say "Skipping reference to #{model_name}", subitem: true
+      end
+    end
+    changes.each do |k, v|
+      # Update in blocks of up to 100 at a time
+      block_of_ids = []
+      id_count = 0
+      num_updated = 0
+      v.sort.each do |id|
+        block_of_ids << id
+        if (id_count += 1) % 100 == 0
+          num_updated += PaperTrail::Version.where(id: block_of_ids).update_all(item_subtype: k)
+          block_of_ids = []
+        end
+      end
+      num_updated += PaperTrail::Version.where(id: block_of_ids).update_all(item_subtype: k)
+      if num_updated > 0
+        say "Associated #{pluralize(num_updated, 'record')} to #{k}", subitem: true
+      end
+    end
+  end
+end
