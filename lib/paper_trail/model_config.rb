@@ -130,22 +130,31 @@ module PaperTrail
     end
 
     def setup_associations(options)
+      # @api private - version_association_name
       @model_class.class_attribute :version_association_name
       @model_class.version_association_name = options[:version] || :version
 
       # The version this instance was reified from.
+      # @api public
       @model_class.send :attr_accessor, @model_class.version_association_name
 
+      # @api private - `version_class_name` - However, `rails_admin` has been
+      # using it since 2014 (see `rails_admin/extensions/paper_trail/auditing_adapter.rb`,
+      # https://github.com/sferik/rails_admin/commit/959e1bd4e47e0369d264b58bbbe972ff863767cd)
+      # In PR _____ () we ask them to use `paper_trail_options` instead.
       @model_class.class_attribute :version_class_name
       @model_class.version_class_name = options[:class_name] || "PaperTrail::Version"
 
+      # @api private - versions_association_name
       @model_class.class_attribute :versions_association_name
       @model_class.versions_association_name = options[:versions] || :versions
 
+      # @api public - paper_trail_event
       @model_class.send :attr_accessor, :paper_trail_event
 
       assert_concrete_activerecord_class(@model_class.version_class_name)
 
+      # @api public
       @model_class.has_many(
         @model_class.versions_association_name,
         -> { order(model.timestamp_sort_order) },
@@ -161,6 +170,9 @@ module PaperTrail
     end
 
     def setup_options(options)
+      # @api public - paper_trail_options - Let's encourage plugins to use
+      # eg. `paper_trail_options[:class_name]` rather than `version_class_name`
+      # because the former is documented and the latter is not.
       @model_class.class_attribute :paper_trail_options
       @model_class.paper_trail_options = options.dup
 
