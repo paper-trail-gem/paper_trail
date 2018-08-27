@@ -50,9 +50,7 @@ require "ffaker"
 
 # Migrate
 require_relative "support/paper_trail_spec_migrator"
-::PaperTrailSpecMigrator.
-  new(::File.expand_path("dummy_app/db/migrate/", __dir__)).
-  migrate
+::PaperTrailSpecMigrator.new.migrate
 
 RSpec.configure do |config|
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
