@@ -850,6 +850,24 @@ you must add it to your own `Gemfile`. We will keep PT-AT as a development
 dependency and continue running the existing tests related to association
 tracking for as long as is practical.
 
+#### 4.b.1 The optional `item_subtype` column
+
+As of PT 10, users may add an `item_subtype` column to their `versions` table.
+When storing versions for STI models, rails stores the base class in `item_type`
+(that's just how polymorphic associations like `item` work) In addition, PT will
+now store the subclass in `item_subtype`. If this column is present PT-AT will
+use it to fix a rare issue with reification of STI subclasses.
+
+```ruby
+add_column :versions, :item_subtype, null: true
+```
+
+So, if you use PT-AT and STI, the addition of this colulmn is recommended.
+
+- https://github.com/paper-trail-gem/paper_trail/issues/594
+- https://github.com/paper-trail-gem/paper_trail/pull/1143
+- https://github.com/westonganger/paper_trail-association_tracking/pull/5
+
 ### 4.c. Storing Metadata
 
 You can add your own custom columns to your `versions` table. Values can be

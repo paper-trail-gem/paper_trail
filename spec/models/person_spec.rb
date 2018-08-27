@@ -167,6 +167,11 @@ RSpec.describe Person, type: :model, versioning: true do
       expect(person.reload.versions.length).to(eq(3))
 
       # These will work when PT-AT adds support for the new `item_subtype` column
+      #
+      # - https://github.com/westonganger/paper_trail-association_tracking/pull/5
+      # - https://github.com/paper-trail-gem/paper_trail/pull/1143
+      # - https://github.com/paper-trail-gem/paper_trail/issues/594
+      #
       # second_version = person.reload.versions.second.reify(has_one: true)
       # expect(second_version.car.name).to(eq("BMW 325"))
       # expect(second_version.bicycle.name).to(eq("BMX 1.0"))

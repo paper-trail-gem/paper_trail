@@ -45,7 +45,12 @@ respectively.
 ### Fixed
 
 - [#594](https://github.com/paper-trail-gem/paper_trail/issues/594) -
-  A long-standing issue with reification of STI subclasses
+  A rare issue with reification of STI subclasses, affecting only PT-AT users
+  who have a model with mutliple associations, whose foreign keys are named the
+  same, and whose foreign models are STI with the same parent class. This fix
+  requires a schema change. See [docs section 4.b.1 The optional `item_subtype`
+  column](https://github.com/paper-trail-gem/paper_trail#4b-associations) for
+  instructions.
 
 ## 9.2.0 (2018-06-09)
 
