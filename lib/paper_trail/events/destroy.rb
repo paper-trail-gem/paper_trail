@@ -14,7 +14,7 @@ module PaperTrail
       def data
         data = {
           item_id: @record.id,
-          item_type: @record.class.name,
+          item_type: @record.class.base_class.name,
           event: @record.paper_trail_event || "destroy",
           whodunnit: PaperTrail.request.whodunnit
         }
@@ -26,6 +26,7 @@ module PaperTrail
           changes = @record.attributes.map { |attr, value| [attr, [value, nil]] }.to_h
           data[:object_changes] = prepare_object_changes(changes)
         end
+        merge_item_subtype_into(data)
         merge_metadata_into(data)
       end
     end

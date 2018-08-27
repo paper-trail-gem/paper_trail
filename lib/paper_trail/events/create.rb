@@ -23,6 +23,7 @@ module PaperTrail
           changes = notable_changes
           data[:object_changes] = prepare_object_changes(changes)
         end
+        merge_item_subtype_into(data)
         merge_metadata_into(data)
       end
     end

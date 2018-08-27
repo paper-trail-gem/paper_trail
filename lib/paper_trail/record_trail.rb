@@ -7,21 +7,10 @@ require "paper_trail/events/update"
 module PaperTrail
   # Represents the "paper trail" for a single record.
   class RecordTrail
-    E_STI_ITEM_TYPES_NOT_UPDATED = <<~STR.squish.freeze
-      It looks like %s is an STI subclass, and you have not yet updated your
-      `item_type`s. Starting with
-      [#1108](https://github.com/paper-trail-gem/paper_trail/pull/1108), we now
-      store the subclass name instead of the base_class. You must migrate
-      existing `versions` records if you use STI. A migration generator has been
-      provided. See section 5.c. Generators in the README for instructions. This
-      warning will continue until you have thoroughly read the instructions.
-    STR
-
     RAILS_GTE_5_1 = ::ActiveRecord.gem_version >= ::Gem::Version.new("5.1.0.beta1")
 
     def initialize(record)
       @record = record
-      assert_sti_item_type_updated
     end
 
     # Invoked after rollbacks to ensure versions records are not created for
@@ -85,9 +74,7 @@ module PaperTrail
       data = event.data.merge(data_for_create)
 
       versions_assoc = @record.send(@record.class.versions_association_name)
-      version = versions_assoc.new(data)
-      version.save!
-      version
+      versions_assoc.create!(data)
     end
 
     # PT-AT extends this method to add its transaction id.
@@ -111,12 +98,12 @@ module PaperTrail
       # `data_for_destroy` but PT-AT still does.
       data = event.data.merge(data_for_destroy)
 
-      version = @record.class.paper_trail.version_class.new(data)
-      if version.save
+      version = @record.class.paper_trail.version_class.create(data)
+      if version.errors.any?
+        log_version_errors(version, :destroy)
+      else
         assign_and_reset_version_association(version)
         version
-      else
-        log_version_errors(version, :destroy)
       end
     end
 
@@ -140,11 +127,11 @@ module PaperTrail
       data = event.data.merge(data_for_update)
 
       versions_assoc = @record.send(@record.class.versions_association_name)
-      version = versions_assoc.new(data)
-      if version.save
-        version
-      else
+      version = versions_assoc.create(data)
+      if version.errors.any?
         log_version_errors(version, :update)
+      else
+        version
       end
     end
 
@@ -167,11 +154,11 @@ module PaperTrail
       data = event.data.merge(data_for_update_columns)
 
       versions_assoc = @record.send(@record.class.versions_association_name)
-      version = versions_assoc.new(data)
-      if version.save
-        version
-      else
+      version = versions_assoc.create(data)
+      if version.errors.any?
         log_version_errors(version, :update)
+      else
+        version
       end
     end
 
@@ -240,20 +227,6 @@ module PaperTrail
       record_update_columns(changes)
     end
 
-    # Given `@record`, when building the query for the `versions` association,
-    # what `item_type` (if any) should we use in our query. Returning nil
-    # indicates that rails should do whatever it normally does.
-    def versions_association_item_type
-      type_column = @record.class.inheritance_column
-      item_type = (respond_to?(type_column) ? send(type_column) : nil) ||
-        @record.class.name
-      if item_type == @record.class.base_class.name
-        nil
-      else
-        item_type
-      end
-    end
-
     # Returns the object (not a Version) as it was at the given timestamp.
     def version_at(timestamp, reify_options = {})
       # Because a version stores how its object looked *before* the change,
@@ -270,23 +243,6 @@ module PaperTrail
     end
 
     private
-
-    # @api private
-    def assert_sti_item_type_updated
-      # Does the user promise they have updated their `item_type`s?
-      return if ::PaperTrail.config.i_have_updated_my_existing_item_types
-
-      # Is this class an STI subclass?
-      record_class = @record.class
-      return if record_class.descends_from_active_record?
-
-      # Have we already issued this warning?
-      ::PaperTrail.config.classes_warned_about_sti_item_types ||= []
-      return if ::PaperTrail.config.classes_warned_about_sti_item_types.include?(record_class)
-
-      ::Kernel.warn(format(E_STI_ITEM_TYPES_NOT_UPDATED, record_class.name))
-      ::PaperTrail.config.classes_warned_about_sti_item_types << record_class
-    end
 
     # @api private
     def assign_and_reset_version_association(version)

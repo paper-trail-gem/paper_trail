@@ -95,6 +95,10 @@ Naming/PredicateName:
 Naming/UncommunicativeMethodParamName:
   Enabled: false
 
+# This cop does not seem to work in rubocop-rspec 1.28.0
+RSpec/DescribeClass:
+  Enabled: false
+
 # Yes, ideally examples would be short. Is it possible to pick a limit and say,
 # "no example will ever be longer than this"? Hard to say. Sometimes they're
 # quite long.

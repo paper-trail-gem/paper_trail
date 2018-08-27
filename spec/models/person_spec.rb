@@ -7,8 +7,6 @@ require "spec_helper"
 # - has a dozen associations of various types
 # - has a custom serializer, TimeZoneSerializer, for its `time_zone` attribute
 RSpec.describe Person, type: :model, versioning: true do
-  it { is_expected.to be_versioned }
-
   describe "#time_zone" do
     it "returns an ActiveSupport::TimeZone" do
       person = Person.new(time_zone: "Samoa")
@@ -168,7 +166,7 @@ RSpec.describe Person, type: :model, versioning: true do
 
       expect(person.reload.versions.length).to(eq(3))
 
-      # These will work when PT-AT has PR #5 merged:
+      # These will work when PT-AT adds support for the new `item_subtype` column
       # second_version = person.reload.versions.second.reify(has_one: true)
       # expect(second_version.car.name).to(eq("BMW 325"))
       # expect(second_version.bicycle.name).to(eq("BMX 1.0"))

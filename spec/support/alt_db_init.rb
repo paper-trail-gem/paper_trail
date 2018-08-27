@@ -40,7 +40,8 @@ end
 Foo::Base.configurations = configs
 Foo::Base.establish_connection(:foo)
 ActiveRecord::Base.establish_connection(:foo)
-::PaperTrailSpecMigrator.new.migrate
+paper_trail_migrations_path = File.expand_path("#{db_directory}/migrate/", __FILE__)
+::PaperTrailSpecMigrator.new(paper_trail_migrations_path).migrate
 
 module Bar
   class Base < ActiveRecord::Base
@@ -59,4 +60,4 @@ end
 Bar::Base.configurations = configs
 Bar::Base.establish_connection(:bar)
 ActiveRecord::Base.establish_connection(:bar)
-::PaperTrailSpecMigrator.new.migrate
+::PaperTrailSpecMigrator.new(paper_trail_migrations_path).migrate

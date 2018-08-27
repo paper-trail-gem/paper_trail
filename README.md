@@ -934,15 +934,8 @@ class Banana < Fruit
 end
 ```
 
-A change in what `item_type` stores for subclassed models was introduced in
-[PR#1108](https://github.com/paper-trail-gem/paper_trail/pull/1108), recording
-the subclass name instead of the base class. This simplifies
-reifying through associations, and allows for a change in PT-AT that fixes
-[issue 594](https://github.com/paper-trail-gem/paper_trail/issues/594).
-
-For those that have existing version data from STI models, `item_type` can be
-updated by using a generator, `rails generate paper_trail:update_sti`.  More
-information is found in section [5.c. Generators](#5c-generators).
+However, there is a known issue when reifying [associations](#associations),
+see https://github.com/paper-trail-gem/paper_trail/issues/594
 
 ### 5.b. Configuring the `versions` Association
 
@@ -962,97 +955,27 @@ Overriding associations is not recommended in general.
 
 ### 5.c. Generators
 
-#### `paper_trail:install`
-
-Used to set up PT for the first time. Writes, but does not run, a migration
-file. Creates an initializer for configuration. The migration adds the
-`versions` table.
+PaperTrail has one generator, `paper_trail:install`. It writes, but does not
+run, a migration file.  It also creates a PaperTrail configuration initializer.
+The migration adds (at least) the `versions` table. The
+most up-to-date documentation for this generator can be found by running `rails
+generate paper_trail:install --help`, but a copy is included here for
+convenience.
 
 ```
 Usage:
-  rails generate paper_trail:install --help
   rails generate paper_trail:install [options]
 
 Options:
-  # Includes the `object_changes` column, for storing changeset (diff) with each version
-  [--with-changes], [--no-with-changes]
+  [--with-changes], [--no-with-changes]            # Store changeset (diff) with each version
 
 Runtime options:
   -f, [--force]                    # Overwrite files that already exist
   -p, [--pretend], [--no-pretend]  # Run but do not make any changes
   -q, [--quiet], [--no-quiet]      # Suppress status output
   -s, [--skip], [--no-skip]        # Skip files that already exist
-```
 
-#### `paper_trail:update_sti`
-
-Updates `versions.item_type` from base class name to subclass name. If you use
-STI, and you have records in `versions` created prior to
-[#1108](https://github.com/paper-trail-gem/paper_trail/pull/1108), you must run
-this migration.
-
-Writes, but does not run, a migration. The migration scans existing data in the
-versions table to identify models which use STI. Upon finding each entry which
-refers to an object from a subclassed model, `versions.item_type` is updated to
-reflect the subclass name, providing full compatibility with how the `versions`
-association works after PR#1108. In order to more quickly update a large volume
-of version records, updates are batched to affect 100 records at a time.
-
-Hints can be used in rare cases when the STI structure is modified over time
-such as when establishing additional intermediary inheritance structure,
-pointing to a new base class, abandoning STI entirely, or changing the name of
-the inheritance_column. The vast majority of users will probably never need to
-supply hints when using this generator.
-
-Let's give an example where the inheritance_column is changed, say originally
-there is an Animal class that uses the default `type` column, but after
-generating 500 Bird and Cat objects is modified to instead use the `species`
-column with a line like this:
-
-```
-Animal.inheritance_column = "species"
-```
-
-With this change a hint can be used to build the migration in a way that
-indicates how to treat the older records. For those first 500 Animal objects,
-the `item_type` should be derived from `type`, and for the rest, from `species`.
-We would need to research the ID numbers for versions that utilise `type` in the
-`object` and `object_changes` data. In this example let's say that those first
-500 Animals had version IDs between 249 and 1124. These objects would have been
-created having an `item_type` of Animal prior to PR#1108. Of course versions
-representing all manner of other changes would also be intermingled along with
-creates and updates for Animal objects. Perhaps another STI model exists for Car
-that inherits from Vehicle, and 50 Car objects were also built around the same
-timeframe as Bird and Cat objects, with various creates and updates for those
-being referened in versions with IDs from 382 to 516. For Vehicle let's say that
-initially the inheritance_column was set to `kind`, but then it changed to
-something else after ID 516 in the versions table. In this situation, to
-properly use the generator then these hints can be supplied:
-
-`rails generate update_sti Animal(type):249..1124 Vehicle(kind):382..516`
-
-The resulting migration will include these lines near the top:
-
-```
-# Versions of item_type "Animal" with IDs between 249 and 1124 will be updated based on `type`
-# Versions of item_type "Vehicle" with IDs between 382 and 516 will be updated based on `kind`
-hints = {"Animal"=>{249..1124=>"type"}, "Vehicle"=>{382..516=>"kind"}}
-```
-
-It is important to note that the IDs are not those of the Bird, Cat, or Car
-objects, but rather the IDs from the create, update, and destroy entries in the
-versions table. As well, these hints are only needed in situations where the
-inheritance_column has changed at some point in time, or in cases where the
-entire STI structure is modified or is abandoned. It ultimately facilitates
-better reporting for historic subclassed items, and allows PT-AT to properly
-reify these historic objects through associations.
-
-Once you have run the migration, please inform PaperTrail, so that it won't warn
-you about this.
-
-```
-# config/initializers/paper_trail.rb
-::PaperTrail.config.i_have_updated_my_existing_item_types = true
+Generates (but does not run) a migration to add a versions table.  Also generates an initializer file for configuring PaperTrail
 ```
 
 ### 5.d. Protected Attributes

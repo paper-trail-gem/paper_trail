@@ -162,6 +162,15 @@ module PaperTrail
         ignored.any? && (changed_in_latest_version & ignored).any?
       end
 
+      # PT 10 has a new optional column, `item_subtype`
+      #
+      # @api private
+      def merge_item_subtype_into(data)
+        if @record.class.paper_trail.version_class.columns_hash.key?("item_subtype")
+          data.merge!(item_subtype: @record.class.name)
+        end
+      end
+
       # Updates `data` from the model's `meta` option and from `controller_info`.
       # Metadata is always recorded; that means all three events (create, update,
       # destroy) and `update_columns`.

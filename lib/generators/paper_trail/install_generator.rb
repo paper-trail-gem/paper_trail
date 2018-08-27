@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
-require_relative "../migration_generator"
+require "rails/generators"
+require "rails/generators/active_record"
 
 module PaperTrail
   # Installs PaperTrail in a rails app.
-  class InstallGenerator < MigrationGenerator
+  class InstallGenerator < ::Rails::Generators::Base
+    include ::Rails::Generators::Migration
+
     # Class names of MySQL adapters.
     # - `MysqlAdapter` - Used by gems: `mysql`, `activerecord-jdbcmysql-adapter`.
     # - `Mysql2Adapter` - Used by `mysql2` gem.
@@ -22,14 +25,32 @@ module PaperTrail
     )
 
     desc "Generates (but does not run) a migration to add a versions table." \
-         "  Also generates an initializer file for configuring PaperTrail." \
-         "  See section 5.c. Generators in README.md for more information."
+         "  Also generates an initializer file for configuring PaperTrail"
 
     def create_migration_file
-      add_paper_trail_migration("create_versions",
-        item_type_options: item_type_options,
-        versions_table_options: versions_table_options)
+      add_paper_trail_migration("create_versions")
       add_paper_trail_migration("add_object_changes_to_versions") if options.with_changes?
+    end
+
+    def self.next_migration_number(dirname)
+      ::ActiveRecord::Generators::Base.next_migration_number(dirname)
+    end
+
+    protected
+
+    def add_paper_trail_migration(template)
+      migration_dir = File.expand_path("db/migrate")
+      if self.class.migration_exists?(migration_dir, template)
+        ::Kernel.warn "Migration already exists: #{template}"
+      else
+        migration_template(
+          "#{template}.rb.erb",
+          "db/migrate/#{template}.rb",
+          item_type_options: item_type_options,
+          migration_version: migration_version,
+          versions_table_options: versions_table_options
+        )
+      end
     end
 
     private
@@ -40,6 +61,13 @@ module PaperTrail
       opt = { null: false }
       opt[:limit] = 191 if mysql?
       ", #{opt}"
+    end
+
+    def migration_version
+      major = ActiveRecord::VERSION::MAJOR
+      if major >= 5
+        "[#{major}.#{ActiveRecord::VERSION::MINOR}]"
+      end
     end
 
     def mysql?
