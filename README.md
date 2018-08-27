@@ -101,13 +101,18 @@ has been destroyed.
 1. Add a `versions` table to your database and an initializer file for configuration:
 
     ```
-    bundle exec rails generate paper_trail:install
-    bundle exec rake db:migrate
+    bundle exec rails generate paper_trail:install [--with-changes] [--with-associations]
     ```
 
-    If using [rails_admin][38], you must enable the experimental
-    [Associations](#4b-associations) feature. For more information on this
-    generator, see [section 5.c. Generators](#5c-generators).
+    For more information on this generator, see [section 5.c.
+    Generators](#5c-generators).
+
+    If using [rails_admin][38], you must enable the
+    experimental [Associations](#4b-associations) feature.
+
+    ```
+    bundle exec rake db:migrate
+    ```
 
 1. Add `has_paper_trail` to the models you want to track.
 
