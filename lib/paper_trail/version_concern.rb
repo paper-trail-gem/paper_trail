@@ -25,6 +25,22 @@ module PaperTrail
 
     # :nodoc:
     module ClassMethods
+      # Warning message re: integer primary keys that are not bigint.
+      #
+      # In addition to PK exhaustion, one might worry about wrapping. By
+      # default, postgres and mysql id sequences will not wrap. Postgres can be
+      # configured to wrap (`cycle`), but many PaperTrail methods were
+      # (unfortunately) written without id wraparound in mind. For example,
+      # `preceeding`, `previous`, and `previous_verison` all assume that the
+      # sequence of ids will never wrap. So, the best solution is to urge
+      # everyone to use bigint.
+      E_PK_NOT_BIGINT = <<-EOS.squish.freeze
+        Your versions table uses an integer primary key, but it is not a
+        :bigint. Version tables can grow quite large, so we recommend changing
+        the type of the primary key to bigint. For example:
+        `change_column(:versions, :id, :bigint, null: false)`
+      EOS
+
       def with_item_keys(item_type, item_id)
         where item_type: item_type, item_id: item_id
       end
@@ -116,9 +132,22 @@ module PaperTrail
         Queries::Versions::WhereObjectChanges.new(self, args).execute
       end
 
+      # Some users break rails convention by having primary keys of type uuid.
+      # (https://github.com/paper-trail-gem/paper_trail/issues/363)
+      #
+      # @api private
       def primary_key_is_int?
-        @primary_key_is_int ||= columns_hash[primary_key].type == :integer
-      rescue StandardError # TODO: Rescue something more specific
+        pk_column = columns_hash[primary_key]
+        if pk_column.type == :integer
+          unless pk_column.sql_type == "bigint"
+            ::Kernel.warn(E_PK_NOT_BIGINT)
+          end
+          true
+        else
+          false
+        end
+      rescue StandardError => e # TODO: Rescue something more specific
+        ::Kernel.warn("Unable to determine primary key type, assuming integer: #{e}")
         true
       end
 
