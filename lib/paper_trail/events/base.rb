@@ -253,7 +253,7 @@ module PaperTrail
       #
       # @api private
       def recordable_object_changes(changes)
-        if PaperTrail.config.object_changes_adapter
+        if PaperTrail.config.object_changes_adapter&.respond_to?(:diff)
           changes = PaperTrail.config.object_changes_adapter.diff(changes)
         end
 

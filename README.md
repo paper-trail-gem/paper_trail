@@ -1226,6 +1226,8 @@ A valid adapter is a class that contains the following methods:
 2. load_changeset: Returns the changeset for a given version object
 3. where_object_changes: Returns the records resulting from the given hash of attributes.
 
+To preserve the default behavior for some of these, don't define them in your adapter.
+
 For an example of such an implementation, see [paper_trail-hashdiff](https://github.com/hashwin/paper_trail-hashdiff)
 
 ### 6.d. Excluding the Object Column
