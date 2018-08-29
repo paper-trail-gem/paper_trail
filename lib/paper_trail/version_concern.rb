@@ -45,39 +45,6 @@ module PaperTrail
         where "event <> ?", "create"
       end
 
-      # Returns versions after `obj`.
-      #
-      # @param obj - a `Version` or a timestamp
-      # @param timestamp_arg - boolean - When true, `obj` is a timestamp.
-      #   Default: false.
-      # @return `ActiveRecord::Relation`
-      # @api public
-      def subsequent(obj, timestamp_arg = false)
-        if timestamp_arg != true && primary_key_is_int?
-          return where(arel_table[primary_key].gt(obj.id)).order(arel_table[primary_key].asc)
-        end
-
-        obj = obj.send(:created_at) if obj.is_a?(self)
-        where(arel_table[:created_at].gt(obj)).order(timestamp_sort_order)
-      end
-
-      # Returns versions before `obj`.
-      #
-      # @param obj - a `Version` or a timestamp
-      # @param timestamp_arg - boolean - When true, `obj` is a timestamp.
-      #   Default: false.
-      # @return `ActiveRecord::Relation`
-      # @api public
-      def preceding(obj, timestamp_arg = false)
-        if timestamp_arg != true && primary_key_is_int?
-          return where(arel_table[primary_key].lt(obj.id)).order(arel_table[primary_key].desc)
-        end
-
-        obj = obj.send(:created_at) if obj.is_a?(self)
-        where(arel_table[:created_at].lt(obj)).
-          order(timestamp_sort_order("desc"))
-      end
-
       def between(start_time, end_time)
         where(
           arel_table[:created_at].gt(start_time).
@@ -165,6 +132,61 @@ module PaperTrail
       # supported by PostgreSQL.
       def object_changes_col_is_json?
         %i[json jsonb].include?(columns_hash["object_changes"].try(:type))
+      end
+
+      # Returns versions before `obj`.
+      #
+      # @param obj - a `Version` or a timestamp
+      # @param timestamp_arg - boolean - When true, `obj` is a timestamp.
+      #   Default: false.
+      # @return `ActiveRecord::Relation`
+      # @api public
+      def preceding(obj, timestamp_arg = false)
+        if timestamp_arg != true && primary_key_is_int?
+          preceding_by_id(obj)
+        else
+          preceding_by_timestamp(obj)
+        end
+      end
+
+      # Returns versions after `obj`.
+      #
+      # @param obj - a `Version` or a timestamp
+      # @param timestamp_arg - boolean - When true, `obj` is a timestamp.
+      #   Default: false.
+      # @return `ActiveRecord::Relation`
+      # @api public
+      def subsequent(obj, timestamp_arg = false)
+        if timestamp_arg != true && primary_key_is_int?
+          subsequent_by_id(obj)
+        else
+          subsequent_by_timestamp(obj)
+        end
+      end
+
+      private
+
+      # @api private
+      def preceding_by_id(obj)
+        where(arel_table[primary_key].lt(obj.id)).order(arel_table[primary_key].desc)
+      end
+
+      # @api private
+      def preceding_by_timestamp(obj)
+        obj = obj.send(:created_at) if obj.is_a?(self)
+        where(arel_table[:created_at].lt(obj)).
+          order(timestamp_sort_order("desc"))
+      end
+
+      # @api private
+      def subsequent_by_id(version)
+        where(arel_table[primary_key].gt(version.id)).order(arel_table[primary_key].asc)
+      end
+
+      # @api private
+      def subsequent_by_timestamp(obj)
+        obj = obj.send(:created_at) if obj.is_a?(self)
+        where(arel_table[:created_at].gt(obj)).order(timestamp_sort_order)
       end
     end
 
