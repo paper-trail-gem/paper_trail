@@ -103,7 +103,7 @@ module PaperTrail
             }
         end
         skip = @record.paper_trail_options[:skip]
-        changed_in_latest_version - ignore - skip
+        (changed_in_latest_version - ignore) - skip
       end
 
       # Rails 5.1 changed the API of `ActiveRecord::Dirty`. See
