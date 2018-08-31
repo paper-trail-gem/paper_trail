@@ -23,7 +23,7 @@ module PaperTrail
 
         # @api private
         def execute
-          if PaperTrail.config.object_changes_adapter
+          if PaperTrail.config.object_changes_adapter&.respond_to?(:where_object_changes)
             return PaperTrail.config.object_changes_adapter.where_object_changes(
               @version_model_class, @attributes
             )

@@ -17,24 +17,26 @@ module PaperTrail
       end
 
       context "with object_changes_adapter" do
-        let(:adapter) { instance_spy("CustomObjectChangesAdapter") }
+        after do
+          PaperTrail.config.object_changes_adapter = nil
+        end
 
-        before do
+        it "creates a version with custom changes" do
+          adapter = instance_spy("CustomObjectChangesAdapter")
           PaperTrail.config.object_changes_adapter = adapter
           allow(adapter).to(
             receive(:diff).with(
               hash_including("name" => [nil, "Dashboard"])
             ).and_return([["name", nil, "Dashboard"]])
           )
-        end
-
-        after do
-          PaperTrail.config.object_changes_adapter = nil
-        end
-
-        it "creates a version with custom changes" do
           expect(widget.versions.last.object_changes).to eq("---\n- - name\n  - \n  - Dashboard\n")
           expect(adapter).to have_received(:diff)
+        end
+
+        it "defaults to the original behavior" do
+          adapter = Class.new.new
+          PaperTrail.config.object_changes_adapter = adapter
+          expect(widget.versions.last.object_changes).to start_with("---")
         end
       end
 
@@ -240,6 +242,21 @@ module PaperTrail
                   bicycle.versions.where_object_changes(name: "abc")
                 ).to match_array(bicycle.versions[0..1])
                 expect(adapter).to have_received(:where_object_changes)
+              end
+
+              it "defaults to the original behavior" do
+                adapter = Class.new.new
+                PaperTrail.config.object_changes_adapter = adapter
+                bicycle = Bicycle.create!(name: "abc")
+                if column_datatype_override
+                  expect(
+                    bicycle.versions.where_object_changes(name: "abc")
+                  ).to match_array(bicycle.versions[0..1])
+                else
+                  expect do
+                    bicycle.versions.where_object_changes(name: "abc")
+                  end.to raise_error(/no longer supports reading YAML/)
+                end
               end
             end
 

@@ -71,6 +71,14 @@ RSpec.describe(::PaperTrail, versioning: true) do
           expect(changeset[:c]).to eq("d")
           expect(adapter).to have_received(:load_changeset)
         end
+
+        it "defaults to the original behavior" do
+          adapter = Class.new.new
+          PaperTrail.config.object_changes_adapter = adapter
+          widget = Widget.create(name: "Henry")
+          changeset = widget.versions.last.changeset
+          expect(changeset[:name]).to eq([nil, "Henry"])
+        end
       end
     end
 
