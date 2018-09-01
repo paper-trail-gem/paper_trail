@@ -15,7 +15,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- None
+- When PT-AT is not loaded, and someone sets `track_associations = false`,
+  it should `warn`, not `raise`.
 
 ## 10.0.0 (2018-09-01)
 
