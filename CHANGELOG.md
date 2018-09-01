@@ -15,8 +15,23 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- When PT-AT is not loaded, and someone sets `track_associations = false`,
-  it should `warn`, not `raise`.
+- None
+
+## 10.0.1 (2018-09-01)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- [#1150](https://github.com/paper-trail-gem/paper_trail/pull/1150) - When PT-AT
+  is not loaded, and someone sets `track_associations = false`, it should
+  `warn`, not `raise`.
 
 ## 10.0.0 (2018-09-01)
 
