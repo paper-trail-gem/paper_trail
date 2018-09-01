@@ -13,6 +13,7 @@ has been destroyed.
 | Version        | Documentation |
 | -------------- | ------------- |
 | Unreleased     | https://github.com/paper-trail-gem/paper_trail/blob/master/README.md |
+| 10.0.0         | https://github.com/paper-trail-gem/paper_trail/blob/v10.0.0/README.md |
 | 9.2.0          | https://github.com/paper-trail-gem/paper_trail/blob/v9.2.0/README.md |
 | 8.1.2          | https://github.com/paper-trail-gem/paper_trail/blob/v8.1.2/README.md |
 | 7.1.3          | https://github.com/paper-trail-gem/paper_trail/blob/v7.1.3/README.md |
@@ -79,18 +80,19 @@ has been destroyed.
 
 ### 1.a. Compatibility
 
-| paper_trail    | branch     | tags   | ruby     | activerecord  |
-| -------------- | ---------- | ------ | -------- | ------------- |
-| unreleased     | master     |        | >= 2.3.0 | >= 4.2, < 6   |
-| 9              | 9-stable   | v9.x   | >= 2.3.0 | >= 4.2, < 6   |
-| 8              | 8-stable   | v8.x   | >= 2.2.0 | >= 4.2, < 5.2 |
-| 7              | 7-stable   | v7.x   | >= 2.1.0 | >= 4.0, < 5.2 |
-| 6              | 6-stable   | v6.x   | >= 1.9.3 | >= 4.0, < 5.2 |
-| 5              | 5-stable   | v5.x   | >= 1.9.3 | >= 3.0, < 5.1 |
-| 4              | 4-stable   | v4.x   | >= 1.8.7 | >= 3.0, < 5.1 |
-| 3              | 3.0-stable | v3.x   | >= 1.8.7 | >= 3.0, < 5   |
-| 2              | 2.7-stable | v2.x   | >= 1.8.7 | >= 3.0, < 4   |
-| 1              | rails2     | v1.x   | >= 1.8.7 | >= 2.3, < 3   |
+| paper_trail    | branch     | ruby     | activerecord  |
+| -------------- | ---------- | -------- | ------------- |
+| unreleased     | master     | >= 2.3.0 | >= 4.2, < 6   |
+| 10             | 10-stable  | >= 2.3.0 | >= 4.2, < 6   |
+| 9              | 9-stable   | >= 2.3.0 | >= 4.2, < 6   |
+| 8              | 8-stable   | >= 2.2.0 | >= 4.2, < 5.2 |
+| 7              | 7-stable   | >= 2.1.0 | >= 4.0, < 5.2 |
+| 6              | 6-stable   | >= 1.9.3 | >= 4.0, < 5.2 |
+| 5              | 5-stable   | >= 1.9.3 | >= 3.0, < 5.1 |
+| 4              | 4-stable   | >= 1.8.7 | >= 3.0, < 5.1 |
+| 3              | 3.0-stable | >= 1.8.7 | >= 3.0, < 5   |
+| 2              | 2.7-stable | >= 1.8.7 | >= 3.0, < 4   |
+| 1              | rails2     | >= 1.8.7 | >= 2.3, < 3   |
 
 ### 1.b. Installation
 

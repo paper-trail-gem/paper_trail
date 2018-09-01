@@ -3,10 +3,24 @@
 This project follows [semver 2.0.0](http://semver.org/spec/v2.0.0.html) and the
 recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
-## 10.0.0 (Unreleased)
+## Unreleased
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- None
+
+## 10.0.0 (2018-09-01)
 
 PT 10 tackles some tough issues that required breaking changes. We fixed a
-long-standing issue with STI, and saved major disk space in databases with tens
+rare issue with STI, and saved major disk space in databases with tens
 of millions of version records. Special thanks to @lorint and @seanlinsley,
 respectively.
 
@@ -18,8 +32,10 @@ respectively.
 
 ### Breaking changes affecting fewer people
 
-- `paper_trail-association_tracking` is no longer a runtime dependency. If you
+- [db9c392d](https://github.com/paper-trail-gem/paper_trail/commit/db9c392d) -
+  `paper_trail-association_tracking` is no longer a runtime dependency. If you
   use it (`track_associations = true`) you must now add it to your own `Gemfile`.
+  See also [PT-AT #7](https://github.com/westonganger/paper_trail-association_tracking/issues/7)
 - [#1130](https://github.com/paper-trail-gem/paper_trail/pull/1130) -
   Removed `save_changes`. For those wanting to save space, it's more effective
   to drop the `object` column. If you need ultimate control over the
