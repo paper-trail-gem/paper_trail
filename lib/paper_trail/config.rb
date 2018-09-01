@@ -11,7 +11,10 @@ module PaperTrail
 
     E_PT_AT_REMOVED = <<-EOS.squish
       Association Tracking for PaperTrail has been extracted to a seperate gem.
-      Please add `paper_trail-association_tracking` to your Gemfile.
+      To use it, please add `paper_trail-association_tracking` to your Gemfile.
+      If you don't use it (most people don't, that's the default) and you set
+      `track_associations = false` somewhere (probably a rails initializer) you
+      can remove that line now.
     EOS
 
     attr_accessor(
@@ -47,10 +50,19 @@ module PaperTrail
     # because there is no known use case where someone would want to rescue
     # this. If we think of such a use case in the future we can revisit this
     # decision.
-    def track_associations=(_)
-      raise E_PT_AT_REMOVED
+    #
+    # @override If PT-AT is `require`d, it will replace this method with its
+    # own implementation.
+    def track_associations=(value)
+      if value
+        raise E_PT_AT_REMOVED
+      else
+        ::Kernel.warn(E_PT_AT_REMOVED)
+      end
     end
 
+    # @override If PT-AT is `require`d, it will replace this method with its
+    # own implementation.
     def track_associations?
       raise E_PT_AT_REMOVED
     end
