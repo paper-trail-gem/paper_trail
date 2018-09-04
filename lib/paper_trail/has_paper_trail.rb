@@ -51,12 +51,9 @@ module PaperTrail
       #   is `:versions`.
       # - :version - The name to use for the method which returns the version
       #   the instance was reified from. Default is `:version`.
-      # - :join_tables - If the model has a has_and_belongs_to_many relation
-      #   with an unpapertrailed model, passing the name of the association to
-      #   the join_tables option will paper trail the join table but not save
-      #   the other model, allowing reification of the association but with the
-      #   other models latest state (if the other model is paper trailed, this
-      #   option does nothing)
+      #
+      # If you are using the experimental `paper_trail-association_tracking` gem
+      # it may accept additional options.
       #
       # @api public
       def has_paper_trail(options = {})
