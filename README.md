@@ -866,7 +866,7 @@ now store the subclass in `item_subtype`. If this column is present PT-AT will
 use it to fix a rare issue with reification of STI subclasses.
 
 ```ruby
-add_column :versions, :item_subtype, null: true
+add_column :versions, :item_subtype, :string, null: true
 ```
 
 So, if you use PT-AT and STI, the addition of this colulmn is recommended.
