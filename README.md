@@ -492,15 +492,29 @@ PaperTrail.request(enabled: false) do
 end
 ```
 
-This should satisfy most needs. In the rare case that you need to disable
-versioning for one model while keeping versioning enabled for other models, use:
+or, 
+
+```ruby
+PaperTrail.request.enabled = false
+# no versions created
+PaperTrail.request.enabled = true
+```
+
+#### Per Class
+
+In the rare case that you need to disable versioning for one model while
+keeping versioning enabled for other models, use:
 
 ```ruby
 PaperTrail.request.disable_model(Banana)
-# ...
+# changes to Banana model do not create versions,
+# but eg. changes to Kiwi model do.
 PaperTrail.request.enable_model(Banana)
 PaperTrail.request.enabled_for_model?(Banana) # => true
 ```
+
+This setting, as with all `PaperTrail.request` settings, affects only the
+current request, not all threads.
 
 For this rare use case, there is no convenient way to pass a block.
 
@@ -519,41 +533,17 @@ class ApplicationController < ActionController::Base
 end
 ```
 
-Because you are unable to controll the order of callback execution, this
-technique is not recommended, but is preserved for backwards compatability.
+Because you are unable to control the order of callback execution, this
+technique is not recommended, but is preserved for backwards compatibility.
 
 It would be better to install your own callback and use
 `PaperTrail.request.enabled=` as you see fit.
 
-#### Per Class
+#### Per Method (Removed)
 
-```ruby
-PaperTrail.request.enable_model(Widget)
-PaperTrail.request.disable_model(Widget)
-```
-
-This setting, as with all `PaperTrail.request` settings, affects only the
-current request, not all threads.
-
-#### Per Method
-
-You can call a method without creating a new version using `without_versioning`.
- It takes either a method name as a symbol:
-
-```ruby
-@widget.paper_trail.without_versioning :destroy
-```
-
-Or a block:
-
-```ruby
-@widget.paper_trail.without_versioning do
-  @widget.update_attributes name: 'Ford'
-end
-```
-
-During `without_versioning`, PaperTrail is disabled for the whole model
-(e.g. `Widget`), not just for the instance (e.g. `@widget`).
+The `widget.paper_trail.without_versioning` method was removed in v10, without
+an exact replacement. To disable versioning, use the [Per Class](#per-class) or
+[Per HTTP Request](#per-http-request) methods. 
 
 ### 2.e. Limiting the Number of Versions Created
 
@@ -869,7 +859,7 @@ use it to fix a rare issue with reification of STI subclasses.
 add_column :versions, :item_subtype, :string, null: true
 ```
 
-So, if you use PT-AT and STI, the addition of this colulmn is recommended.
+So, if you use PT-AT and STI, the addition of this column is recommended.
 
 - https://github.com/paper-trail-gem/paper_trail/issues/594
 - https://github.com/paper-trail-gem/paper_trail/pull/1143
