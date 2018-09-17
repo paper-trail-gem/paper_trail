@@ -15,7 +15,16 @@ env:
     - DB=mysql
     - DB=postgres
     - DB=sqlite
-sudo: false
+
+# We want to use `sudo: false` because the container infrastructure is supposed
+# to be faster, but Travis is having issues with containers lately ..
+#
+# > No output has been received in the last 10m0s
+#
+# .. and they recommend we use the VM infrastructure (`sudo: required`) in
+# the meantime.
+sudo: required
+
 gemfile:
   - gemfiles/ar_4.2.gemfile
   - gemfiles/ar_5.1.gemfile
