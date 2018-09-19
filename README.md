@@ -1314,8 +1314,9 @@ end
 
 The helper will also reset `whodunnit` to `nil` before each
 test to help prevent data spillover between tests. If you are using PaperTrail
-with Rails, the helper will automatically set the `PaperTrail.controller_info`
-value to `{}` as well, again, to help prevent data spillover between tests.
+with Rails, the helper will automatically set the
+`PaperTrail.request.controller_info` value to `{}` as well, again, to help
+prevent data spillover between tests.
 
 There is also a `be_versioned` matcher provided by PaperTrail's RSpec helper
 which can be leveraged like so:
@@ -1411,8 +1412,9 @@ end
 
 The helper will also reset the `whodunnit` value to `nil` before each
 test to help prevent data spillover between tests. If you are using PaperTrail
-with Rails, the helper will automatically set the `PaperTrail.controller_info`
-value to `{}` as well, again, to help prevent data spillover between tests.
+with Rails, the helper will automatically set the
+`PaperTrail.request.controller_info` value to `{}` as well, again, to help
+prevent data spillover between tests.
 
 ### 7.d. Spork
 
