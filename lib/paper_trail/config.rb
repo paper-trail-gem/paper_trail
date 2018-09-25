@@ -21,7 +21,8 @@ module PaperTrail
       :association_reify_error_behaviour,
       :object_changes_adapter,
       :serializer,
-      :version_limit
+      :version_limit,
+      :ignore_update_timestamp_only_changes
     )
 
     def initialize

@@ -47,6 +47,34 @@ module PaperTrail
             expect(event.changed_notably?).to eq(false)
           end
         end
+
+        context "persisted record with update timestamps only" do
+          context "ignore_timestamp_only_updates is set to true" do
+            before do
+              PaperTrail.config.ignore_update_timestamp_only_changes = true
+            end
+
+            after do
+              PaperTrail.config.ignore_update_timestamp_only_changes = false
+            end
+
+            it "does not acknowledge timestamp-attrs change" do
+              gadget = Gadget.create!(created_at: Time.now)
+              gadget.updated_at = Time.now
+              event = PaperTrail::Events::Base.new(gadget, false)
+              expect(event.changed_notably?).to eq(false)
+            end
+          end
+
+          context "ignore_timestamp_only_updates is set to false (default)" do
+            it "acknowledges timestamp-attrs change" do
+              gadget = Gadget.create!(created_at: Time.now)
+              gadget.updated_at = Time.now
+              event = PaperTrail::Events::Base.new(gadget, false)
+              expect(event.changed_notably?).to eq(true)
+            end
+          end
+        end
       end
     end
   end
