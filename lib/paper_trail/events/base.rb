@@ -32,11 +32,13 @@ module PaperTrail
 
       # Determines whether it is appropriate to generate a new version
       # instance. A timestamp-only update (e.g. only `updated_at` changed) is
-      # considered notable unless an ignored attribute was also changed.
+      # considered notable unless an ignored attribute was also changed or we
+      # explicitly set `ignore_update_timestamp_only_changes` property in
+      # papertrail configs
       #
       # @api private
       def changed_notably?
-        if ignored_attr_has_changed?
+        if ignored_attr_has_changed? || PaperTrail.config.ignore_update_timestamp_only_changes
           timestamps = @record.send(:timestamp_attributes_for_update_in_model).map(&:to_s)
           (notably_changed - timestamps).any?
         else
