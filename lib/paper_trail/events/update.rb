@@ -28,11 +28,13 @@ module PaperTrail
           event: @record.paper_trail_event || "update",
           whodunnit: PaperTrail.request.whodunnit
         }
+        data[:event] = 'touch' if @is_touch
         if @record.respond_to?(:updated_at)
           data[:created_at] = @record.updated_at
         end
         if record_object?
           data[:object] = recordable_object(@is_touch)
+          data[:after] = PaperTrail.serializer.dump(@record)
         end
         if record_object_changes?
           changes = @force_changes.nil? ? notable_changes : @force_changes

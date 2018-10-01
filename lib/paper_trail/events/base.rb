@@ -44,6 +44,19 @@ module PaperTrail
         end
       end
 
+      # Returns an object which can be assigned to the `object` attribute of a
+      # nascent version record. If the `object` column is a postgres `json`
+      # column, then a hash can be used in the assignment, otherwise the column
+      # is a `text` column, and we must perform the serialization here, using
+      # `PaperTrail.serializer`.
+      def recordable_object(is_touch)
+        if @record.class.paper_trail.version_class.object_col_is_json?
+          object_attrs_for_paper_trail(is_touch)
+        else
+          PaperTrail.serializer.dump(object_attrs_for_paper_trail(is_touch))
+        end
+      end
+
       private
 
       # Rails 5.1 changed the API of `ActiveRecord::Dirty`. See
@@ -277,21 +290,6 @@ module PaperTrail
       # @api private
       def record_object?
         @record.class.paper_trail.version_class.column_names.include?("object")
-      end
-
-      # Returns an object which can be assigned to the `object` attribute of a
-      # nascent version record. If the `object` column is a postgres `json`
-      # column, then a hash can be used in the assignment, otherwise the column
-      # is a `text` column, and we must perform the serialization here, using
-      # `PaperTrail.serializer`.
-      #
-      # @api private
-      def recordable_object(is_touch)
-        if @record.class.paper_trail.version_class.object_col_is_json?
-          object_attrs_for_paper_trail(is_touch)
-        else
-          PaperTrail.serializer.dump(object_attrs_for_paper_trail(is_touch))
-        end
       end
     end
   end
