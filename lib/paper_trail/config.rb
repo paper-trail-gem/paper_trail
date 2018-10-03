@@ -18,10 +18,12 @@ module PaperTrail
     EOS
 
     attr_accessor(
-      :association_reify_error_behaviour,
-      :object_changes_adapter,
-      :serializer,
-      :version_limit
+        :association_reify_error_behaviour,
+        :object_changes_adapter,
+        :serializer,
+        :version_limit,
+        :async,
+        :enable_touch
     )
 
     def initialize

@@ -28,7 +28,13 @@ module PaperTrail
     # @api public
     def on_create
       @model_class.after_create { |r|
-        r.paper_trail.record_create if r.paper_trail.save_version?
+        if PaperTrail::ModelConfig.enabled?(r) && r.paper_trail.save_version?
+          if PaperTrail.config.async
+            ::PaperTrail::Workers::AsyncCreateWorker.perform_async(r.attributes, r.class.name, PaperTrail.request.controller_info)
+          else
+            r.paper_trail.record_create
+          end
+        end
       }
       return if @model_class.paper_trail_options[:on].include?(:create)
       @model_class.paper_trail_options[:on] << :create
@@ -50,7 +56,13 @@ module PaperTrail
         "#{recording_order}_destroy",
         lambda do |r|
           return unless r.paper_trail.save_version?
-          r.paper_trail.record_destroy(recording_order)
+          if PaperTrail::ModelConfig.enabled?(r) && !r.new_record?
+            if PaperTrail.config.async
+              ::PaperTrail::Workers::AsyncDestroyWorker.perform_async(r.attributes, r.class.name, PaperTrail.request.controller_info, recording_order)
+            else
+              r.paper_trail.record_destroy(recording_order)
+            end
+          end
         end
       )
 
@@ -66,12 +78,17 @@ module PaperTrail
         r.paper_trail.reset_timestamp_attrs_for_update_if_needed
       }
       @model_class.after_update { |r|
-        if r.paper_trail.save_version?
-          r.paper_trail.record_update(
-            force: false,
-            in_after_callback: true,
-            is_touch: false
-          )
+        if r.paper_trail.save_version? && PaperTrail::ModelConfig.enabled?(r)
+          if PaperTrail.config.async
+            old_object = PaperTrail::Events::Update.new(r, true, false, false).recordable_object(false)
+            ::PaperTrail::Workers::AsyncUpdateWorker.perform_async(r.attributes, r.class.name, PaperTrail.request.controller_info, old_object)
+          else
+            r.paper_trail.record_update(
+              force: false,
+              in_after_callback: true,
+              is_touch: false
+            )
+          end
         end
       }
       @model_class.after_update { |r|
@@ -84,13 +101,22 @@ module PaperTrail
     # Adds a callback that records a version after a "touch" event.
     # @api public
     def on_touch
-      @model_class.after_touch { |r|
-        r.paper_trail.record_update(
-          force: true,
-          in_after_callback: true,
-          is_touch: true
-        )
-      }
+      if PaperTrail.config.enable_touch
+        @model_class.after_touch { |r|
+          if PaperTrail::ModelConfig.enabled?(r)
+            if PaperTrail.config.async
+              old_object = PaperTrail::Events::Update.new(r, true, false, false).recordable_object(false)
+              ::PaperTrail::Workers::AsyncUpdateWorker.perform_async(r.attributes, r.class.name, PaperTrail.request.controller_info, old_object, true, true)
+            else
+              r.paper_trail.record_update(
+                force: true,
+                in_after_callback: true,
+                is_touch: true
+              )
+            end
+          end
+        }
+      end
     end
 
     # Set up `@model_class` for PaperTrail. Installs callbacks, associations,
@@ -184,6 +210,10 @@ module PaperTrail
       end
 
       @model_class.paper_trail_options[:meta] ||= {}
+    end
+
+    def self.enabled?(record)
+      PaperTrail.enabled? && PaperTrail.request.enabled? && PaperTrail.request.enabled_for_model?(record.class)
     end
   end
 end

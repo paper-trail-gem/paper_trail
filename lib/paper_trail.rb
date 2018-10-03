@@ -6,25 +6,28 @@
 # PT files that need them, but this seems easier to troubleshoot, though it may
 # add a few milliseconds to rails boot time. If that becomes a pain point, we
 # can revisit this decision.
-require "active_support/all"
+require 'active_support/all'
 
 # AR is required for, eg. has_paper_trail.rb, so we could put this `require` in
 # all of those files, but it seems easier to troubleshoot if we just make sure
 # AR is loaded here before loading *any* of PT. See discussion of
 # performance/simplicity tradeoff for activesupport above.
-require "active_record"
+require 'active_record'
 
-require "request_store"
-require "paper_trail/cleaner"
-require "paper_trail/config"
-require "paper_trail/has_paper_trail"
-require "paper_trail/record_history"
-require "paper_trail/reifier"
-require "paper_trail/request"
-require "paper_trail/version_concern"
-require "paper_trail/version_number"
-require "paper_trail/serializers/json"
-require "paper_trail/serializers/yaml"
+require 'request_store'
+require 'paper_trail/cleaner'
+require 'paper_trail/config'
+require 'paper_trail/has_paper_trail'
+require 'paper_trail/record_history'
+require 'paper_trail/reifier'
+require 'paper_trail/request'
+require 'paper_trail/version_concern'
+require 'paper_trail/version_number'
+require 'paper_trail/serializers/json'
+require 'paper_trail/serializers/yaml'
+require 'paper_trail/workers/async_create_worker'
+require 'paper_trail/workers/async_destroy_worker'
+require 'paper_trail/workers/async_update_worker'
 
 # An ActiveRecord extension that tracks changes to your models, for auditing or
 # versioning.
@@ -109,6 +112,30 @@ module PaperTrail
       PaperTrail.config.serializer
     end
 
+    # Set async option for paper_trail
+    # @api public
+    def async=(value)
+      PaperTrail.config.async = value
+    end
+
+    # Get async option for paper_trail
+    # @api public
+    def async
+      !!PaperTrail.config.async
+    end
+
+    # Set enable_touch option for paper_trail
+    # @api public
+    def enable_touch=(value)
+      PaperTrail.config.enable_touch = value
+    end
+
+    # Get enable_touch option for paper_trail
+    # @api public
+    def enable_touch
+      !!PaperTrail.config.enable_touch
+    end
+
     # Returns PaperTrail's global configuration object, a singleton. These
     # settings affect all threads.
     # @api private
@@ -134,10 +161,10 @@ if defined?(::Rails)
   # Rails module is sometimes defined by gems like rails-html-sanitizer
   # so we check for presence of Rails.application.
   if defined?(::Rails.application)
-    require "paper_trail/frameworks/rails"
+    require 'paper_trail/frameworks/rails'
   else
     ::Kernel.warn(::PaperTrail::E_RAILS_NOT_LOADED)
   end
 else
-  require "paper_trail/frameworks/active_record"
+  require 'paper_trail/frameworks/active_record'
 end

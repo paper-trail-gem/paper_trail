@@ -14,7 +14,8 @@ module PaperTrail
       def data
         data = {
           event: @record.paper_trail_event || "create",
-          whodunnit: PaperTrail.request.whodunnit
+          whodunnit: PaperTrail.request.whodunnit,
+          after: PaperTrail.serializer.dump(@record)
         }
         if @record.respond_to?(:updated_at)
           data[:created_at] = @record.updated_at
