@@ -37,11 +37,11 @@ matrix:
     - rvm: 2.3.8
       gemfile: gemfiles/ar_6.0.gemfile
     # optimization: don't test intermediate rubies (see above)
-    - rvm: 2.4.4
+    - rvm: 2.4.5
       gemfile: gemfiles/ar_4.2.gemfile
-    - rvm: 2.4.4
+    - rvm: 2.4.5
       gemfile: gemfiles/ar_5.1.gemfile
-    - rvm: 2.4.4
+    - rvm: 2.4.5
       gemfile: gemfiles/ar_5.2.gemfile
   fast_finish: true
 addons:
