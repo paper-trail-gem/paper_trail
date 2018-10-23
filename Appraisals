@@ -34,6 +34,7 @@ end
 appraise "ar-6.0" do
   # TODO: Use actual version number once 6.0 beta is released
   gem "activerecord", github: "rails/rails"
+  gem "railties", github: "rails/rails"
   gem "generator_spec", github: "stevehodgkiss/generator_spec"
   gem "rails-controller-testing", github: "rails/rails-controller-testing"
 end
