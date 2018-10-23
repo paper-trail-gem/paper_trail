@@ -82,7 +82,7 @@ has been destroyed.
 
 | paper_trail    | branch     | ruby     | activerecord  |
 | -------------- | ---------- | -------- | ------------- |
-| unreleased     | master     | >= 2.3.0 | >= 4.2, < 6   |
+| unreleased     | master     | >= 2.3.0 | >= 4.2, < 6.1 |
 | 10             | 10-stable  | >= 2.3.0 | >= 4.2, < 6   |
 | 9              | 9-stable   | >= 2.3.0 | >= 4.2, < 6   |
 | 8              | 8-stable   | >= 2.2.0 | >= 4.2, < 5.2 |
