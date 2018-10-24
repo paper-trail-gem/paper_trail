@@ -8,7 +8,7 @@ module On
     describe "#versions" do
       it "only have a version for the create event" do
         record = described_class.create(name: "Alice")
-        record.update_attributes(name: "blah")
+        record.update(name: "blah")
         record.destroy
         expect(record.versions.length).to(eq(1))
         expect(record.versions.last.event).to(eq("create"))
@@ -19,7 +19,7 @@ module On
       it "rembembers the custom event name" do
         record = described_class.new
         record.paper_trail_event = "banana"
-        record.update_attributes(name: "blah")
+        record.update(name: "blah")
         record.destroy
         expect(record.versions.length).to(eq(1))
         expect(record.versions.last.event).to(eq("banana"))

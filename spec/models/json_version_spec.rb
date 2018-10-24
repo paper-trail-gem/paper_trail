@@ -34,9 +34,9 @@ if JsonVersion.table_exists?
         it "locates versions according to their `object` contents" do
           fruit = Fruit.create!(name: "apple")
           expect(fruit.versions.length).to eq(1)
-          fruit.update_attributes!(name: "banana", color: "aqua")
+          fruit.update!(name: "banana", color: "aqua")
           expect(fruit.versions.length).to eq(2)
-          fruit.update_attributes!(name: "coconut", color: "black")
+          fruit.update!(name: "coconut", color: "black")
           expect(fruit.versions.length).to eq(3)
           where_apple = described_class.where_object(name: "apple")
           expect(where_apple.to_sql).to eq(
@@ -75,8 +75,8 @@ if JsonVersion.table_exists?
       context "valid arguments", versioning: true do
         it "finds versions according to their `object_changes` contents" do
           fruit = Fruit.create!(name: "apple")
-          fruit.update_attributes!(name: "banana", color: "red")
-          fruit.update_attributes!(name: "coconut", color: "green")
+          fruit.update!(name: "banana", color: "red")
+          fruit.update!(name: "coconut", color: "green")
           where_apple = fruit.versions.where_object_changes(name: "apple")
           expect(where_apple.to_sql.squish).to eq(
             <<-SQL.squish
@@ -99,8 +99,8 @@ if JsonVersion.table_exists?
 
         it "finds versions with multiple attributes changed" do
           fruit = Fruit.create!(name: "apple")
-          fruit.update_attributes!(name: "banana", color: "red")
-          fruit.update_attributes!(name: "coconut", color: "green")
+          fruit.update!(name: "banana", color: "red")
+          fruit.update!(name: "coconut", color: "green")
           where_red_apple = fruit.versions.where_object_changes(color: "red", name: "apple")
           expect(where_red_apple.to_sql.squish).to eq(
             <<-SQL.squish

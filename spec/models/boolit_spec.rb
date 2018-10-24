@@ -6,7 +6,7 @@ require "support/custom_json_serializer"
 RSpec.describe Boolit, type: :model, versioning: true do
   let(:boolit) { Boolit.create! }
 
-  before { boolit.update_attributes!(name: FFaker::Name.name) }
+  before { boolit.update!(name: FFaker::Name.name) }
 
   it "has two versions" do
     expect(boolit.versions.size).to eq(2)
@@ -17,7 +17,7 @@ RSpec.describe Boolit, type: :model, versioning: true do
   end
 
   context "Instance falls out of default scope" do
-    before { boolit.update_attributes!(scoped: false) }
+    before { boolit.update!(scoped: false) }
 
     it "is NOT scoped" do
       expect(Boolit.first).to be_nil
@@ -30,8 +30,8 @@ RSpec.describe Boolit, type: :model, versioning: true do
     context "with `nil` attributes on the live instance" do
       before do
         PaperTrail.serializer = CustomJsonSerializer
-        boolit.update_attributes!(name: nil)
-        boolit.update_attributes!(name: FFaker::Name.name)
+        boolit.update!(name: nil)
+        boolit.update!(name: FFaker::Name.name)
       end
 
       after { PaperTrail.serializer = PaperTrail::Serializers::YAML }

@@ -9,7 +9,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
     context "where the association is created between model versions" do
       before do
         @wotsit = Wotsit.create(name: "wotsit_0")
-        @wotsit.update_attributes(widget_id: @widget.id, name: "wotsit_1")
+        @wotsit.update(widget_id: @widget.id, name: "wotsit_1")
       end
 
       context "when reified" do
@@ -26,10 +26,10 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
       context "and then the associated is updated between model versions" do
         before do
-          @widget.update_attributes(name: "widget_1")
-          @widget.update_attributes(name: "widget_2")
-          @wotsit.update_attributes(name: "wotsit_2")
-          @widget.update_attributes(name: "widget_3")
+          @widget.update(name: "widget_1")
+          @widget.update(name: "widget_2")
+          @wotsit.update(name: "wotsit_2")
+          @widget.update(name: "widget_3")
         end
 
         context "when reified" do
@@ -55,7 +55,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
       context "and then the associated is destroyed" do
         before do
-          @wotsit.update_attributes(name: "wotsit_2")
+          @wotsit.update(name: "wotsit_2")
           @widget.destroy
         end
 
@@ -86,7 +86,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
         context "and then the model is updated" do
           before do
-            @wotsit.update_attributes(name: "wotsit_3")
+            @wotsit.update(name: "wotsit_3")
           end
 
           context "when reified" do
@@ -104,7 +104,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
       before do
         @wotsit = @widget.create_wotsit(name: "wotsit_0")
         @new_widget = Widget.create(name: "new_widget")
-        @wotsit.update_attributes(widget_id: @new_widget.id, name: "wotsit_1")
+        @wotsit.update(widget_id: @new_widget.id, name: "wotsit_1")
       end
 
       context "when reified" do

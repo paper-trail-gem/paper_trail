@@ -66,8 +66,8 @@ module PaperTrail
         it "returns name of whodunnit" do
           name = FFaker::Name.name
           widget = Widget.create!(name: FFaker::Name.name)
-          widget.versions.first.update_attributes!(whodunnit: name)
-          widget.update_attributes!(name: FFaker::Name.first_name)
+          widget.versions.first.update!(whodunnit: name)
+          widget.update!(name: FFaker::Name.first_name)
           expect(widget.versions.last.paper_trail_originator).to eq(name)
         end
       end
@@ -84,8 +84,8 @@ module PaperTrail
         it "returns a PaperTrail::Version" do
           name = FFaker::Name.name
           widget = Widget.create!(name: FFaker::Name.name)
-          widget.versions.first.update_attributes!(whodunnit: name)
-          widget.update_attributes!(name: FFaker::Name.first_name)
+          widget.versions.first.update!(whodunnit: name)
+          widget.update!(name: FFaker::Name.first_name)
           expect(widget.versions.last.previous).to be_instance_of(PaperTrail::Version)
         end
       end
@@ -167,9 +167,9 @@ module PaperTrail
 
           describe "#where_object", versioning: true do
             it "requires its argument to be a Hash" do
-              widget.update_attributes!(name: name, an_integer: int)
-              widget.update_attributes!(name: "foobar", an_integer: 100)
-              widget.update_attributes!(name: FFaker::Name.last_name, an_integer: 15)
+              widget.update!(name: name, an_integer: int)
+              widget.update!(name: "foobar", an_integer: 100)
+              widget.update!(name: FFaker::Name.last_name, an_integer: 15)
               expect {
                 PaperTrail::Version.where_object(:foo)
               }.to raise_error(ArgumentError)
@@ -181,9 +181,9 @@ module PaperTrail
             context "YAML serializer" do
               it "locates versions according to their `object` contents" do
                 expect(PaperTrail.serializer).to be PaperTrail::Serializers::YAML
-                widget.update_attributes!(name: name, an_integer: int)
-                widget.update_attributes!(name: "foobar", an_integer: 100)
-                widget.update_attributes!(name: FFaker::Name.last_name, an_integer: 15)
+                widget.update!(name: name, an_integer: int)
+                widget.update!(name: "foobar", an_integer: 100)
+                widget.update!(name: FFaker::Name.last_name, an_integer: 15)
                 expect(
                   PaperTrail::Version.where_object(an_integer: int)
                 ).to eq([widget.versions[1]])
@@ -200,9 +200,9 @@ module PaperTrail
               it "locates versions according to their `object` contents" do
                 PaperTrail.serializer = PaperTrail::Serializers::JSON
                 expect(PaperTrail.serializer).to be PaperTrail::Serializers::JSON
-                widget.update_attributes!(name: name, an_integer: int)
-                widget.update_attributes!(name: "foobar", an_integer: 100)
-                widget.update_attributes!(name: FFaker::Name.last_name, an_integer: 15)
+                widget.update!(name: name, an_integer: int)
+                widget.update!(name: "foobar", an_integer: 100)
+                widget.update!(name: FFaker::Name.last_name, an_integer: 15)
                 expect(
                   PaperTrail::Version.where_object(an_integer: int)
                 ).to eq([widget.versions[1]])
@@ -264,9 +264,9 @@ module PaperTrail
             # supports text columns.
             if column_datatype_override
               it "locates versions according to their object_changes contents" do
-                widget.update_attributes!(name: name, an_integer: 0)
-                widget.update_attributes!(name: "foobar", an_integer: 100)
-                widget.update_attributes!(name: FFaker::Name.last_name, an_integer: int)
+                widget.update!(name: name, an_integer: 0)
+                widget.update!(name: "foobar", an_integer: 100)
+                widget.update!(name: FFaker::Name.last_name, an_integer: int)
                 expect(
                   widget.versions.where_object_changes(name: name)
                 ).to eq(widget.versions[0..1])

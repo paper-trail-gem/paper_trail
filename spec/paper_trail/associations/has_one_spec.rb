@@ -6,7 +6,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
   describe "widget, reified from a version prior to creation of wotsit" do
     it "has a nil wotsit" do
       widget = Widget.create(name: "widget_0")
-      widget.update_attributes(name: "widget_1")
+      widget.update(name: "widget_1")
       widget.create_wotsit(name: "wotsit_0")
       widget0 = widget.versions.last.reify(has_one: true)
       expect(widget0.wotsit).to be_nil
@@ -17,7 +17,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
     it "has the expected wotsit" do
       widget = Widget.create(name: "widget_0")
       wotsit = widget.create_wotsit(name: "wotsit_0")
-      widget.update_attributes(name: "widget_1")
+      widget.update(name: "widget_1")
       widget0 = widget.versions.last.reify(has_one: true)
       expect(widget0.wotsit.name).to(eq("wotsit_0"))
       expect(widget.reload.wotsit).to(eq(wotsit))
@@ -28,11 +28,11 @@ RSpec.describe(::PaperTrail, versioning: true) do
     it "has the expected wotsit" do
       widget = Widget.create(name: "widget_0")
       wotsit = widget.create_wotsit(name: "wotsit_0")
-      widget.update_attributes(name: "widget_1")
-      wotsit.update_attributes(name: "wotsit_1")
-      wotsit.update_attributes(name: "wotsit_2")
-      widget.update_attributes(name: "widget_2")
-      wotsit.update_attributes(name: "wotsit_3")
+      widget.update(name: "widget_1")
+      wotsit.update(name: "wotsit_1")
+      wotsit.update(name: "wotsit_2")
+      widget.update(name: "widget_2")
+      wotsit.update(name: "wotsit_3")
       widget1 = widget.versions.last.reify(has_one: true)
       expect(widget1.wotsit.name).to(eq("wotsit_2"))
       expect(widget.reload.wotsit.name).to(eq("wotsit_3"))
@@ -43,11 +43,11 @@ RSpec.describe(::PaperTrail, versioning: true) do
     it "has the latest wotsit in the database" do
       widget = Widget.create(name: "widget_0")
       wotsit = widget.create_wotsit(name: "wotsit_0")
-      widget.update_attributes(name: "widget_1")
-      wotsit.update_attributes(name: "wotsit_1")
-      wotsit.update_attributes(name: "wotsit_2")
-      widget.update_attributes(name: "widget_2")
-      wotsit.update_attributes(name: "wotsit_3")
+      widget.update(name: "widget_1")
+      wotsit.update(name: "wotsit_1")
+      wotsit.update(name: "wotsit_2")
+      widget.update(name: "widget_2")
+      wotsit.update(name: "wotsit_3")
       widget1 = widget.versions.last.reify(has_one: false)
       expect(widget1.wotsit.name).to(eq("wotsit_3"))
     end
@@ -57,7 +57,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
     it "has the wotsit" do
       widget = Widget.create(name: "widget_0")
       wotsit = widget.create_wotsit(name: "wotsit_0")
-      widget.update_attributes(name: "widget_1")
+      widget.update(name: "widget_1")
       wotsit.destroy
       widget1 = widget.versions.last.reify(has_one: true)
       expect(widget1.wotsit).to(eq(wotsit))
@@ -69,9 +69,9 @@ RSpec.describe(::PaperTrail, versioning: true) do
     it "has a nil wotsit" do
       widget = Widget.create(name: "widget_0")
       wotsit = widget.create_wotsit(name: "wotsit_0")
-      widget.update_attributes(name: "widget_1")
+      widget.update(name: "widget_1")
       wotsit.destroy
-      widget.update_attributes(name: "widget_3")
+      widget.update(name: "widget_3")
       widget2 = widget.versions.last.reify(has_one: true)
       expect(widget2.wotsit).to be_nil
     end
