@@ -23,16 +23,6 @@ class Person < ActiveRecord::Base
 
   has_paper_trail
 
-  # Convert strings to TimeZone objects when assigned
-  def time_zone=(value)
-    if value.is_a? ActiveSupport::TimeZone
-      super
-    else
-      zone = ::Time.find_zone(value) # nil if can't find time zone
-      super zone
-    end
-  end
-
   # Store TimeZone objects as strings when serialized to database
   class TimeZoneSerializer
     class << self
@@ -54,5 +44,20 @@ class Person < ActiveRecord::Base
     end
   end
 
-  serialize :time_zone, TimeZoneSerializer.new
+  if ActiveRecord.gem_version > Gem::Version.new("5.2")
+    require_relative "../lib/time_zone"
+    attribute :time_zone, ::ActiveModel::Type::TimeZone.new
+  else
+    # Convert strings to TimeZone objects when assigned
+    def time_zone=(value)
+      if value.is_a? ActiveSupport::TimeZone
+        super
+      else
+        zone = ::Time.find_zone(value) # nil if can't find time zone
+        super zone
+      end
+    end
+
+    serialize :time_zone, TimeZoneSerializer.new
+  end
 end
