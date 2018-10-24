@@ -12,7 +12,7 @@ RSpec.describe Translation, type: :model, versioning: true do
     context "after update" do
       it "not change the number of versions" do
         translation = described_class.create!(headline: "Headline")
-        translation.update_attributes(content: "Content")
+        translation.update(content: "Content")
         expect(PaperTrail::Version.count).to(eq(0))
       end
     end
@@ -41,7 +41,7 @@ RSpec.describe Translation, type: :model, versioning: true do
         translation.language_code = "US"
         translation.type = "DRAFT"
         translation.save!
-        translation.update_attributes(content: "Content")
+        translation.update(content: "Content")
         expect(PaperTrail::Version.count).to(eq(0))
       end
     end
@@ -54,7 +54,7 @@ RSpec.describe Translation, type: :model, versioning: true do
 
       it "update does not change the number of versions" do
         translation = described_class.create!(headline: "Headline", language_code: "US")
-        translation.update_attributes(content: "Content")
+        translation.update(content: "Content")
         expect(PaperTrail::Version.count).to(eq(2))
         expect(translation.versions.size).to(eq(2))
       end

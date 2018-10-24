@@ -13,7 +13,7 @@ module PaperTrail
       widget = Widget.create
 
       100.times do |i|
-        widget.update_attributes(name: "Name #{i}")
+        widget.update(name: "Name #{i}")
         expect(Widget.find(widget.id).versions.count).to be <= 11
         # 11 versions = 10 updates + 1 create.
       end

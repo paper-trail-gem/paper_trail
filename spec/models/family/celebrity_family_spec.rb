@@ -37,7 +37,7 @@ module Family
           child1 = parent.children.build(name: "Jaimy Jermaine Jackson")
           parent.children.build(name: "Autumn Joy Jackson")
           parent.save!
-          parent.update_attributes!(
+          parent.update!(
             name: "Hazel Gordy",
             children_attributes: { id: child1.id, name: "Jay Jackson" }
           )
@@ -98,7 +98,7 @@ module Family
                                    "bring up 5 boys who have a true zest for comedy."
           parent.build_mentee(name: "Abraham Schönberg")
           parent.save!
-          parent.update_attributes(
+          parent.update(
             name: "Samuel Marx",
             mentee_attributes: { id: parent.mentee.id, name: "Al Shean" }
           )

@@ -158,11 +158,11 @@ RSpec.describe Person, type: :model, versioning: true do
 
       person.car = car
       person.bicycle = bicycle
-      person.update_attributes(name: "Steve")
+      person.update(name: "Steve")
 
-      car.update_attributes(name: "BMW 330")
-      bicycle.update_attributes(name: "BMX 2.0")
-      person.update_attributes(name: "Peter")
+      car.update(name: "BMW 330")
+      bicycle.update(name: "BMX 2.0")
+      person.update(name: "Peter")
 
       expect(person.reload.versions.length).to(eq(3))
 
