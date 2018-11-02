@@ -7,6 +7,18 @@ about: >
 
 ---
 
+Thank you for your contribution!
+
+Due to limited volunteers, issues that do not follow these instructions will be
+closed without comment.
+
+Check the following boxes:
+
+- [ ] This is not a usage question, this is a bug report
+- [ ] I am committed to fixing this bug myself, I just need some help
+- [ ] This bug can be reproduced with the script I provide below
+- [ ] This bug can be reproduced in the latest release of the `paper_trail` gem
+
 Due to limited volunteers, we cannot answer *usage* questions. Please ask such
 questions on [StackOverflow](https://stackoverflow.com/tags/paper-trail-gem).
 
