@@ -11,8 +11,12 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
-- None
+- New configurable `default_events` defines which events are enabled by default.  
+  Example:
 
+  ```PaperTrail.config.default_events = %i[ create update destroy ]  # Skip touch events by default```  
+
+  If not set, the default is `%i[ create update destroy touch ]`.  As before, you can override the enabled events on a per-model basis with `has_paper_trail on: [ events.....]`
 ### Fixed
 
 - None
