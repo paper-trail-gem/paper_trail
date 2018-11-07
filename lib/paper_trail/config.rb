@@ -21,7 +21,8 @@ module PaperTrail
       :association_reify_error_behaviour,
       :object_changes_adapter,
       :serializer,
-      :version_limit
+      :version_limit,
+      :default_events
     )
 
     def initialize
@@ -31,6 +32,7 @@ module PaperTrail
 
       # Variables which affect all threads, whose access is *not* synchronized.
       @serializer = PaperTrail::Serializers::YAML
+      @default_events = %i[create update destroy touch]
     end
 
     # Indicates whether PaperTrail is on or off. Default: true.

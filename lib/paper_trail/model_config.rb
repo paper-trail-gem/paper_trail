@@ -97,7 +97,7 @@ module PaperTrail
     # "class attributes", instance methods, and more.
     # @api private
     def setup(options = {})
-      options[:on] ||= %i[create update destroy touch]
+      options[:on] ||= PaperTrail.config.default_events
       options[:on] = Array(options[:on]) # Support single symbol
       @model_class.send :include, ::PaperTrail::Model::InstanceMethods
       setup_options(options)
