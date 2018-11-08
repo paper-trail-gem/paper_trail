@@ -58,7 +58,7 @@ module PaperTrail
       # @api public
       def has_paper_trail(options = {})
         # Merge defaults with per-model specifications
-        paper_trail.setup(PaperTrail.config.has_paper_trail_defaults.merge options)
+        paper_trail.setup(PaperTrail.config.has_paper_trail_defaults.merge(options))
       end
 
       # @api public

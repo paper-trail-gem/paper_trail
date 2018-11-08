@@ -32,7 +32,7 @@ module PaperTrail
 
       # Variables which affect all threads, whose access is *not* synchronized.
       @serializer = PaperTrail::Serializers::YAML
-      @has_paper_trail_defaults = { }
+      @has_paper_trail_defaults = {}
     end
 
     # Indicates whether PaperTrail is on or off. Default: true.
