@@ -11,7 +11,13 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
-- None
+- Added new configurable `has_paper_trail_defaults` that accepts a hash of default options to be applied to each `has_paper_trail` directive.
+
+  Example:
+
+  ```PaperTrail.config.has_paper_trail_defaults = { on: %i[create update destroy] }```
+  
+  Defines a default for paper_trail events that would not include the touch event. It can be over-ridden on a per-model basis my including an explicit `on: [....]` option to `has_paper_trail`.
 
 ### Fixed
 
