@@ -268,6 +268,33 @@ A common place to put these settings is in a Rails initializer file
 such as `config/initializers/paper_trail.rb` or in an environment-specific
 configuration file such as `config/environments/test.rb`.
 
+#### 1.e.1 Global
+
+Global configuration options affect all threads.
+
+- association_reify_error_behaviour
+- enabled
+- has_paper_trail_defaults
+- object_changes_adapter
+- serializer
+- version_limit
+
+Syntax example: (options described in detail later)
+
+```ruby
+# config/initializers/paper_trail.rb
+PaperTrail.config.enabled = true
+PaperTrail.config.has_paper_trail_defaults = {
+  on: %i[create update destroy]
+}
+PaperTrail.config.version_limit = 3
+````
+
+These options are intended to be set only once, during app initialization (eg.
+in `config/initializers`). It is unsafe to change them while the app is running.
+In contrast, `PaperTrail.request` has various options that only apply to a
+single HTTP request and thus are safe to use while the app is running.
+
 ## 2. Limiting What is Versioned, and When
 
 ### 2.a. Choosing Lifecycle Events To Monitor
@@ -492,7 +519,7 @@ PaperTrail.request(enabled: false) do
 end
 ```
 
-or, 
+or,
 
 ```ruby
 PaperTrail.request.enabled = false
@@ -543,7 +570,7 @@ It would be better to install your own callback and use
 
 The `widget.paper_trail.without_versioning` method was removed in v10, without
 an exact replacement. To disable versioning, use the [Per Class](#per-class) or
-[Per HTTP Request](#per-http-request) methods. 
+[Per HTTP Request](#per-http-request) methods.
 
 ### 2.e. Limiting the Number of Versions Created
 
@@ -617,8 +644,8 @@ previous and next versions.
 ```ruby
 widget = Widget.find 42
 version = widget.versions[-2]    # assuming widget has several versions
-previous = version.previous
-next = version.next
+previous_version = version.previous
+next_version = version.next
 ```
 
 You can find out which of an item's versions yours is:
@@ -999,7 +1026,6 @@ end
 
 Overriding (instead of configuring) the `versions` method is not supported.
 Overriding associations is not recommended in general.
-
 
 ### 5.c. Generators
 
