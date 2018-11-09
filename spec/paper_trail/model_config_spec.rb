@@ -5,25 +5,21 @@ require "spec_helper"
 module PaperTrail
   ::RSpec.describe ModelConfig do
     describe "has_paper_trail" do
-      describe "passing an abstract class to class_name" do
-        it "raises an error" do
-          expect {
-            Class.new(ActiveRecord::Base) do
-              has_paper_trail class_name: "AbstractVersion"
-            end
-          }.to raise_error(
-            /use concrete \(not abstract\) version models/
-          )
-        end
-      end
-
       describe "versions:" do
-        it "name can be passed instead of an options hash" do
+        it "name can be passed instead of an options hash", :deprecated do
+          allow(::ActiveSupport::Deprecation).to receive(:warn)
           klass = Class.new(ActiveRecord::Base) do
             has_paper_trail versions: :drafts
           end
           expect(klass.reflect_on_association(:drafts)).to be_a(
             ActiveRecord::Reflection::HasManyReflection
+          )
+          expect(::ActiveSupport::Deprecation).to have_received(:warn).once.with(
+            %(Passing versions association name as `has_paper_trail versions: :drafts` is ) +
+            %(deprecated. Use `has_paper_trail versions: {name: :drafts}` instead.),
+            array_including(
+              /#{__FILE__}:/
+            )
           )
         end
         it "name can be passed in the options hash" do
@@ -32,6 +28,14 @@ module PaperTrail
           end
           expect(klass.reflect_on_association(:drafts)).to be_a(
             ActiveRecord::Reflection::HasManyReflection
+          )
+        end
+        it "class_name can be passed in the options hash" do
+          klass = Class.new(ActiveRecord::Base) do
+            has_paper_trail versions: { class_name: "NoObjectVersion" }
+          end
+          expect(klass.reflect_on_association(:versions).options[:class_name]).to eq(
+            "NoObjectVersion"
           )
         end
         it "allows any option that has_many supports" do
@@ -54,6 +58,38 @@ module PaperTrail
             end
           }.to raise_error(
             /Unknown key: :read_my_mind. Valid keys are: .*:class_name,/
+          )
+        end
+
+        describe "passing an abstract class to class_name" do
+          it "raises an error" do
+            expect {
+              Class.new(ActiveRecord::Base) do
+                has_paper_trail versions: { class_name: "AbstractVersion" }
+              end
+            }.to raise_error(
+              /use concrete \(not abstract\) version models/
+            )
+          end
+        end
+      end
+
+      describe "class_name:" do
+        it "can be used instead of versions: {class_name: ...}", :deprecated do
+          allow(::ActiveSupport::Deprecation).to receive(:warn)
+          klass = Class.new(ActiveRecord::Base) do
+            has_paper_trail class_name: "NoObjectVersion"
+          end
+          expect(klass.reflect_on_association(:versions).options[:class_name]).to eq(
+            "NoObjectVersion"
+          )
+          expect(::ActiveSupport::Deprecation).to have_received(:warn).once.with(
+            %(Passing Version class name as `has_paper_trail class_name: "NoObjectVersion"` ) +
+            %(is deprecated. Use `has_paper_trail versions: {class_name: "NoObjectVersion"}` ) +
+            %(instead.),
+            array_including(
+              /#{__FILE__}:/
+            )
           )
         end
       end
