@@ -138,10 +138,7 @@ module PaperTrail
       # @api public
       @model_class.send :attr_accessor, @model_class.version_association_name
 
-      # @api private - `version_class_name` - However, `rails_admin` has been
-      # using it since 2014 (see `rails_admin/extensions/paper_trail/auditing_adapter.rb`,
-      # https://github.com/sferik/rails_admin/commit/959e1bd4e47e0369d264b58bbbe972ff863767cd)
-      # In PR _____ () we ask them to use `paper_trail_options` instead.
+      # @api private - `version_class_name`
       @model_class.class_attribute :version_class_name
       @model_class.version_class_name = options[:class_name] || "PaperTrail::Version"
 
