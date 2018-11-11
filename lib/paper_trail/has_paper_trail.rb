@@ -24,8 +24,8 @@ module PaperTrail
       #
       # - :on - The events to track (optional; defaults to all of them). Set
       #   to an array of `:create`, `:update`, `:destroy` as desired.
-      # - :class_name - The name of a custom Version class.  This class should
-      #   inherit from `PaperTrail::Version`.
+      # - :class_name (deprecated) - The name of a custom Version class that
+      #   includes `PaperTrail::VersionConcern`.
       # - :ignore - An array of attributes for which a new `Version` will not be
       #   created if only they change. It can also aceept a Hash as an
       #   argument where the key is the attribute to ignore (a `String` or
@@ -47,13 +47,15 @@ module PaperTrail
       #   are called with `self`, i.e. the model with the paper trail).  See
       #   `PaperTrail::Controller.info_for_paper_trail` for how to store data
       #   from the controller.
-      # - :versions - The name to use for the versions association.  Default
-      #   is `:versions`.
+      # - :versions - Either,
+      #   - A String (deprecated) - The name to use for the versions
+      #     association.  Default is `:versions`.
+      #   - A Hash - options passed to `has_many`, plus `name:` and `scope:`.
       # - :version - The name to use for the method which returns the version
       #   the instance was reified from. Default is `:version`.
       #
-      # If you are using the experimental `paper_trail-association_tracking` gem
-      # it may accept additional options.
+      # Plugins like the experimental `paper_trail-association_tracking` gem
+      # may accept additional options.
       #
       # @api public
       def has_paper_trail(options = {})
