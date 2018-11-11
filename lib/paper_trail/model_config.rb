@@ -167,8 +167,6 @@ module PaperTrail
       check_version_class_name(options)
       check_versions_association_name(options)
       scope = get_versions_scope(options)
-      options[:versions].assert_valid_keys(valid_keys_for_has_many)
-
       @model_class.has_many(
         @model_class.versions_association_name,
         scope,
@@ -237,20 +235,6 @@ module PaperTrail
       end
 
       @model_class.paper_trail_options[:meta] ||= {}
-    end
-
-    # @api private
-    def valid_keys_for_has_many
-      if ActiveRecord.gem_version >= Gem::Version.new("5.0")
-        ActiveRecord::Associations::Builder::HasMany.valid_options({})
-      else
-        %i[
-          after_add after_remove anonymous_class as autosave before_add
-          before_remove class_name counter_cache dependent extend foreign_key
-          foreign_type inverse_of join_table primary_key source source_type
-          table_name through validate
-        ]
-      end
     end
   end
 end
