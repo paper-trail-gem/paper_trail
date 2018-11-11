@@ -21,11 +21,12 @@ module PaperTrail
     DPR_PASSING_ASSOC_NAME_DIRECTLY_TO_VERSIONS_OPTION = <<~STR.squish
       Passing versions association name as `has_paper_trail versions: %{versions_name}`
       is deprecated. Use `has_paper_trail versions: {name: %{versions_name}}` instead.
+      The hash you pass to `versions:` is now passed directly to `has_many`.
     STR
     DPR_CLASS_NAME_OPTION = <<~STR.squish
       Passing Version class name as `has_paper_trail class_name: %{class_name}`
       is deprecated. Use `has_paper_trail versions: {class_name: %{class_name}}`
-      instead.
+      instead. The hash you pass to `versions:` is now passed directly to `has_many`.
     STR
 
     def initialize(model_class)
@@ -138,19 +139,27 @@ module PaperTrail
         ::ActiveRecord::Base.belongs_to_required_by_default
     end
 
-    def setup_associations(options)
-      # @api private - version_association_name
-      @model_class.class_attribute :version_association_name
-      @model_class.version_association_name = options[:version] || :version
+    def check_version_class_name(options)
+      # @api private - `version_class_name`
+      @model_class.class_attribute :version_class_name
+      if options[:class_name]
+        ::ActiveSupport::Deprecation.warn(
+          format(
+            DPR_CLASS_NAME_OPTION,
+            class_name: options[:class_name].inspect
+          ),
+          caller(1)
+        )
+        options[:versions][:class_name] = options.delete(:class_name)
+      end
+      @model_class.version_class_name = options[:versions][:class_name] || "PaperTrail::Version"
+      assert_concrete_activerecord_class(@model_class.version_class_name)
+    end
 
-      # The version this instance was reified from.
-      # @api public
-      @model_class.send :attr_accessor, @model_class.version_association_name
-
-      # @api public - paper_trail_event
-      @model_class.send :attr_accessor, :paper_trail_event
-
-      define_has_many_versions(options)
+    def check_versions_association_name(options)
+      # @api private - versions_association_name
+      @model_class.class_attribute :versions_association_name
+      @model_class.versions_association_name = options[:versions].delete(:name) || :versions
     end
 
     def define_has_many_versions(options)
@@ -187,31 +196,23 @@ module PaperTrail
       options
     end
 
-    def check_version_class_name(options)
-      # @api private - `version_class_name`
-      @model_class.class_attribute :version_class_name
-      if options[:class_name]
-        ::ActiveSupport::Deprecation.warn(
-          format(
-            DPR_CLASS_NAME_OPTION,
-            class_name: options[:class_name].inspect
-          ),
-          caller(1)
-        )
-        options[:versions][:class_name] = options.delete(:class_name)
-      end
-      @model_class.version_class_name = options[:versions][:class_name] || "PaperTrail::Version"
-      assert_concrete_activerecord_class(@model_class.version_class_name)
-    end
-
-    def check_versions_association_name(options)
-      # @api private - versions_association_name
-      @model_class.class_attribute :versions_association_name
-      @model_class.versions_association_name = options[:versions].delete(:name) || :versions
-    end
-
     def get_versions_scope(options)
       options[:versions].delete(:scope) || -> { order(model.timestamp_sort_order) }
+    end
+
+    def setup_associations(options)
+      # @api private - version_association_name
+      @model_class.class_attribute :version_association_name
+      @model_class.version_association_name = options[:version] || :version
+
+      # The version this instance was reified from.
+      # @api public
+      @model_class.send :attr_accessor, @model_class.version_association_name
+
+      # @api public - paper_trail_event
+      @model_class.send :attr_accessor, :paper_trail_event
+
+      define_has_many_versions(options)
     end
 
     def setup_callbacks_from_options(options_on = [])
