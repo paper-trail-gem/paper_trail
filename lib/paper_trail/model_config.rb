@@ -150,7 +150,7 @@ module PaperTrail
           ),
           caller(1)
         )
-        options[:versions][:class_name] = options.delete(:class_name)
+        options[:versions][:class_name] = options[:class_name]
       end
       @model_class.version_class_name = options[:versions][:class_name] || "PaperTrail::Version"
       assert_concrete_activerecord_class(@model_class.version_class_name)
@@ -159,7 +159,7 @@ module PaperTrail
     def check_versions_association_name(options)
       # @api private - versions_association_name
       @model_class.class_attribute :versions_association_name
-      @model_class.versions_association_name = options[:versions].delete(:name) || :versions
+      @model_class.versions_association_name = options[:versions][:name] || :versions
     end
 
     def define_has_many_versions(options)
@@ -172,7 +172,7 @@ module PaperTrail
         scope,
         class_name: @model_class.version_class_name,
         as: :item,
-        **options[:versions]
+        **options[:versions].except(:name, :scope)
       )
     end
 
@@ -195,7 +195,7 @@ module PaperTrail
     end
 
     def get_versions_scope(options)
-      options[:versions].delete(:scope) || -> { order(model.timestamp_sort_order) }
+      options[:versions][:scope] || -> { order(model.timestamp_sort_order) }
     end
 
     def setup_associations(options)
