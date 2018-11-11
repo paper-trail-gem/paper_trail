@@ -33,7 +33,7 @@ module Foo
   end
 
   class Document < Base
-    has_paper_trail class_name: "Foo::Version"
+    has_paper_trail versions: { class_name: "Foo::Version" }
   end
 end
 
@@ -52,7 +52,7 @@ module Bar
   end
 
   class Document < Base
-    has_paper_trail class_name: "Bar::Version"
+    has_paper_trail versions: { class_name: "Bar::Version" }
   end
 end
 

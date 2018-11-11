@@ -955,7 +955,7 @@ see https://github.com/paper-trail-gem/paper_trail/issues/594
 ### 5.b. Configuring the `versions` Association
 
 You may configure the name of the `versions` association by passing
-a different name to `has_paper_trail`.
+a different name to `has_paper_trail`:
 
 ```ruby
 class Post < ActiveRecord::Base
@@ -967,6 +967,23 @@ Post.new.versions # => NoMethodError
 
 Overriding (instead of configuring) the `versions` method is not supported.
 Overriding associations is not recommended in general.
+
+You may pass other options for the `has_many` by passing a hash of options:
+
+```ruby
+class Post < ActiveRecord::Base
+  has_paper_trail versions: {
+    name: :drafts,
+    scope: -> { order("id desc") },
+    extend: VersionsExtensions
+  }
+end
+```
+
+Refer to
+https://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html#method-i-has_many-label-Options
+for the full list of supported options for `has_many`.
+
 
 ### 5.c. Generators
 

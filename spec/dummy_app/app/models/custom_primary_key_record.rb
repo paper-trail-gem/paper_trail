@@ -5,7 +5,7 @@ require "securerandom"
 class CustomPrimaryKeyRecord < ActiveRecord::Base
   self.primary_key = :uuid
 
-  has_paper_trail class_name: "CustomPrimaryKeyRecordVersion"
+  has_paper_trail versions: { class_name: "CustomPrimaryKeyRecordVersion" }
 
   # This default_scope is to test the case of the Version#item association
   # not returning the item due to unmatched default_scope on the model.

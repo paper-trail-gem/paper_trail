@@ -9,9 +9,16 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 - None
 
+### Deprecated
+
+- [#1158](https://github.com/paper-trail-gem/paper_trail/pull/1158) — Passing association name as
+  `versions:` option or Version class name as `class_name:` options directly to `has_paper_trail`.
+  Use `has_paper_trail versions: {name: :drafts, class_name: "MyVersionModel"}` instead.
+
 ### Added
 
-- None
+- [#1158](https://github.com/paper-trail-gem/paper_trail/pull/1158) — Add the ability to pass
+  options, such as `scope` or `extend:` to the `has_many :versions` association macro.
 
 ### Fixed
 
