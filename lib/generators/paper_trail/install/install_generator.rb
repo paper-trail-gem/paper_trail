@@ -22,7 +22,6 @@ module PaperTrail
     )
 
     desc "Generates (but does not run) a migration to add a versions table." \
-         "  Also generates an initializer file for configuring PaperTrail." \
          "  See section 5.c. Generators in README.md for more information."
 
     def create_migration_file
