@@ -24,8 +24,7 @@ module PaperTrail
       desc: "Store changeset (diff) with each version"
     )
 
-    desc "Generates (but does not run) a migration to add a versions table." \
-         "  Also generates an initializer file for configuring PaperTrail"
+    desc "Generates (but does not run) a migration to add a versions table."
 
     def create_migration_file
       add_paper_trail_migration("create_versions")

@@ -100,7 +100,7 @@ has been destroyed.
 
     `gem 'paper_trail'`
 
-1. Add a `versions` table to your database and an initializer file for configuration:
+1. Add a `versions` table to your database:
 
     ```
     bundle exec rails generate paper_trail:install [--with-changes] [--with-associations]
@@ -988,7 +988,7 @@ for the full list of supported options for `has_many`.
 ### 5.c. Generators
 
 PaperTrail has one generator, `paper_trail:install`. It writes, but does not
-run, a migration file.  It also creates a PaperTrail configuration initializer.
+run, a migration file.
 The migration adds (at least) the `versions` table. The
 most up-to-date documentation for this generator can be found by running `rails
 generate paper_trail:install --help`, but a copy is included here for
@@ -1007,7 +1007,7 @@ Runtime options:
   -q, [--quiet], [--no-quiet]      # Suppress status output
   -s, [--skip], [--no-skip]        # Skip files that already exist
 
-Generates (but does not run) a migration to add a versions table.  Also generates an initializer file for configuring PaperTrail
+Generates (but does not run) a migration to add a versions table.
 ```
 
 ### 5.d. Protected Attributes
