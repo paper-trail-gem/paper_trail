@@ -2,8 +2,8 @@
 
 class Thing < ActiveRecord::Base
   has_paper_trail versions: {
-    extend: PrefixVersionsInspectWithCount,
-    scope: -> { order("id desc") }
+    scope: -> { order("id desc") },
+    extend: PrefixVersionsInspectWithCount
   }
 
   if ActiveRecord.gem_version >= Gem::Version.new("5.0")

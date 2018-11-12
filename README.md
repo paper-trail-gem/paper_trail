@@ -954,35 +954,51 @@ see https://github.com/paper-trail-gem/paper_trail/issues/594
 
 ### 5.b. Configuring the `versions` Association
 
-You may configure the name of the `versions` association by passing
-a different name to `has_paper_trail`:
+You may configure the name of the `versions` association by passing a different
+name (default is `:versions`) in the `versions:` options hash:
 
 ```ruby
 class Post < ActiveRecord::Base
-  has_paper_trail class_name: 'Version', versions: :drafts
+  has_paper_trail versions: {
+    name: :drafts
+  }
 end
 
 Post.new.versions # => NoMethodError
 ```
 
-Overriding (instead of configuring) the `versions` method is not supported.
-Overriding associations is not recommended in general.
+You may pass a
+[scope](https://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html#method-i-has_many-label-Scopes)
+to the `versions` association with the `scope:` option:
+```ruby
+class Post < ActiveRecord::Base
+  has_paper_trail versions: {
+    scope: -> { order("id desc") }
+  }
 
-You may pass other options for the `has_many` by passing a hash of options:
+  # Equivalent to:
+  has_many :versions,
+    -> { order("id desc") },
+    class_name: 'PaperTrail::Version',
+    as: :item
+end
+```
+
+Any other [options supported by
+`has_many`](https://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html#method-i-has_many-label-Options)
+can be passed along to the `has_many` macro via the `versions:` options hash.
 
 ```ruby
 class Post < ActiveRecord::Base
   has_paper_trail versions: {
-    name: :drafts,
-    scope: -> { order("id desc") },
-    extend: VersionsExtensions
+    extend: VersionsExtensions,
+    autosave: false
   }
 end
 ```
 
-Refer to
-https://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html#method-i-has_many-label-Options
-for the full list of supported options for `has_many`.
+Overriding (instead of configuring) the `versions` method is not supported.
+Overriding associations is not recommended in general.
 
 
 ### 5.c. Generators
@@ -1045,7 +1061,9 @@ class PostVersion < PaperTrail::Version
 end
 
 class Post < ActiveRecord::Base
-  has_paper_trail class_name: 'PostVersion'
+  has_paper_trail versions: {
+    class_name: 'PostVersion'
+  }
 end
 ```
 
@@ -1091,8 +1109,8 @@ model.  For example:
 
 ```ruby
 class Post < ActiveRecord::Base
-  has_paper_trail versions: :paper_trail_versions,
-                  version:  :paper_trail_version
+  has_paper_trail versions: { name: :paper_trail_versions },
+                  version:          :paper_trail_version
 
   # Existing versions method.  We don't want to clash.
   def versions
