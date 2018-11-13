@@ -23,18 +23,18 @@ module PaperTrail
       # Options:
       #
       # - :on - The events to track (optional; defaults to all of them). Set
-      #   to an array of `:create`, `:update`, `:destroy` as desired.
+      #   to an array of `:create`, `:update`, `:destroy` and `:touch` as desired.
       # - :class_name (deprecated) - The name of a custom Version class that
       #   includes `PaperTrail::VersionConcern`.
       # - :ignore - An array of attributes for which a new `Version` will not be
-      #   created if only they change. It can also aceept a Hash as an
+      #   created if only they change. It can also accept a Hash as an
       #   argument where the key is the attribute to ignore (a `String` or
       #   `Symbol`), which will only be ignored if the value is a `Proc` which
       #   returns truthily.
       # - :if, :unless - Procs that allow to specify conditions when to save
       #   versions for an object.
       # - :only - Inverse of `ignore`. A new `Version` will be created only
-      #   for these attributes if supplied it can also aceept a Hash as an
+      #   for these attributes if supplied it can also accept a Hash as an
       #   argument where the key is the attribute to track (a `String` or
       #   `Symbol`), which will only be counted if the value is a `Proc` which
       #   returns truthily.
@@ -57,9 +57,15 @@ module PaperTrail
       # Plugins like the experimental `paper_trail-association_tracking` gem
       # may accept additional options.
       #
+      # You can define a default set of options via the configurable
+      # `PaperTrail.config.has_paper_trail_defaults` hash in your applications
+      # initializer. The hash can contain any of the following options and will
+      # provide an overridable default for all models.
+      #
       # @api public
       def has_paper_trail(options = {})
-        paper_trail.setup(options)
+        defaults = PaperTrail.config.has_paper_trail_defaults
+        paper_trail.setup(defaults.merge(options))
       end
 
       # @api public
