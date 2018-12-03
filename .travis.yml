@@ -26,6 +26,9 @@ env:
 # the meantime.
 sudo: required
 
+before_install:
+  - gem update bundler
+
 gemfile:
   - gemfiles/ar_4.2.gemfile
   - gemfiles/ar_5.1.gemfile
