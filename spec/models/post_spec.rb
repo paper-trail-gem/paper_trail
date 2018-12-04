@@ -7,7 +7,7 @@ RSpec.describe Post, type: :model, versioning: true do
   it "inserts records into the correct table, post_versions" do
     post = Post.create
     expect(PostVersion.count).to(eq(1))
-    post.update_attributes(content: "Some new content")
+    post.update(content: "Some new content")
     expect(PostVersion.count).to(eq(2))
     expect(PaperTrail::Version.count).to(eq(0))
   end
@@ -28,7 +28,7 @@ RSpec.describe Post, type: :model, versioning: true do
   describe "#changeset" do
     it "returns nil because the object_changes column doesn't exist" do
       post = Post.create
-      post.update_attributes(content: "Some new content")
+      post.update(content: "Some new content")
       expect(post.versions.last.changeset).to(be_nil)
     end
   end

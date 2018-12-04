@@ -14,7 +14,7 @@ RSpec.describe Article, type: :model, versioning: true do
   context "which updates an ignored column" do
     it "not change the number of versions" do
       article = described_class.create
-      article.update_attributes(title: "My first title")
+      article.update(title: "My first title")
       expect(PaperTrail::Version.count).to(eq(1))
     end
   end
@@ -22,7 +22,7 @@ RSpec.describe Article, type: :model, versioning: true do
   context "which updates an ignored column with truly Proc" do
     it "not change the number of versions" do
       article = described_class.create
-      article.update_attributes(abstract: "ignore abstract")
+      article.update(abstract: "ignore abstract")
       expect(PaperTrail::Version.count).to(eq(1))
     end
   end
@@ -30,7 +30,7 @@ RSpec.describe Article, type: :model, versioning: true do
   context "which updates an ignored column with falsy Proc" do
     it "change the number of versions" do
       article = described_class.create
-      article.update_attributes(abstract: "do not ignore abstract!")
+      article.update(abstract: "do not ignore abstract!")
       expect(PaperTrail::Version.count).to(eq(2))
     end
   end
@@ -38,7 +38,7 @@ RSpec.describe Article, type: :model, versioning: true do
   context "which updates an ignored column, ignored with truly Proc and a selected column" do
     it "change the number of versions" do
       article = described_class.create
-      article.update_attributes(
+      article.update(
         title: "My first title",
         content: "Some text here.",
         abstract: "ignore abstract"
@@ -49,7 +49,7 @@ RSpec.describe Article, type: :model, versioning: true do
 
     it "have stored only non-ignored attributes" do
       article = described_class.create
-      article.update_attributes(
+      article.update(
         title: "My first title",
         content: "Some text here.",
         abstract: "ignore abstract"
@@ -62,7 +62,7 @@ RSpec.describe Article, type: :model, versioning: true do
   context "which updates an ignored column, ignored with falsy Proc and a selected column" do
     it "change the number of versions" do
       article = described_class.create
-      article.update_attributes(
+      article.update(
         title: "My first title",
         content: "Some text here.",
         abstract: "do not ignore abstract"
@@ -73,7 +73,7 @@ RSpec.describe Article, type: :model, versioning: true do
 
     it "stores only non-ignored attributes" do
       article = described_class.create
-      article.update_attributes(
+      article.update(
         title: "My first title",
         content: "Some text here.",
         abstract: "do not ignore abstract"
@@ -89,7 +89,7 @@ RSpec.describe Article, type: :model, versioning: true do
   context "which updates a selected column" do
     it "change the number of versions" do
       article = described_class.create
-      article.update_attributes(content: "Some text here.")
+      article.update(content: "Some text here.")
       expect(PaperTrail::Version.count).to(eq(2))
       expect(article.versions.size).to(eq(2))
     end
@@ -98,7 +98,7 @@ RSpec.describe Article, type: :model, versioning: true do
   context "which updates a non-ignored and non-selected column" do
     it "not change the number of versions" do
       article = described_class.create
-      article.update_attributes(abstract: "Other abstract")
+      article.update(abstract: "Other abstract")
       expect(PaperTrail::Version.count).to(eq(1))
     end
   end
@@ -106,7 +106,7 @@ RSpec.describe Article, type: :model, versioning: true do
   context "which updates a skipped column" do
     it "not change the number of versions" do
       article = described_class.create
-      article.update_attributes(file_upload: "Your data goes here")
+      article.update(file_upload: "Your data goes here")
       expect(PaperTrail::Version.count).to(eq(1))
     end
   end
@@ -114,7 +114,7 @@ RSpec.describe Article, type: :model, versioning: true do
   context "which updates a skipped column and a selected column" do
     it "change the number of versions" do
       article = described_class.create
-      article.update_attributes(
+      article.update(
         file_upload: "Your data goes here",
         content: "Some text here."
       )
@@ -123,7 +123,7 @@ RSpec.describe Article, type: :model, versioning: true do
 
     it "show the new version in the model's `versions` association" do
       article = described_class.create
-      article.update_attributes(
+      article.update(
         file_upload: "Your data goes here",
         content: "Some text here."
       )
@@ -132,7 +132,7 @@ RSpec.describe Article, type: :model, versioning: true do
 
     it "have stored only non-skipped attributes" do
       article = described_class.create
-      article.update_attributes(
+      article.update(
         file_upload: "Your data goes here",
         content: "Some text here."
       )
@@ -144,11 +144,11 @@ RSpec.describe Article, type: :model, versioning: true do
     context "and when updated again" do
       it "have removed the skipped attributes when saving the previous version" do
         article = described_class.create
-        article.update_attributes(
+        article.update(
           file_upload: "Your data goes here",
           content: "Some text here."
         )
-        article.update_attributes(
+        article.update(
           file_upload: "More data goes here",
           content: "More text here."
         )
@@ -160,11 +160,11 @@ RSpec.describe Article, type: :model, versioning: true do
 
       it "have kept the non-skipped attributes in the previous version" do
         article = described_class.create
-        article.update_attributes(
+        article.update(
           file_upload: "Your data goes here",
           content: "Some text here."
         )
-        article.update_attributes(
+        article.update(
           file_upload: "More data goes here",
           content: "More text here."
         )

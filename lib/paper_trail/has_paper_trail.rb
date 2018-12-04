@@ -23,18 +23,18 @@ module PaperTrail
       # Options:
       #
       # - :on - The events to track (optional; defaults to all of them). Set
-      #   to an array of `:create`, `:update`, `:destroy` as desired.
-      # - :class_name - The name of a custom Version class.  This class should
-      #   inherit from `PaperTrail::Version`.
+      #   to an array of `:create`, `:update`, `:destroy` and `:touch` as desired.
+      # - :class_name (deprecated) - The name of a custom Version class that
+      #   includes `PaperTrail::VersionConcern`.
       # - :ignore - An array of attributes for which a new `Version` will not be
-      #   created if only they change. It can also aceept a Hash as an
+      #   created if only they change. It can also accept a Hash as an
       #   argument where the key is the attribute to ignore (a `String` or
       #   `Symbol`), which will only be ignored if the value is a `Proc` which
       #   returns truthily.
       # - :if, :unless - Procs that allow to specify conditions when to save
       #   versions for an object.
       # - :only - Inverse of `ignore`. A new `Version` will be created only
-      #   for these attributes if supplied it can also aceept a Hash as an
+      #   for these attributes if supplied it can also accept a Hash as an
       #   argument where the key is the attribute to track (a `String` or
       #   `Symbol`), which will only be counted if the value is a `Proc` which
       #   returns truthily.
@@ -47,20 +47,25 @@ module PaperTrail
       #   are called with `self`, i.e. the model with the paper trail).  See
       #   `PaperTrail::Controller.info_for_paper_trail` for how to store data
       #   from the controller.
-      # - :versions - The name to use for the versions association.  Default
-      #   is `:versions`.
+      # - :versions - Either,
+      #   - A String (deprecated) - The name to use for the versions
+      #     association.  Default is `:versions`.
+      #   - A Hash - options passed to `has_many`, plus `name:` and `scope:`.
       # - :version - The name to use for the method which returns the version
       #   the instance was reified from. Default is `:version`.
-      # - :join_tables - If the model has a has_and_belongs_to_many relation
-      #   with an unpapertrailed model, passing the name of the association to
-      #   the join_tables option will paper trail the join table but not save
-      #   the other model, allowing reification of the association but with the
-      #   other models latest state (if the other model is paper trailed, this
-      #   option does nothing)
+      #
+      # Plugins like the experimental `paper_trail-association_tracking` gem
+      # may accept additional options.
+      #
+      # You can define a default set of options via the configurable
+      # `PaperTrail.config.has_paper_trail_defaults` hash in your applications
+      # initializer. The hash can contain any of the following options and will
+      # provide an overridable default for all models.
       #
       # @api public
       def has_paper_trail(options = {})
-        paper_trail.setup(options)
+        defaults = PaperTrail.config.has_paper_trail_defaults
+        paper_trail.setup(defaults.merge(options))
       end
 
       # @api public

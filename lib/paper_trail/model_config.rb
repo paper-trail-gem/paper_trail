@@ -18,6 +18,16 @@ module PaperTrail
       `abstract_class`. This is fine, but all application models must be
       configured to use concrete (not abstract) version models.
     STR
+    DPR_PASSING_ASSOC_NAME_DIRECTLY_TO_VERSIONS_OPTION = <<~STR.squish
+      Passing versions association name as `has_paper_trail versions: %{versions_name}`
+      is deprecated. Use `has_paper_trail versions: {name: %{versions_name}}` instead.
+      The hash you pass to `versions:` is now passed directly to `has_many`.
+    STR
+    DPR_CLASS_NAME_OPTION = <<~STR.squish
+      Passing Version class name as `has_paper_trail class_name: %{class_name}`
+      is deprecated. Use `has_paper_trail versions: {class_name: %{class_name}}`
+      instead. The hash you pass to `versions:` is now passed directly to `has_many`.
+    STR
 
     def initialize(model_class)
       @model_class = model_class
@@ -129,6 +139,65 @@ module PaperTrail
         ::ActiveRecord::Base.belongs_to_required_by_default
     end
 
+    def check_version_class_name(options)
+      # @api private - `version_class_name`
+      @model_class.class_attribute :version_class_name
+      if options[:class_name]
+        ::ActiveSupport::Deprecation.warn(
+          format(
+            DPR_CLASS_NAME_OPTION,
+            class_name: options[:class_name].inspect
+          ),
+          caller(1)
+        )
+        options[:versions][:class_name] = options[:class_name]
+      end
+      @model_class.version_class_name = options[:versions][:class_name] || "PaperTrail::Version"
+      assert_concrete_activerecord_class(@model_class.version_class_name)
+    end
+
+    def check_versions_association_name(options)
+      # @api private - versions_association_name
+      @model_class.class_attribute :versions_association_name
+      @model_class.versions_association_name = options[:versions][:name] || :versions
+    end
+
+    def define_has_many_versions(options)
+      options = ensure_versions_option_is_hash(options)
+      check_version_class_name(options)
+      check_versions_association_name(options)
+      scope = get_versions_scope(options)
+      @model_class.has_many(
+        @model_class.versions_association_name,
+        scope,
+        class_name: @model_class.version_class_name,
+        as: :item,
+        **options[:versions].except(:name, :scope)
+      )
+    end
+
+    def ensure_versions_option_is_hash(options)
+      unless options[:versions].is_a?(Hash)
+        if options[:versions]
+          ::ActiveSupport::Deprecation.warn(
+            format(
+              DPR_PASSING_ASSOC_NAME_DIRECTLY_TO_VERSIONS_OPTION,
+              versions_name: options[:versions].inspect
+            ),
+            caller(1)
+          )
+        end
+        options[:versions] = {
+          name: options[:versions]
+        }
+      end
+      options
+    end
+
+    def get_versions_scope(options)
+      options[:versions][:scope] || -> { order(model.timestamp_sort_order) }
+    end
+
     def setup_associations(options)
       # @api private - version_association_name
       @model_class.class_attribute :version_association_name
@@ -138,29 +207,10 @@ module PaperTrail
       # @api public
       @model_class.send :attr_accessor, @model_class.version_association_name
 
-      # @api private - `version_class_name` - However, `rails_admin` has been
-      # using it since 2014 (see `rails_admin/extensions/paper_trail/auditing_adapter.rb`,
-      # https://github.com/sferik/rails_admin/commit/959e1bd4e47e0369d264b58bbbe972ff863767cd)
-      # In PR _____ () we ask them to use `paper_trail_options` instead.
-      @model_class.class_attribute :version_class_name
-      @model_class.version_class_name = options[:class_name] || "PaperTrail::Version"
-
-      # @api private - versions_association_name
-      @model_class.class_attribute :versions_association_name
-      @model_class.versions_association_name = options[:versions] || :versions
-
       # @api public - paper_trail_event
       @model_class.send :attr_accessor, :paper_trail_event
 
-      assert_concrete_activerecord_class(@model_class.version_class_name)
-
-      # @api public
-      @model_class.has_many(
-        @model_class.versions_association_name,
-        -> { order(model.timestamp_sort_order) },
-        class_name: @model_class.version_class_name,
-        as: :item
-      )
+      define_has_many_versions(options)
     end
 
     def setup_callbacks_from_options(options_on = [])
@@ -170,9 +220,10 @@ module PaperTrail
     end
 
     def setup_options(options)
-      # @api public - paper_trail_options - Let's encourage plugins to use
-      # eg. `paper_trail_options[:class_name]` rather than `version_class_name`
-      # because the former is documented and the latter is not.
+      # @api public - paper_trail_options - Let's encourage plugins to use eg.
+      # `paper_trail_options[:versions][:class_name]` rather than
+      # `version_class_name` because the former is documented and the latter is
+      # not.
       @model_class.class_attribute :paper_trail_options
       @model_class.paper_trail_options = options.dup
 

@@ -93,13 +93,13 @@ RSpec.describe(::PaperTrail, versioning: true) do
     context "and then updated with changes" do
       it "have three previous versions" do
         widget = Widget.create(name: "Henry")
-        widget.update_attributes(name: "Harry")
+        widget.update(name: "Harry")
         expect(widget.versions.length).to(eq(2))
       end
 
       it "be available in its previous version" do
         widget = Widget.create(name: "Henry")
-        widget.update_attributes(name: "Harry")
+        widget.update(name: "Harry")
         expect(widget.name).to(eq("Harry"))
         expect(widget.versions.last.object).not_to(be_nil)
         reified_widget = widget.versions.last.reify
@@ -109,19 +109,19 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
       it "have the same ID in its previous version" do
         widget = Widget.create(name: "Henry")
-        widget.update_attributes(name: "Harry")
+        widget.update(name: "Harry")
         expect(widget.versions.last.reify.id).to(eq(widget.id))
       end
 
       it "record the correct event" do
         widget = Widget.create(name: "Henry")
-        widget.update_attributes(name: "Harry")
+        widget.update(name: "Harry")
         expect(widget.versions.last.event).to(match(/update/i))
       end
 
       it "have versions that are not live" do
         widget = Widget.create(name: "Henry")
-        widget.update_attributes(name: "Harry")
+        widget.update(name: "Harry")
         widget.versions.map(&:reify).compact.each do |v|
           expect(v.paper_trail).not_to be_live
         end
@@ -129,7 +129,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
       it "have stored changes" do
         widget = Widget.create(name: "Henry")
-        widget.update_attributes(name: "Harry")
+        widget.update(name: "Harry")
         last_obj_changes = widget.versions.last.object_changes
         actual = PaperTrail.serializer.load(last_obj_changes).reject do |k, _v|
           (k.to_sym == :updated_at)
@@ -141,7 +141,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
       it "return changes with indifferent access" do
         widget = Widget.create(name: "Henry")
-        widget.update_attributes(name: "Harry")
+        widget.update(name: "Harry")
         expect(widget.versions.last.changeset[:name]).to(eq(%w[Henry Harry]))
         expect(widget.versions.last.changeset["name"]).to(eq(%w[Henry Harry]))
       end
@@ -149,7 +149,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
       context "and has one associated object" do
         it "not copy the has_one association by default when reifying" do
           widget = Widget.create(name: "Henry")
-          widget.update_attributes(name: "Harry")
+          widget.update(name: "Harry")
           wotsit = widget.create_wotsit name: "John"
           reified_widget = widget.versions.last.reify
           expect(reified_widget.wotsit).to eq(wotsit)
@@ -158,7 +158,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
         it "copy the has_one association when reifying with :has_one => true" do
           widget = Widget.create(name: "Henry")
-          widget.update_attributes(name: "Harry")
+          widget.update(name: "Harry")
           wotsit = widget.create_wotsit name: "John"
           reified_widget = widget.versions.last.reify(has_one: true)
           expect(reified_widget.wotsit).to(be_nil)
@@ -169,7 +169,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
       context "and has many associated objects" do
         it "copy the has_many associations when reifying" do
           widget = Widget.create(name: "Henry")
-          widget.update_attributes(name: "Harry")
+          widget.update(name: "Harry")
           widget.fluxors.create(name: "f-zero")
           widget.fluxors.create(name: "f-one")
           reified_widget = widget.versions.last.reify
@@ -183,7 +183,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
       context "and has many associated polymorphic objects" do
         it "copy the has_many associations when reifying" do
           widget = Widget.create(name: "Henry")
-          widget.update_attributes(name: "Harry")
+          widget.update(name: "Harry")
           widget.whatchamajiggers.create(name: "f-zero")
           widget.whatchamajiggers.create(name: "f-zero")
           reified_widget = widget.versions.last.reify
@@ -197,7 +197,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
       context "polymorphic objects by themselves" do
         it "not fail with a nil pointer on the polymorphic association" do
           widget = Widget.create(name: "Henry")
-          widget.update_attributes(name: "Harry")
+          widget.update(name: "Harry")
           widget = Whatchamajigger.new(name: "f-zero")
           widget.save!
         end
@@ -206,14 +206,14 @@ RSpec.describe(::PaperTrail, versioning: true) do
       context "and then destroyed" do
         it "record the correct event" do
           widget = Widget.create(name: "Henry")
-          widget.update_attributes(name: "Harry")
+          widget.update(name: "Harry")
           widget.destroy
           expect(PaperTrail::Version.last.event).to(match(/destroy/i))
         end
 
         it "have three previous versions" do
           widget = Widget.create(name: "Henry")
-          widget.update_attributes(name: "Harry")
+          widget.update(name: "Harry")
           widget.destroy
           expect(PaperTrail::Version.with_item_keys("Widget", widget.id).length).to(eq(3))
         end
@@ -221,7 +221,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
         describe "#attributes" do
           it "returns the expected attributes for the reified widget" do
             widget = Widget.create(name: "Henry")
-            widget.update_attributes(name: "Harry")
+            widget.update(name: "Harry")
             widget.destroy
             reified_widget = PaperTrail::Version.last.reify
             expect(reified_widget.id).to eq(widget.id)
@@ -249,7 +249,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
         it "be re-creatable from its previous version" do
           widget = Widget.create(name: "Henry")
-          widget.update_attributes(name: "Harry")
+          widget.update(name: "Harry")
           widget.destroy
           reified_widget = PaperTrail::Version.last.reify
           expect(reified_widget.save).to(be_truthy)
@@ -257,7 +257,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
         it "restore its associations on its previous version" do
           widget = Widget.create(name: "Henry")
-          widget.update_attributes(name: "Harry")
+          widget.update(name: "Harry")
           widget.fluxors.create(name: "flux")
           widget.destroy
           reified_widget = PaperTrail::Version.last.reify
@@ -267,7 +267,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
         it "have nil item for last version" do
           widget = Widget.create(name: "Henry")
-          widget.update_attributes(name: "Harry")
+          widget.update(name: "Harry")
           widget.destroy
           expect(widget.versions.last.item).to be_nil
         end
@@ -306,7 +306,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
         a_date: @date,
         a_boolean: true
       )
-      @widget.update_attributes(
+      @widget.update(
         name: nil,
         a_text: nil,
         an_integer: nil,
@@ -389,7 +389,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
       after { PaperTrail.enabled = true }
 
       context "when updated" do
-        before { @widget.update_attributes(name: "Beeblebrox") }
+        before { @widget.update(name: "Beeblebrox") }
 
         it "not add to its trail" do
           expect(@widget.versions.length).to(eq(@count))
@@ -408,7 +408,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
       end
 
       context "when updated" do
-        before { @widget.update_attributes(name: "Beeblebrox") }
+        before { @widget.update(name: "Beeblebrox") }
 
         it "not add to its trail" do
           expect(@widget.versions.length).to(eq(@count))
@@ -421,7 +421,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
         end
 
         context "when updated" do
-          before { @widget.update_attributes(name: "Ford") }
+          before { @widget.update(name: "Ford") }
 
           it "add to its trail" do
             expect(@widget.versions.length).to(eq((@count + 1)))
@@ -451,7 +451,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
       context "when a record is updated" do
         before do
           PaperTrail.request.whodunnit = "Bob"
-          @widget.update_attributes(name: "Rivet")
+          @widget.update(name: "Rivet")
           @version = @widget.versions.last
         end
 
@@ -480,23 +480,23 @@ RSpec.describe(::PaperTrail, versioning: true) do
     end
   end
 
-  it "update_attributes! records timestamps" do
+  it "update! records timestamps" do
     wotsit = Wotsit.create!(name: "wotsit")
-    wotsit.update_attributes!(name: "changed")
+    wotsit.update!(name: "changed")
     reified = wotsit.versions.last.reify
     expect(reified.created_at).not_to(be_nil)
     expect(reified.updated_at).not_to(be_nil)
   end
 
-  it "update_attributes! does not raise error" do
+  it "update! does not raise error" do
     wotsit = Wotsit.create!(name: "name1")
-    expect { wotsit.update_attributes!(name: "name2") }.not_to(raise_error)
+    expect { wotsit.update!(name: "name2") }.not_to(raise_error)
   end
 
   context "A subclass" do
     before do
       @foo = FooWidget.create
-      @foo.update_attributes!(name: "Foo")
+      @foo.update!(name: "Foo")
     end
 
     it "reify with the correct type" do
@@ -527,8 +527,8 @@ RSpec.describe(::PaperTrail, versioning: true) do
   context "An item with versions" do
     before do
       @widget = Widget.create(name: "Widget")
-      @widget.update_attributes(name: "Fidget")
-      @widget.update_attributes(name: "Digit")
+      @widget.update(name: "Fidget")
+      @widget.update(name: "Digit")
     end
 
     context "which were created over time" do
@@ -536,9 +536,9 @@ RSpec.describe(::PaperTrail, versioning: true) do
         @created = 2.days.ago
         @first_update = 1.day.ago
         @second_update = 1.hour.ago
-        @widget.versions[0].update_attributes(created_at: @created)
-        @widget.versions[1].update_attributes(created_at: @first_update)
-        @widget.versions[2].update_attributes(created_at: @second_update)
+        @widget.versions[0].update(created_at: @created)
+        @widget.versions[1].update(created_at: @first_update)
+        @widget.versions[2].update(created_at: @second_update)
         @widget.update_attribute(:updated_at, @second_update)
       end
 
@@ -590,9 +590,9 @@ RSpec.describe(::PaperTrail, versioning: true) do
         @created = 30.days.ago
         @first_update = 15.days.ago
         @second_update = 1.day.ago
-        @widget.versions[0].update_attributes(created_at: @created)
-        @widget.versions[1].update_attributes(created_at: @first_update)
-        @widget.versions[2].update_attributes(created_at: @second_update)
+        @widget.versions[0].update(created_at: @created)
+        @widget.versions[1].update(created_at: @first_update)
+        @widget.versions[2].update(created_at: @second_update)
         @widget.update_attribute(:updated_at, @second_update)
       end
 
@@ -676,7 +676,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
       context "and updated" do
         before do
-          @article.update_attributes!(content: "Better text.", title: "Rhubarb")
+          @article.update!(content: "Better text.", title: "Rhubarb")
         end
 
         it "store fixed meta data" do
@@ -722,7 +722,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
     before do
       widget = Widget.create(name: "Bob")
       %w[Tom Dick Jane].each do |name|
-        widget.update_attributes(name: name)
+        widget.update(name: name)
       end
       @version = widget.versions.last
       @widget = @version.reify
@@ -743,7 +743,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
       it "returns the object (not a Version) as it became next" do
         widget = Widget.create(name: "Bob")
         %w[Tom Dick Jane].each do |name|
-          widget.update_attributes(name: name)
+          widget.update(name: name)
         end
         second_widget = widget.versions[1].reify
         last_widget = widget.versions.last.reify
@@ -758,7 +758,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
         expect(widget.paper_trail.next_version).to(be_nil)
         widget.save
         %w[Tom Dick Jane].each do |name|
-          widget.update_attributes(name: name)
+          widget.update(name: name)
         end
         expect(widget.paper_trail.next_version).to(be_nil)
       end
@@ -770,7 +770,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
       it "returns the object (not a Version) as it was most recently" do
         widget = Widget.create(name: "Bob")
         %w[Tom Dick Jane].each do |name|
-          widget.update_attributes(name: name)
+          widget.update(name: name)
         end
         second_widget = widget.versions[1].reify
         last_widget = widget.versions.last.reify
@@ -785,7 +785,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
         expect(widget.paper_trail.previous_version).to(be_nil)
         widget.save
         %w[Tom Dick Jane].each do |name|
-          widget.update_attributes(name: name)
+          widget.update(name: name)
         end
         expect(widget.paper_trail.previous_version.name).to(eq(widget.versions.last.reify.name))
       end
@@ -843,7 +843,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
   context "the default accessor, length=, is overwritten" do
     it "returns overwritten value on reified instance" do
       song = Song.create(length: 4)
-      song.update_attributes(length: 5)
+      song.update(length: 5)
       expect(song.length).to(eq(5))
       expect(song.versions.last.reify.length).to(eq(4))
     end
@@ -852,7 +852,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
   context "song name is a virtual attribute (no such db column)" do
     it "returns overwritten virtual attribute on the reified instance" do
       song = Song.create(length: 4)
-      song.update_attributes(length: 5)
+      song.update(length: 5)
       song.name = "Good Vibrations"
       song.save
       song.name = "Yellow Submarine"

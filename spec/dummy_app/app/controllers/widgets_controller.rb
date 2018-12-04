@@ -12,7 +12,7 @@ class WidgetsController < ApplicationController
 
   def update
     @widget = Widget.find params[:id]
-    @widget.update_attributes widget_params
+    @widget.update widget_params
     head :ok
   end
 

@@ -10,7 +10,7 @@ module PaperTrail
     include Singleton
 
     E_PT_AT_REMOVED = <<-EOS.squish
-      Association Tracking for PaperTrail has been extracted to a seperate gem.
+      Association Tracking for PaperTrail has been extracted to a separate gem.
       To use it, please add `paper_trail-association_tracking` to your Gemfile.
       If you don't use it (most people don't, that's the default) and you set
       `track_associations = false` somewhere (probably a rails initializer) you
@@ -21,7 +21,8 @@ module PaperTrail
       :association_reify_error_behaviour,
       :object_changes_adapter,
       :serializer,
-      :version_limit
+      :version_limit,
+      :has_paper_trail_defaults
     )
 
     def initialize
@@ -31,6 +32,7 @@ module PaperTrail
 
       # Variables which affect all threads, whose access is *not* synchronized.
       @serializer = PaperTrail::Serializers::YAML
+      @has_paper_trail_defaults = {}
     end
 
     # Indicates whether PaperTrail is on or off. Default: true.

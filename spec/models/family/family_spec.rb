@@ -10,7 +10,7 @@ module Family
           parent = described_class.new(name: "parent1")
           parent.children.build(name: "child1")
           parent.save!
-          parent.update_attributes!(
+          parent.update!(
             name: "parent2",
             children_attributes: { id: parent.children.first.id, name: "child2" }
           )
@@ -64,7 +64,7 @@ module Family
           parent = described_class.new(name: "parent1")
           parent.build_mentee(name: "partner1")
           parent.save!
-          parent.update_attributes(
+          parent.update(
             name: "parent2",
             mentee_attributes: { id: parent.mentee.id, name: "partner2" }
           )

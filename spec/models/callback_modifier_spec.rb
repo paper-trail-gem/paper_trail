@@ -47,7 +47,7 @@ RSpec.describe CallbackModifier, type: :model, versioning: true do
 
     it "creates a version" do
       modifier = UpdateModifier.create!(some_content: FFaker::Lorem.sentence)
-      modifier.update_attributes! some_content: "modified"
+      modifier.update! some_content: "modified"
       expect(modifier.versions.last.event).to eq "update"
     end
   end
@@ -78,7 +78,7 @@ RSpec.describe CallbackModifier, type: :model, versioning: true do
 
     it "tracks update" do
       modifier = DefaultModifier.create!(some_content: FFaker::Lorem.sentence)
-      modifier.update_attributes! some_content: "modified"
+      modifier.update! some_content: "modified"
       expect(modifier.versions.last.event).to eq "update"
     end
 
@@ -91,7 +91,7 @@ RSpec.describe CallbackModifier, type: :model, versioning: true do
   context "when only one callback-method" do
     it "does only track the corresponding event" do
       modifier = CreateModifier.create!(some_content: FFaker::Lorem.sentence)
-      modifier.update_attributes!(some_content: "modified")
+      modifier.update!(some_content: "modified")
       modifier.test_destroy
       expect(modifier.versions.collect(&:event)).to eq ["create"]
     end
