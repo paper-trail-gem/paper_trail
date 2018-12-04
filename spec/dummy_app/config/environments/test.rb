@@ -10,7 +10,7 @@ Dummy::Application.configure do
   config.cache_classes = true
 
   # Eager loads all registered namespaces
-  config.eager_load = true
+  config.eager_load = false
 
   if config.respond_to?(:public_file_server)
     config.public_file_server.enabled = true
