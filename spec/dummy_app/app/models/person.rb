@@ -44,20 +44,15 @@ class Person < ActiveRecord::Base
     end
   end
 
-  if ActiveRecord.gem_version > Gem::Version.new("5.2")
-    require_relative "../lib/time_zone"
-    attribute :time_zone, ::ActiveModel::Type::TimeZone.new
-  else
-    # Convert strings to TimeZone objects when assigned
-    def time_zone=(value)
-      if value.is_a? ActiveSupport::TimeZone
-        super
-      else
-        zone = ::Time.find_zone(value) # nil if can't find time zone
-        super zone
-      end
+  # Convert strings to TimeZone objects when assigned
+  def time_zone=(value)
+    if value.is_a? ActiveSupport::TimeZone
+      super
+    else
+      zone = ::Time.find_zone(value) # nil if can't find time zone
+      super zone
     end
-
-    serialize :time_zone, TimeZoneSerializer.new
   end
+
+  serialize :time_zone, TimeZoneSerializer.new
 end
