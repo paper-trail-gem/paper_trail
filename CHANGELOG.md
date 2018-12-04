@@ -3,7 +3,21 @@
 This project follows [semver 2.0.0](http://semver.org/spec/v2.0.0.html) and the
 recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
-## 10.1.0 (Unreleased)
+## Unreleased
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- None
+
+## 10.1.0 (2018-12-04)
 
 ### Breaking Changes
 
@@ -24,7 +38,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
   ability to pass options, such as `scope` or `extend:` to the `has_many
   :versions` association macro.
 - [#1172](https://github.com/paper-trail-gem/paper_trail/pull/1172) -
-  Support rails 6.0.0 alpha.
+  Support rails 6.0.0.alpha
 
 ### Fixed
 
