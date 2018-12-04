@@ -29,7 +29,7 @@ module PaperTrail
       private
 
       def active_record_pre_502?
-        ::ActiveRecord.version < Gem::Version.new("5.0.2")
+        ::ActiveRecord.gem_version < Gem::Version.new("5.0.2")
       end
 
       def serialize_with_ar(array)
