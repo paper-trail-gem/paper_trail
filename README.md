@@ -83,8 +83,8 @@ has been destroyed.
 | paper_trail    | branch     | ruby     | activerecord  |
 | -------------- | ---------- | -------- | ------------- |
 | unreleased     | master     | >= 2.3.0 | >= 4.2, < 6   |
-| 10             | 10-stable  | >= 2.3.0 | >= 4.2, < 6   |
-| 9              | 9-stable   | >= 2.3.0 | >= 4.2, < 6   |
+| 10             | 10-stable  | >= 2.3.0 | >= 4.2, < 5.3 |
+| 9              | 9-stable   | >= 2.3.0 | >= 4.2, < 5.3 |
 | 8              | 8-stable   | >= 2.2.0 | >= 4.2, < 5.2 |
 | 7              | 7-stable   | >= 2.1.0 | >= 4.0, < 5.2 |
 | 6              | 6-stable   | >= 1.9.3 | >= 4.0, < 5.2 |
@@ -167,7 +167,7 @@ widget.name                                 # 'Doobly'
 # Add has_paper_trail to Widget model.
 
 widget.versions                             # []
-widget.update_attributes name: 'Wotsit'
+widget.update name: 'Wotsit'
 widget.versions.last.reify.name             # 'Doobly'
 widget.versions.last.event                  # 'update'
 ```
@@ -333,11 +333,11 @@ a = Article.create
 a.versions.size                           # 1
 a.versions.last.event                     # 'create'
 a.paper_trail_event = 'update title'
-a.update_attributes title: 'My Title'
+a.update title: 'My Title'
 a.versions.size                           # 2
 a.versions.last.event                     # 'update title'
 a.paper_trail_event = nil
-a.update_attributes title: 'Alternate'
+a.update title: 'Alternate'
 a.versions.size                           # 3
 a.versions.last.event                     # 'update'
 ```
@@ -414,9 +414,9 @@ Changes to other attributes will create a version record.
 ```ruby
 a = Article.create
 a.versions.length                         # 1
-a.update_attributes title: 'My Title', rating: 3
+a.update title: 'My Title', rating: 3
 a.versions.length                         # 1
-a.update_attributes title: 'Greeting', content: 'Hello'
+a.update title: 'Greeting', content: 'Hello'
 a.versions.length                         # 2
 a.paper_trail.previous_version.title      # 'My Title'
 ```
@@ -436,9 +436,9 @@ Only changes to the `title` will create a version record.
 ```ruby
 a = Article.create
 a.versions.length                         # 1
-a.update_attributes title: 'My Title'
+a.update title: 'My Title'
 a.versions.length                         # 2
-a.update_attributes content: 'Hello'
+a.update content: 'Hello'
 a.versions.length                         # 2
 a.paper_trail.previous_version.content    # nil
 ```
@@ -457,14 +457,14 @@ will create a version record.
 ```ruby
 a = Article.create
 a.versions.length                         # 1
-a.update_attributes content: 'Hello'
+a.update content: 'Hello'
 a.versions.length                         # 2
-a.update_attributes title: 'Title One'
+a.update title: 'Title One'
 a.versions.length                         # 3
-a.update_attributes content: 'Hai'
+a.update content: 'Hai'
 a.versions.length                         # 3
 a.paper_trail.previous_version.content    # "Hello"
-a.update_attributes title: 'Title Two'
+a.update title: 'Title Two'
 a.versions.length                         # 4
 a.paper_trail.previous_version.content    # "Hai"
 ```
@@ -592,7 +592,7 @@ PaperTrail makes reverting to a previous version easy:
 
 ```ruby
 widget = Widget.find 42
-widget.update_attributes name: 'Blah blah'
+widget.update name: 'Blah blah'
 # Time passes....
 widget = widget.paper_trail.previous_version  # the widget as it was before the update
 widget.save                                   # reverted
@@ -707,7 +707,7 @@ widget.versions.last.changeset
 #   "updated_at"=>[nil, 2015-08-10 04:10:40 UTC],
 #   "id"=>[nil, 1]
 # }
-widget.update_attributes name: 'Robert'
+widget.update name: 'Robert'
 widget.versions.last.changeset
 # {
 #   "name"=>["Bob", "Robert"],
@@ -770,7 +770,7 @@ version's `whodunnit` column.
 
 ```ruby
 PaperTrail.request.whodunnit = 'Andy Stewart'
-widget.update_attributes name: 'Wibble'
+widget.update name: 'Wibble'
 widget.versions.last.whodunnit # Andy Stewart
 ```
 
@@ -795,7 +795,7 @@ To set whodunnit temporarily, for the duration of a block, use
 
 ```ruby
 PaperTrail.request(whodunnit: 'Dorian Marié') do
-  widget.update_attributes name: 'Wibble'
+  widget.update name: 'Wibble'
 end
 ```
 
@@ -839,10 +839,10 @@ like it does, call `paper_trail_originator` on the object.
 ```ruby
 widget = Widget.find 153                    # assume widget has 0 versions
 PaperTrail.request.whodunnit = 'Alice'
-widget.update_attributes name: 'Yankee'
+widget.update name: 'Yankee'
 widget.paper_trail.originator               # 'Alice'
 PaperTrail.request.whodunnit = 'Bob'
-widget.update_attributes name: 'Zulu'
+widget.update name: 'Zulu'
 widget.paper_trail.originator               # 'Bob'
 first_version, last_version = widget.versions.first, widget.versions.last
 first_version.whodunnit                     # 'Alice'
@@ -1413,9 +1413,9 @@ The `have_a_version_with` matcher makes assertions about versions using
 ```ruby
 describe '`have_a_version_with` matcher' do
   it 'is possible to do assertions on version attributes' do
-    widget.update_attributes!(name: 'Leonard', an_integer: 1)
-    widget.update_attributes!(name: 'Tom')
-    widget.update_attributes!(name: 'Bob')
+    widget.update!(name: 'Leonard', an_integer: 1)
+    widget.update!(name: 'Tom')
+    widget.update!(name: 'Bob')
     expect(widget).to have_a_version_with name: 'Leonard', an_integer: 1
     expect(widget).to have_a_version_with an_integer: 1
     expect(widget).to have_a_version_with name: 'Tom'
@@ -1430,9 +1430,9 @@ The `have_a_version_with_changes` matcher makes assertions about versions using
 ```ruby
 describe '`have_a_version_with_changes` matcher' do
   it 'is possible to do assertions on version changes' do
-    widget.update_attributes!(name: 'Leonard', an_integer: 1)
-    widget.update_attributes!(name: 'Tom')
-    widget.update_attributes!(name: 'Bob')
+    widget.update!(name: 'Leonard', an_integer: 1)
+    widget.update!(name: 'Tom')
+    widget.update!(name: 'Bob')
     expect(widget).to have_a_version_with_changes name: 'Leonard', an_integer: 2
     expect(widget).to have_a_version_with_changes an_integer: 2
     expect(widget).to have_a_version_with_changes name: 'Bob'

@@ -15,11 +15,11 @@ RSpec.describe Pet, type: :model, versioning: true do
 
     person.pets << Pet.create(animal: dog)
     person.pets << Pet.create(animal: cat)
-    person.update_attributes(name: "Steve")
+    person.update(name: "Steve")
 
-    dog.update_attributes(name: "Beethoven")
-    cat.update_attributes(name: "Sylvester")
-    person.update_attributes(name: "Peter")
+    dog.update(name: "Beethoven")
+    cat.update(name: "Sylvester")
+    person.update(name: "Peter")
 
     expect(person.reload.versions.length).to(eq(3))
 
@@ -50,9 +50,9 @@ RSpec.describe Pet, type: :model, versioning: true do
 
     before do
       # This line runs the `let` for :cat, creating two entries
-      cat.update_attributes(name: "Sylvester")   # Index 1 - second
-      cat.update_attributes(name: "Cheshire")    # Index 2 - third
-      cat.destroy                                # Index 3 - fourth
+      cat.update(name: "Sylvester")   # Index 1 - second
+      cat.update(name: "Cheshire")    # Index 2 - third
+      cat.destroy # Index 3 - fourth
 
       # Prior to PR#1143 a subclassed version's item_subtype would be nil.  In order to simulate
       # an entry having been made in the old way, set one of the item_subtype entries to be nil

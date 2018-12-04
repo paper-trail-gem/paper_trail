@@ -7,7 +7,7 @@ module PaperTrail
     describe ".creates" do
       it "returns only create events" do
         animal = Animal.create(name: "Foo")
-        animal.update_attributes(name: "Bar")
+        animal.update(name: "Bar")
         expect(described_class.creates.pluck(:event)).to eq(["create"])
       end
     end
@@ -15,7 +15,7 @@ module PaperTrail
     describe ".updates" do
       it "returns only update events" do
         animal = Animal.create
-        animal.update_attributes(name: "Animal")
+        animal.update(name: "Animal")
         expect(described_class.updates.pluck(:event)).to eq(["update"])
       end
     end
@@ -31,7 +31,7 @@ module PaperTrail
     describe ".not_creates" do
       it "returns all versions except create events" do
         animal = Animal.create
-        animal.update_attributes(name: "Animal")
+        animal.update(name: "Animal")
         animal.destroy
         expect(
           described_class.not_creates.pluck(:event)
@@ -44,7 +44,7 @@ module PaperTrail
         it "returns all versions that were created after the timestamp" do
           animal = Animal.create
           2.times do
-            animal.update_attributes(name: FFaker::Lorem.word)
+            animal.update(name: FFaker::Lorem.word)
           end
           value = described_class.subsequent(1.hour.ago, true)
           expect(value).to eq(animal.versions.to_a)
@@ -58,7 +58,7 @@ module PaperTrail
         it "grab the timestamp from the version and use that as the value" do
           animal = Animal.create
           2.times do
-            animal.update_attributes(name: FFaker::Lorem.word)
+            animal.update(name: FFaker::Lorem.word)
           end
           expect(described_class.subsequent(animal.versions.first)).to eq(
             animal.versions.to_a.drop(1)
@@ -72,7 +72,7 @@ module PaperTrail
         it "returns all versions that were created before the timestamp" do
           animal = Animal.create
           2.times do
-            animal.update_attributes(name: FFaker::Lorem.word)
+            animal.update(name: FFaker::Lorem.word)
           end
           value = described_class.preceding(5.seconds.from_now, true)
           expect(value).to eq(animal.versions.reverse)
@@ -86,7 +86,7 @@ module PaperTrail
         it "grab the timestamp from the version and use that as the value" do
           animal = Animal.create
           2.times do
-            animal.update_attributes(name: FFaker::Lorem.word)
+            animal.update(name: FFaker::Lorem.word)
           end
           expect(described_class.preceding(animal.versions.last)).to eq(
             animal.versions.to_a.tap(&:pop).reverse

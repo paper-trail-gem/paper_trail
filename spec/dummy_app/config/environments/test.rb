@@ -9,8 +9,11 @@ Dummy::Application.configure do
   # and recreated between test runs. Don't rely on the data there!
   config.cache_classes = true
 
-  # Eager loads all registered namespaces
-  config.eager_load = true
+  # In Rails 6.0, rails/rails@3b95478 made a change to eagerly define attribute
+  # methods of a Model when `eager_load` is enabled. If we used `eager_load`,
+  # this would break our test suite because of the way we run migration. For
+  # example, `People.attribute_names` would return an empty array.
+  config.eager_load = false
 
   if config.respond_to?(:public_file_server)
     config.public_file_server.enabled = true

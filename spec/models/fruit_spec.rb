@@ -10,7 +10,7 @@ if ENV["DB"] == "postgres" || JsonVersion.table_exists?
         # so that's why were testing the have_a_version_with_changes matcher
         # here.
         banana = Fruit.create!(color: "Red", name: "Banana")
-        banana.update_attributes!(color: "Yellow")
+        banana.update!(color: "Yellow")
         expect(banana).to have_a_version_with_changes(color: "Yellow")
         expect(banana).not_to have_a_version_with_changes(color: "Pink")
         expect(banana).not_to have_a_version_with_changes(color: "Yellow", name: "Kiwi")

@@ -21,10 +21,10 @@ module On
       end
     end
 
-    describe "#update_attributes" do
+    describe "#update" do
       it "does not create any version records" do
         record = described_class.create(name: "Alice")
-        record.update_attributes(name: "blah")
+        record.update(name: "blah")
         expect(record.versions.length).to(eq(0))
       end
     end

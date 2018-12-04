@@ -8,7 +8,7 @@ RSpec.describe Car, type: :model do
   describe "changeset", versioning: true do
     it "has the expected keys (see issue 738)" do
       car = Car.create!(name: "Alice")
-      car.update_attributes(name: "Bob")
+      car.update(name: "Bob")
       assert_includes car.versions.last.changeset.keys, "name"
     end
   end

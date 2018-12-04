@@ -11,9 +11,9 @@ RSpec.describe Widget, type: :model do
 
   describe "`have_a_version_with` matcher", versioning: true do
     before do
-      widget.update_attributes!(name: "Leonard", an_integer: 1)
-      widget.update_attributes!(name: "Tom")
-      widget.update_attributes!(name: "Bob")
+      widget.update!(name: "Leonard", an_integer: 1)
+      widget.update!(name: "Tom")
+      widget.update!(name: "Bob")
     end
 
     it "is possible to do assertions on version attributes" do
@@ -40,7 +40,7 @@ RSpec.describe Widget, type: :model do
   describe "Callbacks", versioning: true do
     describe "before_save" do
       it "resets value for timestamp attrs for update so that value gets updated properly" do
-        widget.update_attributes!(name: "Foobar")
+        widget.update!(name: "Foobar")
         w = widget.versions.last.reify
         expect { w.save! }.to change(w, :updated_at)
       end
@@ -56,7 +56,7 @@ RSpec.describe Widget, type: :model do
 
     describe "after_update" do
       before do
-        widget.update_attributes!(name: "Foobar", updated_at: Time.now + 1.week)
+        widget.update!(name: "Foobar", updated_at: Time.now + 1.week)
       end
 
       it "clears the `versions_association_name` virtual attribute" do
@@ -90,8 +90,8 @@ RSpec.describe Widget, type: :model do
       before do
         begin
           widget.transaction do
-            widget.update_attributes!(name: rolled_back_name)
-            widget.update_attributes!(name: Widget::EXCLUDED_NAME)
+            widget.update!(name: rolled_back_name)
+            widget.update!(name: Widget::EXCLUDED_NAME)
           end
         rescue ActiveRecord::RecordInvalid
           widget.reload
@@ -125,8 +125,8 @@ RSpec.describe Widget, type: :model do
   if defined?(ActiveRecord::IdentityMap) && ActiveRecord::IdentityMap.respond_to?(:without)
     describe "IdentityMap", versioning: true do
       it "does not clobber the IdentityMap when reifying" do
-        widget.update_attributes name: "Henry", created_at: Time.now - 1.day
-        widget.update_attributes name: "Harry"
+        widget.update name: "Henry", created_at: Time.now - 1.day
+        widget.update name: "Harry"
         allow(ActiveRecord::IdentityMap).to receive(:without)
         widget.versions.last.reify
         expect(ActiveRecord::IdentityMap).to have_receive(:without).once
@@ -182,24 +182,24 @@ RSpec.describe Widget, type: :model do
         expect(widget.paper_trail).to be_live
         expect(widget.paper_trail.originator).to eq(orig_name)
         ::PaperTrail.request(whodunnit: new_name) {
-          widget.update_attributes(name: "Elizabeth")
+          widget.update(name: "Elizabeth")
         }
         expect(widget.paper_trail.originator).to eq(new_name)
       end
 
       it "returns the appropriate originator" do
-        widget.update_attributes(name: "Andy")
+        widget.update(name: "Andy")
         PaperTrail.request.whodunnit = new_name
-        widget.update_attributes(name: "Elizabeth")
+        widget.update(name: "Elizabeth")
         reified_widget = widget.versions[1].reify
         expect(reified_widget.paper_trail.originator).to eq(orig_name)
         expect(reified_widget).not_to be_new_record
       end
 
       it "can create a new instance with options[:dup]" do
-        widget.update_attributes(name: "Andy")
+        widget.update(name: "Andy")
         PaperTrail.request.whodunnit = new_name
-        widget.update_attributes(name: "Elizabeth")
+        widget.update(name: "Elizabeth")
         reified_widget = widget.versions[1].reify(dup: true)
         expect(reified_widget.paper_trail.originator).to eq(orig_name)
         expect(reified_widget).to be_new_record
@@ -250,7 +250,7 @@ RSpec.describe Widget, type: :model do
     it "creates a version record" do
       widget = Widget.create
       assert_equal 1, widget.versions.length
-      widget.update_attributes(name: "Bugle")
+      widget.update(name: "Bugle")
       assert_equal 2, widget.versions.length
     end
   end
