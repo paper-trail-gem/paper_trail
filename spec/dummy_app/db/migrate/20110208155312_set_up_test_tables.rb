@@ -105,10 +105,11 @@ class SetUpTestTables < (
       t.integer  :version_id
       t.string   :foreign_key_name, null: false
       t.integer  :foreign_key_id
+      t.string   :foreign_type, null: false
     end
     add_index :version_associations, [:version_id]
     add_index :version_associations,
-      %i[foreign_key_name foreign_key_id],
+      %i[foreign_key_name foreign_key_id foreign_type],
       name: "index_version_associations_on_foreign_key"
 
     create_table :post_versions, force: true do |t|
