@@ -6,8 +6,7 @@ cache: bundler
 # ruby 2.5.0 has just been released, then we test 2.3 and 2.5, but not 2.4.
 rvm:
   - 2.3.8
-  - 2.4.5
-  - 2.5.3
+  - 2.6.0
 
 env:
   global:
@@ -36,16 +35,12 @@ gemfile:
   - gemfiles/ar_6.0.gemfile
 matrix:
   exclude:
-    # rails 6 will not support ruby < 2.4.1
+    # rails 6 requires ruby >= 2.5.0
     - rvm: 2.3.8
       gemfile: gemfiles/ar_6.0.gemfile
-    # optimization: don't test intermediate rubies (see above)
-    - rvm: 2.4.5
+    # rails 4.2 is not compatible with ruby 2.6? raises ThreadError
+    - rvm: 2.6.0
       gemfile: gemfiles/ar_4.2.gemfile
-    - rvm: 2.4.5
-      gemfile: gemfiles/ar_5.1.gemfile
-    - rvm: 2.4.5
-      gemfile: gemfiles/ar_5.2.gemfile
   fast_finish: true
 addons:
   postgresql: "9.4"
