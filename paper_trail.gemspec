@@ -36,11 +36,11 @@ has been destroyed.
   s.add_development_dependency "ffaker", "~> 2.8"
   s.add_development_dependency "generator_spec", "~> 0.9.4"
   s.add_development_dependency "mysql2", "~> 0.5.2"
-  s.add_development_dependency "paper_trail-association_tracking", "< 2"
+  s.add_development_dependency "paper_trail-association_tracking", "< 1.1"
   s.add_development_dependency "pg", "~> 1.0"
   s.add_development_dependency "rake", "~> 12.3"
   s.add_development_dependency "rspec-rails", "~> 3.8"
-  s.add_development_dependency "rubocop", "~> 0.58.2"
+  s.add_development_dependency "rubocop", "~> 0.62.0"
   s.add_development_dependency "rubocop-rspec", "~> 1.28.0"
   s.add_development_dependency "sqlite3", "~> 1.3"
 end

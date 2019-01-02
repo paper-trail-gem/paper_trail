@@ -27,6 +27,10 @@ Layout/AlignParameters:
 Layout/DotPosition:
   EnforcedStyle: trailing
 
+# Avoid blank lines inside methods. They are a sign that the method is too big.
+Layout/EmptyLineAfterGuardClause:
+  Enabled: false
+
 Layout/IndentHeredoc:
   Exclude:
     - paper_trail.gemspec
