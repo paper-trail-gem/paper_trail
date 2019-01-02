@@ -284,7 +284,6 @@ Syntax example: (options described in detail later)
 
 ```ruby
 # config/initializers/paper_trail.rb
-PaperTrail.config.enabled = true
 PaperTrail.config.has_paper_trail_defaults = {
   on: %i[create update destroy]
 }
@@ -292,9 +291,14 @@ PaperTrail.config.version_limit = 3
 ````
 
 These options are intended to be set only once, during app initialization (eg.
-in `config/initializers`). It is unsafe to change them while the app is running.
+in `config/initializers` or in an environment-specific configuration file such as
+`config/environments/test.rb`). It is unsafe to change them while the app is running.
 In contrast, `PaperTrail.request` has various options that only apply to a
 single HTTP request and thus are safe to use while the app is running.
+
+Note that `PaperTrails.config.enabled` will be overwritten if it is set within
+`config/initializers`. For more information, see
+[Turning PaperTrail Off](#2d-turning-papertrail-off) below.
 
 ## 2. Limiting What is Versioned, and When
 
@@ -502,6 +506,11 @@ PaperTrail.enabled = false
 
 **Do not use this in production** unless you have a good understanding of
 threads vs. processes.
+
+Also note that PaperTrail can only be disabled globally during or after
+environment-specific initialization. In other words, changes to
+`PaperTrail.enabled` (or its alias `PaperTrail.config.enabled`) in
+`config/initializers` will be overwritten.
 
 A legitimate use case is to speed up tests. See [Testing](#7-testing) below.
 
