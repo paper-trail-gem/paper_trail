@@ -106,16 +106,9 @@ module PaperTrail
         (changed_in_latest_version - ignore) - skip
       end
 
-      # Rails 5.1 changed the API of `ActiveRecord::Dirty`. See
-      # https://github.com/paper-trail-gem/paper_trail/pull/899
-      #
       # @api private
       def changed_in_latest_version
-        if @in_after_callback && RAILS_GTE_5_1
-          @record.saved_changes.keys
-        else
-          @record.changed
-        end
+        changes_in_latest_version.keys
       end
 
       # @api private
