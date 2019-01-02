@@ -22,12 +22,17 @@ module PaperTrail
           data[:object] = recordable_object(false)
         end
         if record_object_changes?
-          # Rails' implementation returns nothing on destroy :/
-          changes = @record.attributes.map { |attr, value| [attr, [value, nil]] }.to_h
-          data[:object_changes] = prepare_object_changes(changes)
+          data[:object_changes] = prepare_object_changes(notable_changes)
         end
         merge_item_subtype_into(data)
         merge_metadata_into(data)
+      end
+
+      private
+
+      # Rails' implementation returns nothing on destroy :/
+      def changes_in_latest_version
+        @record.attributes.map { |attr, value| [attr, [value, nil]] }.to_h
       end
     end
   end
