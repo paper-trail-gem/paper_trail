@@ -30,7 +30,10 @@ module PaperTrail
 
       private
 
-      # Rails' implementation returns nothing on destroy :/
+      # Rails' implementation (eg. `@record.saved_changes`) returns nothing on
+      # destroy, so we have to build the hash we want.
+      #
+      # @override
       def changes_in_latest_version
         @record.attributes.map { |attr, value| [attr, [value, nil]] }.to_h
       end
