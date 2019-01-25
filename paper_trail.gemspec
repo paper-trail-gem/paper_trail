@@ -28,7 +28,7 @@ has been destroyed.
   s.required_ruby_version = ">= 2.3.0"
 
   # Rails does not follow semver, makes breaking changes in minor versions.
-  s.add_dependency "activerecord", [">= 4.2", "< 6.0"]
+  s.add_dependency "activerecord", [">= 4.2", "< 6.1"]
   s.add_dependency "request_store", "~> 1.1"
 
   s.add_development_dependency "appraisal", "~> 2.2"
