@@ -12,6 +12,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 ### Added
 
 - Support ruby 2.6.0
+- [#1182](https://github.com/paper-trail-gem/paper_trail/pull/1182) -
+  Support rails 6.0.0.beta1
 
 ### Fixed
 
