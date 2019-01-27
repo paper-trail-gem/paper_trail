@@ -125,6 +125,10 @@ module PaperTrail
   end
 end
 
+# We use the `on_load` "hook" instead of `ActiveRecord::Base.include` because we
+# don't want to cause all of AR to be autloaded yet. See
+# https://guides.rubyonrails.org/engines.html#what-are-on-load-hooks-questionmark
+# to learn more about `on_load`.
 ActiveSupport.on_load(:active_record) do
   include PaperTrail::Model
 end
