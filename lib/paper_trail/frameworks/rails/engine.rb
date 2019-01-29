@@ -6,11 +6,10 @@ module PaperTrail
     class Engine < ::Rails::Engine
       DPR_CONFIG_ENABLED = <<~EOS.squish.freeze
         The rails configuration option config.paper_trail.enabled is deprecated.
-        Please use PaperTrail.enabled= instead. We are *considering* removing
-        this config option because people were getting confused that PT has
-        both, specifically regarding *when* each was happening. See
-        https://github.com/paper-trail-gem/paper_trail/pull/1176 to participate
-        in the discussion.
+        Please use PaperTrail.enabled= instead. People were getting confused
+        that PT has both, specifically regarding *when* each was happening. If
+        you'd like to keep config.paper_trail, join the discussion at
+        https://github.com/paper-trail-gem/paper_trail/pull/1176
       EOS
       private_constant :DPR_CONFIG_ENABLED
       DPR_RUDELY_ENABLING = <<~EOS.squish.freeze
