@@ -12,6 +12,7 @@ module PaperTrail
         https://github.com/paper-trail-gem/paper_trail/pull/1176 to participate
         in the discussion.
       EOS
+      private_constant :DPR_CONFIG_ENABLED
       DPR_RUDELY_ENABLING = <<~EOS.squish.freeze
         At some point early in the rails boot process, you have set
         PaperTrail.enabled = false. PT's rails engine is now overriding your
@@ -21,6 +22,7 @@ module PaperTrail
         your setting. See
         https://github.com/paper-trail-gem/paper_trail/pull/1176 for discussion.
       EOS
+      private_constant :DPR_RUDELY_ENABLING
 
       paths["app/models"] << "lib/paper_trail/frameworks/active_record/models"
 
