@@ -48,6 +48,17 @@ module PaperTrail
           end
         end
       end
+
+      describe "#nonskipped_attributes_before_change", versioning: true do
+        subject { event.send(:nonskipped_attributes_before_change, false) }
+
+        let(:event) { PaperTrail::Events::Base.new(skipper, false) }
+        let(:skipper) { Skipper.create!(another_timestamp: Time.now) }
+
+        it do
+          is_expected.not_to have_key("another_timestamp")
+        end
+      end
     end
   end
 end

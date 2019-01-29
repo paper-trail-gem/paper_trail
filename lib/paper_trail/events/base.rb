@@ -59,8 +59,10 @@ module PaperTrail
       end
 
       # @api private
-      def attributes_before_change(is_touch)
-        Hash[@record.attributes.map do |k, v|
+      def nonskipped_attributes_before_change(is_touch)
+        record_attributes = @record.attributes.except(*@record.paper_trail_options[:skip])
+
+        Hash[record_attributes.map do |k, v|
           if @record.class.column_names.include?(k)
             [k, attribute_in_previous_version(k, is_touch)]
           else
@@ -217,8 +219,7 @@ module PaperTrail
       #
       # @api private
       def object_attrs_for_paper_trail(is_touch)
-        attrs = attributes_before_change(is_touch).
-          except(*@record.paper_trail_options[:skip])
+        attrs = nonskipped_attributes_before_change(is_touch)
         AttributeSerializers::ObjectAttribute.new(@record.class).serialize(attrs)
         attrs
       end
