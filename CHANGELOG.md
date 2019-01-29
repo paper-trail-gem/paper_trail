@@ -20,6 +20,11 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 - [#1177](https://github.com/paper-trail-gem/paper_trail/pull/1177) -
   Do not store ignored and skipped attributes in `object_changes` on destroy.
 
+### Deprecated
+
+- [#1176](https://github.com/paper-trail-gem/paper_trail/pull/1176) -
+  `config.paper_trail.enabled`
+
 ## 10.1.0 (2018-12-04)
 
 ### Breaking Changes
