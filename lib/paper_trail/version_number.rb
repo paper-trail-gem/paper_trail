@@ -8,7 +8,7 @@ module PaperTrail
   # People are encouraged to use `PaperTrail.gem_version` instead.
   module VERSION
     MAJOR = 10
-    MINOR = 1
+    MINOR = 2
     TINY = 0
 
     # Set PRE to nil unless it's a pre-release (beta, rc, etc.)
