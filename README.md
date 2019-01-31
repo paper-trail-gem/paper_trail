@@ -505,13 +505,6 @@ threads vs. processes.
 
 A legitimate use case is to speed up tests. See [Testing](#7-testing) below.
 
-There is also a rails config option that does the same thing.
-
-```ruby
-# in config/environments/test.rb
-config.paper_trail.enabled = false
-```
-
 #### Per HTTP Request
 
 ```ruby
