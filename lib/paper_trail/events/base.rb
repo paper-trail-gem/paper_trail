@@ -106,38 +106,9 @@ module PaperTrail
         (changed_in_latest_version - ignore) - skip
       end
 
-      # Rails 5.1 changed the API of `ActiveRecord::Dirty`. See
-      # https://github.com/paper-trail-gem/paper_trail/pull/899
-      #
       # @api private
       def changed_in_latest_version
-        if @in_after_callback && RAILS_GTE_5_1
-          @record.saved_changes.keys
-        else
-          @record.changed
-        end
-      end
-
-      # @api private
-      def prepare_object_changes(changes)
-        changes = serialize_object_changes(changes)
-        changes = recordable_object_changes(changes)
-        changes
-      end
-
-      # @api private
-      def serialize_object_changes(changes)
-        AttributeSerializers::ObjectChangesAttribute.
-          new(@record.class).
-          serialize(changes)
-        changes.to_hash
-      end
-
-      # @api private
-      def notable_changes
-        changes_in_latest_version.delete_if { |k, _v|
-          !notably_changed.include?(k)
-        }
+        changes_in_latest_version.keys
       end
 
       # Rails 5.1 changed the API of `ActiveRecord::Dirty`. See
@@ -221,6 +192,13 @@ module PaperTrail
       end
 
       # @api private
+      def notable_changes
+        changes_in_latest_version.delete_if { |k, _v|
+          !notably_changed.include?(k)
+        }
+      end
+
+      # @api private
       def notably_changed
         only = @record.paper_trail_options[:only].dup
         # Remove Hash arguments and then evaluate whether the attributes (the
@@ -243,6 +221,13 @@ module PaperTrail
           except(*@record.paper_trail_options[:skip])
         AttributeSerializers::ObjectAttribute.new(@record.class).serialize(attrs)
         attrs
+      end
+
+      # @api private
+      def prepare_object_changes(changes)
+        changes = serialize_object_changes(changes)
+        changes = recordable_object_changes(changes)
+        changes
       end
 
       # Returns an object which can be assigned to the `object_changes`
@@ -292,6 +277,14 @@ module PaperTrail
         else
           PaperTrail.serializer.dump(object_attrs_for_paper_trail(is_touch))
         end
+      end
+
+      # @api private
+      def serialize_object_changes(changes)
+        AttributeSerializers::ObjectChangesAttribute.
+          new(@record.class).
+          serialize(changes)
+        changes.to_hash
       end
     end
   end
