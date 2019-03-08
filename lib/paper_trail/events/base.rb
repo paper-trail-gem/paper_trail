@@ -60,15 +60,28 @@ module PaperTrail
 
       # @api private
       def nonskipped_attributes_before_change(is_touch)
-        record_attributes = @record.attributes.except(*@record.paper_trail_options[:skip])
+        cache_changed_attributes do
+          record_attributes = @record.attributes.except(*@record.paper_trail_options[:skip])
 
-        Hash[record_attributes.map do |k, v|
-          if @record.class.column_names.include?(k)
-            [k, attribute_in_previous_version(k, is_touch)]
-          else
-            [k, v]
+          record_attributes.each_key do |k|
+            if @record.class.column_names.include?(k)
+              record_attributes[k] = attribute_in_previous_version(k, is_touch)
+            end
           end
-        end]
+        end
+      end
+
+      # Rails 5.1 changed the API of `ActiveRecord::Dirty`.
+      # @api private
+      def cache_changed_attributes
+        if RAILS_GTE_5_1
+          # Everything works fine as it is
+          yield
+        else
+          # Any particular call to `changed_attributes` produces the huge memory allocation.
+          # Lets use the generic AR workaround for that.
+          @record.send(:cache_changed_attributes) { yield }
+        end
       end
 
       # Rails 5.1 changed the API of `ActiveRecord::Dirty`. See
@@ -110,7 +123,8 @@ module PaperTrail
 
       # @api private
       def changed_in_latest_version
-        changes_in_latest_version.keys
+        # Memoized to reduce memory usage
+        @changed_in_latest_version ||= changes_in_latest_version.keys
       end
 
       # Rails 5.1 changed the API of `ActiveRecord::Dirty`. See
@@ -118,10 +132,13 @@ module PaperTrail
       #
       # @api private
       def changes_in_latest_version
-        if @in_after_callback && RAILS_GTE_5_1
-          @record.saved_changes
-        else
-          @record.changes
+        # Memoized to reduce memory usage
+        @changes_in_latest_version ||= begin
+          if @in_after_callback && RAILS_GTE_5_1
+            @record.saved_changes
+          else
+            @record.changes
+          end
         end
       end
 
@@ -202,16 +219,19 @@ module PaperTrail
 
       # @api private
       def notably_changed
-        only = @record.paper_trail_options[:only].dup
-        # Remove Hash arguments and then evaluate whether the attributes (the
-        # keys of the hash) should also get pushed into the collection.
-        only.delete_if do |obj|
-          obj.is_a?(Hash) &&
-            obj.each { |attr, condition|
-              only << attr if condition.respond_to?(:call) && condition.call(@record)
-            }
+        # Memoized to reduce memory usage
+        @notably_changed ||= begin
+          only = @record.paper_trail_options[:only].dup
+          # Remove Hash arguments and then evaluate whether the attributes (the
+          # keys of the hash) should also get pushed into the collection.
+          only.delete_if do |obj|
+            obj.is_a?(Hash) &&
+              obj.each { |attr, condition|
+                only << attr if condition.respond_to?(:call) && condition.call(@record)
+              }
+          end
+          only.empty? ? changed_and_not_ignored : (changed_and_not_ignored & only)
         end
-        only.empty? ? changed_and_not_ignored : (changed_and_not_ignored & only)
       end
 
       # Returns hash of attributes (with appropriate attributes serialized),
