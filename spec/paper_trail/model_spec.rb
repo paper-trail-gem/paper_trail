@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "spec_helper"
+require "support/performance_helpers"
 
 RSpec.describe(::PaperTrail, versioning: true) do
   context "a new record" do
@@ -866,6 +867,76 @@ RSpec.describe(::PaperTrail, versioning: true) do
       widget = Widget.new
       widget.destroy
       expect(widget.versions.empty?).to(eq(true))
+    end
+  end
+
+  context "Memory allocation of" do
+    let(:widget) do
+      Widget.new(
+        name: "Warble",
+        a_text: "The quick brown fox",
+        an_integer: 42,
+        a_float: 153.01,
+        a_decimal: 2.71828,
+        a_boolean: true
+      )
+    end
+
+    before do
+      # Json fields for `object` & `object_changes` attributes is most efficient way
+      # to do the things - this way we will save even more RAM, as well as will skip
+      # the whole YAML serialization
+      allow(PaperTrail::Version).to receive(:object_changes_col_is_json?).and_return(true)
+      allow(PaperTrail::Version).to receive(:object_col_is_json?).and_return(true)
+
+      # Force the loading of all lazy things like class definitions,
+      # in order to get the pure benchmark
+      version_building.call
+    end
+
+    describe "#build_version_on_create" do
+      let(:version_building) do
+        -> { widget.paper_trail.build_version_on_create(in_after_callback: false) }
+      end
+
+      it "is frugal enough" do
+        # Some time ago there was 95kbs..
+        # At the time of commit the test passes with assertion on 17kbs.
+        # Lets assert 20kbs then, to avoid flaky fails.
+        expect(&version_building).to allocate_less_than(20).kilobytes
+      end
+    end
+
+    describe "#build_version_on_update" do
+      let(:widget) do
+        super().tap do |w|
+          w.save!
+          w.attributes = {
+            name: "Dostoyevsky",
+            a_text: "The slow yellow mouse",
+            an_integer: 84,
+            a_float: 306.02,
+            a_decimal: 5.43656,
+            a_boolean: false
+          }
+        end
+      end
+      let(:version_building) do
+        lambda do
+          widget.paper_trail.build_version_on_update(
+            force: false,
+            in_after_callback: false,
+            is_touch: false
+          )
+        end
+      end
+
+      it "is frugal enough" do
+        # Some time ago there was 144kbs..
+        # At the time of commit the test passes with assertion on 27kbs.
+        # Lets assert 35kbs then, to avoid flaky fails.
+        expect(&version_building).to allocate_less_than(35).kilobytes
+      end
     end
   end
 end

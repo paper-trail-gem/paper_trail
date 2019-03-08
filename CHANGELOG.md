@@ -18,6 +18,13 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 - [#1184](https://github.com/paper-trail-gem/paper_trail/pull/1184) -
   No need to calculate previous values of skipped attributes
 
+- [#1188](https://github.com/paper-trail-gem/paper_trail/pull/1188) -
+  Optimized the memory allocations during the building of every particular
+  Version object. That can help a lot for heavy bulk processing.
+  In additional we advise to use `json[b]` DB types for `object`
+  and `object_changes` Version columns, in order to reach best possible
+  RAM performance.
+
 ## 10.2.0 (2019-01-31)
 
 ### Breaking Changes
