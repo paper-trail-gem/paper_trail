@@ -10,7 +10,7 @@
 # > https://github.com/thoughtbot/appraisal
 
 appraise "ar-4.2" do
-  gem "activerecord", "~> 4.2.10"
+  gem "activerecord", [">= 4.2.11.1", "< 4.3"] # CVE-2019-5420
   gem "database_cleaner", "~> 1.6"
 
   # not compatible with mysql2 0.5
@@ -22,17 +22,16 @@ appraise "ar-4.2" do
 end
 
 appraise "ar-5.1" do
-  gem "activerecord", "~> 5.1.5"
+  gem "activerecord", [">= 5.1.6.2", "< 5.2"] # CVE-2019-5420
   gem "rails-controller-testing", "~> 1.0.2"
 end
 
 appraise "ar-5.2" do
-  gem "activerecord", "~> 5.2.1"
+  gem "activerecord", [">= 5.2.2.1", "< 5.3"] # CVE-2019-5420
   gem "rails-controller-testing", "~> 1.0.2"
 end
 
 appraise "ar-6.0" do
-  # TODO: Use actual version number once 6.0 final is released
-  gem "activerecord", "~> 6.0.0.beta1"
+  gem "activerecord", [">= 6.0.0.beta3", "< 6.1"] # CVE-2019-5420
   gem "rails-controller-testing", "~> 1.0.3"
 end
