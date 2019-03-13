@@ -238,9 +238,14 @@ module PaperTrail
       # serialization here, using `PaperTrail.serializer`.
       #
       # @api private
+      # @param changes HashWithIndifferentAccess
       def recordable_object_changes(changes)
         if PaperTrail.config.object_changes_adapter&.respond_to?(:diff)
-          changes = PaperTrail.config.object_changes_adapter.diff(changes)
+          # We'd like to avoid the `to_hash` here, because it increases memory
+          # usage, but that would be a breaking change because
+          # `object_changes_adapter` expects a plain `Hash`, not a
+          # `HashWithIndifferentAccess`.
+          changes = PaperTrail.config.object_changes_adapter.diff(changes.to_hash)
         end
 
         if @record.class.paper_trail.version_class.object_changes_col_is_json?
@@ -285,7 +290,10 @@ module PaperTrail
         AttributeSerializers::ObjectChangesAttribute.
           new(@record.class).
           serialize(changes)
-        changes.to_hash
+
+        # We'd like to convert this `HashWithIndifferentAccess` to a plain
+        # `Hash`, but we don't, to save memory.
+        changes
       end
     end
   end
