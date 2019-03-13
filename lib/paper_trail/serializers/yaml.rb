@@ -13,6 +13,7 @@ module PaperTrail
       end
 
       def dump(object)
+        object = object.to_hash if object.is_a?(HashWithIndifferentAccess)
         ::YAML.dump object
       end
 

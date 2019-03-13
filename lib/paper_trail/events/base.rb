@@ -285,7 +285,7 @@ module PaperTrail
         AttributeSerializers::ObjectChangesAttribute.
           new(@record.class).
           serialize(changes)
-        changes.to_hash
+        changes
       end
     end
   end
