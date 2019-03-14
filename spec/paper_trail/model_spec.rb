@@ -896,7 +896,12 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
     describe "#build_version_on_create" do
       let(:version_building) do
-        -> { widget.paper_trail.build_version_on_create(in_after_callback: false) }
+        lambda do
+          widget.paper_trail.send(
+            :build_version_on_create,
+            in_after_callback: false
+          )
+        end
       end
 
       it "is frugal enough" do
@@ -923,7 +928,8 @@ RSpec.describe(::PaperTrail, versioning: true) do
       end
       let(:version_building) do
         lambda do
-          widget.paper_trail.build_version_on_update(
+          widget.paper_trail.send(
+            :build_version_on_update,
             force: false,
             in_after_callback: false,
             is_touch: false
