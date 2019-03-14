@@ -15,6 +15,20 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
+- None
+
+## 10.2.1 (2019-03-14)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
 - [#1184](https://github.com/paper-trail-gem/paper_trail/pull/1184) -
   No need to calculate previous values of skipped attributes
 - [#1188](https://github.com/paper-trail-gem/paper_trail/pull/1188) -
