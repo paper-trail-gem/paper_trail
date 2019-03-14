@@ -59,14 +59,29 @@ module PaperTrail
       end
 
       # @api private
-      def attributes_before_change(is_touch)
-        Hash[@record.attributes.map do |k, v|
-          if @record.class.column_names.include?(k)
-            [k, attribute_in_previous_version(k, is_touch)]
-          else
-            [k, v]
+      def nonskipped_attributes_before_change(is_touch)
+        cache_changed_attributes do
+          record_attributes = @record.attributes.except(*@record.paper_trail_options[:skip])
+
+          record_attributes.each_key do |k|
+            if @record.class.column_names.include?(k)
+              record_attributes[k] = attribute_in_previous_version(k, is_touch)
+            end
           end
-        end]
+        end
+      end
+
+      # Rails 5.1 changed the API of `ActiveRecord::Dirty`.
+      # @api private
+      def cache_changed_attributes
+        if RAILS_GTE_5_1
+          # Everything works fine as it is
+          yield
+        else
+          # Any particular call to `changed_attributes` produces the huge memory allocation.
+          # Lets use the generic AR workaround for that.
+          @record.send(:cache_changed_attributes) { yield }
+        end
       end
 
       # Rails 5.1 changed the API of `ActiveRecord::Dirty`. See
@@ -108,7 +123,8 @@ module PaperTrail
 
       # @api private
       def changed_in_latest_version
-        changes_in_latest_version.keys
+        # Memoized to reduce memory usage
+        @changed_in_latest_version ||= changes_in_latest_version.keys
       end
 
       # Rails 5.1 changed the API of `ActiveRecord::Dirty`. See
@@ -116,10 +132,13 @@ module PaperTrail
       #
       # @api private
       def changes_in_latest_version
-        if @in_after_callback && RAILS_GTE_5_1
-          @record.saved_changes
-        else
-          @record.changes
+        # Memoized to reduce memory usage
+        @changes_in_latest_version ||= begin
+          if @in_after_callback && RAILS_GTE_5_1
+            @record.saved_changes
+          else
+            @record.changes
+          end
         end
       end
 
@@ -200,16 +219,19 @@ module PaperTrail
 
       # @api private
       def notably_changed
-        only = @record.paper_trail_options[:only].dup
-        # Remove Hash arguments and then evaluate whether the attributes (the
-        # keys of the hash) should also get pushed into the collection.
-        only.delete_if do |obj|
-          obj.is_a?(Hash) &&
-            obj.each { |attr, condition|
-              only << attr if condition.respond_to?(:call) && condition.call(@record)
-            }
+        # Memoized to reduce memory usage
+        @notably_changed ||= begin
+          only = @record.paper_trail_options[:only].dup
+          # Remove Hash arguments and then evaluate whether the attributes (the
+          # keys of the hash) should also get pushed into the collection.
+          only.delete_if do |obj|
+            obj.is_a?(Hash) &&
+              obj.each { |attr, condition|
+                only << attr if condition.respond_to?(:call) && condition.call(@record)
+              }
+          end
+          only.empty? ? changed_and_not_ignored : (changed_and_not_ignored & only)
         end
-        only.empty? ? changed_and_not_ignored : (changed_and_not_ignored & only)
       end
 
       # Returns hash of attributes (with appropriate attributes serialized),
@@ -217,8 +239,7 @@ module PaperTrail
       #
       # @api private
       def object_attrs_for_paper_trail(is_touch)
-        attrs = attributes_before_change(is_touch).
-          except(*@record.paper_trail_options[:skip])
+        attrs = nonskipped_attributes_before_change(is_touch)
         AttributeSerializers::ObjectAttribute.new(@record.class).serialize(attrs)
         attrs
       end
@@ -237,9 +258,14 @@ module PaperTrail
       # serialization here, using `PaperTrail.serializer`.
       #
       # @api private
+      # @param changes HashWithIndifferentAccess
       def recordable_object_changes(changes)
         if PaperTrail.config.object_changes_adapter&.respond_to?(:diff)
-          changes = PaperTrail.config.object_changes_adapter.diff(changes)
+          # We'd like to avoid the `to_hash` here, because it increases memory
+          # usage, but that would be a breaking change because
+          # `object_changes_adapter` expects a plain `Hash`, not a
+          # `HashWithIndifferentAccess`.
+          changes = PaperTrail.config.object_changes_adapter.diff(changes.to_hash)
         end
 
         if @record.class.paper_trail.version_class.object_changes_col_is_json?
@@ -284,7 +310,10 @@ module PaperTrail
         AttributeSerializers::ObjectChangesAttribute.
           new(@record.class).
           serialize(changes)
-        changes.to_hash
+
+        # We'd like to convert this `HashWithIndifferentAccess` to a plain
+        # `Hash`, but we don't, to save memory.
+        changes
       end
     end
   end

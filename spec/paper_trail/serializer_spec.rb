@@ -9,7 +9,7 @@ RSpec.describe(PaperTrail, versioning: true) do
       customer = Customer.create(name: "Some text.")
       original_attributes = PaperTrail::Events::Base.
         new(customer, false).
-        send(:attributes_before_change, false)
+        send(:nonskipped_attributes_before_change, false)
       customer.update(name: "Some more text.")
       expect(customer.versions.length).to(eq(2))
       expect(customer.versions[0].reify).to(be_nil)
@@ -34,7 +34,7 @@ RSpec.describe(PaperTrail, versioning: true) do
       customer = Customer.create(name: "Some text.")
       original_attributes = PaperTrail::Events::Base.
         new(customer, false).
-        send(:attributes_before_change, false)
+        send(:nonskipped_attributes_before_change, false)
       customer.update(name: "Some more text.")
       expect(customer.versions.length).to(eq(2))
       expect(customer.versions[0].reify).to(be_nil)
@@ -68,7 +68,7 @@ RSpec.describe(PaperTrail, versioning: true) do
       customer = Customer.create
       original_attributes = PaperTrail::Events::Base.
         new(customer, false).
-        send(:attributes_before_change, false).
+        send(:nonskipped_attributes_before_change, false).
         reject { |_k, v| v.nil? }
       customer.update(name: "Some more text.")
       expect(customer.versions.length).to(eq(2))

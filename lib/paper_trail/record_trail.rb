@@ -67,14 +67,14 @@ module PaperTrail
 
     def record_create
       return unless enabled?
-      event = Events::Create.new(@record, true)
 
-      # Merge data from `Event` with data from PT-AT. We no longer use
-      # `data_for_create` but PT-AT still does.
-      data = event.data.merge(data_for_create)
-
-      versions_assoc = @record.send(@record.class.versions_association_name)
-      versions_assoc.create!(data)
+      build_version_on_create(in_after_callback: true).tap do |version|
+        version.save!
+        # Because the version object was created using version_class.new instead
+        # of versions_assoc.build?, the association cache is unaware. So, we
+        # invalidate the `versions` association cache with `reset`.
+        versions.reset
+      end
     end
 
     # PT-AT extends this method to add its transaction id.
@@ -119,19 +119,22 @@ module PaperTrail
     # paper_trail-association_tracking
     def record_update(force:, in_after_callback:, is_touch:)
       return unless enabled?
-      event = Events::Update.new(@record, in_after_callback, is_touch, nil)
-      return unless force || event.changed_notably?
 
-      # Merge data from `Event` with data from PT-AT. We no longer use
-      # `data_for_update` but PT-AT still does.
-      data = event.data.merge(data_for_update)
+      version = build_version_on_update(
+        force: force,
+        in_after_callback: in_after_callback,
+        is_touch: is_touch
+      )
+      return unless version
 
-      versions_assoc = @record.send(@record.class.versions_association_name)
-      version = versions_assoc.create(data)
-      if version.errors.any?
-        log_version_errors(version, :update)
-      else
+      if version.save
+        # Because the version object was created using version_class.new instead
+        # of versions_assoc.build?, the association cache is unaware. So, we
+        # invalidate the `versions` association cache with `reset`.
+        versions.reset
         version
+      else
+        log_version_errors(version, :update)
       end
     end
 
@@ -248,6 +251,35 @@ module PaperTrail
     def assign_and_reset_version_association(version)
       @record.send("#{@record.class.version_association_name}=", version)
       @record.send(@record.class.versions_association_name).reset
+    end
+
+    # @api private
+    def build_version_on_create(in_after_callback:)
+      event = Events::Create.new(@record, in_after_callback)
+
+      # Merge data from `Event` with data from PT-AT. We no longer use
+      # `data_for_create` but PT-AT still does.
+      data = event.data.merge!(data_for_create)
+
+      # Pure `version_class.new` reduces memory usage compared to `versions_assoc.build`
+      @record.class.paper_trail.version_class.new(data)
+    end
+
+    # @api private
+    def build_version_on_update(force:, in_after_callback:, is_touch:)
+      event = Events::Update.new(@record, in_after_callback, is_touch, nil)
+      return unless force || event.changed_notably?
+
+      # Merge data from `Event` with data from PT-AT. We no longer use
+      # `data_for_update` but PT-AT still does. To save memory, we use `merge!`
+      # instead of `merge`.
+      data = event.data.merge!(data_for_update)
+
+      # Using `version_class.new` reduces memory usage compared to
+      # `versions_assoc.build`. It's a trade-off though. We have to clear
+      # the association cache (see `versions.reset`) and that could cause an
+      # additional query in certain applications.
+      @record.class.paper_trail.version_class.new(data)
     end
 
     def log_version_errors(version, action)

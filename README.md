@@ -751,7 +751,7 @@ sql> delete from versions where created_at < 2010-06-01;
 ```
 
 ```ruby
-PaperTrail::Version.delete_all ['created_at < ?', 1.week.ago]
+PaperTrail::Version.where('created_at < ?', 1.day.ago).delete_all
 ```
 
 ## 4. Saving More Information About Versions

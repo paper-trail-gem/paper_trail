@@ -25,6 +25,7 @@ module PaperTrail
       # @api private
       def data
         data = {
+          item: @record,
           event: @record.paper_trail_event || "update",
           whodunnit: PaperTrail.request.whodunnit
         }

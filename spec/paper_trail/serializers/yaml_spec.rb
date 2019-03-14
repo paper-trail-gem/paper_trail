@@ -15,6 +15,7 @@ module PaperTrail
           float: 4.2
         }
       }
+      let(:hash_with_indifferent_access) { HashWithIndifferentAccess.new(hash) }
 
       describe ".load" do
         it "deserializes YAML to Ruby" do
@@ -26,6 +27,8 @@ module PaperTrail
       describe ".dump" do
         it "serializes Ruby to YAML" do
           expect(described_class.dump(hash)).to eq(hash.to_yaml)
+          expect(described_class.dump(hash_with_indifferent_access)).
+            to eq(hash.stringify_keys.to_yaml)
           expect(described_class.dump(array)).to eq(array.to_yaml)
         end
       end
