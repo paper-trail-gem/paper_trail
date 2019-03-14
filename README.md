@@ -13,7 +13,7 @@ has been destroyed.
 | Version        | Documentation |
 | -------------- | ------------- |
 | Unreleased     | https://github.com/paper-trail-gem/paper_trail/blob/master/README.md |
-| 10.2.0         | https://github.com/paper-trail-gem/paper_trail/blob/v10.2.0/README.md |
+| 10.2.1         | https://github.com/paper-trail-gem/paper_trail/blob/v10.2.1/README.md |
 | 9.2.0          | https://github.com/paper-trail-gem/paper_trail/blob/v9.2.0/README.md |
 | 8.1.2          | https://github.com/paper-trail-gem/paper_trail/blob/v8.1.2/README.md |
 | 7.1.3          | https://github.com/paper-trail-gem/paper_trail/blob/v7.1.3/README.md |
@@ -751,7 +751,7 @@ sql> delete from versions where created_at < 2010-06-01;
 ```
 
 ```ruby
-PaperTrail::Version.delete_all ['created_at < ?', 1.week.ago]
+PaperTrail::Version.where('created_at < ?', 1.day.ago).delete_all
 ```
 
 ## 4. Saving More Information About Versions
