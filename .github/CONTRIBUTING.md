@@ -17,17 +17,11 @@ questions on [StackOverflow](https://stackoverflow.com/tags/paper-trail-gem).
 
 ## Reporting Bugs
 
-You want to fix a bug, but need some help.
-
-> You are required to provide a script that reproduces the bug, using our
-> template. You are required to fix the bug. We're here to help, but no one else
-> will fix it for you. If you don't fix the bug in a reasonable amount of time,
-> your issue will be closed.
-> - From our [issue template][1].
-
 Due to limited volunteers, we cannot fix everyone's bugs for them. We're happy
-to help, but we can only accept issues from people committed to working on their
-own problems.
+to help, but we are no longer accepting public issues.  If you want to work to
+solve your own problem, put together a Pull Request with whatever you are able
+to determine is going wrong and we can have a dialog there to get your issue
+fixed and merged.
 
 Different people use different parts of PaperTrail. You may have found a bug,
 but you might also be the only person affected by that bug. Don't hesitate to
@@ -105,5 +99,3 @@ markdown-toc -i --maxdepth 3 --bullets='-' README.md
 1. gem push paper_trail-10.0.0.gem
 1. git tag -a -m "v10.0.0" "v10.0.0" # or whatever number
 1. git push --tags origin
-
-[1]: https://github.com/paper-trail-gem/paper_trail/blob/master/.github/ISSUE_TEMPLATE/bug_report.md

@@ -1543,7 +1543,7 @@ require 'paper_trail/frameworks/rspec'
 
 ## Problems
 
-Please use GitHub's [issue tracker](https://github.com/paper-trail-gem/paper_trail/issues).
+Please ask your questions on [StackOverflow](https://stackoverflow.com/tags/paper-trail-gem).
 
 ## Contributors
 
