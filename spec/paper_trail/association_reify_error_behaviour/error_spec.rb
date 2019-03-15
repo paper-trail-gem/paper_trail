@@ -7,7 +7,6 @@ RSpec.describe PaperTrail, versioning: true do
     expect(Person.new).to be_versioned
   end
 
-  # See https://github.com/paper-trail-gem/paper_trail/issues/594
   describe "#association reify error behaviour" do
     it "association reify error behaviour = :error" do
       ::PaperTrail.config.association_reify_error_behaviour = :error

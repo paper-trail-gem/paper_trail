@@ -614,8 +614,8 @@ widget.save                   # the widget lives!
 
 You could even use PaperTrail to implement an undo system; [Ryan Bates has!][3]
 
-If your model uses [optimistic locking][1] don't forget to [increment your
-`lock_version`][2] before saving or you'll get a `StaleObjectError`.
+If your model uses [optimistic locking][1] don't forget to increment your
+`lock_version` before saving or you'll get a `StaleObjectError`.
 
 ### 3.b. Navigating Versions
 
@@ -857,8 +857,7 @@ To track and reify associations, use [paper_trail-association_tracking][6] (PT-A
 
 From 2014 to 2018, association tracking was part of PT core as an experimental
 feature, but many issues were discovered. To attract new volunteers to address
-these issues, PT-AT was extracted (see
-https://github.com/paper-trail-gem/paper_trail/issues/1070).
+these issues, PT-AT was extracted.
 
 Even though this has always been an experimental feature, we don't want the
 extraction of PT-AT to be a breaking change. In PT 9, PT-AT was kept as a
@@ -881,7 +880,6 @@ add_column :versions, :item_subtype, :string, null: true
 
 So, if you use PT-AT and STI, the addition of this column is recommended.
 
-- https://github.com/paper-trail-gem/paper_trail/issues/594
 - https://github.com/paper-trail-gem/paper_trail/pull/1143
 - https://github.com/westonganger/paper_trail-association_tracking/pull/5
 
@@ -969,8 +967,7 @@ class Banana < Fruit
 end
 ```
 
-However, there is a known issue when reifying [associations](#associations),
-see https://github.com/paper-trail-gem/paper_trail/issues/594
+However, there is a known issue when reifying [associations](#associations).
 
 ### 5.b. Configuring the `versions` Association
 
@@ -1570,7 +1567,6 @@ Copyright (c) 2011 Andy Stewart (boss@airbladesoftware.com).
 Released under the MIT licence.
 
 [1]: http://api.rubyonrails.org/classes/ActiveRecord/Locking/Optimistic.html
-[2]: https://github.com/paper-trail-gem/paper_trail/issues/163
 [3]: http://railscasts.com/episodes/255-undo-with-paper-trail
 [4]: https://api.travis-ci.org/paper-trail-gem/paper_trail.svg?branch=master
 [5]: https://travis-ci.org/paper-trail-gem/paper_trail
@@ -1579,7 +1575,6 @@ Released under the MIT licence.
 [10]: https://github.com/paper-trail-gem/paper_trail/tree/2.7-stable
 [11]: https://github.com/paper-trail-gem/paper_trail/tree/rails2
 [14]: https://raw.github.com/paper-trail-gem/paper_trail/master/lib/generators/paper_trail/templates/create_versions.rb
-[16]: https://github.com/paper-trail-gem/paper_trail/issues/113
 [17]: https://github.com/rails/protected_attributes
 [18]: https://github.com/rails/strong_parameters
 [19]: http://github.com/myobie/htmldiff

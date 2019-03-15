@@ -37,8 +37,7 @@ module PaperTrail
           where_object_changes no longer supports reading JSON from a text
           column. The old implementation was inaccurate, returning more records
           than you wanted. This feature was deprecated in 7.1.0 and removed in
-          8.0.0. The json and jsonb datatypes are still supported. See the
-          discussion at https://github.com/paper-trail-gem/paper_trail/issues/803
+          8.0.0. The json and jsonb datatypes are still supported.
         STR
       end
     end
