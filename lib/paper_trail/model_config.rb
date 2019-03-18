@@ -110,6 +110,7 @@ module PaperTrail
       options[:on] ||= %i[create update destroy touch]
       options[:on] = Array(options[:on]) # Support single symbol
       @model_class.send :include, ::PaperTrail::Model::InstanceMethods
+      check_item_subtype(options[:limit]) if options.key?(:limit)
       setup_options(options)
       setup_associations(options)
       @model_class.after_rollback { paper_trail.clear_rolled_back_versions }
@@ -160,6 +161,22 @@ module PaperTrail
       # @api private - versions_association_name
       @model_class.class_attribute :versions_association_name
       @model_class.versions_association_name = options[:versions][:name] || :versions
+    end
+
+    # @api private
+    def check_item_subtype(limit)
+      return if PaperTrail::Version.column_names.include?("item_subtype")
+      logger = defined?(::Rails) ? ::Rails.logger : Logger.new(STDOUT)
+      missing_item_subtype = %(
+--------------------------------------------------------------------------------------------------
+paper_trail WARNING!
+has_paper_trail is configured with 'limit: #{limit}' in your model '#{@model_class}'.
+This feature is available only if the versions database table contains the 'item_subtype' column.
+Since your versions table does not have 'item_subtype', paper_trail will ignore this limit and
+use the global PaperTrail.config.version_limit instead.
+--------------------------------------------------------------------------------------------------
+)
+      logger.warn missing_item_subtype
     end
 
     def define_has_many_versions(options)

@@ -885,6 +885,20 @@ So, if you use PT-AT and STI, the addition of this column is recommended.
 - https://github.com/paper-trail-gem/paper_trail/pull/1143
 - https://github.com/westonganger/paper_trail-association_tracking/pull/5
 
+When the `item_subtype` column is present in the `versions` table, the has_paper_trail 
+directive allows for an additional `limit` argument, which overrides the global 
+`PaperTrail.config.version_limit` variable.
+
+example:  
+```ruby
+# Limit: 3 versions per record (2 most recent, plus a `create` event)
+# This overrides what is set in `PaperTrail.config.version_limit`
+class Widget < ActiveRecord::Base 
+  has_paper_trail limit: 2
+end
+```
+
+
 ### 4.c. Storing Metadata
 
 You can add your own custom columns to your `versions` table. Values can be
