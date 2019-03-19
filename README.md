@@ -747,7 +747,7 @@ version is self-contained (see the Diffing section above for more) you can
 simply delete any records you don't want any more.  For example:
 
 ```sql
-sql> delete from versions where created_at < 2010-06-01;
+sql> delete from versions where created_at < '2010-06-01';
 ```
 
 ```ruby
