@@ -591,10 +591,10 @@ PaperTrail.config.version_limit = 10
 has_paper_trail
 
 # At most 3 versions (2 updates, 1 create). Overrides global version_limit.
-has_paper_trail limit: 2 
+has_paper_trail limit: 2
 
-# Infinite versions 
-has_paper_trail limit: nil 
+# Infinite versions
+has_paper_trail limit: nil
 ```
 
 To use a per-model limit, your `versions` table must have an
