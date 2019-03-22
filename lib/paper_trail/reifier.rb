@@ -120,6 +120,7 @@ module PaperTrail
       # this method returns the constant `Animal`. You can see this particular
       # example in action in `spec/models/animal_spec.rb`.
       #
+      # TODO: Duplication: similar `constantize` in VersionConcern#version_limit
       def version_reification_class(version, attrs)
         inheritance_column_name = version.item_type.constantize.inheritance_column
         inher_col_value = attrs[inheritance_column_name]

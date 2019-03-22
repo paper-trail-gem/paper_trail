@@ -5,44 +5,15 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ## Unreleased
 
-Added a 'limit' option to has_paper_trail, allowing models to override the global `PaperTrail.config.version_limit` setting.
-
-Note that in order to use this option, you must have added the 
-optional 'item_subtype' column as indicated in [Section 4.b.1](https://github.com/paper-trail-gem/paper_trail#4b1-the-optional-item_subtype-column).
-
-For example, having set in your initializer:
-```
- PaperTrail.config.version_limit = 10
-```
-
-with these models:
-
-```
-class Widget < ActiveRecord::Base
-  #there will be at most 10 versions of this model 
-  has_paper_trail
-end
-
-class Bicycle < ActiveRecord::Base 
-  #there will be at most 2 versions of this model 
-  has_paper_trail limit: 2
-end
-
-class Unlimited < ActiveRecord::Base 
-  #there will be an infinite number of versions of this model 
-  has_paper_trail limit: nil
-end
-```
-
-
-
 ### Breaking Changes
 
 - None
 
 ### Added
 
-- None
+- [#1194](https://github.com/paper-trail-gem/paper_trail/pull/1194) - 
+  Added a 'limit' option to has_paper_trail, allowing models to override the 
+  global `PaperTrail.config.version_limit` setting.
 
 ### Fixed
 

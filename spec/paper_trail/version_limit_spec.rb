@@ -10,12 +10,14 @@ module PaperTrail
 
     it "cleans up old versions with limit specified in model" do
       PaperTrail.config.version_limit = 10
+
+      # LimitedBicycle overrides the global version_limit
       bike = LimitedBicycle.create(name: "Bike") # has_paper_trail limit: 3
 
-      100.times do |i|
+      15.times do |i|
         bike.update(name: "Name #{i}")
       end
-      expect(LimitedBicycle.find(bike.id).versions.count).to be <= 4
+      expect(LimitedBicycle.find(bike.id).versions.count).to eq(4)
       # 4 versions = 3 updates + 1 create.
     end
 

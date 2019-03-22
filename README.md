@@ -577,6 +577,30 @@ PaperTrail.config.version_limit = 3
 PaperTrail.config.version_limit = nil
 ```
 
+#### 2.e.1 Per-model limit
+
+Models can override the global `PaperTrail.config.version_limit` setting.
+
+Example:
+
+```
+# initializer
+PaperTrail.config.version_limit = 10
+
+# At most 10 versions
+has_paper_trail
+
+# At most 3 versions (2 updates, 1 create). Overrides global version_limit.
+has_paper_trail limit: 2 
+
+# Infinite versions 
+has_paper_trail limit: nil 
+```
+
+To use a per-model limit, your `versions` table must have an
+`item_subtype` column. See [Section
+4.b.1](https://github.com/paper-trail-gem/paper_trail#4b1-the-optional-item_subtype-column).
+
 ## 3. Working With Versions
 
 ### 3.a. Reverting And Undeleting A Model
@@ -884,20 +908,6 @@ So, if you use PT-AT and STI, the addition of this column is recommended.
 - https://github.com/paper-trail-gem/paper_trail/issues/594
 - https://github.com/paper-trail-gem/paper_trail/pull/1143
 - https://github.com/westonganger/paper_trail-association_tracking/pull/5
-
-When the `item_subtype` column is present in the `versions` table, the has_paper_trail 
-directive allows for an additional `limit` argument, which overrides the global 
-`PaperTrail.config.version_limit` variable.
-
-example:  
-```ruby
-# Limit: 3 versions per record (2 most recent, plus a `create` event)
-# This overrides what is set in `PaperTrail.config.version_limit`
-class Widget < ActiveRecord::Base 
-  has_paper_trail limit: 2
-end
-```
-
 
 ### 4.c. Storing Metadata
 

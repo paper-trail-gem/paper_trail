@@ -18,6 +18,11 @@ module PaperTrail
       `abstract_class`. This is fine, but all application models must be
       configured to use concrete (not abstract) version models.
     STR
+    E_MODEL_LIMIT_REQUIRES_ITEM_SUBTYPE = <<~STR.squish.freeze
+      To use PaperTrail's per-model limit in your %s model, you must have an
+      item_subtype column in your versions table. See documentation sections
+      2.e.1 Per-model limit, and 4.b.1 The optional item_subtype column.
+    STR
     DPR_PASSING_ASSOC_NAME_DIRECTLY_TO_VERSIONS_OPTION = <<~STR.squish
       Passing versions association name as `has_paper_trail versions: %{versions_name}`
       is deprecated. Use `has_paper_trail versions: {name: %{versions_name}}` instead.
@@ -110,9 +115,9 @@ module PaperTrail
       options[:on] ||= %i[create update destroy touch]
       options[:on] = Array(options[:on]) # Support single symbol
       @model_class.send :include, ::PaperTrail::Model::InstanceMethods
-      check_item_subtype(options[:limit]) if options.key?(:limit)
       setup_options(options)
       setup_associations(options)
+      check_presence_of_item_subtype_column(options)
       @model_class.after_rollback { paper_trail.clear_rolled_back_versions }
       setup_callbacks_from_options options[:on]
     end
@@ -140,6 +145,16 @@ module PaperTrail
         ::ActiveRecord::Base.belongs_to_required_by_default
     end
 
+    # Some options require the presence of the `item_subtype` column. Currently
+    # only `limit`, but in the future there may be others.
+    #
+    # @api private
+    def check_presence_of_item_subtype_column(options)
+      return unless options.key?(:limit)
+      return if version_class.item_subtype_column_present?
+      raise format(E_MODEL_LIMIT_REQUIRES_ITEM_SUBTYPE, @model_class.name)
+    end
+
     def check_version_class_name(options)
       # @api private - `version_class_name`
       @model_class.class_attribute :version_class_name
@@ -161,22 +176,6 @@ module PaperTrail
       # @api private - versions_association_name
       @model_class.class_attribute :versions_association_name
       @model_class.versions_association_name = options[:versions][:name] || :versions
-    end
-
-    # @api private
-    def check_item_subtype(limit)
-      return if PaperTrail::Version.column_names.include?("item_subtype")
-      logger = defined?(::Rails) ? ::Rails.logger : Logger.new(STDOUT)
-      missing_item_subtype = %(
---------------------------------------------------------------------------------------------------
-paper_trail WARNING!
-has_paper_trail is configured with 'limit: #{limit}' in your model '#{@model_class}'.
-This feature is available only if the versions database table contains the 'item_subtype' column.
-Since your versions table does not have 'item_subtype', paper_trail will ignore this limit and
-use the global PaperTrail.config.version_limit instead.
---------------------------------------------------------------------------------------------------
-)
-      logger.warn missing_item_subtype
     end
 
     def define_has_many_versions(options)
