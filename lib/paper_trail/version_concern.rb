@@ -349,7 +349,7 @@ module PaperTrail
     #
     # TODO: Duplication: similar `constantize` in Reifier#version_reification_class
     def version_limit
-      if PaperTrail::Version.column_names.include?("item_subtype")
+      if self.class.item_subtype_column_present?
         klass = (item_subtype || item_type).constantize
         if klass&.paper_trail_options&.key?(:limit)
           return klass.paper_trail_options[:limit]
