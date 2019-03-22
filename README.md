@@ -8,6 +8,9 @@ Track changes to your models, for auditing or versioning. See how a model looked
 at any stage in its lifecycle, revert it to any version, or restore it after it
 has been destroyed.
 
+As of March 2019, we are [temporarily not accepting issues][57]. Pull requests
+are welcome.
+
 ## Documentation
 
 | Version        | Documentation |
@@ -1620,3 +1623,4 @@ Released under the MIT licence.
 [54]: https://rubygems.org/gems/paper_trail
 [55]: https://api.dependabot.com/badges/compatibility_score?dependency-name=paper_trail&package-manager=bundler&version-scheme=semver
 [56]: https://dependabot.com/compatibility-score.html?dependency-name=paper_trail&package-manager=bundler&version-scheme=semver
+[57]: https://github.com/paper-trail-gem/paper_trail/blob/master/doc/temporarily_not_accepting_issues.md
