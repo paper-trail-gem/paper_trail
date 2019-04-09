@@ -11,7 +11,7 @@ class CreateVersions < ActiveRecord::Migration<%= migration_version %>
   def change
     create_table :versions<%= versions_table_options %> do |t|
       t.string   :item_type<%= item_type_options %>
-      t.integer  :item_id,   null: false
+      t.integer  :item_id,   null: false, limit: 8
       t.string   :event,     null: false
       t.string   :whodunnit
       t.text     :object, limit: TEXT_BYTES

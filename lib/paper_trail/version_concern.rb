@@ -25,6 +25,10 @@ module PaperTrail
 
     # :nodoc:
     module ClassMethods
+      def item_subtype_column_present?
+        column_names.include?("item_subtype")
+      end
+
       def with_item_keys(item_type, item_id)
         where item_type: item_type, item_id: item_id
       end
@@ -329,13 +333,29 @@ module PaperTrail
     # Enforces the `version_limit`, if set. Default: no limit.
     # @api private
     def enforce_version_limit!
-      limit = PaperTrail.config.version_limit
+      limit = version_limit
       return unless limit.is_a? Numeric
       previous_versions = sibling_versions.not_creates.
         order(self.class.timestamp_sort_order("asc"))
       return unless previous_versions.size > limit
       excess_versions = previous_versions - previous_versions.last(limit)
       excess_versions.map(&:destroy)
+    end
+
+    # See docs section 2.e. Limiting the Number of Versions Created.
+    # The version limit can be global or per-model.
+    #
+    # @api private
+    #
+    # TODO: Duplication: similar `constantize` in Reifier#version_reification_class
+    def version_limit
+      if self.class.item_subtype_column_present?
+        klass = (item_subtype || item_type).constantize
+        if klass&.paper_trail_options&.key?(:limit)
+          return klass.paper_trail_options[:limit]
+        end
+      end
+      PaperTrail.config.version_limit
     end
   end
 end
