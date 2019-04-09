@@ -88,22 +88,30 @@ markdown-toc -i --maxdepth 3 --bullets='-' README.md
 
 ## Releases
 
-1. Checkout the appropriate stable branch, eg. `10-stable`
-1. Checkout a new branch, eg. `release-10.0.0`
-1. Set the version in `lib/paper_trail/version_number.rb`
-1. In the changelog,
-  - Replace "Unreleased" with the date in ISO-8601 format
-  - Add a new "Unreleased" section
-1. In the readme, update references to version number, including
-  - documentation links table
-  - compatability table, if necessary
-1. git commit -am 'Release 10.0.0'
-1. git push origin release-10.0.0
-1. Pull request into `10-stable`
-1. git checkout 10-stable && git pull
-1. gem build paper_trail.gemspec
-1. gem push paper_trail-10.0.0.gem
-1. git tag -a -m "v10.0.0" "v10.0.0" # or whatever number
-1. git push --tags origin
+1. Prepare the appropriate "stable" branch for release, eg. `10-stable`
+  1. git checkout 10-stable
+  1. Checkout a new branch, eg. `release-10.3.0`
+  1. Merge the relevant changes from `master`. This could be a plain merge, or
+    it could be cherry-picking. The later is more common in backports.
+  1. Set the version in `lib/paper_trail/version_number.rb`
+  1. In the changelog,
+    - Replace "Unreleased" with the date in ISO-8601 format
+    - Add a new "Unreleased" section
+  1. In the readme, update references to version number, including
+    - documentation links table
+    - compatability table, if necessary
+  1. git commit -am 'Release 10.3.0'
+  1. git push origin release-10.3.0
+  1. Pull request into `10-stable`, CI pass, merge PR
+1. Release
+  1. git checkout 10-stable && git pull
+  1. gem build paper_trail.gemspec
+  1. gem push paper_trail-10.3.0.gem
+  1. git tag -a -m "v10.3.0" "v10.3.0" # or whatever number
+  1. git push --tags origin
+1. Cleanup
+  1. git checkout master
+  1. cherry-pick the "Release 10.3.0" commit from the `10-stable` branch
+  1. git push origin master
 
 [1]: https://github.com/paper-trail-gem/paper_trail/blob/master/.github/ISSUE_TEMPLATE/bug_report.md
