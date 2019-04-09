@@ -11,6 +11,27 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
+- [#1194](https://github.com/paper-trail-gem/paper_trail/pull/1194) -
+  Added a 'limit' option to has_paper_trail, allowing models to override the
+  global `PaperTrail.config.version_limit` setting.
+
+### Fixed
+
+- [#1196](https://github.com/paper-trail-gem/paper_trail/pull/1196) -
+  Added 'limit: 8' as an additional parameter to the item_id field
+  for the versions table. Bigint is the current default datatype for
+  the id column of Rails tables. This change allows id values to be
+  properly stored when they would exceed the range of a 4 byte integer
+  datatype.
+
+## 10.2.1 (2019-03-14)
+
+### Breaking Changes
+
+- None
+
+### Added
+
 - None
 
 ### Fixed
