@@ -10,7 +10,8 @@
 # > https://github.com/thoughtbot/appraisal
 
 appraise "ar-4.2" do
-  gem "activerecord", [">= 4.2.11.1", "< 4.3"] # CVE-2019-5420
+  # >= 4.2.11.1 because CVE-2019-5420
+  gem "activerecord", [">= 4.2.11.1", "< 4.3"]
   gem "database_cleaner", "~> 1.6"
 
   # not compatible with mysql2 0.5
@@ -22,16 +23,22 @@ appraise "ar-4.2" do
 end
 
 appraise "ar-5.1" do
-  gem "activerecord", [">= 5.1.6.2", "< 5.2"] # CVE-2019-5420
+  # >= 5.1.6.2 because CVE-2019-5420
+  gem "activerecord", [">= 5.1.6.2", "< 5.2"]
   gem "rails-controller-testing", "~> 1.0.2"
 end
 
 appraise "ar-5.2" do
-  gem "activerecord", [">= 5.2.2.1", "< 5.3"] # CVE-2019-5420
+  # >= 5.2.2.1 because CVE-2019-5420
+  gem "activerecord", [">= 5.2.2.1", "< 5.3"]
   gem "rails-controller-testing", "~> 1.0.2"
 end
 
 appraise "ar-6.0" do
-  gem "activerecord", [">= 6.0.0.beta3", "< 6.1"] # CVE-2019-5420
+  # >= 6.0.0.beta3 because CVE-2019-5420
+  gem "activerecord", [">= 6.0.0.beta3", "< 6.1"]
   gem "rails-controller-testing", "~> 1.0.3"
+
+  # Must match `gem` call in active_record/connection_adapters/sqlite3_adapter.rb
+  gem "sqlite3", "~> 1.4"
 end
