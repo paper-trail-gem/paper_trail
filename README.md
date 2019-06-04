@@ -1065,7 +1065,8 @@ Usage:
   rails generate paper_trail:install [options]
 
 Options:
-  [--with-changes], [--no-with-changes]            # Store changeset (diff) with each version
+  [--skip-namespace], [--no-skip-namespace]  # Skip namespace (affects only isolated applications)
+  [--with-changes], [--no-with-changes]      # Store changeset (diff) with each version
 
 Runtime options:
   -f, [--force]                    # Overwrite files that already exist
