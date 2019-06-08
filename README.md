@@ -1603,7 +1603,7 @@ See our [contribution guidelines][43]
 
 ## Inspirations
 
-* [Simply Versioned](https://github.com/mmower/simply_versioned)
+* [Simply Versioned](https://github.com/jerome/simply_versioned)
 * [Acts As Audited](https://github.com/collectiveidea/audited)
 
 ## Intellectual Property
