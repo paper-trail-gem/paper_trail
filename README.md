@@ -1603,8 +1603,8 @@ See our [contribution guidelines][43]
 
 ## Inspirations
 
-* [Simply Versioned](http://github.com/github/simply_versioned)
-* [Acts As Audited](http://github.com/collectiveidea/acts_as_audited)
+* [Simply Versioned](https://github.com/jerome/simply_versioned)
+* [Acts As Audited](https://github.com/collectiveidea/audited)
 
 ## Intellectual Property
 
