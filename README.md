@@ -1301,22 +1301,35 @@ end
 
 ### 6.c. Custom Object Changes
 
-By default, PaperTrail stores object changes in a before/after array of objects
-containing keys of columns that have changed in that particular version. You can
-override this behaviour by using the object_changes_adapter config option:
+To fully control the contents of their `object_changes` column, expert users
+can write an adapter.
 
 ```ruby
 PaperTrail.config.object_changes_adapter = MyObjectChangesAdapter.new
+
+class MyObjectChangesAdapter
+  # @param changes Hash
+  # @return Hash
+  def diff(changes)
+    # ...
+  end
+end
 ```
 
-A valid adapter is a class that contains the following methods:
+You should only use this feature if you are comfortable reading PT's source to
+see exactly how the adapter is used. For example, see how `diff` is used by
+reading `::PaperTrail::Events::Base#recordable_object_changes`.
+
+An adapter can implement any or all of the following methods:
+
 1. diff: Returns the changeset in the desired format given the changeset in the original format
 2. load_changeset: Returns the changeset for a given version object
 3. where_object_changes: Returns the records resulting from the given hash of attributes.
 
-To preserve the default behavior for some of these, don't define them in your adapter.
+Depending on what your adapter does, you may have to implement all three.
 
-For an example of such an implementation, see [paper_trail-hashdiff](https://github.com/hashwin/paper_trail-hashdiff)
+For an example of a complete and useful adapter, see
+[paper_trail-hashdiff](https://github.com/hashwin/paper_trail-hashdiff)
 
 ### 6.d. Excluding the Object Column
 
