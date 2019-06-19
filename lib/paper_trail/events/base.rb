@@ -239,9 +239,17 @@ module PaperTrail
       #
       # @api private
       def object_attrs_for_paper_trail(is_touch)
-        attrs = nonskipped_attributes_before_change(is_touch)
+        attrs = if @record.class.paper_trail_options[:model_after]
+                  nonskipped_attributes_after_change(is_touch)
+                else
+                  nonskipped_attributes_before_change(is_touch)
+                end
         AttributeSerializers::ObjectAttribute.new(@record.class).serialize(attrs)
         attrs
+      end
+
+      def nonskipped_attributes_after_change(_is_touch)
+        @record.attributes.except(*@record.paper_trail_options[:skip])
       end
 
       # @api private

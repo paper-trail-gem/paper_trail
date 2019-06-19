@@ -24,6 +24,10 @@ module PaperTrail
           changes = notable_changes
           data[:object_changes] = prepare_object_changes(changes)
         end
+        # assign the created object to data hash
+        if @record.class.paper_trail_options[:model_after]
+          data[:object] = recordable_object(false)
+        end
         merge_item_subtype_into(data)
         merge_metadata_into(data)
       end
