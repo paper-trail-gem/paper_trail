@@ -36,7 +36,9 @@ end
 
 appraise "ar-6.0" do
   # >= 6.0.0.beta3 because CVE-2019-5420
-  gem "activerecord", [">= 6.0.0.beta3", "< 6.1"]
+  # < rc2 because there seem to have been breaking changes between rc1 and rc2
+  # re: MigrationContext
+  gem "activerecord", [">= 6.0.0.beta3", "< 6.0.0.rc2"]
   gem "rails-controller-testing", "~> 1.0.3"
 
   # Must match `gem` call in active_record/connection_adapters/sqlite3_adapter.rb
