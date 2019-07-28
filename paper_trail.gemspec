@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 $LOAD_PATH.unshift File.expand_path("lib", __dir__)
+require "paper_trail/compatibility"
 require "paper_trail/version_number"
 
 Gem::Specification.new do |s|
@@ -27,8 +28,9 @@ has been destroyed.
   s.required_rubygems_version = ">= 1.3.6"
   s.required_ruby_version = ">= 2.3.0"
 
-  # Rails does not follow semver, makes breaking changes in minor versions.
-  s.add_dependency "activerecord", [">= 4.2", "< 6.1"]
+  # We no longer specify a maximum rails version.
+  # See discussion in paper_trail/compatibility.rb
+  s.add_dependency "activerecord", ::PaperTrail::Compatibility::ACTIVERECORD_GTE
   s.add_dependency "request_store", "~> 1.1"
 
   s.add_development_dependency "appraisal", "~> 2.2"
