@@ -16,7 +16,7 @@ are welcome.
 | Version        | Documentation |
 | -------------- | ------------- |
 | Unreleased     | https://github.com/paper-trail-gem/paper_trail/blob/master/README.md |
-| 10.3.0         | https://github.com/paper-trail-gem/paper_trail/blob/v10.3.0/README.md |
+| 10.3.1         | https://github.com/paper-trail-gem/paper_trail/blob/v10.3.1/README.md |
 | 9.2.0          | https://github.com/paper-trail-gem/paper_trail/blob/v9.2.0/README.md |
 | 8.1.2          | https://github.com/paper-trail-gem/paper_trail/blob/v8.1.2/README.md |
 | 7.1.3          | https://github.com/paper-trail-gem/paper_trail/blob/v7.1.3/README.md |
@@ -97,6 +97,9 @@ are welcome.
 | 2              | 2.7-stable | >= 1.8.7 | >= 3.0, < 4   |
 | 1              | rails2     | >= 1.8.7 | >= 2.3, < 3   |
 
+Experts: to install incompatible versions of activerecord, see 
+`paper_trail/compatibility.rb`.
+
 ### 1.b. Installation
 
 1. Add PaperTrail to your `Gemfile`.
@@ -114,6 +117,10 @@ are welcome.
 
     If using [rails_admin][38], you must enable the
     experimental [Associations](#4b-associations) feature.
+
+    If you're getting "Could not find generator 'paper_trail:install'" errors from
+    recent Ruby/Rails versions, try running `spring stop`
+    (see [this thread](https://github.com/paper-trail-gem/paper_trail/issues/459) for more details).
 
     ```
     bundle exec rake db:migrate
@@ -1212,14 +1219,25 @@ loop over every record and parse it in Ruby, then write to a temporary column:
 
 ```ruby
 add_column :versions, :new_object, :jsonb # or :json
+# add_column :versions, :new_object_changes, :jsonb # or :json
 
-PaperTrail::Version.reset_column_information
-PaperTrail::Version.find_each do |version|
-  version.update_column :new_object, YAML.load(version.object) if version.object
+# PaperTrail::Version.reset_column_information # needed for rails < 6
+
+PaperTrail::Version.where.not(object: nil).find_each do |version|
+  version.update_column(:new_object, YAML.load(version.object))
+  
+  # if version.object_changes
+  #   version.update_column(
+  #     :new_object_changes,
+  #     YAML.load(version.object_changes)
+  #   )
+  # end
 end
 
 remove_column :versions, :object
+# remove_column :versions, :object_changes
 rename_column :versions, :new_object, :object
+# rename_column :versions, :new_object_changes, :object_changes
 ```
 
 This technique can be very slow if you have a lot of data. Though slow, it is
@@ -1286,22 +1304,35 @@ end
 
 ### 6.c. Custom Object Changes
 
-By default, PaperTrail stores object changes in a before/after array of objects
-containing keys of columns that have changed in that particular version. You can
-override this behaviour by using the object_changes_adapter config option:
+To fully control the contents of their `object_changes` column, expert users
+can write an adapter.
 
 ```ruby
 PaperTrail.config.object_changes_adapter = MyObjectChangesAdapter.new
+
+class MyObjectChangesAdapter
+  # @param changes Hash
+  # @return Hash
+  def diff(changes)
+    # ...
+  end
+end
 ```
 
-A valid adapter is a class that contains the following methods:
+You should only use this feature if you are comfortable reading PT's source to
+see exactly how the adapter is used. For example, see how `diff` is used by
+reading `::PaperTrail::Events::Base#recordable_object_changes`.
+
+An adapter can implement any or all of the following methods:
+
 1. diff: Returns the changeset in the desired format given the changeset in the original format
 2. load_changeset: Returns the changeset for a given version object
 3. where_object_changes: Returns the records resulting from the given hash of attributes.
 
-To preserve the default behavior for some of these, don't define them in your adapter.
+Depending on what your adapter does, you may have to implement all three.
 
-For an example of such an implementation, see [paper_trail-hashdiff](https://github.com/hashwin/paper_trail-hashdiff)
+For an example of a complete and useful adapter, see
+[paper_trail-hashdiff](https://github.com/hashwin/paper_trail-hashdiff)
 
 ### 6.d. Excluding the Object Column
 
@@ -1588,8 +1619,8 @@ See our [contribution guidelines][43]
 
 ## Inspirations
 
-* [Simply Versioned](http://github.com/github/simply_versioned)
-* [Acts As Audited](http://github.com/collectiveidea/acts_as_audited)
+* [Simply Versioned](https://github.com/jerome/simply_versioned)
+* [Acts As Audited](https://github.com/collectiveidea/audited)
 
 ## Intellectual Property
 
