@@ -17,6 +17,11 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 - None
 
+### Dependencies
+
+- Allow contributors to install incompatible versions of ActiveRecord.
+  See discussion in paper_trail/compatibility.rb 
+
 ## 10.3.0 (2019-04-09)
 
 ### Breaking Changes
