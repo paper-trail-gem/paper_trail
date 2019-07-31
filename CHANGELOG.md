@@ -17,9 +17,24 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 - None
 
+## 10.3.1 (2019-07-31)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- None
+
 ### Dependencies
 
-- Allow contributors to install incompatible versions of ActiveRecord.
+- [#1213](https://github.com/paper-trail-gem/paper_trail/pull/1213) - Allow 
+  contributors to install incompatible versions of ActiveRecord.
   See discussion in paper_trail/compatibility.rb 
 
 ## 10.3.0 (2019-04-09)
