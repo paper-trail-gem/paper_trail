@@ -34,10 +34,6 @@ gemfile:
   - gemfiles/ar_5.2.gemfile
   - gemfiles/ar_6.0.gemfile
 matrix:
-  allow_failures:
-    # We haven't changed anything, but mysql builds no longer work on TravisCI.
-    # Allow failures temporarily until we have time to troubleshoot this.
-    - env: DB=mysql
   exclude:
     # rails 6 requires ruby >= 2.5.0
     - rvm: 2.3.8
@@ -46,5 +42,6 @@ matrix:
     - rvm: 2.6.0
       gemfile: gemfiles/ar_4.2.gemfile
   fast_finish: true
-addons:
-  postgresql: "9.4"
+services:
+  - mysql
+  - postgresql
