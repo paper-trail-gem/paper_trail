@@ -10,36 +10,33 @@
 # > https://github.com/thoughtbot/appraisal
 
 appraise "ar-4.2" do
-  # >= 4.2.11.1 because CVE-2019-5420
   gem "activerecord", [">= 4.2.11.1", "< 4.3"]
   gem "database_cleaner", "~> 1.6"
-
-  # not compatible with mysql2 0.5
-  # https://github.com/brianmario/mysql2/issues/950#issuecomment-376259151
-  gem "mysql2", "~> 0.4.10"
-
-  # not compatible with pg 1.0.0
-  gem "pg", "~> 0.21.0"
+  gem "mysql2", "~> 0.4.10" # not compatible with 0.5
+  gem "pg", "~> 0.21.0" # not compatible with 1.0
+  gem "sqlite3", "~> 1.3.13" # not compatible with 1.4
 end
 
 appraise "ar-5.1" do
-  # >= 5.1.6.2 because CVE-2019-5420
   gem "activerecord", [">= 5.1.6.2", "< 5.2"]
   gem "rails-controller-testing", "~> 1.0.2"
+  gem "mysql2", "~> 0.5.2"
+  gem "pg", "~> 1.1"
+  gem "sqlite3", "~> 1.4"
 end
 
 appraise "ar-5.2" do
-  # >= 5.2.2.1 because CVE-2019-5420
   gem "activerecord", [">= 5.2.2.1", "< 5.3"]
   gem "rails-controller-testing", "~> 1.0.2"
+  gem "mysql2", "~> 0.5.2"
+  gem "pg", "~> 1.1"
+  gem "sqlite3", "~> 1.4"
 end
 
 appraise "ar-6.0" do
-  # >= 6.0.0.beta3 because CVE-2019-5420
-  # <= rc2 because we use private APIs that can change between RCs
   gem "activerecord", [">= 6.0.0.beta3", "<= 6.0.0.rc2"]
   gem "rails-controller-testing", "~> 1.0.3"
-
-  # Must match `gem` call in active_record/connection_adapters/sqlite3_adapter.rb
+  gem "mysql2", "~> 0.5.2"
+  gem "pg", "~> 1.1"
   gem "sqlite3", "~> 1.4"
 end

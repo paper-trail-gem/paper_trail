@@ -2,22 +2,22 @@
 
 require "spec_helper"
 
-RSpec.describe(::PaperTrail, versioning: true) do
-  CHAPTER_NAMES = [
-    "Down the Rabbit-Hole",
-    "The Pool of Tears",
-    "A Caucus-Race and a Long Tale",
-    "The Rabbit Sends in a Little Bill",
-    "Advice from a Caterpillar",
-    "Pig and Pepper",
-    "A Mad Tea-Party",
-    "The Queen's Croquet-Ground",
-    "The Mock Turtle's Story",
-    "The Lobster Quadrille",
-    "Who Stole the Tarts?",
-    "Alice's Evidence"
-  ].freeze
+CHAPTER_NAMES = [
+  "Down the Rabbit-Hole",
+  "The Pool of Tears",
+  "A Caucus-Race and a Long Tale",
+  "The Rabbit Sends in a Little Bill",
+  "Advice from a Caterpillar",
+  "Pig and Pepper",
+  "A Mad Tea-Party",
+  "The Queen's Croquet-Ground",
+  "The Mock Turtle's Story",
+  "The Lobster Quadrille",
+  "Who Stole the Tarts?",
+  "Alice's Evidence"
+].freeze
 
+RSpec.describe(::PaperTrail, versioning: true) do
   context "Books, Authors, and Authorships" do
     before { @book = Book.create(title: "book_0") }
 
