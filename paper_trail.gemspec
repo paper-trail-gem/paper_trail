@@ -43,8 +43,8 @@ has been destroyed.
   s.add_development_dependency "pg", "~> 1.0"
   s.add_development_dependency "rake", "~> 12.3"
   s.add_development_dependency "rspec-rails", "~> 3.8"
-  s.add_development_dependency "rubocop", "~> 0.71.0"
-  s.add_development_dependency "rubocop-performance", "~> 1.3.0"
-  s.add_development_dependency "rubocop-rspec", "~> 1.33.0"
+  s.add_development_dependency "rubocop", "~> 0.74.0"
+  s.add_development_dependency "rubocop-performance", "~> 1.4"
+  s.add_development_dependency "rubocop-rspec", "~> 1.35"
   s.add_development_dependency "sqlite3", "~> 1.3.13"
 end

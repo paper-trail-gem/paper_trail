@@ -104,6 +104,11 @@ Naming/UncommunicativeMethodParamName:
 RSpec/DescribeClass:
   Enabled: false
 
+# This cop has a bug in 1.35.0
+# https://github.com/rubocop-hq/rubocop-rspec/issues/799
+RSpec/DescribedClass:
+  Enabled: false
+
 # Yes, ideally examples would be short. Is it possible to pick a limit and say,
 # "no example will ever be longer than this"? Hard to say. Sometimes they're
 # quite long.
