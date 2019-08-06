@@ -38,13 +38,14 @@ has been destroyed.
   s.add_development_dependency "ffaker", "~> 2.11"
   s.add_development_dependency "generator_spec", "~> 0.9.4"
   s.add_development_dependency "memory_profiler", "~> 0.9.14"
-  s.add_development_dependency "mysql2", "~> 0.5.2"
   s.add_development_dependency "paper_trail-association_tracking", "~> 2.0.0"
-  s.add_development_dependency "pg", "~> 1.1"
   s.add_development_dependency "rake", "~> 12.3"
   s.add_development_dependency "rspec-rails", "~> 3.8"
   s.add_development_dependency "rubocop", "~> 0.74.0"
   s.add_development_dependency "rubocop-performance", "~> 1.4"
   s.add_development_dependency "rubocop-rspec", "~> 1.35"
-  s.add_development_dependency "sqlite3", "~> 1.3.13"
+
+  # Database adapters (mysql2, pg, sqlite3) are listed in `Appraisals`, not
+  # here, because each minor version of rails has very specific requirements
+  # about which adapter versions it supports.
 end
