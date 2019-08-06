@@ -40,7 +40,7 @@ has been destroyed.
   s.add_development_dependency "memory_profiler", "~> 0.9.12"
   s.add_development_dependency "mysql2", "~> 0.5.2"
   s.add_development_dependency "paper_trail-association_tracking", "~> 2.0.0"
-  s.add_development_dependency "pg", "~> 1.0"
+  s.add_development_dependency "pg", "~> 1.1"
   s.add_development_dependency "rake", "~> 12.3"
   s.add_development_dependency "rspec-rails", "~> 3.8"
   s.add_development_dependency "rubocop", "~> 0.74.0"
