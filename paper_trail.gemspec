@@ -35,7 +35,7 @@ has been destroyed.
 
   s.add_development_dependency "appraisal", "~> 2.2"
   s.add_development_dependency "byebug", "~> 10.0"
-  s.add_development_dependency "ffaker", "~> 2.8"
+  s.add_development_dependency "ffaker", "~> 2.11"
   s.add_development_dependency "generator_spec", "~> 0.9.4"
   s.add_development_dependency "memory_profiler", "~> 0.9.12"
   s.add_development_dependency "mysql2", "~> 0.5.2"
