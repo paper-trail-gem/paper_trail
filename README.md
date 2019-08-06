@@ -97,7 +97,7 @@ are welcome.
 | 2              | 2.7-stable | >= 1.8.7 | >= 3.0, < 4   |
 | 1              | rails2     | >= 1.8.7 | >= 2.3, < 3   |
 
-Experts: to install incompatible versions of activerecord, see 
+Experts: to install incompatible versions of activerecord, see
 `paper_trail/compatibility.rb`.
 
 ### 1.b. Installation
@@ -109,7 +109,7 @@ Experts: to install incompatible versions of activerecord, see
 1. Add a `versions` table to your database:
 
     ```
-    bundle exec rails generate paper_trail:install [--with-changes] [--with-associations]
+    bundle exec rails generate paper_trail:install [--with-changes]
     ```
 
     For more information on this generator, see [section 5.c.
@@ -889,17 +889,19 @@ string, please try the [paper_trail-globalid][37] gem.
 
 To track and reify associations, use [paper_trail-association_tracking][6] (PT-AT).
 
-From 2014 to 2018, association tracking was part of PT core as an experimental
-feature, but many issues were discovered. To attract new volunteers to address
-these issues, PT-AT was extracted (see
-https://github.com/paper-trail-gem/paper_trail/issues/1070).
+From 2014 to 2018, association tracking was an experimental feature, but many
+issues were discovered. To attract new volunteers to address these issues, PT-AT
+was extracted (see https://github.com/paper-trail-gem/paper_trail/issues/1070).
 
-Even though this has always been an experimental feature, we don't want the
-extraction of PT-AT to be a breaking change. In PT 9, PT-AT was kept as a
-runtime dependency. In PT 10, it is a development dependency, so if you use it
-you must add it to your own `Gemfile`. We will keep PT-AT as a development
-dependency and continue running the existing tests related to association
-tracking for as long as is practical.
+Even though it had always been an experimental feature, we didn't want the
+extraction of PT-AT to be a breaking change, so great care was taken to remove
+it slowly.
+
+- In PT 9, PT-AT was kept as a runtime dependency.
+- In PT 10, it became a development dependency (If you use it you must add it to
+  your own `Gemfile`) and we kept running all of its tests.
+- In PT 11, it will no longer be a development dependency, and it is responsible
+  for its own tests.
 
 #### 4.b.1 The optional `item_subtype` column
 
@@ -1225,7 +1227,7 @@ add_column :versions, :new_object, :jsonb # or :json
 
 PaperTrail::Version.where.not(object: nil).find_each do |version|
   version.update_column(:new_object, YAML.load(version.object))
-  
+
   # if version.object_changes
   #   version.update_column(
   #     :new_object_changes,

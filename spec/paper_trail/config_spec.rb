@@ -17,22 +17,6 @@ module PaperTrail
       end
     end
 
-    describe "track_associations?" do
-      context "@track_associations is nil" do
-        it "returns false and prints a deprecation warning" do
-          config = described_class.instance
-          config.track_associations = nil
-          expect(config.track_associations?).to eq(false)
-        end
-
-        after do
-          ::ActiveSupport::Deprecation.silence do
-            PaperTrail.config.track_associations = true
-          end
-        end
-      end
-    end
-
     describe ".version_limit", versioning: true do
       after { PaperTrail.config.version_limit = nil }
 

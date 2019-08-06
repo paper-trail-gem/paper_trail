@@ -156,15 +156,6 @@ RSpec.describe(::PaperTrail, versioning: true) do
           expect(reified_widget.wotsit).to eq(wotsit)
           expect(widget.reload.wotsit).to eq(wotsit)
         end
-
-        it "copy the has_one association when reifying with :has_one => true" do
-          widget = Widget.create(name: "Henry")
-          widget.update(name: "Harry")
-          wotsit = widget.create_wotsit name: "John"
-          reified_widget = widget.versions.last.reify(has_one: true)
-          expect(reified_widget.wotsit).to(be_nil)
-          expect(widget.reload.wotsit).to eq(wotsit)
-        end
       end
 
       context "and has many associated objects" do
