@@ -50,13 +50,12 @@ module PaperTrail
       end
 
       describe "#nonskipped_attributes_before_change", versioning: true do
-        subject { event.send(:nonskipped_attributes_before_change, false) }
-
-        let(:event) { PaperTrail::Events::Base.new(skipper, false) }
-        let(:skipper) { Skipper.create!(another_timestamp: Time.now) }
-
-        it do
-          is_expected.not_to have_key("another_timestamp")
+        it "returns a hash lacking the skipped attribute" do
+          # Skipper has_paper_trail(..., skip: [:another_timestamp])
+          skipper = Skipper.create!(another_timestamp: Time.now)
+          event = PaperTrail::Events::Base.new(skipper, false)
+          attributes = event.send(:nonskipped_attributes_before_change, false)
+          expect(attributes).not_to have_key("another_timestamp")
         end
       end
     end

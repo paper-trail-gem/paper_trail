@@ -29,10 +29,6 @@ RSpec/HooksBeforeExamples:
     - spec/paper_trail/request_spec.rb
     - spec/paper_trail_spec.rb
 
-RSpec/ImplicitSubject:
-  Exclude:
-    - spec/paper_trail/events/base_spec.rb
-
 RSpec/InstanceVariable:
   Exclude:
     - spec/paper_trail/associations/belongs_to_spec.rb
