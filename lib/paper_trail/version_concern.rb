@@ -205,18 +205,8 @@ module PaperTrail
 
     # Restore the item from this version.
     #
-    # Optionally this can also restore all :has_one and :has_many (including
-    # has_many :through) associations as they were "at the time", if they are
-    # also being versioned by PaperTrail.
-    #
     # Options:
     #
-    # - :has_one
-    #   - `true` - Also reify has_one associations.
-    #   - `false - Default.
-    # - :has_many
-    #   - `true` - Also reify has_many and has_many :through associations.
-    #   - `false` - Default.
     # - :mark_for_destruction
     #   - `true` - Mark the has_one/has_many associations that did not exist in
     #     the reified version for destruction, instead of removing them.
