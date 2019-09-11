@@ -34,7 +34,7 @@ appraise "ar-5.2" do
 end
 
 appraise "ar-6.0" do
-  gem "activerecord", [">= 6.0.0.beta3", "<= 6.0.0.rc2"]
+  gem "activerecord", ["6.0.0"]
   gem "rails-controller-testing", "~> 1.0.3"
   gem "mysql2", "~> 0.5.2"
   gem "pg", "~> 1.1"
