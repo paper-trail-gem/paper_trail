@@ -641,6 +641,7 @@ Undeleting is just as simple:
 widget = Widget.find(42)
 widget.destroy
 # Time passes....
+widget = Widget.new(id:42)    # creating a new object with the same id, re-establishes the link
 versions = widget.versions    # versions ordered by versions.created_at, ascending
 widget = versions.last.reify  # the widget as it was before destruction
 widget.save                   # the widget lives!
