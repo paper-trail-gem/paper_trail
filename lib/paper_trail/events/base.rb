@@ -46,6 +46,11 @@ module PaperTrail
 
       private
 
+      def record_id
+        id_key = @record.paper_trail_options[:id_key]
+        id_key.present? ? @record[id_key] : @record.id
+      end
+
       # Rails 5.1 changed the API of `ActiveRecord::Dirty`. See
       # https://github.com/paper-trail-gem/paper_trail/pull/899
       #
