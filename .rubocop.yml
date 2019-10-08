@@ -65,6 +65,7 @@ Layout/SpaceAroundOperators:
 # from these is of questionable value.
 Metrics/AbcSize:
   Exclude:
+    - lib/paper_trail/reifier.rb
     - 'spec/dummy_app/db/migrate/*'
 
 # Not a useful metric compared to, e.g. `AbcSize`.

@@ -72,7 +72,8 @@ module PaperTrail
 
       # @api private
       def init_model_by_finding_item_id(klass, version)
-        klass.unscoped.where(klass.primary_key => version.item_id).first
+        id_key = klass.paper_trail_options[:id_key] || klass.primary_key
+        klass.unscoped.where(id_key => version.item_id).first
       end
 
       # Look for attributes that exist in `model` and not in this version.

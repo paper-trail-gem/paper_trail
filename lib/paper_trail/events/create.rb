@@ -14,6 +14,7 @@ module PaperTrail
       def data
         data = {
           item: @record,
+          item_id: record_id,
           event: @record.paper_trail_event || "create",
           whodunnit: PaperTrail.request.whodunnit
         }
