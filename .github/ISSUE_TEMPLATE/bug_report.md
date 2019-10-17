@@ -1,9 +1,10 @@
 ---
 name: I want to fix a bug, but need some help
 about: >
-  You must provide a script that reproduces the bug, using our template. We'll
-  help, but you must fix the bug, in a reasonable amount of time, or your issue
-  will be closed. See CONTRIBUTING.md
+  BUG REPORTS NOT ACCEPTED. You can ask for help fixing a bug. You must provide
+  a script that reproduces the bug, using our template. We'll help, but you must
+  fix the bug, in a reasonable amount of time, or your issue will be closed. See
+  CONTRIBUTING.md
 
 ---
 
