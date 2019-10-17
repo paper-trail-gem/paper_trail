@@ -7,7 +7,13 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Breaking Changes
 
-- None
+- [#1221](https://github.com/paper-trail-gem/paper_trail/pull/1221)
+  If you use the experimental association-tracking feature, and you forget to
+  install the `paper_trail-association_tracking` gem, then, when you call
+  `track_associations=` you will get a `NoMethodError` instead of the previous
+  detailed error. Normally the removal of such a temporary warning would not be
+  treated as a breaking change, but since this relates to PT-AT, it seemed
+  warranted.
 
 ### Added
 
