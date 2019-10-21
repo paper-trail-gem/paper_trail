@@ -176,7 +176,7 @@ RSpec.describe Article, type: :model, versioning: true do
     end
   end
 
-  context "#destroy" do
+  describe "#destroy" do
     it "creates a version record" do
       article = described_class.create
       article.destroy

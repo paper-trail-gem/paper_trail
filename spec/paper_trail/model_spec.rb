@@ -577,7 +577,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
       end
     end
 
-    context ".versions_between" do
+    describe ".versions_between" do
       before do
         @created = 30.days.ago
         @first_update = 15.days.ago
