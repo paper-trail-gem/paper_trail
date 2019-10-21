@@ -29,7 +29,7 @@ RSpec.describe CustomYamlSerializer do
     }
   }
 
-  context(".load") do
+  describe ".load" do
     it("deserializes YAML to Ruby, removing pairs with blank keys or values") do
       expect(described_class.load(word_hash.to_yaml)).to eq(
         word_hash.reject { |k, v| (k.blank? || v.blank?) }
@@ -37,7 +37,7 @@ RSpec.describe CustomYamlSerializer do
     end
   end
 
-  context(".dump") do
+  describe ".dump" do
     it("serializes Ruby to YAML, removing pairs with nil values") do
       expect(described_class.dump(word_hash)).to eq(
         word_hash.reject { |_k, v| v.nil? }.to_yaml

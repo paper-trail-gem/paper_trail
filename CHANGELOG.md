@@ -23,6 +23,10 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 - None
 
+### Dependencies
+
+- Drop support for rails 4 (reached EOL on 2019-08-15)
+
 ## 10.3.1 (2019-07-31)
 
 ### Breaking Changes

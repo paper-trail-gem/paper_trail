@@ -19,8 +19,9 @@ For instructions on how to file a bug report, please see our [issue template][3]
 ## Responses to Common Problems
 
 ```
-Thanks for the bug report. All bug reports are required to use our
-[bug report template][2]. See also our [contributing guide][1].
+Hi ___. All issues are required to use our [issue template][2]. See also our
+[contributing guide][1]. Please review the issue template, open a new issue,
+and I'll do what I can to help!
 
 [1]: https://github.com/paper-trail-gem/paper_trail/blob/master/.github/CONTRIBUTING.md
 [2]: https://github.com/paper-trail-gem/paper_trail/blob/master/.github/ISSUE_TEMPLATE/bug_report.md

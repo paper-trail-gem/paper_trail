@@ -45,7 +45,17 @@ has been destroyed.
   s.add_development_dependency "rubocop-performance", "~> 1.4"
   s.add_development_dependency "rubocop-rspec", "~> 1.35"
 
-  # Database adapters (mysql2, pg, sqlite3) are listed in `Appraisals`, not
-  # here, because each minor version of rails has very specific requirements
-  # about which adapter versions it supports.
+  # ## Database Adapters
+  #
+  # The dependencies here must match the `gem` call at the top of their
+  # adapters, eg. `active_record/connection_adapters/mysql2_adapter.rb`,
+  # assuming said call is consistent for all versions of rails we test against
+  # (see `Appraisals`).
+  #
+  # Currently, all versions of rails we test against are consistent. In the past,
+  # when we tested against rails 4.2, we had to specify database adapters in
+  # `Appraisals`.
+  s.add_development_dependency "mysql2", ">= 0.4.4"
+  s.add_development_dependency "pg", ">= 0.18", "< 2.0"
+  s.add_development_dependency "sqlite3", "~> 1.4"
 end
