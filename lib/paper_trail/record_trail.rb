@@ -46,7 +46,7 @@ module PaperTrail
     #  "live" item, we return nil.  Perhaps we should return self instead?
     def next_version
       subsequent_version = source_version.next
-      subsequent_version ? subsequent_version.reify : @record.class.find(@record.id)
+      subsequent_version ? subsequent_version.reify : @record.class.find(record_id)
     rescue StandardError # TODO: Rescue something more specific
       nil
     end
@@ -285,8 +285,13 @@ module PaperTrail
     def log_version_errors(version, action)
       version.logger&.warn(
         "Unable to create version for #{action} of #{@record.class.name}" \
-          "##{@record.id}: " + version.errors.full_messages.join(", ")
+          "##{record_id}: " + version.errors.full_messages.join(", ")
       )
+    end
+
+    # @api private
+    def record_id
+      @record[@record.class.paper_trail.primary_key_for_has_many_versions]
     end
 
     def version

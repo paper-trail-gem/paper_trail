@@ -329,6 +329,13 @@ class SetUpTestTables < (
     add_index :bar_habtms_foo_habtms, [:foo_habtm_id]
     add_index :bar_habtms_foo_habtms, [:bar_habtm_id]
 
+    # custom_id_key_records have id and uuid
+    create_table :custom_id_key_records, force: true do |t|
+      t.column :uuid, :string
+      t.string :name
+      t.timestamps null: true, limit: 6
+    end
+
     # custom_primary_key_records use a uuid column (string)
     create_table :custom_primary_key_records, id: false, force: true do |t|
       t.column :uuid, :string, primary_key: true

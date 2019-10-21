@@ -17,7 +17,11 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
-- None
+- [#1228](https://github.com/paper-trail-gem/paper_trail/pull/1228)
+  Centralizes in a single method the id of the class to be used for the versions table.
+  By default it uses the class `primary_key` but it can be overriden to take another value.
+  The `paper_trail-configurable_item_id` gem is created to provide a way to customize as an option
+  of the `has_paper_trail` method.
 
 ### Fixed
 

@@ -275,6 +275,20 @@ module PaperTrail
         end
       end
 
+      # Returns the record id for the versions table
+      #
+      # @api private
+      def record_id
+        @record[@record.class.paper_trail.primary_key_for_has_many_versions]
+      end
+
+      # Returns the record type for the versions table
+      #
+      # @api private
+      def record_type
+        @record.class.base_class.name
+      end
+
       # Returns a boolean indicating whether to store serialized version diffs
       # in the `object_changes` column of the version record.
       #

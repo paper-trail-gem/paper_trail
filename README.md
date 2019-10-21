@@ -58,6 +58,8 @@ has been destroyed.
   - [6.a. Custom Version Classes](#6a-custom-version-classes)
   - [6.b. Custom Serializer](#6b-custom-serializer)
   - [6.c. Custom Object Changes](#6c-custom-object-changes)
+  - [6.d. Excluding the Object Column](#6d-excluding-the-object-column)
+  - [6.e. Custom Primary Key for the versions Association](#6e-custom-primary-key-for-the-versions-association)
 - [7. Testing](#7-testing)
   - [7.a. Minitest](#7a-minitest)
   - [7.b. RSpec](#7b-rspec)
@@ -1339,6 +1341,13 @@ For an example of a complete and useful adapter, see
 The `object` column ends up storing a lot of duplicate data if you have models that have many columns,
 and that are updated many times. You can save ~50% of storage space by removing the column from the
 versions table. It's important to note that this will disable `reify` and `where_object`.
+
+
+### 6.e. Custom Primary Key for the versions Association
+
+The versions table by default uses the class `primary_key` for the association. If you want another column
+to be used for the association, you can override the `primary_key_for_has_many_versions` method of the
+`PaperTrail::ModelConfig` class or use the `paper_trail-configurable_item_id` gem.
 
 ## 7. Testing
 

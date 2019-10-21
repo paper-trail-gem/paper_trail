@@ -122,6 +122,16 @@ module PaperTrail
       setup_callbacks_from_options options[:on]
     end
 
+    # Single source of truth of the primary_key used for the versions association
+    # Can be overriden by a gem to allow custom primary keys for the has_many
+    # versions association
+    # https://github.com/paper-trail-gem/paper_trail/pull/1226
+    # https://github.com/paper-trail-gem/paper_trail/pull/1228
+    # @api public
+    def primary_key_for_has_many_versions
+      @model_class.primary_key
+    end
+
     def version_class
       @_version_class ||= @model_class.version_class_name.constantize
     end
@@ -187,6 +197,7 @@ module PaperTrail
         @model_class.versions_association_name,
         scope,
         class_name: @model_class.version_class_name,
+        primary_key: primary_key_for_has_many_versions,
         as: :item,
         **options[:versions].except(:name, :scope)
       )

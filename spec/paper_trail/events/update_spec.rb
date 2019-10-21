@@ -6,6 +6,17 @@ module PaperTrail
   module Events
     ::RSpec.describe Update do
       describe "#data", versioning: true do
+        it "includes correct item_subtype" do
+          carter = Family::CelebrityFamily.create(
+            name: "Carter",
+            path_to_stardom: "Mexican radio"
+          )
+          carter.path_to_stardom = "Johnny"
+          data = PaperTrail::Events::Update.new(carter, false, false, nil).data
+          expect(data[:item_type]).to eq("Family::Family")
+          expect(data[:item_subtype]).to eq("Family::CelebrityFamily")
+        end
+
         context "is_touch false" do
           it "object_changes is present" do
             carter = Family::CelebrityFamily.create(
