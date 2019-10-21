@@ -55,7 +55,7 @@ has been destroyed.
   # Currently, all versions of rails we test against are consistent. In the past,
   # when we tested against rails 4.2, we had to specify database adapters in
   # `Appraisals`.
-  s.add_development_dependency "mysql2", ">= 0.4.4"
+  s.add_development_dependency "mysql2", "~> 0.5"
   s.add_development_dependency "pg", ">= 0.18", "< 2.0"
   s.add_development_dependency "sqlite3", "~> 1.4"
 end
