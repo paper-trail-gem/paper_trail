@@ -125,7 +125,7 @@ module PaperTrail
         inheritance_column_name = version.item_type.constantize.inheritance_column
         inher_col_value = attrs[inheritance_column_name]
         class_name = inher_col_value.blank? ? version.item_type : inher_col_value
-        class_name.constantize
+        class_name.safe_constantize || "#{version.item_type}::#{inher_col_value}".constantize
       end
     end
   end
