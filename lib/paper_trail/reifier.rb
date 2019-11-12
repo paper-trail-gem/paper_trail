@@ -122,10 +122,18 @@ module PaperTrail
       #
       # TODO: Duplication: similar `constantize` in VersionConcern#version_limit
       def version_reification_class(version, attrs)
-        inheritance_column_name = version.item_type.constantize.inheritance_column
+        item_klass = version.item_type.constantize
+        inheritance_column_name = item_klass.inheritance_column
         inher_col_value = attrs[inheritance_column_name]
-        class_name = inher_col_value.blank? ? version.item_type : inher_col_value
-        class_name.constantize
+        case inher_col_value
+        when Numeric
+          enum_mapping = item_klass.send(inheritance_column_name.pluralize)
+          enum_mapping.key(inher_col_value)&.constantize || item_klass
+        when String
+          inher_col_value.blank? ? item_klass : inher_col_value.constantize
+        else
+          item_klass
+        end
       end
     end
   end
