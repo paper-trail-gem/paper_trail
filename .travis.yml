@@ -5,8 +5,8 @@ cache: bundler
 # For example, if our gemspec says `required_ruby_version = ">= 2.3.0"`, and
 # ruby 2.5.0 has just been released, then we test 2.3 and 2.5, but not 2.4.
 rvm:
-  - 2.3.8
-  - 2.6.0
+  - 2.3
+  - 2.7
 
 env:
   global:
@@ -35,7 +35,7 @@ gemfile:
 matrix:
   exclude:
     # rails 6 requires ruby >= 2.5.0
-    - rvm: 2.3.8
+    - rvm: 2.3
       gemfile: gemfiles/ar_6.0.gemfile
   fast_finish: true
 services:
