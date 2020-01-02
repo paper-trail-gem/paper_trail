@@ -78,9 +78,9 @@ class SetUpTestTables < (
     end
 
     create_table :versions, versions_table_options do |t|
-      t.string   :item_type, item_type_options(null: false)
+      t.string   :item_type, **item_type_options(null: false)
       t.integer  :item_id, null: false
-      t.string   :item_subtype, item_type_options(null: true)
+      t.string   :item_subtype, **item_type_options(null: true)
       t.string   :event, null: false
       t.string   :whodunnit
       t.text     :object, limit: TEXT_BYTES
