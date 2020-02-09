@@ -1,13 +1,9 @@
 ---
-name: I want to fix a bug, but need some help
-about: 'BUG REPORTS NOT ACCEPTED. You can ask for help fixing a bug. You must provide
-  a script that reproduces the bug, using our template. We''ll help, but you must
-  fix the bug yourself (prepare a PR).
-
-'
-title: 
-labels: 
-assignees: 
+name: Bug report
+about: You must provide a script that reproduces the bug, using our template.
+title: ''
+labels: ''
+assignees: ''
 
 ---
 
@@ -19,7 +15,6 @@ closed without comment.
 Check the following boxes:
 
 - [ ] This is not a usage question, this is a bug report
-- [ ] I am committed to fixing this bug myself, I just need some help
 - [ ] This bug can be reproduced with the script I provide below
 - [ ] This bug can be reproduced in the latest release of the `paper_trail` gem
 
