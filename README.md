@@ -8,12 +8,10 @@ Track changes to your models, for auditing or versioning. See how a model looked
 at any stage in its lifecycle, revert it to any version, or restore it after it
 has been destroyed.
 
-## Looking for a new maintainer
+## Looking for new maintainers
 
-We're looking to add a new maintainer to triage issues! Please [email us][43]
-if you're interested. In the meantime, we'll continue to make releases a few
-times per year to stay up to date with rails. Issues are disabled until we have
-enough volunteers to handle them, but pull requests are still welcome!
+We're looking to add new maintainers! Please [email us][43]
+if you're interested.
 
 ## Documentation
 
