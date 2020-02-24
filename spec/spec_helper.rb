@@ -28,14 +28,6 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 end
 
-# At the time rails 5.0 introduced the `params` keyword for controller tests,
-# we still supported rails 4, so we needed a method here to handle both
-# versions. We no longer need this method.
-def params_wrapper(args)
-  ActiveSupport::Deprecation.warn("In PT tests, do not use params_wrapper anymore")
-  { params: args }
-end
-
 require File.expand_path("dummy_app/config/environment", __dir__)
 require "rspec/rails"
 require "paper_trail/frameworks/rspec"
