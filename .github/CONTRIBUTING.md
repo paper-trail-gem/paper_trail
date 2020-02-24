@@ -39,6 +39,7 @@ ask for whatever help you need, but it's your job to fix it.
 gem install bundler
 bundle
 bundle exec appraisal install
+bundle exec appraisal update # occasionally
 ```
 
 Testing is a little awkward because the test suite:

@@ -3,7 +3,7 @@ require: rubocop-rspec
 # Remove these configuration records
 # one by one as the offenses are removed from the code base.
 
-Layout/AlignArguments:
+Layout/ArgumentAlignment:
   Enabled: false
 
 Metrics/AbcSize:
@@ -37,4 +37,12 @@ RSpec/NestedGroups:
 # safelists, like `whitelist_classes` into our serializer, and the serializer
 # interface is a public API, so that would be a breaking change.
 Security/YAMLLoad:
+  Enabled: false
+
+# We want this, but not until we drop support for ruby 2.4
+Style/HashTransformKeys:
+  Enabled: false
+
+# We want this, but not until we drop support for ruby 2.4
+Style/HashTransformValues:
   Enabled: false
