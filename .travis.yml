@@ -27,7 +27,6 @@ before_install:
   - gem update bundler
 
 gemfile:
-  - gemfiles/ar_5.1.gemfile
   - gemfiles/ar_5.2.gemfile
   - gemfiles/ar_6.0.gemfile
 matrix:

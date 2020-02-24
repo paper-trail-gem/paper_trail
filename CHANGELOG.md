@@ -25,7 +25,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Dependencies
 
-- Drop support for rails 4 (reached EOL on 2019-08-15)
+- Drop support for rails <= 5.1 (reached EOL when 6.0 was released,
+  per https://guides.rubyonrails.org/maintenance_policy.html)
 - Drop support for ruby 2.3 (reached EOL on 2019-04-01)
 
 ## 10.3.1 (2019-07-31)
