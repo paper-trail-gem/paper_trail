@@ -1,11 +1,9 @@
 language: ruby
 cache: bundler
 
-# For ruby compatibility, we test the highest and lowest minor versions only.
-# For example, if our gemspec says `required_ruby_version = ">= 2.3.0"`, and
-# ruby 2.5.0 has just been released, then we test 2.3 and 2.5, but not 2.4.
+# For ruby, we test the highest and lowest minor versions only.
 rvm:
-  - 2.3
+  - 2.4
   - 2.7
 
 env:
@@ -35,7 +33,7 @@ gemfile:
 matrix:
   exclude:
     # rails 6 requires ruby >= 2.5.0
-    - rvm: 2.3
+    - rvm: 2.4
       gemfile: gemfiles/ar_6.0.gemfile
   fast_finish: true
 services:
