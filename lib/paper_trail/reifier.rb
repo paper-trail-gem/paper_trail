@@ -88,9 +88,7 @@ module PaperTrail
       #
       # @api private
       def reify_attribute(k, v, model, version)
-        enums = model.class.respond_to?(:defined_enums) ? model.class.defined_enums : {}
-        is_enum_without_type_caster = ::ActiveRecord::VERSION::MAJOR < 5 && enums.key?(k)
-        if model.has_attribute?(k) && !is_enum_without_type_caster
+        if model.has_attribute?(k)
           model[k.to_sym] = v
         elsif model.respond_to?("#{k}=")
           model.send("#{k}=", v)

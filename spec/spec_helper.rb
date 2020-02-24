@@ -28,19 +28,12 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 end
 
-def active_record_gem_version
-  Gem::Version.new(ActiveRecord::VERSION::STRING)
-end
-
-# Wrap args in a hash to support the ActionController::TestCase and
-# ActionDispatch::Integration HTTP request method switch to keyword args
-# (see https://github.com/rails/rails/blob/master/actionpack/CHANGELOG.md)
+# At the time rails 5.0 introduced the `params` keyword for controller tests,
+# we still supported rails 4, so we needed a method here to handle both
+# versions. We no longer need this method.
 def params_wrapper(args)
-  if defined?(::Rails) && active_record_gem_version >= Gem::Version.new("5.0.0.beta1")
-    { params: args }
-  else
-    args
-  end
+  ActiveSupport::Deprecation.warn("In PT tests, do not use params_wrapper anymore")
+  { params: args }
 end
 
 require File.expand_path("dummy_app/config/environment", __dir__)
@@ -54,21 +47,5 @@ require_relative "support/paper_trail_spec_migrator"
 
 RSpec.configure do |config|
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
-end
-
-# In rails < 5, some tests seem to require DatabaseCleaner-truncation.
-# Truncation is about three times slower than transaction rollback, so it'll
-# be nice when we can drop support for rails < 5.
-if active_record_gem_version < ::Gem::Version.new("5")
-  require "database_cleaner"
-  DatabaseCleaner.strategy = :truncation
-  RSpec.configure do |config|
-    config.use_transactional_fixtures = false
-    config.before { DatabaseCleaner.start }
-    config.after { DatabaseCleaner.clean }
-  end
-else
-  RSpec.configure do |config|
-    config.use_transactional_fixtures = true
-  end
+  config.use_transactional_fixtures = true
 end

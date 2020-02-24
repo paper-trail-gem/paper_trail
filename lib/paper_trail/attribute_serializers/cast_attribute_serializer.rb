@@ -32,50 +32,18 @@ module PaperTrail
       end
     end
 
-    if ::ActiveRecord::VERSION::MAJOR >= 5
-      # This implementation uses AR 5's `serialize` and `deserialize`.
-      class CastAttributeSerializer
-        def serialize(attr, val)
-          AttributeSerializerFactory.for(@klass, attr).serialize(val)
-        end
-
-        def deserialize(attr, val)
-          if defined_enums[attr] && val.is_a?(::String)
-            # Because PT 4 used to save the string version of enums to `object_changes`
-            val
-          else
-            AttributeSerializerFactory.for(@klass, attr).deserialize(val)
-          end
-        end
+    # Uses AR 5's `serialize` and `deserialize`.
+    class CastAttributeSerializer
+      def serialize(attr, val)
+        AttributeSerializerFactory.for(@klass, attr).serialize(val)
       end
-    else
-      # This implementation uses AR 4.2's `type_cast_for_database`. For
-      # versions of AR < 4.2 we provide an implementation of
-      # `type_cast_for_database` in our shim attribute type classes,
-      # `NoOpAttribute` and `SerializedAttribute`.
-      class CastAttributeSerializer
-        def serialize(attr, val)
-          castable_val = val
-          if defined_enums[attr]
-            # `attr` is an enum. Find the number that corresponds to `val`. If `val` is
-            # a number already, there won't be a corresponding entry, just use `val`.
-            castable_val = defined_enums[attr][val] || val
-          end
-          @klass.type_for_attribute(attr).type_cast_for_database(castable_val)
-        end
 
-        def deserialize(attr, val)
-          if defined_enums[attr] && val.is_a?(::String)
-            # Because PT 4 used to save the string version of enums to `object_changes`
-            val
-          else
-            val = @klass.type_for_attribute(attr).type_cast_from_database(val)
-            if defined_enums[attr]
-              defined_enums[attr].key(val)
-            else
-              val
-            end
-          end
+      def deserialize(attr, val)
+        if defined_enums[attr] && val.is_a?(::String)
+          # Because PT 4 used to save the string version of enums to `object_changes`
+          val
+        else
+          AttributeSerializerFactory.for(@klass, attr).deserialize(val)
         end
       end
     end
