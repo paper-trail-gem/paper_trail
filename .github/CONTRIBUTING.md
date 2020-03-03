@@ -35,7 +35,12 @@ ask for whatever help you need, but it's your job to fix it.
 
 ## Development
 
-Install gems with `bundle exec appraisal install`.
+```bash
+gem install bundler
+bundle
+bundle exec appraisal install
+bundle exec appraisal update # occasionally
+```
 
 Testing is a little awkward because the test suite:
 
@@ -43,13 +48,10 @@ Testing is a little awkward because the test suite:
 1. Contains a "dummy" rails app with three databases (test, foo, and bar)
 1. Supports three different RDBMS': sqlite, mysql, and postgres
 
-### Test sqlite, AR 4
+### Test sqlite, AR 6
 
 ```
-DB=sqlite bundle exec appraisal ar-4.2 rake
-
-# Run a single test
-DB=sqlite bundle exec appraisal ar-4.2 rspec spec/paper_trail_spec.rb
+DB=sqlite bundle exec appraisal ar-6.0 rake
 ```
 
 ### Test sqlite, AR 5
