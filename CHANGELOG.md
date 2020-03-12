@@ -7,9 +7,11 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Breaking Changes
 
-- In the PT rails engine, the `paper_trail` configuration has been
-  removed. This configuration object was deprecated in 10.2.0. Please review
-  docs section [2.d. Turning PaperTrail
+- Rails: Instead of an `Engine`, PT now provides a `Railtie`, which is simpler.
+- Rails: The deprecated `config.paper_trail` configuration technique
+  has been removed. This configuration object was deprecated in 10.2.0. It only
+  had one key, `config.paper_trail.enabled`. Please review docs section [2.d.
+  Turning PaperTrail
   Off](https://github.com/paper-trail-gem/paper_trail/#2d-turning-papertrail-off)
   for alternatives.
 

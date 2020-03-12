@@ -7,7 +7,7 @@ require "byebug"
 require_relative "support/pt_arel_helpers"
 
 unless File.exist?(File.expand_path("dummy_app/config/database.yml", __dir__))
-  warn "No database.yml detected for the dummy app, please run `rake prepare` first"
+  warn "No database.yml detected for the dummy app, please run `rake install_database_yml` first"
 end
 
 RSpec.configure do |config|
