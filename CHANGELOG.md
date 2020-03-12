@@ -21,7 +21,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- None
+- [#1237](https://github.com/paper-trail-gem/paper_trail/pull/1237)
+  Fixed Rails lazy load ActiveRecord
 
 ### Dependencies
 

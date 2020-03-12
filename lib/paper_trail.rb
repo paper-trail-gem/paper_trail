@@ -8,24 +8,13 @@
 # can revisit this decision.
 require "active_support/all"
 
-# AR is required for, eg. has_paper_trail.rb, so we could put this `require` in
-# all of those files, but it seems easier to troubleshoot if we just make sure
-# AR is loaded here before loading *any* of PT. See discussion of
-# performance/simplicity tradeoff for activesupport above.
-require "active_record"
-
-require "request_store"
 require "paper_trail/cleaner"
 require "paper_trail/compatibility"
 require "paper_trail/config"
-require "paper_trail/has_paper_trail"
 require "paper_trail/record_history"
-require "paper_trail/reifier"
 require "paper_trail/request"
-require "paper_trail/version_concern"
 require "paper_trail/version_number"
 require "paper_trail/serializers/json"
-require "paper_trail/serializers/yaml"
 
 # An ActiveRecord extension that tracks changes to your models, for auditing or
 # versioning.
@@ -126,27 +115,13 @@ module PaperTrail
   end
 end
 
-# We use the `on_load` "hook" instead of `ActiveRecord::Base.include` because we
-# don't want to cause all of AR to be autloaded yet. See
-# https://guides.rubyonrails.org/engines.html#what-are-on-load-hooks-questionmark
-# to learn more about `on_load`.
-ActiveSupport.on_load(:active_record) do
-  include PaperTrail::Model
-end
-
-# Require frameworks
-if defined?(::Rails)
-  # Rails module is sometimes defined by gems like rails-html-sanitizer
-  # so we check for presence of Rails.application.
-  if defined?(::Rails.application)
-    require "paper_trail/frameworks/rails"
-  else
-    ::Kernel.warn(::PaperTrail::E_RAILS_NOT_LOADED)
-  end
+if defined?(Rails::Railtie)
+  require "paper_trail/railtie"
 else
-  require "paper_trail/frameworks/active_record"
-end
-
-if defined?(::ActiveRecord)
+  require "active_record"
   ::PaperTrail::Compatibility.check_activerecord(::ActiveRecord.gem_version)
+  require "paper_trail/has_paper_trail"
+  require "paper_trail/reifier"
+  require "paper_trail/frameworks/active_record/models/paper_trail/version"
+  ActiveRecord.include PaperTrail::Model
 end

@@ -103,9 +103,3 @@ module PaperTrail
     end
   end
 end
-
-if defined?(::ActionController)
-  ::ActiveSupport.on_load(:action_controller) do
-    include ::PaperTrail::Rails::Controller
-  end
-end
