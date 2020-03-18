@@ -52,23 +52,23 @@ module PaperTrail
       # not the actual subclass. If `type` is present but empty, the class is
       # the base class.
       def init_model(attrs, options, version)
-        if options[:dup] != true && version.item
-          model = version.item
-          if options[:unversioned_attributes] == :nil
-            init_unversioned_attrs(attrs, model)
-          end
-        else
-          klass = version_reification_class(version, attrs)
-          # The `dup` option always returns a new object, otherwise we should
-          # attempt to look for the item outside of default scope(s).
-          find_cond = { klass.primary_key => version.item_id }
-          if options[:dup] || (item_found = klass.unscoped.where(find_cond).first).nil?
-            model = klass.new
-          elsif options[:unversioned_attributes] == :nil
-            model = item_found
-            init_unversioned_attrs(attrs, model)
-          end
+        klass = version_reification_class(version, attrs)
+
+        # The `dup` option and destroyed version always returns a new object,
+        # otherwise we should attempt to load item or to look for the item
+        # outside of default scope(s).
+        model = if options[:dup] == true || destroy_event?(version)
+                  klass.new
+                else
+                  find_cond = { klass.primary_key => version.item_id }
+
+                  version.item || klass.unscoped.where(find_cond).first || klass.new
+                end
+
+        if options[:unversioned_attributes] == :nil && !model.new_record?
+          init_unversioned_attrs(attrs, model)
         end
+
         model
       end
 
@@ -124,6 +124,10 @@ module PaperTrail
         inher_col_value = attrs[inheritance_column_name]
         class_name = inher_col_value.blank? ? version.item_type : inher_col_value
         class_name.constantize
+      end
+
+      def destroy_event?(version)
+        version.event == "destroy"
       end
     end
   end
