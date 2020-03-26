@@ -748,9 +748,6 @@ widget.versions.last.changeset
 # {}
 ```
 
-The `object_changes` are only stored for creation and updates, not when an
-object is destroyed.
-
 Please be aware that PaperTrail doesn't use diffs internally.  When I designed
 PaperTrail I wanted simplicity and robustness so I decided to make each version
 of an object self-contained.  A version stores all of its object's data, not a
