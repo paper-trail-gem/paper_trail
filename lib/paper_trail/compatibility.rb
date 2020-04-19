@@ -17,8 +17,8 @@ module PaperTrail
   # newer rails versions. Most PT users should avoid incompatible rails
   # versions.
   module Compatibility
-    ACTIVERECORD_GTE = ">= 4.2"
-    ACTIVERECORD_LT = "< 6.1"
+    ACTIVERECORD_GTE = ">= 5.2" # enforced in gemspec
+    ACTIVERECORD_LT = "< 6.1" # not enforced in gemspec
 
     E_INCOMPATIBLE_AR = <<-EOS
       PaperTrail %s is not compatible with ActiveRecord %s. We allow PT

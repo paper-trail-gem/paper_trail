@@ -128,10 +128,6 @@ module PaperTrail
 
     private
 
-    def active_record_gem_version
-      Gem::Version.new(ActiveRecord::VERSION::STRING)
-    end
-
     # Raises an error if the provided class is an `abstract_class`.
     # @api private
     def assert_concrete_activerecord_class(class_name)
@@ -141,8 +137,7 @@ module PaperTrail
     end
 
     def cannot_record_after_destroy?
-      Gem::Version.new(ActiveRecord::VERSION::STRING).release >= Gem::Version.new("5") &&
-        ::ActiveRecord::Base.belongs_to_required_by_default
+      ::ActiveRecord::Base.belongs_to_required_by_default
     end
 
     # Some options require the presence of the `item_subtype` column. Currently

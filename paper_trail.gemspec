@@ -26,7 +26,10 @@ has been destroyed.
   s.require_paths = ["lib"]
 
   s.required_rubygems_version = ">= 1.3.6"
-  s.required_ruby_version = ">= 2.3.0"
+
+  # Ruby 2.4 reaches EoL at the end of March of 2020
+  # https://www.ruby-lang.org/en/news/2019/10/02/ruby-2-4-9-released/
+  s.required_ruby_version = ">= 2.4.0"
 
   # We no longer specify a maximum rails version.
   # See discussion in paper_trail/compatibility.rb
@@ -41,7 +44,7 @@ has been destroyed.
   s.add_development_dependency "paper_trail-association_tracking", "~> 2.0.0"
   s.add_development_dependency "rake", "~> 12.3"
   s.add_development_dependency "rspec-rails", "~> 3.8"
-  s.add_development_dependency "rubocop", "~> 0.74.0"
+  s.add_development_dependency "rubocop", "~> 0.80.0"
   s.add_development_dependency "rubocop-performance", "~> 1.4"
   s.add_development_dependency "rubocop-rspec", "~> 1.35"
 
