@@ -115,7 +115,7 @@ module PaperTrail
   end
 end
 
-if defined?(Rails::Railtie)
+if defined?(Rails)
   require "paper_trail/railtie"
 else
   require "active_record"
