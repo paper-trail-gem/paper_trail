@@ -3,10 +3,17 @@
 require "paper_trail/frameworks/rails/engine"
 
 module PaperTrail
-  # Represents code to load within Rails framework
+  # Represents code to load within Rails framework. See documentation in
+  # `rails/railtie.rb`.
   # @api private
   class Railtie < ::Rails::Railtie
+    # PaperTrail only has one initializer. The `initializer` method can take a
+    # `before:` or `after:` argument, but that's only relevant for railties with
+    # more than one initializer.
     initializer "paper_trail" do
+      # `on_load` is a "lazy load hook". It "declares a block that will be
+      # executed when a Rails component is fully loaded". (See
+      # `active_support/lazy_load_hooks.rb`)
       ActiveSupport.on_load(:action_controller) do
         require "paper_trail/frameworks/rails/controller"
         include PaperTrail::Rails::Controller
