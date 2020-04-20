@@ -1596,6 +1596,7 @@ require 'paper_trail/frameworks/rspec'
 
 ## Articles
 
+* [PaperTrail Gem Tutorial](https://stevepolito.design/blog/paper-trail-gem-tutorial/), 20th April 2020.
 * [Jutsu #8 - Version your RoR models with PaperTrail](http://samurails.com/gems/papertrail/),
   [Thibault](http://samurails.com/about-me/), 29th September 2014
 * [Versioning with PaperTrail](http://www.sitepoint.com/versioning-papertrail),
