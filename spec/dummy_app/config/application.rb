@@ -43,7 +43,10 @@ module Dummy
       end
     end
 
-    if ::ENV["DB"] == "sqlite" && ::Rails.gem_version >= ::Gem::Version.new("5.2")
+    # In rails >= 6.0, "`.represent_boolean_as_integer=` is now always true,
+    # so setting this is deprecated and will be removed in Rails 6.1."
+    if ::ENV["DB"] == "sqlite" &&
+        ::Gem::Requirement.new("~> 5.2").satisfied_by?(::Rails.gem_version)
       config.active_record.sqlite3.represent_boolean_as_integer = true
     end
   end
