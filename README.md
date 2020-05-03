@@ -8,11 +8,6 @@ Track changes to your models, for auditing or versioning. See how a model looked
 at any stage in its lifecycle, revert it to any version, or restore it after it
 has been destroyed.
 
-## Looking for new maintainers
-
-We're looking to add new maintainers! Please [email us][43]
-if you're interested.
-
 ## Documentation
 
 | Version        | Documentation |
