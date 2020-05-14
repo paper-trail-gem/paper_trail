@@ -9,12 +9,6 @@ require "action_controller/railtie"
 Bundler.require(:default, Rails.env)
 require "paper_trail"
 
-# As of PT 10, PT-AT is a development dependency in paper_trail.gemspec
-# https://github.com/paper-trail-gem/paper_trail/issues/1070
-# https://github.com/westonganger/paper_trail-association_tracking/issues/2
-# https://github.com/westonganger/paper_trail-association_tracking/issues/7
-require "paper_trail-association_tracking"
-
 module Dummy
   class Application < Rails::Application
     config.encoding = "utf-8"
@@ -49,7 +43,10 @@ module Dummy
       end
     end
 
-    if ::ENV["DB"] == "sqlite" && ::Rails.gem_version >= ::Gem::Version.new("5.2")
+    # In rails >= 6.0, "`.represent_boolean_as_integer=` is now always true,
+    # so setting this is deprecated and will be removed in Rails 6.1."
+    if ::ENV["DB"] == "sqlite" &&
+        ::Gem::Requirement.new("~> 5.2").satisfied_by?(::Rails.gem_version)
       config.active_record.sqlite3.represent_boolean_as_integer = true
     end
   end

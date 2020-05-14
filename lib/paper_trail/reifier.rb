@@ -52,23 +52,23 @@ module PaperTrail
       # not the actual subclass. If `type` is present but empty, the class is
       # the base class.
       def init_model(attrs, options, version)
-        if options[:dup] != true && version.item
-          model = version.item
-          if options[:unversioned_attributes] == :nil
-            init_unversioned_attrs(attrs, model)
-          end
-        else
-          klass = version_reification_class(version, attrs)
-          # The `dup` option always returns a new object, otherwise we should
-          # attempt to look for the item outside of default scope(s).
-          find_cond = { klass.primary_key => version.item_id }
-          if options[:dup] || (item_found = klass.unscoped.where(find_cond).first).nil?
-            model = klass.new
-          elsif options[:unversioned_attributes] == :nil
-            model = item_found
-            init_unversioned_attrs(attrs, model)
-          end
+        klass = version_reification_class(version, attrs)
+
+        # The `dup` option and destroyed version always returns a new object,
+        # otherwise we should attempt to load item or to look for the item
+        # outside of default scope(s).
+        model = if options[:dup] == true || version.event == "destroy"
+                  klass.new
+                else
+                  find_cond = { klass.primary_key => version.item_id }
+
+                  version.item || klass.unscoped.where(find_cond).first || klass.new
+                end
+
+        if options[:unversioned_attributes] == :nil && !model.new_record?
+          init_unversioned_attrs(attrs, model)
         end
+
         model
       end
 
@@ -88,9 +88,7 @@ module PaperTrail
       #
       # @api private
       def reify_attribute(k, v, model, version)
-        enums = model.class.respond_to?(:defined_enums) ? model.class.defined_enums : {}
-        is_enum_without_type_caster = ::ActiveRecord::VERSION::MAJOR < 5 && enums.key?(k)
-        if model.has_attribute?(k) && !is_enum_without_type_caster
+        if model.has_attribute?(k)
           model[k.to_sym] = v
         elsif model.respond_to?("#{k}=")
           model.send("#{k}=", v)
@@ -120,6 +118,7 @@ module PaperTrail
       # this method returns the constant `Animal`. You can see this particular
       # example in action in `spec/models/animal_spec.rb`.
       #
+      # TODO: Duplication: similar `constantize` in VersionConcern#version_limit
       def version_reification_class(version, attrs)
         inheritance_column_name = version.item_type.constantize.inheritance_column
         inher_col_value = attrs[inheritance_column_name]

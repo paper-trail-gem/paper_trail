@@ -25,9 +25,7 @@ module PaperTrail
       # @api public
       def user_for_paper_trail
         return unless defined?(current_user)
-        ActiveSupport::VERSION::MAJOR >= 4 ? current_user.try!(:id) : current_user.try(:id)
-      rescue NoMethodError
-        current_user
+        current_user.try(:id) || current_user
       end
 
       # Returns any information about the controller or request that you

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: I have a usage question
+    url: https://stackoverflow.com/tags/paper-trail-gem
+    about: Due to limited volunteers, we cannot answer usage questions on GitHub.
+  - name: I found a security vulnerability
+    url: https://github.com/paper-trail-gem/paper_trail/blob/master/.github/CONTRIBUTING.md
+    about: Please email the maintainers as described in CONTRIBUTING.md

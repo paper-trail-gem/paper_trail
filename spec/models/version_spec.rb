@@ -126,11 +126,7 @@ module PaperTrail
 
           before do
             if column_datatype_override
-              # In rails < 5, we use truncation, ie. there is no transaction
-              # around the tests, so we can't use a savepoint.
-              if active_record_gem_version >= ::Gem::Version.new("5")
-                ActiveRecord::Base.connection.execute("SAVEPOINT pgtest;")
-              end
+              ActiveRecord::Base.connection.execute("SAVEPOINT pgtest;")
               %w[object object_changes].each do |column|
                 ActiveRecord::Base.connection.execute(
                   "ALTER TABLE versions DROP COLUMN #{column};"
@@ -147,20 +143,7 @@ module PaperTrail
             PaperTrail.serializer = PaperTrail::Serializers::YAML
 
             if column_datatype_override
-              # In rails < 5, we use truncation, ie. there is no transaction
-              # around the tests, so we can't use a savepoint.
-              if active_record_gem_version >= ::Gem::Version.new("5")
-                ActiveRecord::Base.connection.execute("ROLLBACK TO SAVEPOINT pgtest;")
-              else
-                %w[object object_changes].each do |column|
-                  ActiveRecord::Base.connection.execute(
-                    "ALTER TABLE versions DROP COLUMN #{column};"
-                  )
-                  ActiveRecord::Base.connection.execute(
-                    "ALTER TABLE versions ADD COLUMN #{column} text;"
-                  )
-                end
-              end
+              ActiveRecord::Base.connection.execute("ROLLBACK TO SAVEPOINT pgtest;")
               PaperTrail::Version.reset_column_information
             end
           end

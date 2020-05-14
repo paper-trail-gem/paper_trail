@@ -28,10 +28,11 @@ module PaperTrail
     end
 
     def migration_version
-      major = ActiveRecord::VERSION::MAJOR
-      if major >= 5
-        "[#{major}.#{ActiveRecord::VERSION::MINOR}]"
-      end
+      format(
+        "[%d.%d]",
+        ActiveRecord::VERSION::MAJOR,
+        ActiveRecord::VERSION::MINOR
+      )
     end
   end
 end

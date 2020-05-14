@@ -13,7 +13,7 @@ has been destroyed.
 | Version        | Documentation |
 | -------------- | ------------- |
 | Unreleased     | https://github.com/paper-trail-gem/paper_trail/blob/master/README.md |
-| 10.1.0         | https://github.com/paper-trail-gem/paper_trail/blob/v10.1.0/README.md |
+| 10.3.1         | https://github.com/paper-trail-gem/paper_trail/blob/v10.3.1/README.md |
 | 9.2.0          | https://github.com/paper-trail-gem/paper_trail/blob/v9.2.0/README.md |
 | 8.1.2          | https://github.com/paper-trail-gem/paper_trail/blob/v8.1.2/README.md |
 | 7.1.3          | https://github.com/paper-trail-gem/paper_trail/blob/v7.1.3/README.md |
@@ -82,9 +82,8 @@ has been destroyed.
 
 | paper_trail    | branch     | ruby     | activerecord  |
 | -------------- | ---------- | -------- | ------------- |
-| unreleased     | master     | >= 2.3.0 | >= 4.2, < 6   |
-| 10.1           | 10-stable  | >= 2.3.0 | >= 4.2, < 6   |
-| 10.0           | 10-stable  | >= 2.3.0 | >= 4.2, < 5.3 |
+| unreleased     | master     | >= 2.3.0 | >= 4.2, < 6.1 |
+| 10             | 10-stable  | >= 2.3.0 | >= 4.2, < 6.1 |
 | 9              | 9-stable   | >= 2.3.0 | >= 4.2, < 5.3 |
 | 8              | 8-stable   | >= 2.2.0 | >= 4.2, < 5.2 |
 | 7              | 7-stable   | >= 2.1.0 | >= 4.0, < 5.2 |
@@ -95,6 +94,9 @@ has been destroyed.
 | 2              | 2.7-stable | >= 1.8.7 | >= 3.0, < 4   |
 | 1              | rails2     | >= 1.8.7 | >= 2.3, < 3   |
 
+Experts: to install incompatible versions of activerecord, see
+`paper_trail/compatibility.rb`.
+
 ### 1.b. Installation
 
 1. Add PaperTrail to your `Gemfile`.
@@ -104,7 +106,7 @@ has been destroyed.
 1. Add a `versions` table to your database:
 
     ```
-    bundle exec rails generate paper_trail:install [--with-changes] [--with-associations]
+    bundle exec rails generate paper_trail:install [--with-changes]
     ```
 
     For more information on this generator, see [section 5.c.
@@ -112,6 +114,10 @@ has been destroyed.
 
     If using [rails_admin][38], you must enable the
     experimental [Associations](#4b-associations) feature.
+
+    If you're getting "Could not find generator 'paper_trail:install'" errors from
+    recent Ruby/Rails versions, try running `spring stop`
+    (see [this thread](https://github.com/paper-trail-gem/paper_trail/issues/459) for more details).
 
     ```
     bundle exec rake db:migrate
@@ -505,13 +511,6 @@ threads vs. processes.
 
 A legitimate use case is to speed up tests. See [Testing](#7-testing) below.
 
-There is also a rails config option that does the same thing.
-
-```ruby
-# in config/environments/test.rb
-config.paper_trail.enabled = false
-```
-
 #### Per HTTP Request
 
 ```ruby
@@ -585,6 +584,30 @@ PaperTrail.config.version_limit = 3
 PaperTrail.config.version_limit = nil
 ```
 
+#### 2.e.1 Per-model limit
+
+Models can override the global `PaperTrail.config.version_limit` setting.
+
+Example:
+
+```
+# initializer
+PaperTrail.config.version_limit = 10
+
+# At most 10 versions
+has_paper_trail
+
+# At most 3 versions (2 updates, 1 create). Overrides global version_limit.
+has_paper_trail limit: 2
+
+# Infinite versions
+has_paper_trail limit: nil
+```
+
+To use a per-model limit, your `versions` table must have an
+`item_subtype` column. See [Section
+4.b.1](https://github.com/paper-trail-gem/paper_trail#4b1-the-optional-item_subtype-column).
+
 ## 3. Working With Versions
 
 ### 3.a. Reverting And Undeleting A Model
@@ -615,6 +638,7 @@ Undeleting is just as simple:
 widget = Widget.find(42)
 widget.destroy
 # Time passes....
+widget = Widget.new(id:42)    # creating a new object with the same id, re-establishes the link
 versions = widget.versions    # versions ordered by versions.created_at, ascending
 widget = versions.last.reify  # the widget as it was before destruction
 widget.save                   # the widget lives!
@@ -755,11 +779,11 @@ version is self-contained (see the Diffing section above for more) you can
 simply delete any records you don't want any more.  For example:
 
 ```sql
-sql> delete from versions where created_at < 2010-06-01;
+sql> delete from versions where created_at < '2010-06-01';
 ```
 
 ```ruby
-PaperTrail::Version.delete_all ['created_at < ?', 1.week.ago]
+PaperTrail::Version.where('created_at < ?', 1.day.ago).delete_all
 ```
 
 ## 4. Saving More Information About Versions
@@ -863,17 +887,19 @@ string, please try the [paper_trail-globalid][37] gem.
 
 To track and reify associations, use [paper_trail-association_tracking][6] (PT-AT).
 
-From 2014 to 2018, association tracking was part of PT core as an experimental
-feature, but many issues were discovered. To attract new volunteers to address
-these issues, PT-AT was extracted (see
-https://github.com/paper-trail-gem/paper_trail/issues/1070).
+From 2014 to 2018, association tracking was an experimental feature, but many
+issues were discovered. To attract new volunteers to address these issues, PT-AT
+was extracted (see https://github.com/paper-trail-gem/paper_trail/issues/1070).
 
-Even though this has always been an experimental feature, we don't want the
-extraction of PT-AT to be a breaking change. In PT 9, PT-AT was kept as a
-runtime dependency. In PT 10, it is a development dependency, so if you use it
-you must add it to your own `Gemfile`. We will keep PT-AT as a development
-dependency and continue running the existing tests related to association
-tracking for as long as is practical.
+Even though it had always been an experimental feature, we didn't want the
+extraction of PT-AT to be a breaking change, so great care was taken to remove
+it slowly.
+
+- In PT 9, PT-AT was kept as a runtime dependency.
+- In PT 10, it became a development dependency (If you use it you must add it to
+  your own `Gemfile`) and we kept running all of its tests.
+- In PT 11, it will no longer be a development dependency, and it is responsible
+  for its own tests.
 
 #### 4.b.1 The optional `item_subtype` column
 
@@ -1193,14 +1219,25 @@ loop over every record and parse it in Ruby, then write to a temporary column:
 
 ```ruby
 add_column :versions, :new_object, :jsonb # or :json
+# add_column :versions, :new_object_changes, :jsonb # or :json
 
-PaperTrail::Version.reset_column_information
-PaperTrail::Version.find_each do |version|
-  version.update_column :new_object, YAML.load(version.object) if version.object
+# PaperTrail::Version.reset_column_information # needed for rails < 6
+
+PaperTrail::Version.where.not(object: nil).find_each do |version|
+  version.update_column(:new_object, YAML.load(version.object))
+
+  # if version.object_changes
+  #   version.update_column(
+  #     :new_object_changes,
+  #     YAML.load(version.object_changes)
+  #   )
+  # end
 end
 
 remove_column :versions, :object
+# remove_column :versions, :object_changes
 rename_column :versions, :new_object, :object
+# rename_column :versions, :new_object_changes, :object_changes
 ```
 
 This technique can be very slow if you have a lot of data. Though slow, it is
@@ -1267,22 +1304,35 @@ end
 
 ### 6.c. Custom Object Changes
 
-By default, PaperTrail stores object changes in a before/after array of objects
-containing keys of columns that have changed in that particular version. You can
-override this behaviour by using the object_changes_adapter config option:
+To fully control the contents of their `object_changes` column, expert users
+can write an adapter.
 
 ```ruby
 PaperTrail.config.object_changes_adapter = MyObjectChangesAdapter.new
+
+class MyObjectChangesAdapter
+  # @param changes Hash
+  # @return Hash
+  def diff(changes)
+    # ...
+  end
+end
 ```
 
-A valid adapter is a class that contains the following methods:
+You should only use this feature if you are comfortable reading PT's source to
+see exactly how the adapter is used. For example, see how `diff` is used by
+reading `::PaperTrail::Events::Base#recordable_object_changes`.
+
+An adapter can implement any or all of the following methods:
+
 1. diff: Returns the changeset in the desired format given the changeset in the original format
 2. load_changeset: Returns the changeset for a given version object
 3. where_object_changes: Returns the records resulting from the given hash of attributes.
 
-To preserve the default behavior for some of these, don't define them in your adapter.
+Depending on what your adapter does, you may have to implement all three.
 
-For an example of such an implementation, see [paper_trail-hashdiff](https://github.com/hashwin/paper_trail-hashdiff)
+For an example of a complete and useful adapter, see
+[paper_trail-hashdiff](https://github.com/hashwin/paper_trail-hashdiff)
 
 ### 6.d. Excluding the Object Column
 
@@ -1541,6 +1591,7 @@ require 'paper_trail/frameworks/rspec'
 
 ## Articles
 
+* [PaperTrail Gem Tutorial](https://stevepolito.design/blog/paper-trail-gem-tutorial/), 20th April 2020.
 * [Jutsu #8 - Version your RoR models with PaperTrail](http://samurails.com/gems/papertrail/),
   [Thibault](http://samurails.com/about-me/), 29th September 2014
 * [Versioning with PaperTrail](http://www.sitepoint.com/versioning-papertrail),
@@ -1569,8 +1620,8 @@ See our [contribution guidelines][43]
 
 ## Inspirations
 
-* [Simply Versioned](http://github.com/github/simply_versioned)
-* [Acts As Audited](http://github.com/collectiveidea/acts_as_audited)
+* [Simply Versioned](https://github.com/jerome/simply_versioned)
+* [Acts As Audited](https://github.com/collectiveidea/audited)
 
 ## Intellectual Property
 

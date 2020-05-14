@@ -16,6 +16,7 @@ require "active_record"
 
 require "request_store"
 require "paper_trail/cleaner"
+require "paper_trail/compatibility"
 require "paper_trail/config"
 require "paper_trail/has_paper_trail"
 require "paper_trail/record_history"
@@ -125,6 +126,10 @@ module PaperTrail
   end
 end
 
+# We use the `on_load` "hook" instead of `ActiveRecord::Base.include` because we
+# don't want to cause all of AR to be autloaded yet. See
+# https://guides.rubyonrails.org/engines.html#what-are-on-load-hooks-questionmark
+# to learn more about `on_load`.
 ActiveSupport.on_load(:active_record) do
   include PaperTrail::Model
 end
@@ -140,4 +145,8 @@ if defined?(::Rails)
   end
 else
   require "paper_trail/frameworks/active_record"
+end
+
+if defined?(::ActiveRecord)
+  ::PaperTrail::Compatibility.check_activerecord(::ActiveRecord.gem_version)
 end

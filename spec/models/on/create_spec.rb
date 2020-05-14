@@ -15,7 +15,7 @@ module On
       end
     end
 
-    context "#paper_trail_event" do
+    describe "#paper_trail_event" do
       it "rembembers the custom event name" do
         record = described_class.new
         record.paper_trail_event = "banana"

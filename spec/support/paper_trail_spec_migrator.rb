@@ -11,7 +11,13 @@ class PaperTrailSpecMigrator
   # how many people use the programmatic interface? Most people probably
   # just use rake. Maybe we're doing it wrong.
   def migrate
-    if ::ActiveRecord.gem_version >= ::Gem::Version.new("5.2.0.rc1")
+    v = ::ActiveRecord.gem_version
+    if v >= ::Gem::Version.new("6.0.0.rc2")
+      ::ActiveRecord::MigrationContext.new(
+        @migrations_path,
+        ::ActiveRecord::Base.connection.schema_migration
+      ).migrate
+    elsif ::Gem::Requirement.new([">= 5.2.0.rc1", "< 6.0.0.rc2"]).satisfied_by?(v)
       ::ActiveRecord::MigrationContext.new(@migrations_path).migrate
     else
       ::ActiveRecord::Migrator.migrate(@migrations_path)

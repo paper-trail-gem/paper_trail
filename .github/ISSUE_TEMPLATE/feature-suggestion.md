@@ -1,22 +1,16 @@
 ---
-name: Feature Suggestion
-about: >
-  Suggest something that you would like to build. We'll help, but you must build
-  it yourself, in a reasonable amount of time, or your issue will be closed. See
-  CONTRIBUTING.md
+name: Feature suggestion
+about: Suggest a feature that you'd like to build
+title: ''
+labels: ''
+assignees: ''
 
 ---
 
 Thank you for your contribution!
 
-Due to limited volunteers, issues that do not follow these instructions will be
+Due to limited volunteers, issues that do not follow this template will be
 closed without comment.
-
-Check the following boxes:
-
-- [ ] I am committed to building this feature myself
-- [ ] I will respond to feedback, and build this feature, in a reasonable amount
-  of time
 
 **Is your feature suggestion related to a problem? Please describe.**
 

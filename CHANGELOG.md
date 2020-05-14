@@ -7,6 +7,33 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Breaking Changes
 
+- [#1221](https://github.com/paper-trail-gem/paper_trail/pull/1221)
+  If you use the experimental association-tracking feature, and you forget to
+  install the `paper_trail-association_tracking` gem, then, when you call
+  `track_associations=` you will get a `NoMethodError` instead of the previous
+  detailed error. Normally the removal of such a temporary warning would not be
+  treated as a breaking change, but since this relates to PT-AT, it seemed
+  warranted.
+
+### Added
+
+- None
+
+### Fixed
+
+- [#1238](https://github.com/paper-trail-gem/paper_trail/pull/1238) -
+  Query optimization in `reify`
+
+### Dependencies
+
+- Drop support for rails <= 5.1 (reached EOL when 6.0 was released,
+  per https://guides.rubyonrails.org/maintenance_policy.html)
+- Drop support for ruby 2.3 (reached EOL on 2019-04-01)
+
+## 10.3.1 (2019-07-31)
+
+### Breaking Changes
+
 - None
 
 ### Added
@@ -16,6 +43,73 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 ### Fixed
 
 - None
+
+### Dependencies
+
+- [#1213](https://github.com/paper-trail-gem/paper_trail/pull/1213) - Allow 
+  contributors to install incompatible versions of ActiveRecord.
+  See discussion in paper_trail/compatibility.rb 
+
+## 10.3.0 (2019-04-09)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- [#1194](https://github.com/paper-trail-gem/paper_trail/pull/1194) -
+  Added a 'limit' option to has_paper_trail, allowing models to override the
+  global `PaperTrail.config.version_limit` setting.
+
+### Fixed
+
+- [#1196](https://github.com/paper-trail-gem/paper_trail/pull/1196) -
+  In the installation migration, change `versions.item_id` from 4 byte integer
+  to 8 bytes (bigint).
+
+## 10.2.1 (2019-03-14)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- [#1184](https://github.com/paper-trail-gem/paper_trail/pull/1184) -
+  No need to calculate previous values of skipped attributes
+- [#1188](https://github.com/paper-trail-gem/paper_trail/pull/1188) -
+  Optimized the memory allocations during the building of every particular
+  Version object. That can help a lot for heavy bulk processing.
+  In additional we advise to use `json[b]` DB types for `object`
+  and `object_changes` Version columns, in order to reach best possible
+  RAM performance.
+
+## 10.2.0 (2019-01-31)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- Support ruby 2.6.0
+- [#1182](https://github.com/paper-trail-gem/paper_trail/pull/1182) -
+  Support rails 6.0.0.beta1
+
+### Fixed
+
+- [#1177](https://github.com/paper-trail-gem/paper_trail/pull/1177) -
+  Do not store ignored and skipped attributes in `object_changes` on destroy.
+
+### Deprecated
+
+- [#1176](https://github.com/paper-trail-gem/paper_trail/pull/1176) -
+  `config.paper_trail.enabled`
 
 ## 10.1.0 (2018-12-04)
 
