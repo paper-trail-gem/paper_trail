@@ -69,11 +69,14 @@ module PaperTrail
       return unless enabled?
 
       build_version_on_create(in_after_callback: true).tap do |version|
-        version.save!
-        # Because the version object was created using version_class.new instead
-        # of versions_assoc.build?, the association cache is unaware. So, we
-        # invalidate the `versions` association cache with `reset`.
-        versions.reset
+        if version.save
+          # Because the version object was created using version_class.new instead
+          # of versions_assoc.build?, the association cache is unaware. So, we
+          # invalidate the `versions` association cache with `reset`.
+          versions.reset
+        else
+          log_version_errors(version, :create)
+        end          
       end
     end
 
