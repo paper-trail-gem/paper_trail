@@ -15,6 +15,9 @@ AllCops:
     - gemfiles/vendor/bundle/**/* # This dir only shows up on travis ¯\_(ツ)_/¯
     - spec/dummy_app/db/schema.rb # Generated, out of our control
 
+  # Enable pending cops so we can adopt the code before they are switched on.
+  NewCops: enable
+
   # Set to lowest supported version
   TargetRubyVersion: 2.4
 
