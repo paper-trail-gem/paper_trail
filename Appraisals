@@ -10,11 +10,11 @@
 # > https://github.com/thoughtbot/appraisal
 
 appraise "ar-5.2" do
-  gem "activerecord", [">= 5.2.2.1", "< 5.3"]
+  gem "activerecord", "~> 5.2.4"
   gem "rails-controller-testing", "~> 1.0.2"
 end
 
 appraise "ar-6.0" do
-  gem "activerecord", "~> 6.0.2.2"
+  gem "activerecord", "~> 6.0.3"
   gem "rails-controller-testing", "~> 1.0.3"
 end
