@@ -34,6 +34,7 @@ class Song < ActiveRecord::Base
     attribute :name, :string
   else
     attr_accessor :name
+
     prepend OverrideSongAttributesTheRails4Way
   end
 end
