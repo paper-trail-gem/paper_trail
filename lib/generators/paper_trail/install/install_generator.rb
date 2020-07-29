@@ -36,9 +36,11 @@ module PaperTrail
     # MySQL 5.6 utf8mb4 limit is 191 chars for keys used in indexes.
     # See https://github.com/paper-trail-gem/paper_trail/issues/651
     def item_type_options
-      opt = { null: false }
-      opt[:limit] = 191 if mysql?
-      ", #{opt}"
+      if mysql?
+        ", { null: false, limit: 191 }"
+      else
+        ", { null: false }"
+      end
     end
 
     def mysql?

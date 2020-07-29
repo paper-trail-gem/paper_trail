@@ -35,6 +35,13 @@ RSpec.describe PaperTrail::InstallGenerator, type: :generator do
           ""
         end
       }.call
+      expected_item_type_options = lambda {
+        if described_class::MYSQL_ADAPTERS.include?(ActiveRecord::Base.connection.class.name)
+          ", { null: false, limit: 191 }"
+        else
+          ", { null: false }"
+        end
+      }.call
       expect(destination_root).to(
         have_structure {
           directory("db") {
@@ -43,6 +50,7 @@ RSpec.describe PaperTrail::InstallGenerator, type: :generator do
                 contains("class CreateVersions < " + expected_parent_class)
                 contains "def change"
                 contains "create_table :versions#{expected_create_table_options}"
+                contains "  t.string   :item_type#{expected_item_type_options}"
               }
             }
           }
