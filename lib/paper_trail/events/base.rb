@@ -247,8 +247,7 @@ module PaperTrail
       # @api private
       def prepare_object_changes(changes)
         changes = serialize_object_changes(changes)
-        changes = recordable_object_changes(changes)
-        changes
+        recordable_object_changes(changes)
       end
 
       # Returns an object which can be assigned to the `object_changes`

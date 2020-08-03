@@ -10,7 +10,7 @@ Metrics/AbcSize:
   Max: 20 # Goal: 15
 
 Metrics/CyclomaticComplexity:
-  Max: 7 # Goal: 6
+  Max: 8 # Goal: 7
 
 Metrics/PerceivedComplexity:
   Max: 9 # Goal: 7
