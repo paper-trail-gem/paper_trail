@@ -12,7 +12,7 @@ module PaperTrail
         specify { expect(PaperTrail.serializer).to be PaperTrail::Serializers::YAML }
 
         it "store out as a plain hash" do
-          expect(value =~ /HashWithIndifferentAccess/).to be_nil
+          expect(value).not_to include("HashWithIndifferentAccess")
         end
       end
 
@@ -46,7 +46,7 @@ module PaperTrail
         end
 
         it "store out as a plain hash" do
-          expect(value =~ /HashWithIndifferentAccess/).to be_nil
+          expect(value).not_to include("HashWithIndifferentAccess")
         end
 
         after do
