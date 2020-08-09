@@ -428,6 +428,14 @@ a.versions.length                         # 2
 a.paper_trail.previous_version.title      # 'My Title'
 ```
 
+The `:ignore` option can also accept `Hash` arguments that we are considering deprecating.
+
+```ruby
+class Article < ActiveRecord::Base
+  has_paper_trail ignore: [:title, { color: proc { |obj| obj.color == "Yellow" } }]
+end
+```
+
 #### Only
 
 Or, you can specify a list of the `only` attributes you care about:
@@ -450,11 +458,11 @@ a.versions.length                         # 2
 a.paper_trail.previous_version.content    # nil
 ```
 
-The `:ignore` and `:only` options can also accept `Hash` arguments.
+The `:only` option can also accept `Hash` arguments that we are considering deprecating.
 
 ```ruby
 class Article < ActiveRecord::Base
-  has_paper_trail only: { title: Proc.new { |obj| !obj.title.blank? } }
+  has_paper_trail only: [{ title: Proc.new { |obj| !obj.title.blank? } }]
 end
 ```
 
