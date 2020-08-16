@@ -107,7 +107,7 @@ module PaperTrail
       end
 
       # @api private
-      def changed_and_not_ignored
+      def calculated_ignored_array
         ignore = @record.paper_trail_options[:ignore].dup
         # Remove Hash arguments and then evaluate whether the attributes (the
         # keys of the hash) should also get pushed into the collection.
@@ -117,8 +117,12 @@ module PaperTrail
               ignore << attr if condition.respond_to?(:call) && condition.call(@record)
             }
         end
+      end
+
+      # @api private
+      def changed_and_not_ignored
         skip = @record.paper_trail_options[:skip]
-        (changed_in_latest_version - ignore) - skip
+        (changed_in_latest_version - calculated_ignored_array) - skip
       end
 
       # @api private
@@ -148,7 +152,7 @@ module PaperTrail
       #
       # @api private
       def ignored_attr_has_changed?
-        ignored = @record.paper_trail_options[:ignore] + @record.paper_trail_options[:skip]
+        ignored = calculated_ignored_array + @record.paper_trail_options[:skip]
         ignored.any? && (changed_in_latest_version & ignored).any?
       end
 
