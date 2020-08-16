@@ -254,6 +254,7 @@ class SetUpTestTables < ::ActiveRecord::Migration::Current
     create_table :gadgets, force: true do |t|
       t.string    :name
       t.string    :brand
+      t.string    :color
       t.timestamps null: true, limit: 6
     end
 

@@ -27,6 +27,9 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 - [#1238](https://github.com/paper-trail-gem/paper_trail/pull/1238) -
   Query optimization in `reify`
 
+- [#1256](https://github.com/paper-trail-gem/paper_trail/pull/1256) -
+  Skip version for timestamp when changed attributed is ignored via Hash
+
 ### Dependencies
 
 - Drop support for rails <= 5.1 (reached EOL when 6.0 was released,
