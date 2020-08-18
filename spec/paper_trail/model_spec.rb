@@ -279,24 +279,26 @@ RSpec.describe(::PaperTrail, versioning: true) do
     end
   end
 
-  # rubocop:disable RSpec/InstanceVariable
   context "a record's papertrail" do
-    before do
-      @date_time = Time.now
-      @time = Time.now
-      @date = Date.new(2009, 5, 29)
-      @widget = Widget.create(
+    let!(:d0) { Date.new(2009, 5, 29) }
+    let!(:t0) { Time.now }
+    let(:previous_widget) { widget.versions.last.reify }
+    let(:widget) {
+      Widget.create(
         name: "Warble",
         a_text: "The quick brown fox",
         an_integer: 42,
         a_float: 153.01,
         a_decimal: 2.71828,
-        a_datetime: @date_time,
-        a_time: @time,
-        a_date: @date,
+        a_datetime: t0,
+        a_time: t0,
+        a_date: d0,
         a_boolean: true
       )
-      @widget.update(
+    }
+
+    before do
+      widget.update(
         name: nil,
         a_text: nil,
         an_integer: nil,
@@ -307,62 +309,62 @@ RSpec.describe(::PaperTrail, versioning: true) do
         a_date: nil,
         a_boolean: false
       )
-      @previous = @widget.versions.last.reify
     end
 
     it "handle strings" do
-      expect(@previous.name).to(eq("Warble"))
+      expect(previous_widget.name).to(eq("Warble"))
     end
 
     it "handle text" do
-      expect(@previous.a_text).to(eq("The quick brown fox"))
+      expect(previous_widget.a_text).to(eq("The quick brown fox"))
     end
 
     it "handle integers" do
-      expect(@previous.an_integer).to(eq(42))
+      expect(previous_widget.an_integer).to(eq(42))
     end
 
     it "handle floats" do
-      assert_in_delta(153.01, @previous.a_float, 0.001)
+      assert_in_delta(153.01, previous_widget.a_float, 0.001)
     end
 
     it "handle decimals" do
-      assert_in_delta(2.7183, @previous.a_decimal, 0.0001)
+      assert_in_delta(2.7183, previous_widget.a_decimal, 0.0001)
     end
 
     it "handle datetimes" do
-      expect(@previous.a_datetime.to_time.utc.to_i).to(eq(@date_time.to_time.utc.to_i))
+      expect(previous_widget.a_datetime.to_time.utc.to_i).to(eq(t0.to_time.utc.to_i))
     end
 
     it "handle times" do
-      expect(@previous.a_time.utc.to_i).to(eq(@time.utc.to_i))
+      expect(previous_widget.a_time.utc.to_i).to(eq(t0.utc.to_i))
     end
 
     it "handle dates" do
-      expect(@previous.a_date).to(eq(@date))
+      expect(previous_widget.a_date).to(eq(d0))
     end
 
     it "handle booleans" do
-      expect(@previous.a_boolean).to(be_truthy)
+      expect(previous_widget.a_boolean).to(be_truthy)
     end
 
     context "after a column is removed from the record's schema" do
-      before { @last = @widget.versions.last }
+      let(:last_version) { widget.versions.last }
 
       it "reify previous version" do
-        assert_kind_of(Widget, @last.reify)
+        assert_kind_of(Widget, last_version.reify)
       end
 
       it "restore all forward-compatible attributes" do
-        expect(@last.reify.name).to(eq("Warble"))
-        expect(@last.reify.a_text).to(eq("The quick brown fox"))
-        expect(@last.reify.an_integer).to(eq(42))
-        assert_in_delta(153.01, @last.reify.a_float, 0.001)
-        assert_in_delta(2.7183, @last.reify.a_decimal, 0.0001)
-        expect(@last.reify.a_datetime.to_time.utc.to_i).to(eq(@date_time.to_time.utc.to_i))
-        expect(@last.reify.a_time.utc.to_i).to(eq(@time.utc.to_i))
-        expect(@last.reify.a_date).to(eq(@date))
-        expect(@last.reify.a_boolean).to(be_truthy)
+        reified = last_version.reify
+        expect(reified.name).to(eq("Warble"))
+        expect(reified.a_text).to(eq("The quick brown fox"))
+        expect(reified.an_integer).to(eq(42))
+        assert_in_delta(153.01, reified.a_float, 0.001)
+        assert_in_delta(2.7183, reified.a_decimal, 0.0001)
+        expect(reified.a_datetime.to_time.utc.to_i).to(eq(t0.to_time.utc.to_i))
+        expect(reified.a_time.utc.to_i).to(eq(t0.utc.to_i))
+        expect(reified.a_date).to(eq(d0))
+        expect(reified.a_boolean).to(be_truthy)
       end
     end
   end
@@ -466,251 +468,251 @@ RSpec.describe(::PaperTrail, versioning: true) do
   end
 
   context "A subclass" do
+    let(:foo) { FooWidget.create }
+
     before do
-      @foo = FooWidget.create
-      @foo.update!(name: "Foo")
+      foo.update!(name: "Foo")
     end
 
     it "reify with the correct type" do
       if ActiveRecord::VERSION::MAJOR < 4
-        assert_kind_of(FooWidget, @foo.versions.last.reify)
+        assert_kind_of(FooWidget, foo.versions.last.reify)
       end
-      expect(PaperTrail::Version.last.previous).to(eq(@foo.versions.first))
+      expect(PaperTrail::Version.last.previous).to(eq(foo.versions.first))
       expect(PaperTrail::Version.last.next).to(be_nil)
     end
 
     it "returns the correct originator" do
       PaperTrail.request.whodunnit = "Ben"
-      @foo.update_attribute(:name, "Geoffrey")
-      expect(@foo.paper_trail.originator).to(eq(PaperTrail.request.whodunnit))
+      foo.update_attribute(:name, "Geoffrey")
+      expect(foo.paper_trail.originator).to(eq(PaperTrail.request.whodunnit))
     end
 
     context "when destroyed" do
-      before { @foo.destroy }
+      before { foo.destroy }
 
       it "reify with the correct type" do
-        assert_kind_of(FooWidget, @foo.versions.last.reify)
-        expect(PaperTrail::Version.last.previous).to(eq(@foo.versions[1]))
+        assert_kind_of(FooWidget, foo.versions.last.reify)
+        expect(PaperTrail::Version.last.previous).to(eq(foo.versions[1]))
         expect(PaperTrail::Version.last.next).to(be_nil)
       end
     end
   end
 
   context "An item with versions" do
-    before do
-      @widget = Widget.create(name: "Widget")
-      @widget.update(name: "Fidget")
-      @widget.update(name: "Digit")
-    end
-
     context "which were created over time" do
+      let(:widget) { Widget.create(name: "Widget") }
+      let(:t0) { 2.days.ago }
+      let(:t1) { 1.day.ago }
+      let(:t2) { 1.hour.ago }
+
       before do
-        @created = 2.days.ago
-        @first_update = 1.day.ago
-        @second_update = 1.hour.ago
-        @widget.versions[0].update(created_at: @created)
-        @widget.versions[1].update(created_at: @first_update)
-        @widget.versions[2].update(created_at: @second_update)
-        @widget.update_attribute(:updated_at, @second_update)
+        widget.update(name: "Fidget")
+        widget.update(name: "Digit")
+        widget.versions[0].update(created_at: t0)
+        widget.versions[1].update(created_at: t1)
+        widget.versions[2].update(created_at: t2)
+        widget.update_attribute(:updated_at, t2)
       end
 
       it "return nil for version_at before it was created" do
-        expect(@widget.paper_trail.version_at((@created - 1))).to(be_nil)
+        expect(widget.paper_trail.version_at((t0 - 1))).to(be_nil)
       end
 
       it "return how it looked when created for version_at its creation" do
-        expect(@widget.paper_trail.version_at(@created).name).to(eq("Widget"))
+        expect(widget.paper_trail.version_at(t0).name).to(eq("Widget"))
       end
 
       it "return how it looked before its first update" do
-        expect(@widget.paper_trail.version_at((@first_update - 1)).name).to(eq("Widget"))
+        expect(widget.paper_trail.version_at((t1 - 1)).name).to(eq("Widget"))
       end
 
       it "return how it looked after its first update" do
-        expect(@widget.paper_trail.version_at(@first_update).name).to(eq("Fidget"))
+        expect(widget.paper_trail.version_at(t1).name).to(eq("Fidget"))
       end
 
       it "return how it looked before its second update" do
-        expect(@widget.paper_trail.version_at((@second_update - 1)).name).to(eq("Fidget"))
+        expect(widget.paper_trail.version_at((t2 - 1)).name).to(eq("Fidget"))
       end
 
       it "return how it looked after its second update" do
-        expect(@widget.paper_trail.version_at(@second_update).name).to(eq("Digit"))
+        expect(widget.paper_trail.version_at(t2).name).to(eq("Digit"))
       end
 
       it "return the current object for version_at after latest update" do
-        expect(@widget.paper_trail.version_at(1.day.from_now).name).to(eq("Digit"))
+        expect(widget.paper_trail.version_at(1.day.from_now).name).to(eq("Digit"))
       end
 
       it "still return a widget when appropriate, when passing timestamp as string" do
         expect(
-          @widget.paper_trail.version_at((@created + 1.second).to_s).name
+          widget.paper_trail.version_at((t0 + 1.second).to_s).name
         ).to(eq("Widget"))
         expect(
-          @widget.paper_trail.version_at((@first_update + 1.second).to_s).name
+          widget.paper_trail.version_at((t1 + 1.second).to_s).name
         ).to(eq("Fidget"))
         expect(
-          @widget.paper_trail.version_at((@second_update + 1.second).to_s).name
+          widget.paper_trail.version_at((t2 + 1.second).to_s).name
         ).to(eq("Digit"))
       end
     end
 
     describe ".versions_between" do
-      before do
-        @created = 30.days.ago
-        @first_update = 15.days.ago
-        @second_update = 1.day.ago
-        @widget.versions[0].update(created_at: @created)
-        @widget.versions[1].update(created_at: @first_update)
-        @widget.versions[2].update(created_at: @second_update)
-        @widget.update_attribute(:updated_at, @second_update)
-      end
-
       it "return versions in the time period" do
+        widget = Widget.create(name: "Widget")
+        widget.update(name: "Fidget")
+        widget.update(name: "Digit")
+        widget.versions[0].update(created_at: 30.days.ago)
+        widget.versions[1].update(created_at: 15.days.ago)
+        widget.versions[2].update(created_at: 1.day.ago)
+        widget.update_attribute(:updated_at, 1.day.ago)
         expect(
-          @widget.paper_trail.versions_between(20.days.ago, 10.days.ago).map(&:name)
+          widget.paper_trail.versions_between(20.days.ago, 10.days.ago).map(&:name)
         ).to(eq(["Fidget"]))
         expect(
-          @widget.paper_trail.versions_between(45.days.ago, 10.days.ago).map(&:name)
+          widget.paper_trail.versions_between(45.days.ago, 10.days.ago).map(&:name)
         ).to(eq(%w[Widget Fidget]))
         expect(
-          @widget.paper_trail.versions_between(16.days.ago, 1.minute.ago).map(&:name)
+          widget.paper_trail.versions_between(16.days.ago, 1.minute.ago).map(&:name)
         ).to(eq(%w[Fidget Digit Digit]))
         expect(
-          @widget.paper_trail.versions_between(60.days.ago, 45.days.ago).map(&:name)
+          widget.paper_trail.versions_between(60.days.ago, 45.days.ago).map(&:name)
         ).to(eq([]))
       end
     end
 
     context "on the first version" do
-      before { @version = @widget.versions.first }
+      let(:widget) { Widget.create(name: "Widget") }
+      let(:version) { widget.versions.last }
+
+      before do
+        widget = Widget.create(name: "Widget")
+        widget.update(name: "Fidget")
+        widget.update(name: "Digit")
+      end
 
       it "have a nil previous version" do
-        expect(@version.previous).to(be_nil)
+        expect(version.previous).to(be_nil)
       end
 
       it "return the next version" do
-        expect(@version.next).to(eq(@widget.versions[1]))
+        expect(version.next).to(eq(widget.versions[1]))
       end
 
       it "return the correct index" do
-        expect(@version.index).to(eq(0))
+        expect(version.index).to(eq(0))
       end
     end
 
     context "on the last version" do
-      before { @version = @widget.versions.last }
+      let(:widget) { Widget.create(name: "Widget") }
+      let(:version) { widget.versions.last }
+
+      before do
+        widget.update(name: "Fidget")
+        widget.update(name: "Digit")
+      end
 
       it "return the previous version" do
-        expect(@version.previous).to(eq(@widget.versions[(@widget.versions.length - 2)]))
+        expect(version.previous).to(eq(widget.versions[(widget.versions.length - 2)]))
       end
 
       it "have a nil next version" do
-        expect(@version.next).to(be_nil)
+        expect(version.next).to(be_nil)
       end
 
       it "return the correct index" do
-        expect(@version.index).to(eq((@widget.versions.length - 1)))
+        expect(version.index).to(eq((widget.versions.length - 1)))
       end
     end
   end
 
   context "An item" do
-    before do
-      @initial_title = "Foobar"
-      @article = Article.new(title: @initial_title)
-    end
+    let(:article) { Article.new(title: initial_title) }
+    let(:initial_title) { "Foobar" }
 
     context "which is created" do
-      before { @article.save }
+      before { article.save }
 
       it "store fixed meta data" do
-        expect(@article.versions.last.answer).to(eq(42))
+        expect(article.versions.last.answer).to(eq(42))
       end
 
       it "store dynamic meta data which is independent of the item" do
-        expect(@article.versions.last.question).to(eq("31 + 11 = 42"))
+        expect(article.versions.last.question).to(eq("31 + 11 = 42"))
       end
 
       it "store dynamic meta data which depends on the item" do
-        expect(@article.versions.last.article_id).to(eq(@article.id))
+        expect(article.versions.last.article_id).to(eq(article.id))
       end
 
       it "store dynamic meta data based on a method of the item" do
-        expect(@article.versions.last.action).to(eq(@article.action_data_provider_method))
+        expect(article.versions.last.action).to(eq(article.action_data_provider_method))
       end
 
       it "store dynamic meta data based on an attribute of the item at creation" do
-        expect(@article.versions.last.title).to(eq(@initial_title))
+        expect(article.versions.last.title).to(eq(initial_title))
       end
     end
 
     context "created, then updated" do
       before do
-        @article.save
-        @article.update!(content: "Better text.", title: "Rhubarb")
+        article.save
+        article.update!(content: "Better text.", title: "Rhubarb")
       end
 
       it "store fixed meta data" do
-        expect(@article.versions.last.answer).to(eq(42))
+        expect(article.versions.last.answer).to(eq(42))
       end
 
       it "store dynamic meta data which is independent of the item" do
-        expect(@article.versions.last.question).to(eq("31 + 11 = 42"))
+        expect(article.versions.last.question).to(eq("31 + 11 = 42"))
       end
 
       it "store dynamic meta data which depends on the item" do
-        expect(@article.versions.last.article_id).to(eq(@article.id))
+        expect(article.versions.last.article_id).to(eq(article.id))
       end
 
       it "store dynamic meta data based on an attribute of the item prior to the update" do
-        expect(@article.versions.last.title).to(eq(@initial_title))
+        expect(article.versions.last.title).to(eq(initial_title))
       end
     end
 
     context "created, then destroyed" do
       before do
-        @article.save
-        @article.destroy
+        article.save
+        article.destroy
       end
 
       it "store fixed metadata" do
-        expect(@article.versions.last.answer).to(eq(42))
+        expect(article.versions.last.answer).to(eq(42))
       end
 
       it "store dynamic metadata which is independent of the item" do
-        expect(@article.versions.last.question).to(eq("31 + 11 = 42"))
+        expect(article.versions.last.question).to(eq("31 + 11 = 42"))
       end
 
       it "store dynamic metadata which depends on the item" do
-        expect(@article.versions.last.article_id).to(eq(@article.id))
+        expect(article.versions.last.article_id).to(eq(article.id))
       end
 
       it "store dynamic metadata based on attribute of item prior to destruction" do
-        expect(@article.versions.last.title).to(eq(@initial_title))
+        expect(article.versions.last.title).to(eq(initial_title))
       end
     end
   end
 
   context "A reified item" do
-    before do
+    it "know which version it came from, and return its previous self" do
       widget = Widget.create(name: "Bob")
       %w[Tom Dick Jane].each do |name|
         widget.update(name: name)
       end
-      @version = widget.versions.last
-      @widget = @version.reify
-    end
-
-    it "know which version it came from" do
-      expect(@widget.version).to(eq(@version))
-    end
-
-    it "return its previous self" do
-      expect(@widget.paper_trail.previous_version).to(eq(@widget.versions[-2].reify))
+      version = widget.versions.last
+      widget = version.reify
+      expect(widget.version).to(eq(version))
+      expect(widget.paper_trail.previous_version).to(eq(widget.versions[-2].reify))
     end
   end
-  # rubocop:enable RSpec/InstanceVariable
 
   describe "#next_version" do
     context "a reified item" do
