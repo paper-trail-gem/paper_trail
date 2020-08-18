@@ -4,6 +4,48 @@ require "spec_helper"
 require "support/performance_helpers"
 
 RSpec.describe(::PaperTrail, versioning: true) do
+  describe "#changeset" do
+    it "has expected values" do
+      widget = Widget.create(name: "Henry")
+      changeset = widget.versions.last.changeset
+      expect(changeset["name"]).to eq([nil, "Henry"])
+      expect(changeset["id"]).to eq([nil, widget.id])
+      # When comparing timestamps, round off to the nearest second, because
+      # mysql doesn't do fractional seconds.
+      expect(changeset["created_at"][0]).to be_nil
+      expect(changeset["created_at"][1].to_i).to eq(widget.created_at.to_i)
+      expect(changeset["updated_at"][0]).to be_nil
+      expect(changeset["updated_at"][1].to_i).to eq(widget.updated_at.to_i)
+    end
+
+    context "custom object_changes_adapter" do
+      after do
+        PaperTrail.config.object_changes_adapter = nil
+      end
+
+      it "calls the adapter's load_changeset method" do
+        widget = Widget.create(name: "Henry")
+        adapter = instance_spy("CustomObjectChangesAdapter")
+        PaperTrail.config.object_changes_adapter = adapter
+        allow(adapter).to(
+          receive(:load_changeset).with(widget.versions.last).and_return(a: "b", c: "d")
+        )
+        changeset = widget.versions.last.changeset
+        expect(changeset[:a]).to eq("b")
+        expect(changeset[:c]).to eq("d")
+        expect(adapter).to have_received(:load_changeset)
+      end
+
+      it "defaults to the original behavior" do
+        adapter = Class.new.new
+        PaperTrail.config.object_changes_adapter = adapter
+        widget = Widget.create(name: "Henry")
+        changeset = widget.versions.last.changeset
+        expect(changeset[:name]).to eq([nil, "Henry"])
+      end
+    end
+  end
+
   context "a new record" do
     it "not have any previous versions" do
       expect(Widget.new.versions).to(eq([]))
@@ -39,48 +81,6 @@ RSpec.describe(::PaperTrail, versioning: true) do
     it "use the widget `updated_at` as the version's `created_at`" do
       widget = Widget.create(name: "Henry")
       expect(widget.versions.first.created_at.to_i).to(eq(widget.updated_at.to_i))
-    end
-
-    describe "#changeset" do
-      it "has expected values" do
-        widget = Widget.create(name: "Henry")
-        changeset = widget.versions.last.changeset
-        expect(changeset["name"]).to eq([nil, "Henry"])
-        expect(changeset["id"]).to eq([nil, widget.id])
-        # When comparing timestamps, round off to the nearest second, because
-        # mysql doesn't do fractional seconds.
-        expect(changeset["created_at"][0]).to be_nil
-        expect(changeset["created_at"][1].to_i).to eq(widget.created_at.to_i)
-        expect(changeset["updated_at"][0]).to be_nil
-        expect(changeset["updated_at"][1].to_i).to eq(widget.updated_at.to_i)
-      end
-
-      context "custom object_changes_adapter" do
-        after do
-          PaperTrail.config.object_changes_adapter = nil
-        end
-
-        it "calls the adapter's load_changeset method" do
-          widget = Widget.create(name: "Henry")
-          adapter = instance_spy("CustomObjectChangesAdapter")
-          PaperTrail.config.object_changes_adapter = adapter
-          allow(adapter).to(
-            receive(:load_changeset).with(widget.versions.last).and_return(a: "b", c: "d")
-          )
-          changeset = widget.versions.last.changeset
-          expect(changeset[:a]).to eq("b")
-          expect(changeset[:c]).to eq("d")
-          expect(adapter).to have_received(:load_changeset)
-        end
-
-        it "defaults to the original behavior" do
-          adapter = Class.new.new
-          PaperTrail.config.object_changes_adapter = adapter
-          widget = Widget.create(name: "Henry")
-          changeset = widget.versions.last.changeset
-          expect(changeset[:name]).to eq([nil, "Henry"])
-        end
-      end
     end
 
     context "and then updated without any changes" do
@@ -146,137 +146,135 @@ RSpec.describe(::PaperTrail, versioning: true) do
         expect(widget.versions.last.changeset[:name]).to(eq(%w[Henry Harry]))
         expect(widget.versions.last.changeset["name"]).to(eq(%w[Henry Harry]))
       end
+    end
 
-      context "and has one associated object" do
-        it "not copy the has_one association by default when reifying" do
-          widget = Widget.create(name: "Henry")
-          widget.update(name: "Harry")
-          wotsit = widget.create_wotsit name: "John"
-          reified_widget = widget.versions.last.reify
-          expect(reified_widget.wotsit).to eq(wotsit)
-          expect(widget.reload.wotsit).to eq(wotsit)
-        end
+    context "updated, and has one associated object" do
+      it "not copy the has_one association by default when reifying" do
+        widget = Widget.create(name: "Henry")
+        widget.update(name: "Harry")
+        wotsit = widget.create_wotsit name: "John"
+        reified_widget = widget.versions.last.reify
+        expect(reified_widget.wotsit).to eq(wotsit)
+        expect(widget.reload.wotsit).to eq(wotsit)
+      end
+    end
+
+    context "updated, and has many associated objects" do
+      it "copy the has_many associations when reifying" do
+        widget = Widget.create(name: "Henry")
+        widget.update(name: "Harry")
+        widget.fluxors.create(name: "f-zero")
+        widget.fluxors.create(name: "f-one")
+        reified_widget = widget.versions.last.reify
+        expect(reified_widget.fluxors.length).to(eq(widget.fluxors.length))
+        expect(reified_widget.fluxors).to match_array(widget.fluxors)
+        expect(reified_widget.versions.length).to(eq(widget.versions.length))
+        expect(reified_widget.versions).to match_array(widget.versions)
+      end
+    end
+
+    context "updated, and has many associated polymorphic objects" do
+      it "copy the has_many associations when reifying" do
+        widget = Widget.create(name: "Henry")
+        widget.update(name: "Harry")
+        widget.whatchamajiggers.create(name: "f-zero")
+        widget.whatchamajiggers.create(name: "f-zero")
+        reified_widget = widget.versions.last.reify
+        expect(reified_widget.whatchamajiggers.length).to eq(widget.whatchamajiggers.length)
+        expect(reified_widget.whatchamajiggers).to match_array(widget.whatchamajiggers)
+        expect(reified_widget.versions.length).to(eq(widget.versions.length))
+        expect(reified_widget.versions).to match_array(widget.versions)
+      end
+    end
+
+    context "updated, polymorphic objects by themselves" do
+      it "not fail with a nil pointer on the polymorphic association" do
+        widget = Widget.create(name: "Henry")
+        widget.update(name: "Harry")
+        widget = Whatchamajigger.new(name: "f-zero")
+        widget.save!
+      end
+    end
+
+    context "updated, and then destroyed" do
+      it "record the correct event" do
+        widget = Widget.create(name: "Henry")
+        widget.update(name: "Harry")
+        widget.destroy
+        expect(PaperTrail::Version.last.event).to(match(/destroy/i))
       end
 
-      context "and has many associated objects" do
-        it "copy the has_many associations when reifying" do
-          widget = Widget.create(name: "Henry")
-          widget.update(name: "Harry")
-          widget.fluxors.create(name: "f-zero")
-          widget.fluxors.create(name: "f-one")
-          reified_widget = widget.versions.last.reify
-          expect(reified_widget.fluxors.length).to(eq(widget.fluxors.length))
-          expect(reified_widget.fluxors).to match_array(widget.fluxors)
-          expect(reified_widget.versions.length).to(eq(widget.versions.length))
-          expect(reified_widget.versions).to match_array(widget.versions)
-        end
+      it "have three previous versions" do
+        widget = Widget.create(name: "Henry")
+        widget.update(name: "Harry")
+        widget.destroy
+        expect(PaperTrail::Version.with_item_keys("Widget", widget.id).length).to(eq(3))
       end
 
-      context "and has many associated polymorphic objects" do
-        it "copy the has_many associations when reifying" do
-          widget = Widget.create(name: "Henry")
-          widget.update(name: "Harry")
-          widget.whatchamajiggers.create(name: "f-zero")
-          widget.whatchamajiggers.create(name: "f-zero")
-          reified_widget = widget.versions.last.reify
-          expect(reified_widget.whatchamajiggers.length).to eq(widget.whatchamajiggers.length)
-          expect(reified_widget.whatchamajiggers).to match_array(widget.whatchamajiggers)
-          expect(reified_widget.versions.length).to(eq(widget.versions.length))
-          expect(reified_widget.versions).to match_array(widget.versions)
-        end
+      it "returns the expected attributes for the reified widget" do
+        widget = Widget.create(name: "Henry")
+        widget.update(name: "Harry")
+        widget.destroy
+        reified_widget = PaperTrail::Version.last.reify
+        expect(reified_widget.id).to eq(widget.id)
+        expected = widget.attributes
+        actual = reified_widget.attributes
+        expect(expected["id"]).to eq(actual["id"])
+        expect(expected["name"]).to eq(actual["name"])
+        expect(expected["a_text"]).to eq(actual["a_text"])
+        expect(expected["an_integer"]).to eq(actual["an_integer"])
+        expect(expected["a_float"]).to eq(actual["a_float"])
+        expect(expected["a_decimal"]).to eq(actual["a_decimal"])
+        expect(expected["a_datetime"]).to eq(actual["a_datetime"])
+        expect(expected["a_time"]).to eq(actual["a_time"])
+        expect(expected["a_date"]).to eq(actual["a_date"])
+        expect(expected["a_boolean"]).to eq(actual["a_boolean"])
+        expect(expected["type"]).to eq(actual["type"])
+
+        # We are using `to_i` to truncate to the nearest second, but isn't
+        # there still a chance of this failing intermittently if
+        # ___ and ___ occured more than 0.5s apart?
+        expect(expected["created_at"].to_i).to eq(actual["created_at"].to_i)
+        expect(expected["updated_at"].to_i).to eq(actual["updated_at"].to_i)
       end
 
-      context "polymorphic objects by themselves" do
-        it "not fail with a nil pointer on the polymorphic association" do
-          widget = Widget.create(name: "Henry")
-          widget.update(name: "Harry")
-          widget = Whatchamajigger.new(name: "f-zero")
-          widget.save!
-        end
+      it "be re-creatable from its previous version" do
+        widget = Widget.create(name: "Henry")
+        widget.update(name: "Harry")
+        widget.destroy
+        reified_widget = PaperTrail::Version.last.reify
+        expect(reified_widget.save).to(be_truthy)
       end
 
-      context "and then destroyed" do
-        it "record the correct event" do
-          widget = Widget.create(name: "Henry")
-          widget.update(name: "Harry")
-          widget.destroy
-          expect(PaperTrail::Version.last.event).to(match(/destroy/i))
-        end
+      it "restore its associations on its previous version" do
+        widget = Widget.create(name: "Henry")
+        widget.update(name: "Harry")
+        widget.fluxors.create(name: "flux")
+        widget.destroy
+        reified_widget = PaperTrail::Version.last.reify
+        reified_widget.save
+        expect(reified_widget.fluxors.length).to(eq(1))
+      end
 
-        it "have three previous versions" do
-          widget = Widget.create(name: "Henry")
-          widget.update(name: "Harry")
-          widget.destroy
-          expect(PaperTrail::Version.with_item_keys("Widget", widget.id).length).to(eq(3))
-        end
+      it "have nil item for last version" do
+        widget = Widget.create(name: "Henry")
+        widget.update(name: "Harry")
+        widget.destroy
+        expect(widget.versions.last.item).to be_nil
+      end
 
-        describe "#attributes" do
-          it "returns the expected attributes for the reified widget" do
-            widget = Widget.create(name: "Henry")
-            widget.update(name: "Harry")
-            widget.destroy
-            reified_widget = PaperTrail::Version.last.reify
-            expect(reified_widget.id).to eq(widget.id)
-            expected = widget.attributes
-            actual = reified_widget.attributes
-            expect(expected["id"]).to eq(actual["id"])
-            expect(expected["name"]).to eq(actual["name"])
-            expect(expected["a_text"]).to eq(actual["a_text"])
-            expect(expected["an_integer"]).to eq(actual["an_integer"])
-            expect(expected["a_float"]).to eq(actual["a_float"])
-            expect(expected["a_decimal"]).to eq(actual["a_decimal"])
-            expect(expected["a_datetime"]).to eq(actual["a_datetime"])
-            expect(expected["a_time"]).to eq(actual["a_time"])
-            expect(expected["a_date"]).to eq(actual["a_date"])
-            expect(expected["a_boolean"]).to eq(actual["a_boolean"])
-            expect(expected["type"]).to eq(actual["type"])
+      it "has changes" do
+        book = Book.create! title: "A"
+        changes = YAML.load book.versions.last.attributes["object_changes"]
+        expect(changes).to eq("id" => [nil, book.id], "title" => [nil, "A"])
 
-            # We are using `to_i` to truncate to the nearest second, but isn't
-            # there still a chance of this failing intermittently if
-            # ___ and ___ occured more than 0.5s apart?
-            expect(expected["created_at"].to_i).to eq(actual["created_at"].to_i)
-            expect(expected["updated_at"].to_i).to eq(actual["updated_at"].to_i)
-          end
-        end
+        book.update! title: "B"
+        changes = YAML.load book.versions.last.attributes["object_changes"]
+        expect(changes).to eq("title" => %w[A B])
 
-        it "be re-creatable from its previous version" do
-          widget = Widget.create(name: "Henry")
-          widget.update(name: "Harry")
-          widget.destroy
-          reified_widget = PaperTrail::Version.last.reify
-          expect(reified_widget.save).to(be_truthy)
-        end
-
-        it "restore its associations on its previous version" do
-          widget = Widget.create(name: "Henry")
-          widget.update(name: "Harry")
-          widget.fluxors.create(name: "flux")
-          widget.destroy
-          reified_widget = PaperTrail::Version.last.reify
-          reified_widget.save
-          expect(reified_widget.fluxors.length).to(eq(1))
-        end
-
-        it "have nil item for last version" do
-          widget = Widget.create(name: "Henry")
-          widget.update(name: "Harry")
-          widget.destroy
-          expect(widget.versions.last.item).to be_nil
-        end
-
-        it "has changes" do
-          book = Book.create! title: "A"
-          changes = YAML.load book.versions.last.attributes["object_changes"]
-          expect(changes).to eq("id" => [nil, book.id], "title" => [nil, "A"])
-
-          book.update! title: "B"
-          changes = YAML.load book.versions.last.attributes["object_changes"]
-          expect(changes).to eq("title" => %w[A B])
-
-          book.destroy
-          changes = YAML.load book.versions.last.attributes["object_changes"]
-          expect(changes).to eq("id" => [book.id, nil], "title" => ["B", nil])
-        end
+        book.destroy
+        changes = YAML.load book.versions.last.attributes["object_changes"]
+        expect(changes).to eq("id" => [book.id, nil], "title" => ["B", nil])
       end
     end
   end
@@ -370,104 +368,86 @@ RSpec.describe(::PaperTrail, versioning: true) do
   end
 
   context "A record" do
-    before { @widget = Widget.create(name: "Zaphod") }
-
-    context "with PaperTrail globally disabled" do
-      before do
-        PaperTrail.enabled = false
-        @count = @widget.versions.length
-      end
-
+    context "with PaperTrail globally disabled, when updated" do
       after { PaperTrail.enabled = true }
 
-      context "when updated" do
-        before { @widget.update(name: "Beeblebrox") }
-
-        it "not add to its trail" do
-          expect(@widget.versions.length).to(eq(@count))
-        end
+      it "not add to its trail" do
+        widget = Widget.create(name: "Zaphod")
+        PaperTrail.enabled = false
+        count = widget.versions.length
+        widget.update(name: "Beeblebrox")
+        expect(widget.versions.length).to(eq(count))
       end
     end
 
-    context "with its paper trail turned off" do
-      before do
-        PaperTrail.request.disable_model(Widget)
-        @count = @widget.versions.length
-      end
-
+    context "with its paper trail turned off, when updated" do
       after do
         PaperTrail.request.enable_model(Widget)
       end
 
-      context "when updated" do
-        before { @widget.update(name: "Beeblebrox") }
-
-        it "not add to its trail" do
-          expect(@widget.versions.length).to(eq(@count))
-        end
+      it "not add to its trail" do
+        widget = Widget.create(name: "Zaphod")
+        PaperTrail.request.disable_model(Widget)
+        count = widget.versions.length
+        widget.update(name: "Beeblebrox")
+        expect(widget.versions.length).to(eq(count))
       end
 
-      context "and then its paper trail turned on" do
-        before do
-          PaperTrail.request.enable_model(Widget)
-        end
-
-        context "when updated" do
-          before { @widget.update(name: "Ford") }
-
-          it "add to its trail" do
-            expect(@widget.versions.length).to(eq((@count + 1)))
-          end
-        end
+      it "add to its trail" do
+        widget = Widget.create(name: "Zaphod")
+        PaperTrail.request.disable_model(Widget)
+        count = widget.versions.length
+        widget.update(name: "Beeblebrox")
+        PaperTrail.request.enable_model(Widget)
+        widget.update(name: "Ford")
+        expect(widget.versions.length).to(eq((count + 1)))
       end
     end
   end
 
   context "A papertrail with somebody making changes" do
-    before { @widget = Widget.new(name: "Fidget") }
-
     context "when a record is created" do
-      before do
+      it "tracks who made the change" do
+        widget = Widget.new(name: "Fidget")
         PaperTrail.request.whodunnit = "Alice"
-        @widget.save
-        @version = @widget.versions.last
+        widget.save
+        version = widget.versions.last
+        expect(version.whodunnit).to(eq("Alice"))
+        expect(version.paper_trail_originator).to(be_nil)
+        expect(version.terminator).to(eq("Alice"))
+        expect(widget.paper_trail.originator).to(eq("Alice"))
       end
+    end
 
-      it "track who made the change" do
-        expect(@version.whodunnit).to(eq("Alice"))
-        expect(@version.paper_trail_originator).to(be_nil)
-        expect(@version.terminator).to(eq("Alice"))
-        expect(@widget.paper_trail.originator).to(eq("Alice"))
+    context "when created, then updated" do
+      it "tracks who made the change" do
+        widget = Widget.new(name: "Fidget")
+        PaperTrail.request.whodunnit = "Alice"
+        widget.save
+        PaperTrail.request.whodunnit = "Bob"
+        widget.update(name: "Rivet")
+        version = widget.versions.last
+        expect(version.whodunnit).to(eq("Bob"))
+        expect(version.paper_trail_originator).to(eq("Alice"))
+        expect(version.terminator).to(eq("Bob"))
+        expect(widget.paper_trail.originator).to(eq("Bob"))
       end
+    end
 
-      context "when a record is updated" do
-        before do
-          PaperTrail.request.whodunnit = "Bob"
-          @widget.update(name: "Rivet")
-          @version = @widget.versions.last
-        end
-
-        it "track who made the change" do
-          expect(@version.whodunnit).to(eq("Bob"))
-          expect(@version.paper_trail_originator).to(eq("Alice"))
-          expect(@version.terminator).to(eq("Bob"))
-          expect(@widget.paper_trail.originator).to(eq("Bob"))
-        end
-
-        context "when a record is destroyed" do
-          before do
-            PaperTrail.request.whodunnit = "Charlie"
-            @widget.destroy
-            @version = PaperTrail::Version.last
-          end
-
-          it "track who made the change" do
-            expect(@version.whodunnit).to(eq("Charlie"))
-            expect(@version.paper_trail_originator).to(eq("Bob"))
-            expect(@version.terminator).to(eq("Charlie"))
-            expect(@widget.paper_trail.originator).to(eq("Charlie"))
-          end
-        end
+    context "when created, updated, and destroyed" do
+      it "tracks who made the change" do
+        widget = Widget.new(name: "Fidget")
+        PaperTrail.request.whodunnit = "Alice"
+        widget.save
+        PaperTrail.request.whodunnit = "Bob"
+        widget.update(name: "Rivet")
+        PaperTrail.request.whodunnit = "Charlie"
+        widget.destroy
+        version = PaperTrail::Version.last
+        expect(version.whodunnit).to(eq("Charlie"))
+        expect(version.paper_trail_originator).to(eq("Bob"))
+        expect(version.terminator).to(eq("Charlie"))
+        expect(widget.paper_trail.originator).to(eq("Charlie"))
       end
     end
   end
@@ -562,18 +542,16 @@ RSpec.describe(::PaperTrail, versioning: true) do
         expect(@widget.paper_trail.version_at(1.day.from_now).name).to(eq("Digit"))
       end
 
-      context "passing in a string representation of a timestamp" do
-        it "still return a widget when appropriate" do
-          expect(
-            @widget.paper_trail.version_at((@created + 1.second).to_s).name
-          ).to(eq("Widget"))
-          expect(
-            @widget.paper_trail.version_at((@first_update + 1.second).to_s).name
-          ).to(eq("Fidget"))
-          expect(
-            @widget.paper_trail.version_at((@second_update + 1.second).to_s).name
-          ).to(eq("Digit"))
-        end
+      it "still return a widget when appropriate, when passing timestamp as string" do
+        expect(
+          @widget.paper_trail.version_at((@created + 1.second).to_s).name
+        ).to(eq("Widget"))
+        expect(
+          @widget.paper_trail.version_at((@first_update + 1.second).to_s).name
+        ).to(eq("Fidget"))
+        expect(
+          @widget.paper_trail.version_at((@second_update + 1.second).to_s).name
+        ).to(eq("Digit"))
       end
     end
 
@@ -665,47 +643,51 @@ RSpec.describe(::PaperTrail, versioning: true) do
       it "store dynamic meta data based on an attribute of the item at creation" do
         expect(@article.versions.last.title).to(eq(@initial_title))
       end
+    end
 
-      context "and updated" do
-        before do
-          @article.update!(content: "Better text.", title: "Rhubarb")
-        end
-
-        it "store fixed meta data" do
-          expect(@article.versions.last.answer).to(eq(42))
-        end
-
-        it "store dynamic meta data which is independent of the item" do
-          expect(@article.versions.last.question).to(eq("31 + 11 = 42"))
-        end
-
-        it "store dynamic meta data which depends on the item" do
-          expect(@article.versions.last.article_id).to(eq(@article.id))
-        end
-
-        it "store dynamic meta data based on an attribute of the item prior to the update" do
-          expect(@article.versions.last.title).to(eq(@initial_title))
-        end
+    context "created, then updated" do
+      before do
+        @article.save
+        @article.update!(content: "Better text.", title: "Rhubarb")
       end
 
-      context "and destroyed" do
-        before { @article.destroy }
+      it "store fixed meta data" do
+        expect(@article.versions.last.answer).to(eq(42))
+      end
 
-        it "store fixed metadata" do
-          expect(@article.versions.last.answer).to(eq(42))
-        end
+      it "store dynamic meta data which is independent of the item" do
+        expect(@article.versions.last.question).to(eq("31 + 11 = 42"))
+      end
 
-        it "store dynamic metadata which is independent of the item" do
-          expect(@article.versions.last.question).to(eq("31 + 11 = 42"))
-        end
+      it "store dynamic meta data which depends on the item" do
+        expect(@article.versions.last.article_id).to(eq(@article.id))
+      end
 
-        it "store dynamic metadata which depends on the item" do
-          expect(@article.versions.last.article_id).to(eq(@article.id))
-        end
+      it "store dynamic meta data based on an attribute of the item prior to the update" do
+        expect(@article.versions.last.title).to(eq(@initial_title))
+      end
+    end
 
-        it "store dynamic metadata based on attribute of item prior to destruction" do
-          expect(@article.versions.last.title).to(eq(@initial_title))
-        end
+    context "created, then destroyed" do
+      before do
+        @article.save
+        @article.destroy
+      end
+
+      it "store fixed metadata" do
+        expect(@article.versions.last.answer).to(eq(42))
+      end
+
+      it "store dynamic metadata which is independent of the item" do
+        expect(@article.versions.last.question).to(eq("31 + 11 = 42"))
+      end
+
+      it "store dynamic metadata which depends on the item" do
+        expect(@article.versions.last.article_id).to(eq(@article.id))
+      end
+
+      it "store dynamic metadata based on attribute of item prior to destruction" do
+        expect(@article.versions.last.title).to(eq(@initial_title))
       end
     end
   end
