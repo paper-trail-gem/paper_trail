@@ -14,6 +14,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
   detailed error. Normally the removal of such a temporary warning would not be
   treated as a breaking change, but since this relates to PT-AT, it seemed
   warranted.
+- `VersionConcern#sibling_versions` is now private, and its arity has changed.
 
 ### Added
 
