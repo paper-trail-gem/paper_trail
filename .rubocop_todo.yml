@@ -39,10 +39,6 @@ RSpec/NestedGroups:
 Security/YAMLLoad:
   Enabled: false
 
-Style/ExplicitBlockArgument:
-  Exclude:
-    - lib/paper_trail/events/base.rb
-
 # We want this, but not until we drop support for ruby 2.4
 Style/HashTransformKeys:
   Enabled: false
