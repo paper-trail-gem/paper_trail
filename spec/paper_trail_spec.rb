@@ -40,13 +40,13 @@ RSpec.describe PaperTrail do
   end
 
   context "when enabled" do
+    after do
+      described_class.enabled = true
+    end
+
     it "affects all threads" do
       Thread.new { described_class.enabled = false }.join
       assert_equal false, described_class.enabled?
-    end
-
-    after do
-      described_class.enabled = true
     end
   end
 
