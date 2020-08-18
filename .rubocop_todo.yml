@@ -3,9 +3,6 @@ require: rubocop-rspec
 # Remove these configuration records
 # one by one as the offenses are removed from the code base.
 
-Layout/ArgumentAlignment:
-  Enabled: false
-
 Metrics/AbcSize:
   Max: 20 # Goal: 15
 
