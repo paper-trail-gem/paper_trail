@@ -7,6 +7,8 @@ RSpec.describe ArticlesController, type: :controller do
     context "PaperTrail.enabled? == true" do
       before { PaperTrail.enabled = true }
 
+      after { PaperTrail.enabled = false }
+
       it "returns true" do
         expect(PaperTrail.enabled?).to eq(true)
         post :create, params: { article: { title: "Doh", content: FFaker::Lorem.sentence } }
@@ -14,8 +16,6 @@ RSpec.describe ArticlesController, type: :controller do
         expect(PaperTrail.request.enabled?).to eq(true)
         expect(assigns(:article).versions.length).to eq(1)
       end
-
-      after { PaperTrail.enabled = false }
     end
 
     context "PaperTrail.enabled? == false" do

@@ -183,6 +183,11 @@ Style/ModuleFunction:
     - 'lib/paper_trail/serializers/json.rb'
     - 'lib/paper_trail/serializers/yaml.rb'
 
+# Too subtle to lint. Use `format` for multiple variables. For single variables,
+# use either interpolation or concatenation, whichever is easier to read.
+Style/StringConcatenation:
+  Enabled: false
+
 # The Ruby Style Guide does not prescribe a particular quote character, only
 # that a project should pick one and be consistent. The decision has no
 # performance implications. Double quotes are slightly easier to read.

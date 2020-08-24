@@ -73,14 +73,14 @@ module PaperTrail
 
       # Rails 5.1 changed the API of `ActiveRecord::Dirty`.
       # @api private
-      def cache_changed_attributes
+      def cache_changed_attributes(&block)
         if RAILS_GTE_5_1
           # Everything works fine as it is
           yield
         else
           # Any particular call to `changed_attributes` produces the huge memory allocation.
           # Lets use the generic AR workaround for that.
-          @record.send(:cache_changed_attributes) { yield }
+          @record.send(:cache_changed_attributes, &block)
         end
       end
 

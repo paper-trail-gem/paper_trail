@@ -45,12 +45,12 @@ module PaperTrail
           PaperTrail.serializer = PaperTrail::Serializers::JSON
         end
 
-        it "store out as a plain hash" do
-          expect(value).not_to include("HashWithIndifferentAccess")
-        end
-
         after do
           PaperTrail.serializer = PaperTrail::Serializers::YAML
+        end
+
+        it "store out as a plain hash" do
+          expect(value).not_to include("HashWithIndifferentAccess")
         end
       end
     end

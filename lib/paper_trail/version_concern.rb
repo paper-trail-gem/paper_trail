@@ -145,6 +145,7 @@ module PaperTrail
       #   Default: false.
       # @return `ActiveRecord::Relation`
       # @api public
+      # rubocop:disable Style/OptionalBooleanParameter
       def preceding(obj, timestamp_arg = false)
         if timestamp_arg != true && primary_key_is_int?
           preceding_by_id(obj)
@@ -152,6 +153,7 @@ module PaperTrail
           preceding_by_timestamp(obj)
         end
       end
+      # rubocop:enable Style/OptionalBooleanParameter
 
       # Returns versions after `obj`.
       #
@@ -160,6 +162,7 @@ module PaperTrail
       #   Default: false.
       # @return `ActiveRecord::Relation`
       # @api public
+      # rubocop:disable Style/OptionalBooleanParameter
       def subsequent(obj, timestamp_arg = false)
         if timestamp_arg != true && primary_key_is_int?
           subsequent_by_id(obj)
@@ -167,6 +170,7 @@ module PaperTrail
           subsequent_by_timestamp(obj)
         end
       end
+      # rubocop:enable Style/OptionalBooleanParameter
 
       private
 
@@ -248,13 +252,6 @@ module PaperTrail
     end
     alias version_author terminator
 
-    def sibling_versions(reload = false)
-      if reload || !defined?(@sibling_versions) || @sibling_versions.nil?
-        @sibling_versions = self.class.with_item_keys(item_type, item_id)
-      end
-      @sibling_versions
-    end
-
     def next
       @next ||= sibling_versions.subsequent(self).first
     end
@@ -264,8 +261,9 @@ module PaperTrail
     end
 
     # Returns an integer representing the chronological position of the
-    # version among its siblings (see `sibling_versions`). The "create" event,
-    # for example, has an index of 0.
+    # version among its siblings. The "create" event, for example, has an index
+    # of 0.
+    #
     # @api public
     def index
       @index ||= RecordHistory.new(sibling_versions, self.class).index(self)
@@ -330,6 +328,11 @@ module PaperTrail
       return unless previous_versions.size > limit
       excess_versions = previous_versions - previous_versions.last(limit)
       excess_versions.map(&:destroy)
+    end
+
+    # @api private
+    def sibling_versions
+      @sibling_versions ||= self.class.with_item_keys(item_type, item_id)
     end
 
     # See docs section 2.e. Limiting the Number of Versions Created.

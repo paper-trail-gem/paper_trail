@@ -3,9 +3,6 @@ require: rubocop-rspec
 # Remove these configuration records
 # one by one as the offenses are removed from the code base.
 
-Layout/ArgumentAlignment:
-  Enabled: false
-
 Metrics/AbcSize:
   Max: 20 # Goal: 15
 
@@ -20,18 +17,6 @@ Naming/MemoizedInstanceVariableName:
 
 RSpec/ContextWording:
   Enabled: false
-
-RSpec/HooksBeforeExamples:
-  Exclude:
-    - spec/controllers/articles_controller_spec.rb
-    - spec/models/version_spec.rb
-    - spec/paper_trail/config_spec.rb
-    - spec/paper_trail/request_spec.rb
-    - spec/paper_trail_spec.rb
-
-RSpec/NestedGroups:
-  Exclude:
-    - spec/paper_trail/model_spec.rb
 
 # It may be possible for us to use safe_load, but we'd have to pass the
 # safelists, like `whitelist_classes` into our serializer, and the serializer
