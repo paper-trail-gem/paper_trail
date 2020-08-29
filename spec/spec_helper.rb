@@ -32,6 +32,8 @@ require File.expand_path("dummy_app/config/environment", __dir__)
 require "rspec/rails"
 require "paper_trail/frameworks/rspec"
 require "ffaker"
+require 'rails-controller-testing'
+Rails::Controller::Testing.install
 
 # Migrate
 require_relative "support/paper_trail_spec_migrator"
@@ -40,4 +42,12 @@ require_relative "support/paper_trail_spec_migrator"
 RSpec.configure do |config|
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
   config.use_transactional_fixtures = true
+end
+
+RSpec.configure do |config|
+  [:controller, :view, :request].each do |type|
+    config.include ::Rails::Controller::Testing::TestProcess, :type => type
+    config.include ::Rails::Controller::Testing::TemplateAssertions, :type => type
+    config.include ::Rails::Controller::Testing::Integration, :type => type
+  end
 end
