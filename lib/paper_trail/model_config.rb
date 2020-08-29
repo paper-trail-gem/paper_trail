@@ -145,9 +145,14 @@ module PaperTrail
     #
     # @api private
     def check_presence_of_item_subtype_column(options)
-      return unless options.key?(:limit)
-      return if version_class.item_subtype_column_present?
-      raise format(E_MODEL_LIMIT_REQUIRES_ITEM_SUBTYPE, @model_class.name)
+      begin
+        return unless options.key?(:limit)
+        return if version_class.item_subtype_column_present?
+        raise format(E_MODEL_LIMIT_REQUIRES_ITEM_SUBTYPE, @model_class.name)
+      rescue ActiveRecord::NoDatabaseError => e
+        ::Rails.logger.warn "Database does not Exist!  - not loading papertrail"
+        return true
+      end
     end
 
     def check_version_class_name(options)
