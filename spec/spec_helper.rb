@@ -32,7 +32,7 @@ require File.expand_path("dummy_app/config/environment", __dir__)
 require "rspec/rails"
 require "paper_trail/frameworks/rspec"
 require "ffaker"
-require 'rails-controller-testing'
+require "rails-controller-testing"
 Rails::Controller::Testing.install
 
 # Migrate
