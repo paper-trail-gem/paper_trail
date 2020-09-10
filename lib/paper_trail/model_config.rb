@@ -148,8 +148,12 @@ module PaperTrail
       return unless options.key?(:limit)
       return if version_class.item_subtype_column_present?
       raise format(E_MODEL_LIMIT_REQUIRES_ITEM_SUBTYPE, @model_class.name)
-    rescue ActiveRecord::NoDatabaseError
-      ::Rails.logger.warn "Database does not Exist! - not loading papertrail"
+    rescue ActiveRecord::NoDatabaseError => e
+      # when there is no database
+      ::Rails.logger.warn e.message
+    rescue ActiveRecord::StatementInvalid => e
+      # when versions table does not exist
+      ::Rails.logger.warn e.message
     end
 
     def check_version_class_name(options)
