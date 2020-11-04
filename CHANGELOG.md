@@ -11,7 +11,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
-- None
+- [#1204](https://github.com/paper-trail-gem/paper_trail/issues/1204) - Add `reify_original` method for reifying the original object.
 
 ### Fixed
 
