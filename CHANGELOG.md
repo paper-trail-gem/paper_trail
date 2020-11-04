@@ -15,6 +15,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
   `rails generate paper_trail:install CommentVersion` created `comment_versions` table
 - `rails generate paper_trail:update_item_subtype` now supports custom version classes via 
   `--version-class-name` option, e.g. `--version-class-name=CommentVersion`
+- [#1204](https://github.com/paper-trail-gem/paper_trail/issues/1204) - Add `reify_original` method for reifying the original object.
 
 ### Fixed
 

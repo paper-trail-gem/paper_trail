@@ -30,6 +30,17 @@ RSpec.describe Document, :versioning do
     end
   end
 
+  describe "#paper_trail.reify_original" do
+    it "returns the expected document" do
+      doc = described_class.create
+      original_name = doc.name
+      doc.update(name: "Doc 1")
+      doc.update(name: "Doc 2")
+      expect(doc.paper_trail_versions.length).to(eq(3))
+      expect(doc.paper_trail.reify_original.name).to(eq(original_name))
+    end
+  end
+
   describe "#paper_trail_versions" do
     it "returns the expected version records" do
       doc = described_class.create

@@ -23,6 +23,16 @@ RSpec.describe LegacyWidget, :versioning do
     end
   end
 
+  describe "#reify_original" do
+    it "return its original self" do
+      widget = described_class.create(name: "foo", version: 2)
+      %w[bar baz].each { |name| widget.update(name: name) }
+      version = widget.versions.last
+      reified = version.reify
+      expect(reified.paper_trail.reify_original).to(eq(reified.versions[1].reify))
+    end
+  end
+
   describe "#update" do
     it "does not create a PT version record because the updated column is ignored" do
       described_class.create.update(version: 1)
