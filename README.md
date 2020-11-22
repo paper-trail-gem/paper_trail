@@ -703,9 +703,9 @@ it came instead from a previous version -- with `live?`:
 
 ```ruby
 widget = Widget.find 42
-widget.live?                        # true
+widget.paper_trail.live?            # true
 widget = widget.paper_trail.previous_version
-widget.live?                        # false
+widget.paper_trail.live?            # false
 ```
 
 And you can perform `WHERE` queries for object versions based on attributes:
