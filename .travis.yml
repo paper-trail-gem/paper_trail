@@ -29,11 +29,14 @@ before_install:
 gemfile:
   - gemfiles/ar_5.2.gemfile
   - gemfiles/ar_6.0.gemfile
+  - gemfiles/ar_6.1.gemfile
 matrix:
   exclude:
     # rails 6 requires ruby >= 2.5.0
     - rvm: 2.4
       gemfile: gemfiles/ar_6.0.gemfile
+    - rvm: 2.4
+      gemfile: gemfiles/ar_6.1.gemfile
   fast_finish: true
 services:
   - mysql
