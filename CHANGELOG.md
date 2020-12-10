@@ -11,7 +11,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
-- None
+- [#1272](https://github.com/paper-trail-gem/paper_trail/issues/1272) -
+  Rails 6.1 compatibility
 
 ### Fixed
 
