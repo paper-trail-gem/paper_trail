@@ -18,7 +18,6 @@ module Dummy
     config.active_support.escape_html_entities_in_json = true
     config.active_support.test_order = :sorted
     config.secret_key_base = "A fox regularly kicked the screaming pile of biscuits."
-    config.active_record.time_zone_aware_types = [:datetime]
 
     # In rails >= 6.0, "`.represent_boolean_as_integer=` is now always true,
     # so setting this is deprecated and will be removed in Rails 6.1."

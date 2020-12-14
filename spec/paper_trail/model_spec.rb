@@ -335,8 +335,9 @@ RSpec.describe(::PaperTrail, versioning: true) do
       expect(previous_widget.a_datetime.to_time.utc.to_i).to(eq(t0.to_time.utc.to_i))
     end
 
-    it "handle times" do
-      expect(previous_widget.a_time.utc.to_i).to(eq(t0.utc.to_i))
+    it "handle times (time only, no date)" do
+      format = ->(t) { t.utc.strftime "%H:%M:%S" }
+      expect(format[previous_widget.a_time]).to eq(format[t0])
     end
 
     it "handle dates" do
@@ -362,7 +363,8 @@ RSpec.describe(::PaperTrail, versioning: true) do
         assert_in_delta(153.01, reified.a_float, 0.001)
         assert_in_delta(2.7183, reified.a_decimal, 0.0001)
         expect(reified.a_datetime.to_time.utc.to_i).to(eq(t0.to_time.utc.to_i))
-        expect(reified.a_time.utc.to_i).to(eq(t0.utc.to_i))
+        format = ->(t) { t.utc.strftime "%H:%M:%S" }
+        expect(format[reified.a_time]).to eq(format[t0])
         expect(reified.a_date).to(eq(d0))
         expect(reified.a_boolean).to(be_truthy)
       end
