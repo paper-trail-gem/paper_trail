@@ -11,6 +11,8 @@ require "paper_trail"
 
 module Dummy
   class Application < Rails::Application
+    config.load_defaults(::Rails.gem_version.segments.take(2).join("."))
+
     config.encoding = "utf-8"
     config.filter_parameters += [:password]
     config.active_support.escape_html_entities_in_json = true
@@ -38,7 +40,6 @@ module Dummy
         config.active_record.time_zone_aware_types = [:datetime]
       end
       if v >= Gem::Version.new("5.1")
-        config.load_defaults "5.1"
         config.active_record.time_zone_aware_types = [:datetime]
       end
     end
