@@ -17,32 +17,8 @@ module Dummy
     config.filter_parameters += [:password]
     config.active_support.escape_html_entities_in_json = true
     config.active_support.test_order = :sorted
-
-    # Disable assets in rails 4.2. In rails 5, config does not respond to
-    # assets, probably because it was moved out of railties to some other gem,
-    # and we only have dev. dependencies on railties, not all of rails. When
-    # we drop support for rails 4.2, we can remove this whole conditional.
-    if config.respond_to?(:assets)
-      config.assets.enabled = false
-    end
-
     config.secret_key_base = "A fox regularly kicked the screaming pile of biscuits."
-
-    # `raise_in_transactional_callbacks` was added in rails 4, then deprecated
-    # in rails 5. Oh, how fickle are the gods.
-    if ActiveRecord.respond_to?(:gem_version)
-      v = ActiveRecord.gem_version
-      if v >= Gem::Version.new("4.2") && v < Gem::Version.new("5.0.0.beta1")
-        config.active_record.raise_in_transactional_callbacks = true
-      end
-      if v >= Gem::Version.new("5.0.0.beta1") && v < Gem::Version.new("5.1")
-        config.active_record.belongs_to_required_by_default = true
-        config.active_record.time_zone_aware_types = [:datetime]
-      end
-      if v >= Gem::Version.new("5.1")
-        config.active_record.time_zone_aware_types = [:datetime]
-      end
-    end
+    config.active_record.time_zone_aware_types = [:datetime]
 
     # In rails >= 6.0, "`.represent_boolean_as_integer=` is now always true,
     # so setting this is deprecated and will be removed in Rails 6.1."
