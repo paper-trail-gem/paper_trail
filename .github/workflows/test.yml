@@ -1,0 +1,158 @@
+name: gha-workflow-pt-test
+on: [push, pull_request]
+jobs:
+
+  # Linting is a separate job, primary because it only needs to be done once,
+  # and secondarily because jobs are performed concurrently.
+  gha-job-pt-lint:
+    name: Lint
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v2
+      - name: Setup ruby
+        uses: actions/setup-ruby@v1
+        with:
+          # Set to `TargetRubyVersion` in `.rubocopy.yml`
+          ruby-version: 2.4
+      - name: Bundle
+        run: |
+          gem install bundler
+          bundle install --jobs 4 --retry 3
+      - name: Lint
+        run: bundle exec rubocop
+
+  # The test job is a matrix of ruby/rails versions.
+  gha-job-pt-test:
+    name: Ruby ${{ matrix.ruby }}, ${{ matrix.gemfile }}.gemfile
+    runs-on: ubuntu-18.04
+    services:
+      gha-service-pt-mysql:
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: paper_trail_test
+        image: mysql:8.0
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+        ports:
+          - 3306:3306
+      gha-service-pt-postgres:
+        env:
+          POSTGRES_PASSWORD: asdfasdf
+        image: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    strategy:
+      # Unlike TravisCI, the database will not be part of the matrix. Each
+      # sub-job in the matrix tests all three databases. Alternatively, we could
+      # have set this up with each database as a separate job, but then we'd be
+      # duplicating the matrix configuration three times.
+      matrix:
+        gemfile: [ 'rails_5.2', 'rails_6.0', 'rails_6.1' ]
+
+        # To keep matrix size down, only test highest and lowest rubies. In
+        # `.rubocopy.yml`, set `TargetRubyVersion`, to the lowest ruby version
+        # tested here.
+        ruby: [ '2.4', '2.7' ]
+
+        exclude:
+          # rails 6 requires ruby >= 2.5.0
+          - ruby: '2.4'
+            gemfile: 'rails_6.0'
+          - ruby: '2.4'
+            gemfile: 'rails_6.1'
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v2
+      - name: Setup ruby
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+      - name: Test connection to postgres, print lists of dbs, users
+        run: |
+          psql \
+            --command '\l' \
+            --command '\du' \
+            --host=$POSTGRES_HOST \
+            --port=$POSTGRES_PORT \
+            --username=postgres \
+            postgres
+        env:
+          PGPASSWORD: asdfasdf
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
+      - name: Test connection to mysql
+        run: |
+          mysql \
+            --execute='show databases;' \
+            --host=$MYSQL_HOST \
+            --protocol=TCP \
+            --port=$MYSQL_PORT \
+            --user=$MYSQL_USER \
+            $MYSQL_DATABASE
+        env:
+          MYSQL_DATABASE: paper_trail_test
+          MYSQL_HOST: localhost
+          MYSQL_PORT: 3306
+          MYSQL_USER: root
+      - name: Bundle
+        run: |
+          gem install bundler
+          bundle install --jobs 4 --retry 3
+        env:
+          BUNDLE_GEMFILE: gemfiles/${{ matrix.gemfile }}.gemfile
+
+      # MySQL db was created above, sqlite will be created during test suite,
+      # when migrations occur, so we only need to create the postgres db. I
+      # tried something like `cd .....dummy_app && ....db:create`, but couldn't
+      # get that to work.
+      - name: Create postgres database
+        run: |
+          createdb \
+            --host=$POSTGRES_HOST \
+            --port=$POSTGRES_PORT \
+            --username=postgres \
+            paper_trail_test
+        env:
+          PGPASSWORD: asdfasdf
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
+
+      # The following three steps finally run the tests. We use `rake
+      # install_database_yml spec` instead of `rake` (default) because the
+      # default includes rubocop, which we run (once) as a separate job. See
+      # above.
+      - name: Test, sqlite
+        run: bundle exec rake install_database_yml spec
+        env:
+          BUNDLE_GEMFILE: gemfiles/${{ matrix.gemfile }}.gemfile
+          DB: sqlite
+      - name: Test, mysql
+        run: bundle exec rake install_database_yml spec
+        env:
+          BACKTRACE: 1
+          BUNDLE_GEMFILE: gemfiles/${{ matrix.gemfile }}.gemfile
+          DB: mysql
+          PT_CI_DATABASE: paper_trail
+          PT_CI_DB_USER: root
+          PT_CI_DB_HOST: 127.0.0.1
+          PT_CI_DB_PORT: 3306
+      - name: Test, postgres
+        run: bundle exec rake install_database_yml spec
+        env:
+          BACKTRACE: 1
+          BUNDLE_GEMFILE: gemfiles/${{ matrix.gemfile }}.gemfile
+          DB: postgres
+          PT_CI_DATABASE: paper_trail
+          PT_CI_DB_USER: postgres
+          PT_CI_DB_PASSWORD: asdfasdf
+          PT_CI_DB_HOST: 127.0.0.1
+          PT_CI_DB_PORT: 5432

@@ -1,15 +1,8 @@
 test: &test
   adapter: postgresql
-  database: paper_trail_test
-  username: postgres
-  password: 
-  host:     localhost
-  port:     5432
-
-foo:
-  <<: *test
-  database: paper_trail_foo
-
-bar:
-  <<: *test
-  database: paper_trail_bar
+  database: <%= ENV.fetch('PT_CI_DATABASE', 'paper_trail') %>_test
+  username: <%= ENV.fetch('PT_CI_DB_USER', 'postgres') %>
+  password: <%= ENV.fetch('PT_CI_DB_PASSWORD', '') %>
+  host: <%= ENV.fetch('PT_CI_DB_HOST', 'localhost') %>
+  port: <%= ENV.fetch('PT_CI_DB_PORT', 5432) %>
+  protocol: TCP

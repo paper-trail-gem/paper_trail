@@ -18,7 +18,7 @@ AllCops:
   # Enable pending cops so we can adopt the code before they are switched on.
   NewCops: enable
 
-  # Set to lowest supported version
+  # Set to lowest supported version of ruby
   TargetRubyVersion: 2.4
 
 Bundler/OrderedGems:

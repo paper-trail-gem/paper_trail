@@ -1,19 +1,12 @@
 test: &test
   adapter: mysql2
   encoding: utf8
-  database: paper_trail_test
+  database: <%= ENV.fetch('PT_CI_DATABASE', 'paper_trail') %>_test
   pool: 5
-  username: root
+  username: <%= ENV.fetch('PT_CI_DB_USER', 'root') %>
+  host: <%= ENV.fetch('PT_CI_DB_HOST', 'localhost') %>
+  port: <%= ENV.fetch('PT_CI_DB_PORT', 3306) %>
+  protocol: TCP
+
+  # password deliberately blank
   password:
-  host: localhost
-
-# Warning: The database defined as "test" will be erased and
-# re-generated from your development database when you run "rake".
-# Do not set this db to the same as development or production.
-foo:
-  <<: *test
-  database: paper_trail_foo
-
-bar:
-  <<: *test
-  database: paper_trail_bar
