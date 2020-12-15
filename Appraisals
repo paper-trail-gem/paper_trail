@@ -10,17 +10,17 @@
 # > https://github.com/thoughtbot/appraisal
 #
 #
-appraise "ar-5.2" do
+appraise "rails-5.2" do
   gem "rails", "~> 5.2.4"
   gem "rails-controller-testing", "~> 1.0.2"
 end
 
-appraise "ar-6.0" do
+appraise "rails-6.0" do
   gem "rails", "~> 6.0.3"
   gem "rails-controller-testing", "~> 1.0.3"
 end
 
-appraise "ar-6.1" do
+appraise "rails-6.1" do
   gem "rails", "~> 6.1.0"
   gem "rails-controller-testing", "~> 1.0.5"
 end
