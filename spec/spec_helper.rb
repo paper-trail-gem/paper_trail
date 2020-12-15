@@ -4,6 +4,7 @@ ENV["RAILS_ENV"] ||= "test"
 ENV["DB"] ||= "sqlite"
 
 require "byebug"
+require_relative "support/pt_arel_helpers"
 
 unless File.exist?(File.expand_path("dummy_app/config/database.yml", __dir__))
   warn "No database.yml detected for the dummy app, please run `rake prepare` first"
@@ -25,6 +26,7 @@ RSpec.configure do |config|
     config.default_formatter = "doc"
   end
   config.order = :random
+  config.include PTArelHelpers
   Kernel.srand config.seed
 end
 
