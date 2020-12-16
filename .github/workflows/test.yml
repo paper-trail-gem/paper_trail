@@ -76,33 +76,6 @@ jobs:
         uses: actions/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-      - name: Test connection to postgres, print lists of dbs, users
-        run: |
-          psql \
-            --command '\l' \
-            --command '\du' \
-            --host=$POSTGRES_HOST \
-            --port=$POSTGRES_PORT \
-            --username=postgres \
-            postgres
-        env:
-          PGPASSWORD: asdfasdf
-          POSTGRES_HOST: localhost
-          POSTGRES_PORT: 5432
-      - name: Test connection to mysql
-        run: |
-          mysql \
-            --execute='show databases;' \
-            --host=$MYSQL_HOST \
-            --protocol=TCP \
-            --port=$MYSQL_PORT \
-            --user=$MYSQL_USER \
-            $MYSQL_DATABASE
-        env:
-          MYSQL_DATABASE: paper_trail_test
-          MYSQL_HOST: localhost
-          MYSQL_PORT: 3306
-          MYSQL_USER: root
       - name: Bundle
         run: |
           gem install bundler
