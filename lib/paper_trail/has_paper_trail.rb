@@ -12,7 +12,7 @@ module PaperTrail
   # `.paper_trail` and `#paper_trail`.
   module Model
     def self.included(base)
-      base.send :extend, ClassMethods
+      base.extend ClassMethods
     end
 
     # :nodoc:
