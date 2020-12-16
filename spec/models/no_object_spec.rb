@@ -27,7 +27,7 @@ RSpec.describe NoObject, versioning: true do
 
     # New feature: destroy populates object_changes
     # https://github.com/paper-trail-gem/paper_trail/pull/1123
-    h = YAML.safe_load(a["object_changes"], [::Time])
+    h = YAML.load a["object_changes"]
     expect(h["id"]).to eq([n.id, nil])
     expect(h["letter"]).to eq([n.letter, nil])
     expect(h["created_at"][0]).to be_present

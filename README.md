@@ -13,7 +13,7 @@ has been destroyed.
 | Version        | Documentation |
 | -------------- | ------------- |
 | Unreleased     | https://github.com/paper-trail-gem/paper_trail/blob/master/README.md |
-| 11.0.0         | https://github.com/paper-trail-gem/paper_trail/blob/v11.0.0/README.md |
+| 11.1.0         | https://github.com/paper-trail-gem/paper_trail/blob/v11.1.0/README.md |
 | 10.3.1         | https://github.com/paper-trail-gem/paper_trail/blob/v10.3.1/README.md |
 | 9.2.0          | https://github.com/paper-trail-gem/paper_trail/blob/v9.2.0/README.md |
 | 8.1.2          | https://github.com/paper-trail-gem/paper_trail/blob/v8.1.2/README.md |
@@ -83,8 +83,8 @@ has been destroyed.
 
 | paper_trail    | branch     | ruby     | activerecord  |
 | -------------- | ---------- | -------- | ------------- |
-| unreleased     | master     | >= 2.4.0 | >= 5.2, < 6.1 |
-| 11             | master     | >= 2.4.0 | >= 5.2, < 6.1 |
+| unreleased     | master     | >= 2.4.0 | >= 5.2, < 6.2 |
+| 11             | master     | >= 2.4.0 | >= 5.2, < 6.2 |
 | 10             | 10-stable  | >= 2.3.0 | >= 4.2, < 6.1 |
 | 9              | 9-stable   | >= 2.3.0 | >= 4.2, < 5.3 |
 | 8              | 8-stable   | >= 2.2.0 | >= 4.2, < 5.2 |
@@ -703,9 +703,9 @@ it came instead from a previous version -- with `live?`:
 
 ```ruby
 widget = Widget.find 42
-widget.live?                        # true
+widget.paper_trail.live?            # true
 widget = widget.paper_trail.previous_version
-widget.live?                        # false
+widget.paper_trail.live?            # false
 ```
 
 And you can perform `WHERE` queries for object versions based on attributes:
@@ -753,8 +753,8 @@ widget.versions.last.changeset
 # {}
 ```
 
-The `object_changes` are only stored for creation and updates, not when an
-object is destroyed.
+Prior to 10.0.0, the `object_changes` were only stored for create and update
+events. As of 10.0.0, they are stored for all three events.
 
 Please be aware that PaperTrail doesn't use diffs internally.  When I designed
 PaperTrail I wanted simplicity and robustness so I decided to make each version

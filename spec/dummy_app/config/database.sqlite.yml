@@ -5,11 +5,3 @@ test: &test
   pool: 5
   timeout: 5000
   database: db/test.sqlite3
-
-foo:
-  <<: *test
-  database: db/test-foo.sqlite3
-
-bar:
-  <<: *test
-  database: db/test-bar.sqlite3

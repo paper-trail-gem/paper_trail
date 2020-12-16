@@ -20,7 +20,7 @@ has been destroyed.
   s.license = "MIT"
 
   s.files = `git ls-files -z`.split("\x0").select { |f|
-    f.match(%r{^(Gemfile|LICENSE|lib|paper_trail.gemspec)/})
+    f.match(%r{^(Gemfile|LICENSE|lib/|paper_trail.gemspec)})
   }
   s.executables = []
   s.require_paths = ["lib"]
@@ -31,7 +31,7 @@ has been destroyed.
   # https://www.ruby-lang.org/en/news/2019/10/02/ruby-2-4-9-released/
   s.required_ruby_version = ">= 2.4.0"
 
-  # We no longer specify a maximum rails version.
+  # We no longer specify a maximum activerecord version.
   # See discussion in paper_trail/compatibility.rb
   s.add_dependency "activerecord", ::PaperTrail::Compatibility::ACTIVERECORD_GTE
   s.add_dependency "request_store", "~> 1.1"
@@ -41,6 +41,12 @@ has been destroyed.
   s.add_development_dependency "ffaker", "~> 2.11"
   s.add_development_dependency "generator_spec", "~> 0.9.4"
   s.add_development_dependency "memory_profiler", "~> 0.9.14"
+
+  # For `spec/dummy_app`. Technically, we only need `actionpack` (as of 2020).
+  # However, that might change in the future, and the advantages of specifying a
+  # subset (e.g. actionpack only) are unclear.
+  s.add_development_dependency "rails", ::PaperTrail::Compatibility::ACTIVERECORD_GTE
+
   s.add_development_dependency "rake", "~> 13.0"
   s.add_development_dependency "rspec-rails", "~> 4.0"
   s.add_development_dependency "rubocop", "~> 0.89.1"

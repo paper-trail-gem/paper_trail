@@ -17,6 +17,21 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 - None
 
+## 11.1.0 (2020-12-16)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- [#1272](https://github.com/paper-trail-gem/paper_trail/issues/1272) -
+  Rails 6.1 compatibility
+
+### Fixed
+
+- None
+
 ## 11.0.0 (2020-08-24)
 
 ### Breaking Changes
