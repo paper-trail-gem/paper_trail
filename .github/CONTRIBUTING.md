@@ -73,6 +73,16 @@ createuser --superuser postgres
 DB=postgres bundle exec appraisal rails-5.2 rake
 ```
 
+## The dummy_app
+
+In the rare event you need a `console` in the `dummy_app`:
+
+```
+cd spec/dummy_app
+cp config/database.mysql.yml config/database.yml
+BUNDLE_GEMFILE='../../gemfiles/rails_5.2.gemfile' bin/rails console -e test
+```
+
 ## Adding new schema
 
 Edit `spec/dummy_app/db/migrate/20110208155312_set_up_test_tables.rb`. Migration
