@@ -13,7 +13,7 @@ has been destroyed.
 | Version        | Documentation |
 | -------------- | ------------- |
 | Unreleased     | https://github.com/paper-trail-gem/paper_trail/blob/master/README.md |
-| 11.0.0         | https://github.com/paper-trail-gem/paper_trail/blob/v11.0.0/README.md |
+| 11.1.0         | https://github.com/paper-trail-gem/paper_trail/blob/v11.1.0/README.md |
 | 10.3.1         | https://github.com/paper-trail-gem/paper_trail/blob/v10.3.1/README.md |
 | 9.2.0          | https://github.com/paper-trail-gem/paper_trail/blob/v9.2.0/README.md |
 | 8.1.2          | https://github.com/paper-trail-gem/paper_trail/blob/v8.1.2/README.md |
