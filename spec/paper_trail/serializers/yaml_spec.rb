@@ -39,7 +39,7 @@ module PaperTrail
             ::PaperTrail::Version.arel_table[:object], :arg1, "Val 1"
           )
           expect(matches.instance_of?(Arel::Nodes::Matches)).to(eq(true))
-          expect(matches.right.val).to eq("%\narg1: Val 1\n%")
+          expect(arel_value(matches.right)).to eq("%\narg1: Val 1\n%")
         end
       end
     end

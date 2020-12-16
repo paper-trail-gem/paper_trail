@@ -1,5 +1,17 @@
 # frozen_string_literal: true
 
+# AR 6.1 does not autoload MigrationContext, so we must `require` it.
+#
+# ```
+# # lib/active_record.rb
+# autoload :Migration
+# autoload :Migrator, "active_record/migration"
+# ```
+#
+# The above may indicate that we should use `Migrator` instead of
+# MigrationContext.
+require "active_record/migration"
+
 # Manage migrations including running generators to build them, and cleaning up strays
 class PaperTrailSpecMigrator
   def initialize
@@ -31,12 +43,13 @@ class PaperTrailSpecMigrator
   # - generator [String] - name of generator, eg. "paper_trail:update_sti"
   # - generator_invoke_args [Array] - arguments to `Generators#invoke`
   def generate_and_migrate(generator, generator_invoke_args)
-    files = generate(generator, generator_invoke_args)
+    generate(generator, generator_invoke_args)
     begin
       migrate
     ensure
-      files.each do |file|
-        File.delete(Rails.root.join(file))
+      cmd = "git clean -x --force --quiet " + dummy_app_migrations_dir.to_s
+      unless system(cmd)
+        raise "Unable to clean up after PT migration generator test"
       end
     end
   end

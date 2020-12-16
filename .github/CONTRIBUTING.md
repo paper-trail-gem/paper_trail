@@ -51,26 +51,26 @@ Testing is a little awkward because the test suite:
 ### Test sqlite, AR 6
 
 ```
-DB=sqlite bundle exec appraisal ar-6.0 rake
+DB=sqlite bundle exec appraisal rails-6.0 rake
 ```
 
 ### Test sqlite, AR 5
 
 ```
-DB=sqlite bundle exec appraisal ar-5.2 rake
+DB=sqlite bundle exec appraisal rails-5.2 rake
 ```
 
 ### Test mysql, AR 5
 
 ```
-DB=mysql bundle exec appraisal ar-5.2 rake
+DB=mysql bundle exec appraisal rails-5.2 rake
 ```
 
 ### Test postgres, AR 5
 
 ```
 createuser --superuser postgres
-DB=postgres bundle exec appraisal ar-5.2 rake
+DB=postgres bundle exec appraisal rails-5.2 rake
 ```
 
 ## Adding new schema
