@@ -19,9 +19,7 @@ has been destroyed.
   s.email = "jared@jaredbeck.com"
   s.license = "MIT"
 
-  s.files = `git ls-files -z`.split("\x0").select { |f|
-    f.match(%r{^(Gemfile|LICENSE|lib/|paper_trail.gemspec)})
-  }
+  s.files = Dir["lib/**/*", "LICENSE"]
   s.executables = []
   s.require_paths = ["lib"]
 
