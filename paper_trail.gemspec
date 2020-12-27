@@ -42,8 +42,7 @@ has been destroyed.
   # PT supports ruby versions until they reach End-of-Life, historically
   # about 3 years, per https://www.ruby-lang.org/en/downloads/branches/
   #
-  # Same in .gemspec (required_ruby_version), .rubocop.yml (TargetRubyVersion),
-  # and .github/workflows/test.yml.
+  # See "Lowest supported ruby version" in CONTRIBUTING.md
   #
   # Ruby 2.5 reaches EoL on 2021-03-31.
   s.required_ruby_version = ">= 2.5.0"

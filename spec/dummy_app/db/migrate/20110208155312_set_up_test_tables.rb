@@ -71,7 +71,7 @@ class SetUpTestTables < ::ActiveRecord::Migration::Current
       end
     end
 
-    create_table :versions, versions_table_options do |t|
+    create_table :versions, **versions_table_options do |t|
       t.string   :item_type, **item_type_options(null: false)
       t.bigint   :item_id, null: false
       t.string   :item_subtype, **item_type_options(null: true)
