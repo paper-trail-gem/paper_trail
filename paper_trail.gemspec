@@ -23,6 +23,11 @@ has been destroyed.
   # > list, not directories, etc.
   # > https://guides.rubygems.org/specification-reference/#files
   #
+  # > Avoid using `git ls-files` to produce lists of files. Downstreams (OS
+  # > packagers) often need to build your package in an environment that does
+  # > not have git (on purpose).
+  # > https://packaging.rubystyle.guide/#using-git-in-gemspec
+  #
   # By convention, the `.gemspec` is omitted. Tests and related files (like
   # `Gemfile`) are omitted. Documentation is omitted because it would double
   # gem size. See discussion:
