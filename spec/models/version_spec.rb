@@ -24,12 +24,14 @@ module PaperTrail
         it "creates a version with custom changes" do
           adapter = instance_spy("CustomObjectChangesAdapter")
           PaperTrail.config.object_changes_adapter = adapter
+          custom_changes_value = [["name", nil, "Dashboard"]]
           allow(adapter).to(
             receive(:diff).with(
               hash_including("name" => [nil, "Dashboard"])
-            ).and_return([["name", nil, "Dashboard"]])
+            ).and_return(custom_changes_value)
           )
-          expect(widget.versions.last.object_changes).to eq("---\n- - name\n  - \n  - Dashboard\n")
+          yaml = widget.versions.last.object_changes
+          expect(YAML.load(yaml)).to eq(custom_changes_value)
           expect(adapter).to have_received(:diff)
         end
 
