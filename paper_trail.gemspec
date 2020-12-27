@@ -19,7 +19,16 @@ has been destroyed.
   s.email = "jared@jaredbeck.com"
   s.license = "MIT"
 
-  s.files = Dir["lib/**/*", "LICENSE"]
+  # > Files included in this gem. .. Only add files you can require to this
+  # > list, not directories, etc.
+  # > https://guides.rubygems.org/specification-reference/#files
+  #
+  # By convention, the `.gemspec` is omitted. Tests and related files (like
+  # `Gemfile`) are omitted. Documentation is omitted because it would double
+  # gem size. See discussion:
+  # https://github.com/paper-trail-gem/paper_trail/pull/1279#pullrequestreview-558840513
+  s.files = Dir["lib/**/*", "LICENSE"].reject { |f| File.directory?(f) }
+
   s.executables = []
   s.require_paths = ["lib"]
 
