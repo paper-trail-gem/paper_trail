@@ -19,9 +19,21 @@ has been destroyed.
   s.email = "jared@jaredbeck.com"
   s.license = "MIT"
 
-  s.files = `git ls-files -z`.split("\x0").select { |f|
-    f.match(%r{^(Gemfile|LICENSE|lib/|paper_trail.gemspec)})
-  }
+  # > Files included in this gem. .. Only add files you can require to this
+  # > list, not directories, etc.
+  # > https://guides.rubygems.org/specification-reference/#files
+  #
+  # > Avoid using `git ls-files` to produce lists of files. Downstreams (OS
+  # > packagers) often need to build your package in an environment that does
+  # > not have git (on purpose).
+  # > https://packaging.rubystyle.guide/#using-git-in-gemspec
+  #
+  # By convention, the `.gemspec` is omitted. Tests and related files (like
+  # `Gemfile`) are omitted. Documentation is omitted because it would double
+  # gem size. See discussion:
+  # https://github.com/paper-trail-gem/paper_trail/pull/1279#pullrequestreview-558840513
+  s.files = Dir["lib/**/*", "LICENSE"].reject { |f| File.directory?(f) }
+
   s.executables = []
   s.require_paths = ["lib"]
 
