@@ -88,16 +88,14 @@ RSpec.describe Widget, type: :model do
       let(:rolled_back_name) { "Big Moo" }
 
       before do
-        begin
-          widget.transaction do
-            widget.update!(name: rolled_back_name)
-            widget.update!(name: Widget::EXCLUDED_NAME)
-          end
-        rescue ActiveRecord::RecordInvalid
-          widget.reload
-          widget.name = nil
-          widget.save
+        widget.transaction do
+          widget.update!(name: rolled_back_name)
+          widget.update!(name: Widget::EXCLUDED_NAME)
         end
+      rescue ActiveRecord::RecordInvalid
+        widget.reload
+        widget.name = nil
+        widget.save
       end
 
       it "does not create an event for changes that did not happen" do

@@ -89,6 +89,19 @@ Edit `spec/dummy_app/db/migrate/20110208155312_set_up_test_tables.rb`. Migration
 will be performed by `rake`, so you can just run it as shown above. Also,
 `spec/dummy_app/db/schema.rb` is deliberately `.gitignore`d, we don't use it.
 
+## Lowest supported ruby version
+
+Set in three files:
+
+- .gemspec (required_ruby_version)
+- .rubocop.yml (TargetRubyVersion)
+- .github/workflows/test.yml, in two places
+
+Practically, this is only changed when dropping support for an EoL ruby version.
+
+We `.gitignore` `.ruby-version` because it is variable, and only used by
+contributors.
+
 ## Documentation
 
 ### Generate the Table of Contents

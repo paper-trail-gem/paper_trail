@@ -18,8 +18,8 @@ AllCops:
   # Enable pending cops so we can adopt the code before they are switched on.
   NewCops: enable
 
-  # Set to lowest supported version of ruby
-  TargetRubyVersion: 2.4
+  # See "Lowest supported ruby version" in CONTRIBUTING.md
+  TargetRubyVersion: 2.5
 
 Bundler/OrderedGems:
   Exclude:
