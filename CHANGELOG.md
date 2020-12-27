@@ -21,6 +21,10 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 - None
 
+### Dependencies
+
+- Drop support for ruby 2.4 (reached EoL on 2020-03-31)
+
 ## 11.1.0 (2020-12-16)
 
 ### Breaking Changes

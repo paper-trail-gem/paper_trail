@@ -39,9 +39,14 @@ has been destroyed.
 
   s.required_rubygems_version = ">= 1.3.6"
 
-  # Ruby 2.4 reaches EoL at the end of March of 2020
-  # https://www.ruby-lang.org/en/news/2019/10/02/ruby-2-4-9-released/
-  s.required_ruby_version = ">= 2.4.0"
+  # PT supports ruby versions until they reach End-of-Life, historically
+  # about 3 years, per https://www.ruby-lang.org/en/downloads/branches/
+  #
+  # Same in .gemspec (required_ruby_version), .rubocop.yml (TargetRubyVersion),
+  # and .github/workflows/test.yml.
+  #
+  # Ruby 2.5 reaches EoL on 2021-03-31.
+  s.required_ruby_version = ">= 2.5.0"
 
   # We no longer specify a maximum activerecord version.
   # See discussion in paper_trail/compatibility.rb

@@ -58,17 +58,11 @@ jobs:
       matrix:
         gemfile: [ 'rails_5.2', 'rails_6.0', 'rails_6.1' ]
 
-        # To keep matrix size down, only test highest and lowest rubies. In
-        # `.rubocopy.yml`, set `TargetRubyVersion`, to the lowest ruby version
-        # tested here.
-        ruby: [ '2.4', '2.7' ]
-
-        exclude:
-          # rails 6 requires ruby >= 2.5.0
-          - ruby: '2.4'
-            gemfile: 'rails_6.0'
-          - ruby: '2.4'
-            gemfile: 'rails_6.1'
+        # To keep matrix size down, only test highest and lowest rubies.
+        #
+        # Same in .gemspec (required_ruby_version), .rubocop.yml
+        # (TargetRubyVersion), and .github/workflows/test.yml.
+        ruby: [ '2.5', '2.7' ]
     steps:
       - name: Checkout source
         uses: actions/checkout@v2

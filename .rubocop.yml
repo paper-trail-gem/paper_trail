@@ -18,8 +18,10 @@ AllCops:
   # Enable pending cops so we can adopt the code before they are switched on.
   NewCops: enable
 
-  # Set to lowest supported version of ruby
-  TargetRubyVersion: 2.4
+  # Set to lowest supported version of ruby. Same in .gemspec
+  # (required_ruby_version), .rubocop.yml (TargetRubyVersion), and
+  # .github/workflows/test.yml.
+  TargetRubyVersion: 2.5
 
 Bundler/OrderedGems:
   Exclude:
