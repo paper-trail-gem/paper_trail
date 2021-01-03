@@ -19,7 +19,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- None
+- Expand kwargs passed to `save_with_version` using double splat operator - Rails 6.1 compatibility
 
 ### Dependencies
 
