@@ -13,4 +13,8 @@ class CustomObjectChangesAdapter
   def where_object_changes(klass, attributes)
     klass.where(attributes)
   end
+
+  def where_object_changes_from(klass, attributes)
+    klass.where(attributes)
+  end
 end
