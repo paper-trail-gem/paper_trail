@@ -32,6 +32,15 @@ RSpec.describe PostWithStatus, type: :model do
     end
 
     describe "#save_with_version" do
+      context "when passing *args" do
+        it "passes *args down correctly" do
+          post = described_class.create(status: :draft)
+          expect do
+            post.paper_trail.save_with_version(validate: false)
+          end.to change(post.versions, :count).by(1)
+        end
+      end
+
       it "preserves the enum value (and all other attributes)" do
         post = described_class.create(status: :draft)
         expect(post.versions.count).to eq(1)
