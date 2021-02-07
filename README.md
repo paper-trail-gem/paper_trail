@@ -1338,6 +1338,7 @@ An adapter can implement any or all of the following methods:
 1. diff: Returns the changeset in the desired format given the changeset in the original format
 2. load_changeset: Returns the changeset for a given version object
 3. where_object_changes: Returns the records resulting from the given hash of attributes.
+4. where_object_changes_from: Returns the records resulting from the given hash of attributes where the attributes changed *from* the provided value(s).
 
 Depending on what your adapter does, you may have to implement all three.
 
