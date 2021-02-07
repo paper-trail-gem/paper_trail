@@ -52,9 +52,12 @@ module PaperTrail
         def text
           arel_field = @version_model_class.arel_table[:object_changes]
 
-          @attributes.map do |field, value|
+          where_conditions = @attributes.map do |field, value|
             ::PaperTrail.serializer.where_object_changes_from_condition(arel_field, field, value)
           end
+
+          where_conditions = where_conditions.reduce { |a, e| a.and(e) }
+          @version_model_class.where(where_conditions)
         end
       end
     end
