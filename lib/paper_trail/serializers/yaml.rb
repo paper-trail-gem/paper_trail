@@ -38,6 +38,14 @@ module PaperTrail
           discussion at https://github.com/paper-trail-gem/paper_trail/pull/997
         STR
       end
+
+      # Raises an exception as this operation is not allowed with YAML.
+      def where_object_changes_from_condition(*)
+        raise <<-STR.squish.freeze
+          where_object_changes_from does not support reading YAML from a text
+          column. The json and jsonb datatypes are supported.
+        STR
+      end
     end
   end
 end
