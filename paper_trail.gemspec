@@ -83,6 +83,4 @@ has been destroyed.
   s.add_development_dependency "mysql2", "~> 0.5"
   s.add_development_dependency "pg", ">= 0.18", "< 2.0"
   s.add_development_dependency "sqlite3", "~> 1.4"
-
-  s.add_development_dependency "rails-controller-testing", "~> 1.0"
 end
