@@ -30,6 +30,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
+- `where_object_changes_to` queries for versions where the object's attributes
+  changed to one set of known values from any other set of values.
 - `where_object_changes_from` queries for versions where the object's attributes
   changed from one set of known values to any other set of values.
 

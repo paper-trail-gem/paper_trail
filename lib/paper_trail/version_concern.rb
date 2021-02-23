@@ -4,6 +4,7 @@ require "paper_trail/attribute_serializers/object_changes_attribute"
 require "paper_trail/queries/versions/where_object"
 require "paper_trail/queries/versions/where_object_changes"
 require "paper_trail/queries/versions/where_object_changes_from"
+require "paper_trail/queries/versions/where_object_changes_to"
 
 module PaperTrail
   # Originally, PaperTrail did not provide this module, and all of this
@@ -129,6 +130,21 @@ module PaperTrail
       def where_object_changes_from(args = {})
         raise ArgumentError, "expected to receive a Hash" unless args.is_a?(Hash)
         Queries::Versions::WhereObjectChangesFrom.new(self, args).execute
+      end
+
+      # Given a hash of attributes like `name: 'Joan'`, query the
+      # `versions.objects_changes` column for changes where the version changed
+      # to the hash of attributes from other values.
+      #
+      # This is useful for finding versions where the attribute started with an
+      # unknown value and changed to a known value. This is in comparison to
+      # `where_object_changes` which will find both the changes before and
+      # after.
+      #
+      # @api public
+      def where_object_changes_to(args = {})
+        raise ArgumentError, "expected to receive a Hash" unless args.is_a?(Hash)
+        Queries::Versions::WhereObjectChangesTo.new(self, args).execute
       end
 
       def primary_key_is_int?

@@ -46,6 +46,14 @@ module PaperTrail
           column. The json and jsonb datatypes are supported.
         STR
       end
+
+      # Raises an exception as this operation is not allowed with YAML.
+      def where_object_changes_to_condition(*)
+        raise <<-STR.squish.freeze
+          where_object_changes_to does not support reading YAML from a text
+          column. The json and jsonb datatypes are supported.
+        STR
+      end
     end
   end
 end
