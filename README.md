@@ -1339,6 +1339,7 @@ An adapter can implement any or all of the following methods:
 2. load_changeset: Returns the changeset for a given version object
 3. where_object_changes: Returns the records resulting from the given hash of attributes.
 4. where_object_changes_from: Returns the records resulting from the given hash of attributes where the attributes changed *from* the provided value(s).
+5. where_attribute_changes: Returns the records where the attribute changed to or from any value.
 
 Depending on what your adapter does, you may have to implement all three.
 

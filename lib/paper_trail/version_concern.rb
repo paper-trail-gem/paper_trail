@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "paper_trail/attribute_serializers/object_changes_attribute"
+require "paper_trail/queries/versions/where_attribute_changes"
 require "paper_trail/queries/versions/where_object"
 require "paper_trail/queries/versions/where_object_changes"
 require "paper_trail/queries/versions/where_object_changes_from"
@@ -63,6 +64,18 @@ module PaperTrail
         [arel_table[:created_at].send(direction.downcase)].tap do |array|
           array << arel_table[primary_key].send(direction.downcase) if primary_key_is_int?
         end
+      end
+
+      # Given an attribute like `"name"`, query the `versions.object_changes`
+      # column for any changes that modified the provided attribute.
+      #
+      # @api public
+      def where_attribute_changes(attribute)
+        unless attribute.is_a?(String) || attribute.is_a?(Symbol)
+          raise ArgumentError, "expected to receive a String or Symbol"
+        end
+
+        Queries::Versions::WhereAttributeChanges.new(self, attribute).execute
       end
 
       # Given a hash of attributes like `name: 'Joan'`, query the
