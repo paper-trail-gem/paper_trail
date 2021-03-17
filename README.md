@@ -53,8 +53,8 @@ has been destroyed.
 - [5. ActiveRecord](#5-activerecord)
   - [5.a. Single Table Inheritance (STI)](#5a-single-table-inheritance-sti)
   - [5.b. Configuring the `versions` Association](#5b-configuring-the-versions-association)
-  - [5.c. Generators](#5c-generators)
-  - [5.d. Protected Attributes](#5d-protected-attributes)
+  - [5.d. Generators](#5d-generators)
+  - [5.e. Protected Attributes](#5e-protected-attributes)
 - [6. Extensibility](#6-extensibility)
   - [6.a. Custom Version Classes](#6a-custom-version-classes)
   - [6.b. Custom Serializer](#6b-custom-serializer)
@@ -111,8 +111,8 @@ Experts: to install incompatible versions of activerecord, see
     bundle exec rails generate paper_trail:install [--with-changes]
     ```
 
-    For more information on this generator, see [section 5.c.
-    Generators](#5c-generators).
+    For more information on this generator, see [section 5.d.
+    Generators](#5d-generators).
 
     If using [rails_admin][38], you must enable the
     experimental [Associations](#4b-associations) feature.
@@ -1064,7 +1064,20 @@ end
 Overriding (instead of configuring) the `versions` method is not supported.
 Overriding associations is not recommended in general.
 
-### 5.c. Generators
+### 5.c. Configuring the `item` Association
+
+All `PaperTrail::Version` instances receive an polymorphic `belongs_to` association, called `item`, via the inclusion of the `PaperTrail::VersionConcern` module. You may want to customize the association, by adding a `counter_cache` for example, but PaperTrail does not provide a way to configure it. The best solution is to overwrite the association by reopening `PaperTrail::Version` and redefining it:
+
+```ruby
+# app/models/paper_trail/version.rb
+module PaperTrail
+  class Version < ActiveRecord::Base
+    belongs_to :item, polymorphic: true, counter_cache: true
+  end
+end
+```
+
+### 5.d. Generators
 
 PaperTrail has one generator, `paper_trail:install`. It writes, but does not
 run, a migration file.
@@ -1089,7 +1102,7 @@ Runtime options:
 Generates (but does not run) a migration to add a versions table.
 ```
 
-### 5.d. Protected Attributes
+### 5.e. Protected Attributes
 
 As of version 6, PT no longer supports rails 3 or the [protected_attributes][17]
 gem. If you are still using them, you may use PT 5 or lower. We recommend
