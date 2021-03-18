@@ -6,8 +6,16 @@ ENV["DB"] ||= "sqlite"
 require "byebug"
 require_relative "support/pt_arel_helpers"
 
+unless ENV["BUNDLE_GEMFILE"].match?(/rails_\d\.\d\.gemfile/)
+  warn(
+    "It looks like you're trying to run the PT test suite, but you're not " \
+    'using appraisal. Please see "Development" in CONTRIBUTING.md.'
+  )
+  exit 1
+end
 unless File.exist?(File.expand_path("dummy_app/config/database.yml", __dir__))
   warn "No database.yml detected for the dummy app, please run `rake install_database_yml` first"
+  exit 1
 end
 
 RSpec.configure do |config|
