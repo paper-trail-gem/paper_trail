@@ -281,7 +281,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
   context "a record's papertrail" do
     let!(:d0) { Date.new(2009, 5, 29) }
-    let!(:t0) { Time.now }
+    let!(:t0) { Time.current }
     let(:previous_widget) { widget.versions.last.reify }
     let(:widget) {
       Widget.create(
