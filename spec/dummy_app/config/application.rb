@@ -2,12 +2,14 @@
 
 require File.expand_path("boot", __dir__)
 
-# Pick the frameworks you want:
-require "active_record/railtie"
-require "action_controller/railtie"
+# Here a conventional app would load the Rails components it needs, but we have
+# already loaded these in our spec_helper.
+# require "active_record/railtie"
+# require "action_controller/railtie"
 
-Bundler.require(:default, Rails.env)
-require "paper_trail"
+# Here a conventional app would require gems, but again, we have already loaded
+# these in our spec_helper.
+# Bundler.require(:default, Rails.env)
 
 module Dummy
   class Application < Rails::Application

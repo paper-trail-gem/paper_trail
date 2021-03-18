@@ -2,13 +2,15 @@
 
 module PaperTrail
   # Represents code to load within Rails framework. See documentation in
-  # `rails/railtie.rb`.
+  # `railties/lib/rails/railtie.rb`.
   # @api private
   class Railtie < ::Rails::Railtie
-    # PaperTrail only has one initializer. The `initializer` method can take a
-    # `before:` or `after:` argument, but that's only relevant for railties with
-    # more than one initializer.
-    initializer "paper_trail" do
+    # PaperTrail only has one initializer.
+    #
+    # We specify `before: "load_config_initializers"` to ensure that the PT
+    # initializer happens before "app initializers" (those defined in
+    # the app's `config/initalizers`).
+    initializer "paper_trail", before: "load_config_initializers" do
       # `on_load` is a "lazy load hook". It "declares a block that will be
       # executed when a Rails component is fully loaded". (See
       # `active_support/lazy_load_hooks.rb`)
