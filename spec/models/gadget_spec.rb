@@ -32,7 +32,7 @@ RSpec.describe Gadget, type: :model do
     it "still generates a version when only the `updated_at` attribute is updated" do
       # Plus 1 second because MySQL lacks sub-second resolution
       expect {
-        gadget.update_attribute(:updated_at, Time.now + 1)
+        gadget.update_attribute(:updated_at, Time.current + 1)
       }.to(change { gadget.versions.size }.by(1))
       expect(
         YAML.load(gadget.versions.last.object_changes).keys

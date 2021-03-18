@@ -17,7 +17,7 @@ module PaperTrail
         end
 
         context "skipper" do
-          let(:skipper) { Skipper.create!(another_timestamp: Time.now) }
+          let(:skipper) { Skipper.create!(another_timestamp: Time.current) }
           let(:data) { PaperTrail::Events::Destroy.new(skipper, false).data }
 
           it "includes `object` without skipped attributes" do

@@ -58,7 +58,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
   context "a persisted record" do
     it "have one previous version" do
-      widget = Widget.create(name: "Henry", created_at: (Time.now - 1.day))
+      widget = Widget.create(name: "Henry", created_at: (Time.current - 1.day))
       expect(widget.versions.length).to(eq(1))
     end
 

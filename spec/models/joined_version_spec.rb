@@ -27,7 +27,7 @@ RSpec.describe JoinedVersion, type: :model, versioning: true do
 
     describe "#between" do
       it "does not raise error when there is a default scope that joins" do
-        JoinedVersion.between(Time.now, 1.minute.from_now).first
+        JoinedVersion.between(Time.current, 1.minute.from_now).first
       end
     end
   end

@@ -47,7 +47,7 @@ RSpec.describe Widget, type: :model do
     end
 
     describe "after_create" do
-      let(:widget) { Widget.create!(name: "Foobar", created_at: Time.now - 1.week) }
+      let(:widget) { Widget.create!(name: "Foobar", created_at: Time.current - 1.week) }
 
       it "corresponding version uses the widget's `updated_at`" do
         expect(widget.versions.last.created_at.to_i).to eq(widget.updated_at.to_i)
@@ -56,7 +56,7 @@ RSpec.describe Widget, type: :model do
 
     describe "after_update" do
       before do
-        widget.update!(name: "Foobar", updated_at: Time.now + 1.week)
+        widget.update!(name: "Foobar", updated_at: Time.current + 1.week)
       end
 
       it "clears the `versions_association_name` virtual attribute" do
@@ -123,7 +123,7 @@ RSpec.describe Widget, type: :model do
   if defined?(ActiveRecord::IdentityMap) && ActiveRecord::IdentityMap.respond_to?(:without)
     describe "IdentityMap", versioning: true do
       it "does not clobber the IdentityMap when reifying" do
-        widget.update name: "Henry", created_at: Time.now - 1.day
+        widget.update name: "Henry", created_at: Time.current - 1.day
         widget.update name: "Harry"
         allow(ActiveRecord::IdentityMap).to receive(:without)
         widget.versions.last.reify
@@ -210,7 +210,7 @@ RSpec.describe Widget, type: :model do
       it "returns nil" do
         widget.update_attribute(:name, "foobar")
         widget.destroy
-        expect(widget.paper_trail.version_at(Time.now)).to be_nil
+        expect(widget.paper_trail.version_at(Time.current)).to be_nil
       end
     end
   end

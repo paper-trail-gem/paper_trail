@@ -77,7 +77,7 @@ class PaperTrailSpecMigrator
   end
 
   def sleep_until_the_next_whole_second
-    t = Time.now.to_f
+    t = Time.current.to_f
     sleep((t.ceil - t).abs + 0.01)
   end
 end
