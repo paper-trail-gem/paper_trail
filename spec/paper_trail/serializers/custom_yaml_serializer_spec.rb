@@ -15,7 +15,7 @@ module CustomYamlSerializer
   end
 
   def self.dump(object)
-    object.is_a?(Hash) ? super(object.reject { |_k, v| v.nil? }) : super
+    object.is_a?(Hash) ? super(object.compact) : super
   end
 end
 
@@ -40,7 +40,7 @@ RSpec.describe CustomYamlSerializer do
   describe ".dump" do
     it("serializes Ruby to YAML, removing pairs with nil values") do
       expect(described_class.dump(word_hash)).to eq(
-        word_hash.reject { |_k, v| v.nil? }.to_yaml
+        word_hash.compact.to_yaml
       )
     end
   end
