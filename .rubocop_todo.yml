@@ -153,7 +153,3 @@ RSpec/FilePath:
   Exclude:
     - 'spec/paper_trail/model_spec.rb'
     - 'spec/paper_trail/serializer_spec.rb'
-
-Style/ClassEqualityComparison:
-  Exclude:
-    - 'lib/paper_trail/attribute_serializers/attribute_serializer_factory.rb'
