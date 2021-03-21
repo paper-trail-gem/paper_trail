@@ -263,7 +263,7 @@ module PaperTrail
       # @api private
       # @param changes HashWithIndifferentAccess
       def recordable_object_changes(changes)
-        if PaperTrail.config.object_changes_adapter&.respond_to?(:diff)
+        if PaperTrail.config.object_changes_adapter.respond_to?(:diff)
           # We'd like to avoid the `to_hash` here, because it increases memory
           # usage, but that would be a breaking change because
           # `object_changes_adapter` expects a plain `Hash`, not a

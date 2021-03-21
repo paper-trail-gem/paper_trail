@@ -289,7 +289,7 @@ module PaperTrail
 
     # @api private
     def load_changeset
-      if PaperTrail.config.object_changes_adapter&.respond_to?(:load_changeset)
+      if PaperTrail.config.object_changes_adapter.respond_to?(:load_changeset)
         return PaperTrail.config.object_changes_adapter.load_changeset(self)
       end
 

@@ -14,17 +14,6 @@ Gemspec/OrderedDependencies:
   Exclude:
     - 'paper_trail.gemspec'
 
-# Offense count: 4
-# Cop supports --auto-correct.
-# Configuration parameters: AllowedMethods.
-# AllowedMethods: instance_of?, kind_of?, is_a?, eql?, respond_to?, equal?
-Lint/RedundantSafeNavigation:
-  Exclude:
-    - 'lib/paper_trail/events/base.rb'
-    - 'lib/paper_trail/queries/versions/where_object_changes.rb'
-    - 'lib/paper_trail/queries/versions/where_object_changes_from.rb'
-    - 'lib/paper_trail/version_concern.rb'
-
 # Offense count: 5
 # Configuration parameters: IgnoredMethods, CountRepeatedAttributes.
 Metrics/AbcSize:
