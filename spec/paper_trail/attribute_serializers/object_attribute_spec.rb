@@ -5,7 +5,7 @@ require "spec_helper"
 module PaperTrail
   module AttributeSerializers
     ::RSpec.describe ObjectAttribute do
-      if ENV["DB"] == "postgres" && ::ActiveRecord::VERSION::MAJOR >= 5
+      if ENV["DB"] == "postgres"
         describe "postgres-specific column types" do
           describe "#serialize" do
             it "serializes a postgres array into a plain array" do

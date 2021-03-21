@@ -5,10 +5,5 @@ class Thing < ActiveRecord::Base
     scope: -> { order("id desc") },
     extend: PrefixVersionsInspectWithCount
   }
-
-  if ActiveRecord.gem_version >= Gem::Version.new("5.0")
-    belongs_to :person, optional: true
-  else
-    belongs_to :person
-  end
+  belongs_to :person, optional: true
 end

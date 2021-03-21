@@ -14,12 +14,7 @@ module PaperTrail
     extend ::ActiveSupport::Concern
 
     included do
-      if ::ActiveRecord.gem_version >= Gem::Version.new("5.0")
-        belongs_to :item, polymorphic: true, optional: true
-      else
-        belongs_to :item, polymorphic: true
-      end
-
+      belongs_to :item, polymorphic: true, optional: true
       validates_presence_of :event
       after_create :enforce_version_limit!
     end
@@ -289,7 +284,7 @@ module PaperTrail
 
     # @api private
     def load_changeset
-      if PaperTrail.config.object_changes_adapter&.respond_to?(:load_changeset)
+      if PaperTrail.config.object_changes_adapter.respond_to?(:load_changeset)
         return PaperTrail.config.object_changes_adapter.load_changeset(self)
       end
 

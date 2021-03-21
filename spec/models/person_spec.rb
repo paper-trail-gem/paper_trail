@@ -74,9 +74,8 @@ RSpec.describe Person, type: :model, versioning: true do
         person.save!
         person.assign_attributes(time_zone: "Pacific Time (US & Canada)")
         person.save!
-        max_len = ActiveRecord::VERSION::MAJOR < 4 ? 105 : 118
         len = person.versions.last.object_changes.length
-        expect((len < max_len)).to(be_truthy)
+        expect(len < 118).to eq(true)
       end
 
       it "version.object attribute should have stored value from serializer" do

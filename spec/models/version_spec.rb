@@ -110,14 +110,12 @@ module PaperTrail
 
     context "changing the data type of database columns on the fly" do
       # TODO: Changing the data type of these database columns in the middle
-      # of the test suite adds a fair amount of complication. Is there a better
+      # of the test suite adds a fair amount of complexity. Is there a better
       # way? We already have a `json_versions` table in our tests, maybe we
       # could use that and add a `jsonb_versions` table?
       column_overrides = [false]
-      if ENV["DB"] == "postgres" && ::ActiveRecord::VERSION::MAJOR >= 4
-        column_overrides << "json"
-        # 'jsonb' column types are only supported for ActiveRecord 4.2+
-        column_overrides << "jsonb" if ::ActiveRecord::VERSION::STRING >= "4.2"
+      if ENV["DB"] == "postgres"
+        column_overrides += %w[json jsonb]
       end
 
       column_overrides.shuffle.each do |column_datatype_override|
