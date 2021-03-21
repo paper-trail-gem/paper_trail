@@ -30,13 +30,6 @@ Metrics/PerceivedComplexity:
   Max: 9 # Goal: 7
 
 # Offense count: 1
-# Configuration parameters: EnforcedStyleForLeadingUnderscores.
-# SupportedStylesForLeadingUnderscores: disallowed, required, optional
-Naming/MemoizedInstanceVariableName:
-  Exclude:
-    - 'lib/paper_trail/model_config.rb'
-
-# Offense count: 1
 # Configuration parameters: EnforcedStyle, CheckMethodNames, CheckSymbols, AllowedIdentifiers.
 # SupportedStyles: snake_case, normalcase, non_integer
 # AllowedIdentifiers: capture3, iso8601, rfc1123_date, rfc822, rfc2822, rfc3339
