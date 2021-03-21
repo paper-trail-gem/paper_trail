@@ -122,8 +122,9 @@ module PaperTrail
       setup_callbacks_from_options options[:on]
     end
 
+    # @api private
     def version_class
-      @_version_class ||= @model_class.version_class_name.constantize
+      @version_class ||= @model_class.version_class_name.constantize
     end
 
     private

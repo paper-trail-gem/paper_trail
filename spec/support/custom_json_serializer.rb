@@ -10,6 +10,6 @@ module CustomJsonSerializer
   end
 
   def self.dump(object)
-    object.is_a?(Hash) ? super(object.reject { |_k, v| v.nil? }) : super
+    object.is_a?(Hash) ? super(object.compact) : super
   end
 end

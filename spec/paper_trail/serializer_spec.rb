@@ -69,7 +69,7 @@ RSpec.describe(PaperTrail, versioning: true) do
       original_attributes = PaperTrail::Events::Base.
         new(customer, false).
         send(:nonskipped_attributes_before_change, false).
-        reject { |_k, v| v.nil? }
+        compact
       customer.update(name: "Some more text.")
       expect(customer.versions.length).to(eq(2))
       expect(customer.versions[0].reify).to(be_nil)

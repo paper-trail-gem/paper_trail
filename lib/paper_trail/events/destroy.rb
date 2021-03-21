@@ -35,7 +35,7 @@ module PaperTrail
       #
       # @override
       def changes_in_latest_version
-        @record.attributes.map { |attr, value| [attr, [value, nil]] }.to_h
+        @record.attributes.transform_values { |value| [value, nil] }
       end
     end
   end

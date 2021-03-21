@@ -8,9 +8,6 @@ module PaperTrail
     # The `CastAttributeSerializer` (de)serializes model attribute values. For
     # example, the string "1.99" serializes into the integer `1` when assigned
     # to an attribute of type `ActiveRecord::Type::Integer`.
-    #
-    # This implementation depends on the `type_for_attribute` method, which was
-    # introduced in rails 4.2. As of PT 8, we no longer support rails < 4.2.
     class CastAttributeSerializer
       def initialize(klass)
         @klass = klass
@@ -30,13 +27,6 @@ module PaperTrail
       def defined_enums
         @defined_enums ||= (@klass.respond_to?(:defined_enums) ? @klass.defined_enums : {})
       end
-    end
-
-    # Uses AR 5's `serialize` and `deserialize`.
-    class CastAttributeSerializer
-      def serialize(attr, val)
-        AttributeSerializerFactory.for(@klass, attr).serialize(val)
-      end
 
       def deserialize(attr, val)
         if defined_enums[attr] && val.is_a?(::String)
@@ -45,6 +35,10 @@ module PaperTrail
         else
           AttributeSerializerFactory.for(@klass, attr).deserialize(val)
         end
+      end
+
+      def serialize(attr, val)
+        AttributeSerializerFactory.for(@klass, attr).serialize(val)
       end
     end
   end
