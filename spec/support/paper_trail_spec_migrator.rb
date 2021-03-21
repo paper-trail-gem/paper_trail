@@ -22,17 +22,17 @@ class PaperTrailSpecMigrator
   # in rails 5.2. This is an undocumented change, AFAICT. Then again,
   # how many people use the programmatic interface? Most people probably
   # just use rake. Maybe we're doing it wrong.
+  #
+  # See also discussion in https://github.com/rails/rails/pull/40806, when
+  # MigrationContext#migrate became public.
   def migrate
-    v = ::ActiveRecord.gem_version
-    if v >= ::Gem::Version.new("6.0.0.rc2")
+    if ::ActiveRecord.gem_version >= ::Gem::Version.new("6.0.0.rc2")
       ::ActiveRecord::MigrationContext.new(
         @migrations_path,
         ::ActiveRecord::Base.connection.schema_migration
       ).migrate
-    elsif ::Gem::Requirement.new([">= 5.2.0.rc1", "< 6.0.0.rc2"]).satisfied_by?(v)
-      ::ActiveRecord::MigrationContext.new(@migrations_path).migrate
     else
-      ::ActiveRecord::Migrator.migrate(@migrations_path)
+      ::ActiveRecord::MigrationContext.new(@migrations_path).migrate
     end
   end
 

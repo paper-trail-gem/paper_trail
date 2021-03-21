@@ -22,8 +22,6 @@ module PaperTrail
     #
     # @api private
     class Base
-      RAILS_GTE_5_1 = ::ActiveRecord.gem_version >= ::Gem::Version.new("5.1.0.beta1")
-
       # @api private
       def initialize(record, in_after_callback)
         @record = record
@@ -51,7 +49,7 @@ module PaperTrail
       #
       # @api private
       def attribute_changed_in_latest_version?(attr_name)
-        if @in_after_callback && RAILS_GTE_5_1
+        if @in_after_callback
           @record.saved_change_to_attribute?(attr_name.to_s)
         else
           @record.attribute_changed?(attr_name.to_s)
@@ -60,27 +58,11 @@ module PaperTrail
 
       # @api private
       def nonskipped_attributes_before_change(is_touch)
-        cache_changed_attributes do
-          record_attributes = @record.attributes.except(*@record.paper_trail_options[:skip])
-
-          record_attributes.each_key do |k|
-            if @record.class.column_names.include?(k)
-              record_attributes[k] = attribute_in_previous_version(k, is_touch)
-            end
+        record_attributes = @record.attributes.except(*@record.paper_trail_options[:skip])
+        record_attributes.each_key do |k|
+          if @record.class.column_names.include?(k)
+            record_attributes[k] = attribute_in_previous_version(k, is_touch)
           end
-        end
-      end
-
-      # Rails 5.1 changed the API of `ActiveRecord::Dirty`.
-      # @api private
-      def cache_changed_attributes(&block)
-        if RAILS_GTE_5_1
-          # Everything works fine as it is
-          yield
-        else
-          # Any particular call to `changed_attributes` produces the huge memory allocation.
-          # Lets use the generic AR workaround for that.
-          @record.send(:cache_changed_attributes, &block)
         end
       end
 
@@ -91,18 +73,14 @@ module PaperTrail
       #
       # @api private
       def attribute_in_previous_version(attr_name, is_touch)
-        if RAILS_GTE_5_1
-          if @in_after_callback && !is_touch
-            # For most events, we want the original value of the attribute, before
-            # the last save.
-            @record.attribute_before_last_save(attr_name.to_s)
-          else
-            # We are either performing a `record_destroy` or a
-            # `record_update(is_touch: true)`.
-            @record.attribute_in_database(attr_name.to_s)
-          end
+        if @in_after_callback && !is_touch
+          # For most events, we want the original value of the attribute, before
+          # the last save.
+          @record.attribute_before_last_save(attr_name.to_s)
         else
-          @record.attribute_was(attr_name.to_s)
+          # We are either performing a `record_destroy` or a
+          # `record_update(is_touch: true)`.
+          @record.attribute_in_database(attr_name.to_s)
         end
       end
 
@@ -138,7 +116,7 @@ module PaperTrail
       def changes_in_latest_version
         # Memoized to reduce memory usage
         @changes_in_latest_version ||= begin
-          if @in_after_callback && RAILS_GTE_5_1
+          if @in_after_callback
             @record.saved_changes
           else
             @record.changes

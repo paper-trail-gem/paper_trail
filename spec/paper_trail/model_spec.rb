@@ -477,9 +477,6 @@ RSpec.describe(::PaperTrail, versioning: true) do
     end
 
     it "reify with the correct type" do
-      if ActiveRecord::VERSION::MAJOR < 4
-        assert_kind_of(FooWidget, foo.versions.last.reify)
-      end
       expect(PaperTrail::Version.last.previous).to(eq(foo.versions.first))
       expect(PaperTrail::Version.last.next).to(be_nil)
     end

@@ -14,12 +14,7 @@ module PaperTrail
     extend ::ActiveSupport::Concern
 
     included do
-      if ::ActiveRecord.gem_version >= Gem::Version.new("5.0")
-        belongs_to :item, polymorphic: true, optional: true
-      else
-        belongs_to :item, polymorphic: true
-      end
-
+      belongs_to :item, polymorphic: true, optional: true
       validates_presence_of :event
       after_create :enforce_version_limit!
     end

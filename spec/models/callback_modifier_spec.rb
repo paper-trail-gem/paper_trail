@@ -17,9 +17,7 @@ RSpec.describe CallbackModifier, type: :model, versioning: true do
       end
     end
 
-    if ActiveRecord.gem_version < Gem::Version.new("5") ||
-        !ActiveRecord::Base.belongs_to_required_by_default
-
+    unless ActiveRecord::Base.belongs_to_required_by_default
       context "when :after" do
         it "creates the version after destroy" do
           modifier = AfterDestroyModifier.create!(some_content: FFaker::Lorem.sentence)
@@ -27,7 +25,6 @@ RSpec.describe CallbackModifier, type: :model, versioning: true do
           expect(modifier.versions.last.reify).to be_flagged_deleted
         end
       end
-
     end
 
     context "when no argument" do
