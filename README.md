@@ -1018,7 +1018,7 @@ see https://github.com/paper-trail-gem/paper_trail/issues/594
 
 ### 5.b. Configuring the `versions` Association
 
-#### 5.b.1. `versions` association (`has_many`)
+#### 5.b.1. `versions` association
 
 You may configure the name of the `versions` association by passing a different
 name (default is `:versions`) in the `versions:` options hash:
@@ -1066,14 +1066,14 @@ end
 Overriding (instead of configuring) the `versions` method is not supported.
 Overriding associations is not recommended in general.
 
-#### 5.b.2. `item` association (`belongs_to`)
+#### 5.b.2. `item` association
 
-All `PaperTrail::Version` instances receive an polymorphic `belongs_to`
-association, called `item`, via the inclusion of the
-`PaperTrail::VersionConcern` module. You may want to customize the association,
-by adding a `counter_cache` for example, but PaperTrail does not provide a way
-to configure it. The best solution is to overwrite the association by reopening
-`PaperTrail::Version` and redefining it:
+A `PaperTrail::Version` object `belongs_to` an `item`, the relevant record.
+
+The `item` association is first defined in `PaperTrail::VersionConcern`, but
+associations can be redefined.
+
+##### Example: adding a `counter_cache` to `item` association
 
 ```ruby
 # app/models/paper_trail/version.rb
@@ -1083,6 +1083,12 @@ module PaperTrail
   end
 end
 ```
+
+When redefining an association, its options are _replaced_ not _merged_, so
+don't forget to specify the options from `PaperTrail::VersionConcern`, like
+`polymorphic`.
+
+Be advised that redefining an association is an undocumented feature of Rails.
 
 ### 5.c. Generators
 
