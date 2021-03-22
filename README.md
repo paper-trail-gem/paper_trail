@@ -53,8 +53,8 @@ has been destroyed.
 - [5. ActiveRecord](#5-activerecord)
   - [5.a. Single Table Inheritance (STI)](#5a-single-table-inheritance-sti)
   - [5.b. Configuring the `versions` Association](#5b-configuring-the-versions-association)
-  - [5.d. Generators](#5d-generators)
-  - [5.e. Protected Attributes](#5e-protected-attributes)
+  - [5.c. Generators](#5c-generators)
+  - [5.d. Protected Attributes](#5d-protected-attributes)
 - [6. Extensibility](#6-extensibility)
   - [6.a. Custom Version Classes](#6a-custom-version-classes)
   - [6.b. Custom Serializer](#6b-custom-serializer)
@@ -111,8 +111,8 @@ Experts: to install incompatible versions of activerecord, see
     bundle exec rails generate paper_trail:install [--with-changes]
     ```
 
-    For more information on this generator, see [section 5.d.
-    Generators](#5d-generators).
+    For more information on this generator, see [section 5.c.
+    Generators](#5c-generators).
 
     If using [rails_admin][38], you must enable the
     experimental [Associations](#4b-associations) feature.
@@ -1090,7 +1090,7 @@ module PaperTrail
 end
 ```
 
-### 5.d. Generators
+### 5.c. Generators
 
 PaperTrail has one generator, `paper_trail:install`. It writes, but does not
 run, a migration file.
@@ -1115,7 +1115,7 @@ Runtime options:
 Generates (but does not run) a migration to add a versions table.
 ```
 
-### 5.e. Protected Attributes
+### 5.d. Protected Attributes
 
 As of version 6, PT no longer supports rails 3 or the [protected_attributes][17]
 gem. If you are still using them, you may use PT 5 or lower. We recommend
