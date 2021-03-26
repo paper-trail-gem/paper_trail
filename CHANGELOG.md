@@ -21,6 +21,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 ### Fixed
 
 - Expand kwargs passed to `save_with_version` using double splat operator - Rails 6.1 compatibility
+- [#1287](https://github.com/paper-trail-gem/paper_trail/issues/1287) - Fix 'rails db:migrate' error when run against an app with mysql2 adapter
 
 ### Dependencies
 

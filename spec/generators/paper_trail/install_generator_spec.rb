@@ -26,7 +26,7 @@ RSpec.describe PaperTrail::InstallGenerator, type: :generator do
       }.call
       expected_create_table_options = lambda {
         if described_class::MYSQL_ADAPTERS.include?(ActiveRecord::Base.connection.class.name)
-          ', { options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci" }'
+          ', options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci"'
         else
           ""
         end
