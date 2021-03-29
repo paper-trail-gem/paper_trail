@@ -7,7 +7,20 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Breaking Changes
 
-- Rails: Instead of an `Engine`, PT now provides a `Railtie`, which is simpler.
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- None
+
+## 12.0.0 (2021-03-29)
+
+### Breaking Changes
+
 - Rails: The deprecated `config.paper_trail` configuration technique
   has been removed. This configuration object was deprecated in 10.2.0. It only
   had one key, `config.paper_trail.enabled`. Please review docs section [2.d.
@@ -22,6 +35,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
+- [#1281](https://github.com/paper-trail-gem/paper_trail/pull/1281) Rails:
+  Instead of an `Engine`, PT now provides a `Railtie`, which is simpler.
 - Expand kwargs passed to `save_with_version` using double splat operator - Rails 6.1 compatibility
 - [#1287](https://github.com/paper-trail-gem/paper_trail/issues/1287) - Fix 'rails db:migrate' error when run against an app with mysql2 adapter
 
