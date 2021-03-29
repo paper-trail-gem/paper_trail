@@ -13,6 +13,7 @@ has been destroyed.
 | Version        | Documentation |
 | -------------- | ------------- |
 | Unreleased     | https://github.com/paper-trail-gem/paper_trail/blob/master/README.md |
+| 12.0.0         | https://github.com/paper-trail-gem/paper_trail/blob/v12.0.0/README.md |
 | 11.1.0         | https://github.com/paper-trail-gem/paper_trail/blob/v11.1.0/README.md |
 | 10.3.1         | https://github.com/paper-trail-gem/paper_trail/blob/v10.3.1/README.md |
 | 9.2.0          | https://github.com/paper-trail-gem/paper_trail/blob/v9.2.0/README.md |
@@ -84,6 +85,7 @@ has been destroyed.
 | paper_trail    | branch     | ruby     | activerecord  |
 | -------------- | ---------- | -------- | ------------- |
 | unreleased     | master     | >= 2.5.0 | >= 5.2, < 6.2 |
+| 12             | master     | >= 2.5.0 | >= 5.2, < 6.2 |
 | 11             | master     | >= 2.4.0 | >= 5.2, < 6.1 |
 | 10             | 10-stable  | >= 2.3.0 | >= 4.2, < 6.1 |
 | 9              | 9-stable   | >= 2.3.0 | >= 4.2, < 5.3 |
