@@ -101,7 +101,7 @@ module PaperTrail
     def on_touch
       @model_class.after_touch { |r|
         r.paper_trail.record_update(
-          force: true,
+          force: RAILS_LT_6_0,
           in_after_callback: true,
           is_touch: true
         )
@@ -122,11 +122,15 @@ module PaperTrail
       setup_callbacks_from_options options[:on]
     end
 
+    # @api private
     def version_class
-      @_version_class ||= @model_class.version_class_name.constantize
+      @version_class ||= @model_class.version_class_name.constantize
     end
 
     private
+
+    RAILS_LT_6_0 = ::ActiveRecord.gem_version < ::Gem::Version.new("6.0.0")
+    private_constant :RAILS_LT_6_0
 
     # Raises an error if the provided class is an `abstract_class`.
     # @api private

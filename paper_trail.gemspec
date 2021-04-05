@@ -65,10 +65,11 @@ has been destroyed.
 
   s.add_development_dependency "rake", "~> 13.0"
   s.add_development_dependency "rspec-rails", "~> 4.0"
-  s.add_development_dependency "rubocop", "~> 0.89.1"
+  s.add_development_dependency "rubocop", "~> 1.11.0"
+  s.add_development_dependency "rubocop-rails", "~> 2.9.1"
   s.add_development_dependency "rubocop-packaging", "~> 0.5.1"
-  s.add_development_dependency "rubocop-performance", "~> 1.7.1"
-  s.add_development_dependency "rubocop-rspec", "~> 1.42.0"
+  s.add_development_dependency "rubocop-performance", "~> 1.10.1"
+  s.add_development_dependency "rubocop-rspec", "~> 2.2.0"
 
   # ## Database Adapters
   #

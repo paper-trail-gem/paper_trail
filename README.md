@@ -13,6 +13,7 @@ has been destroyed.
 | Version        | Documentation |
 | -------------- | ------------- |
 | Unreleased     | https://github.com/paper-trail-gem/paper_trail/blob/master/README.md |
+| 12.0.0         | https://github.com/paper-trail-gem/paper_trail/blob/v12.0.0/README.md |
 | 11.1.0         | https://github.com/paper-trail-gem/paper_trail/blob/v11.1.0/README.md |
 | 10.3.1         | https://github.com/paper-trail-gem/paper_trail/blob/v10.3.1/README.md |
 | 9.2.0          | https://github.com/paper-trail-gem/paper_trail/blob/v9.2.0/README.md |
@@ -84,6 +85,7 @@ has been destroyed.
 | paper_trail    | branch     | ruby     | activerecord  |
 | -------------- | ---------- | -------- | ------------- |
 | unreleased     | master     | >= 2.5.0 | >= 5.2, < 6.2 |
+| 12             | master     | >= 2.5.0 | >= 5.2, < 6.2 |
 | 11             | master     | >= 2.4.0 | >= 5.2, < 6.1 |
 | 10             | 10-stable  | >= 2.3.0 | >= 4.2, < 6.1 |
 | 9              | 9-stable   | >= 2.3.0 | >= 4.2, < 5.3 |
@@ -1018,6 +1020,8 @@ see https://github.com/paper-trail-gem/paper_trail/issues/594
 
 ### 5.b. Configuring the `versions` Association
 
+#### 5.b.1. `versions` association
+
 You may configure the name of the `versions` association by passing a different
 name (default is `:versions`) in the `versions:` options hash:
 
@@ -1063,6 +1067,30 @@ end
 
 Overriding (instead of configuring) the `versions` method is not supported.
 Overriding associations is not recommended in general.
+
+#### 5.b.2. `item` association
+
+A `PaperTrail::Version` object `belongs_to` an `item`, the relevant record.
+
+The `item` association is first defined in `PaperTrail::VersionConcern`, but
+associations can be redefined.
+
+##### Example: adding a `counter_cache` to `item` association
+
+```ruby
+# app/models/paper_trail/version.rb
+module PaperTrail
+  class Version < ActiveRecord::Base
+    belongs_to :item, polymorphic: true, counter_cache: true
+  end
+end
+```
+
+When redefining an association, its options are _replaced_ not _merged_, so
+don't forget to specify the options from `PaperTrail::VersionConcern`, like
+`polymorphic`.
+
+Be advised that redefining an association is an undocumented feature of Rails.
 
 ### 5.c. Generators
 
@@ -1339,7 +1367,8 @@ An adapter can implement any or all of the following methods:
 2. load_changeset: Returns the changeset for a given version object
 3. where_object_changes: Returns the records resulting from the given hash of attributes.
 4. where_object_changes_from: Returns the records resulting from the given hash of attributes where the attributes changed *from* the provided value(s).
-5. where_attribute_changes: Returns the records where the attribute changed to or from any value.
+5. where_object_changes_to: Returns the records resulting from the given hash of attributes where the attributes changed *to* the provided value(s).
+6. where_attribute_changes: Returns the records where the attribute changed to or from any value.
 
 Depending on what your adapter does, you may have to implement all three.
 

@@ -58,7 +58,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
   context "a persisted record" do
     it "have one previous version" do
-      widget = Widget.create(name: "Henry", created_at: (Time.now - 1.day))
+      widget = Widget.create(name: "Henry", created_at: (Time.current - 1.day))
       expect(widget.versions.length).to(eq(1))
     end
 
@@ -281,7 +281,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
 
   context "a record's papertrail" do
     let!(:d0) { Date.new(2009, 5, 29) }
-    let!(:t0) { Time.now }
+    let!(:t0) { Time.current }
     let(:previous_widget) { widget.versions.last.reify }
     let(:widget) {
       Widget.create(
@@ -477,9 +477,6 @@ RSpec.describe(::PaperTrail, versioning: true) do
     end
 
     it "reify with the correct type" do
-      if ActiveRecord::VERSION::MAJOR < 4
-        assert_kind_of(FooWidget, foo.versions.last.reify)
-      end
       expect(PaperTrail::Version.last.previous).to(eq(foo.versions.first))
       expect(PaperTrail::Version.last.next).to(be_nil)
     end

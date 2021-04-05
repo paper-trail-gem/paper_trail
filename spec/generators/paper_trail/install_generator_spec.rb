@@ -22,15 +22,11 @@ RSpec.describe PaperTrail::InstallGenerator, type: :generator do
       expected_parent_class = lambda {
         old_school = "ActiveRecord::Migration"
         ar_version = ActiveRecord::VERSION
-        if ar_version::MAJOR >= 5
-          format("%s[%d.%d]", old_school, ar_version::MAJOR, ar_version::MINOR)
-        else
-          old_school
-        end
+        format("%s[%d.%d]", old_school, ar_version::MAJOR, ar_version::MINOR)
       }.call
       expected_create_table_options = lambda {
         if described_class::MYSQL_ADAPTERS.include?(ActiveRecord::Base.connection.class.name)
-          ', { options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci" }'
+          ', options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci"'
         else
           ""
         end
