@@ -23,7 +23,7 @@ module PaperTrail
 
       # Raises an exception as this operation is not allowed from text columns.
       def where_attribute_changes(*)
-        raise <<-STR.squish.freeze
+        raise Error, <<-STR.squish.freeze
           where_attribute_changes does not support reading YAML from a text
           column. The json and jsonb datatypes are supported.
         STR
@@ -38,7 +38,7 @@ module PaperTrail
       # Returns a SQL LIKE condition to be used to match the given field and
       # value in the serialized `object_changes`.
       def where_object_changes_condition(*)
-        raise <<-STR.squish.freeze
+        raise Error, <<-STR.squish.freeze
           where_object_changes no longer supports reading YAML from a text
           column. The old implementation was inaccurate, returning more records
           than you wanted. This feature was deprecated in 8.1.0 and removed in
@@ -49,7 +49,7 @@ module PaperTrail
 
       # Raises an exception as this operation is not allowed with YAML.
       def where_object_changes_from_condition(*)
-        raise <<-STR.squish.freeze
+        raise Error, <<-STR.squish.freeze
           where_object_changes_from does not support reading YAML from a text
           column. The json and jsonb datatypes are supported.
         STR
@@ -57,7 +57,7 @@ module PaperTrail
 
       # Raises an exception as this operation is not allowed with YAML.
       def where_object_changes_to_condition(*)
-        raise <<-STR.squish.freeze
+        raise Error, <<-STR.squish.freeze
           where_object_changes_to does not support reading YAML from a text
           column. The json and jsonb datatypes are supported.
         STR

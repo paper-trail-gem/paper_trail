@@ -58,7 +58,7 @@ module PaperTrail
       end
 
       if recording_order.to_s == "after" && cannot_record_after_destroy?
-        raise E_CANNOT_RECORD_AFTER_DESTROY
+        raise Error, E_CANNOT_RECORD_AFTER_DESTROY
       end
 
       @model_class.send(
@@ -143,7 +143,7 @@ module PaperTrail
     # @api private
     def assert_concrete_activerecord_class(class_name)
       if class_name.constantize.abstract_class?
-        raise format(E_HPT_ABSTRACT_CLASS, @model_class, class_name)
+        raise Error, format(E_HPT_ABSTRACT_CLASS, @model_class, class_name)
       end
     end
 
@@ -158,7 +158,7 @@ module PaperTrail
     def check_presence_of_item_subtype_column(options)
       return unless options.key?(:limit)
       return if version_class.item_subtype_column_present?
-      raise format(E_MODEL_LIMIT_REQUIRES_ITEM_SUBTYPE, @model_class.name)
+      raise Error, format(E_MODEL_LIMIT_REQUIRES_ITEM_SUBTYPE, @model_class.name)
     end
 
     def check_version_class_name(options)
