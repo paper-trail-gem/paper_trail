@@ -23,12 +23,16 @@ module PaperTrail
               @version_model_class, @attributes
             )
           end
-
-          case @version_model_class.columns_hash["object_changes"].type
+          column_type = @version_model_class.columns_hash["object_changes"].type
+          case column_type
           when :jsonb, :json
             json
           else
-            text
+            raise UnsupportedColumnType.new(
+              method: "where_object_changes_to",
+              expected: "json or jsonb",
+              actual: column_type
+            )
           end
         end
 
@@ -46,18 +50,6 @@ module PaperTrail
           end
           sql = predicates.join(" and ")
           @version_model_class.where(sql, *values)
-        end
-
-        # @api private
-        def text
-          arel_field = @version_model_class.arel_table[:object_changes]
-
-          where_conditions = @attributes.map do |field, value|
-            ::PaperTrail.serializer.where_object_changes_to_condition(arel_field, field, value)
-          end
-
-          where_conditions = where_conditions.reduce { |a, e| a.and(e) }
-          @version_model_class.where(where_conditions)
         end
       end
     end
