@@ -4,7 +4,7 @@ require "spec_helper"
 
 module PaperTrail
   ::RSpec.describe Version, type: :model do
-    describe "object_changes column", versioning: true do
+    describe "#object_changes", versioning: true do
       let(:widget) { Widget.create!(name: "Dashboard") }
       let(:value) { widget.versions.last.object_changes }
 
@@ -190,9 +190,12 @@ module PaperTrail
                     bicycle.versions.where_attribute_changes(:name)
                   ).to match_array([bicycle.versions[0], bicycle.versions[1]])
                 else
-                  expect do
+                  expect {
                     bicycle.versions.where_attribute_changes(:name)
-                  end.to raise_error(/does not support reading YAML/)
+                  }.to raise_error(
+                    UnsupportedColumnType,
+                    "where_attribute_changes expected json or jsonb column, got text"
+                  )
                 end
               end
             end
@@ -218,7 +221,10 @@ module PaperTrail
               it "raises error" do
                 expect {
                   widget.versions.where_attribute_changes(:name).to_a
-                }.to(raise_error(/does not support reading YAML from a text column/))
+                }.to raise_error(
+                  UnsupportedColumnType,
+                  "where_attribute_changes expected json or jsonb column, got text"
+                )
               end
             end
           end
@@ -311,9 +317,12 @@ module PaperTrail
                     bicycle.versions.where_object_changes(name: "abc")
                   ).to match_array(bicycle.versions[0..1])
                 else
-                  expect do
+                  expect {
                     bicycle.versions.where_object_changes(name: "abc")
-                  end.to raise_error(/no longer supports reading YAML/)
+                  }.to raise_error(
+                    UnsupportedColumnType,
+                    "where_object_changes expected json or jsonb column, got text"
+                  )
                 end
               end
             end
@@ -342,7 +351,10 @@ module PaperTrail
               it "raises error" do
                 expect {
                   widget.versions.where_object_changes(name: "foo").to_a
-                }.to(raise_error(/no longer supports reading YAML from a text column/))
+                }.to raise_error(
+                  UnsupportedColumnType,
+                  "where_object_changes expected json or jsonb column, got text"
+                )
               end
             end
           end
@@ -389,9 +401,12 @@ module PaperTrail
                     bicycle.versions.where_object_changes_from(name: "abc")
                   ).to match_array([bicycle.versions[1]])
                 else
-                  expect do
+                  expect {
                     bicycle.versions.where_object_changes_from(name: "abc")
-                  end.to raise_error(/does not support reading YAML/)
+                  }.to raise_error(
+                    UnsupportedColumnType,
+                    "where_object_changes_from expected json or jsonb column, got text"
+                  )
                 end
               end
             end
@@ -421,7 +436,10 @@ module PaperTrail
               it "raises error" do
                 expect {
                   widget.versions.where_object_changes_from(name: "foo").to_a
-                }.to(raise_error(/does not support reading YAML from a text column/))
+                }.to raise_error(
+                  UnsupportedColumnType,
+                  "where_object_changes_from expected json or jsonb column, got text"
+                )
               end
             end
           end
@@ -468,9 +486,12 @@ module PaperTrail
                     bicycle.versions.where_object_changes_to(name: "xyz")
                   ).to match_array([bicycle.versions[1]])
                 else
-                  expect do
+                  expect {
                     bicycle.versions.where_object_changes_to(name: "xyz")
-                  end.to raise_error(/does not support reading YAML/)
+                  }.to raise_error(
+                    UnsupportedColumnType,
+                    "where_object_changes_to expected json or jsonb column, got text"
+                  )
                 end
               end
             end
@@ -503,7 +524,10 @@ module PaperTrail
               it "raises error" do
                 expect {
                   widget.versions.where_object_changes_to(name: "foo").to_a
-                }.to(raise_error(/does not support reading YAML from a text column/))
+                }.to raise_error(
+                  UnsupportedColumnType,
+                  "where_object_changes_to expected json or jsonb column, got text"
+                )
               end
             end
           end

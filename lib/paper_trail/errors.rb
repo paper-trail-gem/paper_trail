@@ -10,4 +10,24 @@ module PaperTrail
   # @api public
   class InvalidOption < Error
   end
+
+  # The application's database schema is not supported.
+  # @api public
+  class UnsupportedSchema < Error
+  end
+
+  # The application's database column type is not supported.
+  # @api public
+  class UnsupportedColumnType < UnsupportedSchema
+    def initialize(method:, expected:, actual:)
+      super(
+        format(
+          "%s expected %s column, got %s",
+          method,
+          expected,
+          actual
+        )
+      )
+    end
+  end
 end

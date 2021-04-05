@@ -704,42 +704,20 @@ widget = widget.paper_trail.previous_version
 widget.paper_trail.live?            # false
 ```
 
-And you can perform `WHERE` queries for object versions based on attributes:
-
-```ruby
-# Find versions that meet these criteria.
-PaperTrail::Version.where_object(content: 'Hello', title: 'Article')
-
-# Find versions before and after attribute `atr` had value `v`:
-PaperTrail::Version.where_object_changes(atr: 'v')
-```
-
-See also:
-
-- `where_object_changes_from`
-- `where_object_changes_to`
-- `where_attribute_changes`
-
-Using `where_object_changes*` or `where_attribute_changes` to read YAML or JSON
-from a text column was deprecated in 8.1.0, and will now raise an error. Use a
-`json` or `jsonb` column if possible. If you must use a `text` column, you'll
-have to write a custom `object_changes_adapter`.
+See also: Section 3.e. Queries
 
 ### 3.c. Diffing Versions
 
 There are two scenarios: diffing adjacent versions and diffing non-adjacent
 versions.
 
-The best way to diff adjacent versions is to get PaperTrail to do it for you.
-If you add an `object_changes` text column to your `versions` table, either at
-installation time with the `rails generate paper_trail:install --with-changes`
-option or manually, PaperTrail will store the `changes` diff (excluding any
-attributes PaperTrail is ignoring) in each `update` version.  You can use the
-`version.changeset` method to retrieve it.  For example:
+The best way to diff adjacent versions is to get PaperTrail to do it for you. If
+you add an `object_changes` column to your `versions` table, PaperTrail will
+store the `changes` diff in each version. Ignored attributes are omitted.
 
 ```ruby
 widget = Widget.create name: 'Bob'
-widget.versions.last.changeset
+widget.versions.last.changeset # reads object_changes column
 # {
 #   "name"=>[nil, "Bob"],
 #   "created_at"=>[nil, 2015-08-10 04:10:40 UTC],
@@ -760,11 +738,12 @@ widget.versions.last.changeset
 Prior to 10.0.0, the `object_changes` were only stored for create and update
 events. As of 10.0.0, they are stored for all three events.
 
-Please be aware that PaperTrail doesn't use diffs internally.  When I designed
-PaperTrail I wanted simplicity and robustness so I decided to make each version
-of an object self-contained.  A version stores all of its object's data, not a
-diff from the previous version.  This means you can delete any version without
-affecting any other.
+PaperTrail doesn't use diffs internally.
+
+> When I designed PaperTrail I wanted simplicity and robustness so I decided to
+> make each version of an object self-contained.  A version stores all of its
+> object's data, not a diff from the previous version.  This means you can
+> delete any version without affecting any other. -Andy
 
 To diff non-adjacent versions you'll have to write your own code.  These
 libraries may help:
@@ -799,6 +778,30 @@ sql> delete from versions where created_at < '2010-06-01';
 ```ruby
 PaperTrail::Version.where('created_at < ?', 1.day.ago).delete_all
 ```
+
+### 3.e. Queries
+
+You can query records in the `versions` table based on their `object` or
+`object_changes` columns.
+
+```ruby
+# Find versions that meet these criteria.
+PaperTrail::Version.where_object(content: 'Hello', title: 'Article')
+
+# Find versions before and after attribute `atr` had value `v`:
+PaperTrail::Version.where_object_changes(atr: 'v')
+```
+
+See also:
+
+- `where_object_changes_from`
+- `where_object_changes_to`
+- `where_attribute_changes`
+
+Only `where_object` supports text columns. Your `object_changes` column should
+be a `json` or `jsonb` column if possible. If you must use a `text` column,
+you'll have to write a [custom
+`object_changes_adapter`](#6c-custom-object-changes).
 
 ## 4. Saving More Information About Versions
 
@@ -1097,10 +1100,12 @@ Be advised that redefining an association is an undocumented feature of Rails.
 ### 5.c. Generators
 
 PaperTrail has one generator, `paper_trail:install`. It writes, but does not
-run, a migration file.
-The migration adds (at least) the `versions` table. The
-most up-to-date documentation for this generator can be found by running `rails
-generate paper_trail:install --help`, but a copy is included here for
+run, a migration file. The migration creates the `versions` table.
+
+#### Reference
+
+The most up-to-date documentation for this generator can be found by running
+`rails generate paper_trail:install --help`, but a copy is included here for
 convenience.
 
 ```
@@ -1365,17 +1370,24 @@ reading `::PaperTrail::Events::Base#recordable_object_changes`.
 
 An adapter can implement any or all of the following methods:
 
-1. diff: Returns the changeset in the desired format given the changeset in the original format
+1. diff: Returns the changeset in the desired format given the changeset in the
+  original format
 2. load_changeset: Returns the changeset for a given version object
-3. where_object_changes: Returns the records resulting from the given hash of attributes.
-4. where_object_changes_from: Returns the records resulting from the given hash of attributes where the attributes changed *from* the provided value(s).
-5. where_object_changes_to: Returns the records resulting from the given hash of attributes where the attributes changed *to* the provided value(s).
-6. where_attribute_changes: Returns the records where the attribute changed to or from any value.
+3. where_object_changes: Returns the records resulting from the given hash of
+  attributes.
+4. where_object_changes_from: Returns the records resulting from the given hash
+  of attributes where the attributes changed *from* the provided value(s).
+5. where_object_changes_to: Returns the records resulting from the given hash of
+  attributes where the attributes changed *to* the provided value(s).
+6. where_attribute_changes: Returns the records where the attribute changed to
+  or from any value.
 
-Depending on what your adapter does, you may have to implement all three.
+Depending on your needs, you may choose to implement only a subset of these
+methods.
 
-For an example of a complete and useful adapter, see
-[paper_trail-hashdiff](https://github.com/hashwin/paper_trail-hashdiff)
+#### Known Adapters
+
+- [paper_trail-hashdiff](https://github.com/hashwin/paper_trail-hashdiff)
 
 ### 6.d. Excluding the Object Column
 
