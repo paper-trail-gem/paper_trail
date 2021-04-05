@@ -266,7 +266,7 @@ module PaperTrail
     #
     def reify(options = {})
       unless self.class.column_names.include? "object"
-        raise "reify can't be called without an object column"
+        raise Error, "reify requires an object column"
       end
       return nil if object.nil?
       ::PaperTrail::Reifier.reify(self, options)

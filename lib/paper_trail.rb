@@ -8,6 +8,7 @@
 # can revisit this decision.
 require "active_support/all"
 
+require "paper_trail/errors"
 require "paper_trail/cleaner"
 require "paper_trail/compatibility"
 require "paper_trail/config"
@@ -78,7 +79,7 @@ module PaperTrail
     # Set the field which records when a version was created.
     # @api public
     def timestamp_field=(_field_name)
-      raise(E_TIMESTAMP_FIELD_CONFIG)
+      raise Error, E_TIMESTAMP_FIELD_CONFIG
     end
 
     # Set the PaperTrail serializer. This setting affects all threads.

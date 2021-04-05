@@ -140,7 +140,7 @@ module PaperTrail
               end
             end
 
-            expect { subject.call }.to raise_error(PaperTrail::Request::InvalidOption) do |e|
+            expect { subject.call }.to raise_error(PaperTrail::InvalidOption) do |e|
               expect(e.message).to eq "Invalid option: invalid_option"
             end
           end
@@ -154,7 +154,7 @@ module PaperTrail
               end
             end
 
-            expect { subject.call }.to raise_error(PaperTrail::Request::InvalidOption) do |e|
+            expect { subject.call }.to raise_error(PaperTrail::InvalidOption) do |e|
               expect(e.message).to eq "Invalid option: invalid_option"
             end
           end
