@@ -94,7 +94,7 @@ RSpec.describe PaperTrail::InstallGenerator, type: :generator do
               migration("add_object_changes_to_versions") {
                 contains "class AddObjectChangesToVersions"
                 contains "def change"
-                contains "add_column :versions, :object_changes, :text"
+                contains "add_column :versions, :object_changes, :json"
               }
             }
           }

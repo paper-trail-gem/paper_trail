@@ -20,6 +20,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
+- Changes the default type of the `object` and `object_changes` columns, from
+  `text` to `json`.
 - [#1285](https://github.com/paper-trail-gem/paper_trail/pull/1285) -
   For ActiveRecord >= 6.0, the `touch` callback will no longer create a new
   `Version` for skipped or ignored attributes.

@@ -112,7 +112,7 @@ Experts: to install incompatible versions of activerecord, see
 1. Add a `versions` table to your database:
 
     ```
-    bundle exec rails generate paper_trail:install [--with-changes]
+    bundle exec rails generate paper_trail:install --with-changes
     ```
 
     For more information on this generator, see [section 5.c.
@@ -1105,10 +1105,20 @@ Be advised that redefining an association is an undocumented feature of Rails.
 ### 5.c. Generators
 
 PaperTrail has one generator, `paper_trail:install`. It writes, but does not
-run, a migration file.
-The migration adds (at least) the `versions` table. The
-most up-to-date documentation for this generator can be found by running `rails
-generate paper_trail:install --help`, but a copy is included here for
+run, a migration file. The migration creates the `versions` table.
+
+```
+rails generate paper_trail:install --with-changes
+```
+
+The `--with-changes` option is recommended. It adds an `object_changes` column,
+which enables [diffing](#3c-diffing-versions) and [queries](#3e-queries). This
+optional column can be deleted later, if necessary.
+
+#### Reference
+
+The most up-to-date documentation for this generator can be found by running
+`rails generate paper_trail:install --help`, but a copy is included here for
 convenience.
 
 ```
