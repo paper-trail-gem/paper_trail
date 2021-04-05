@@ -117,6 +117,15 @@ Naming/PredicateName:
 Naming/MethodParameterName:
   Enabled: false
 
+# This cop has low value to begin with. Also, secondarily, it does not allow
+# reasonable names like `rails_lt_6_0`.
+Naming/VariableNumber:
+  Enabled: false
+
+# Good advice for rails applications, but not applicable to libraries like PT.
+Rails/SkipsModelValidations:
+  Enabled: false
+
 # This cop does not seem to work in rubocop-rspec 1.28.0
 RSpec/DescribeClass:
   Enabled: false

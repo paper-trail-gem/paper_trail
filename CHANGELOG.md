@@ -11,12 +11,18 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
-- `where_attribute_changes` queries for versions where the object's attribute
+- [#1292](https://github.com/paper-trail-gem/paper_trail/pull/1292) -
+  `where_attribute_changes` queries for versions where the object's attribute
   changed to or from any values.
+- [#1291](https://github.com/paper-trail-gem/paper_trail/pull/1291) -
+  `where_object_changes_to` queries for versions where the object's attributes
+  changed to one set of known values from any other set of values.
 
 ### Fixed
 
-- None
+- [#1285](https://github.com/paper-trail-gem/paper_trail/pull/1285) -
+  For ActiveRecord >= 6.0, the `touch` callback will no longer create a new
+  `Version` for skipped or ignored attributes.
 
 ## 12.0.0 (2021-03-29)
 
@@ -31,8 +37,6 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
-- `where_object_changes_to` queries for versions where the object's attributes
-  changed to one set of known values from any other set of values.
 - `where_object_changes_from` queries for versions where the object's attributes
   changed from one set of known values to any other set of values.
 
@@ -42,10 +46,6 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
   Instead of an `Engine`, PT now provides a `Railtie`, which is simpler.
 - Expand kwargs passed to `save_with_version` using double splat operator - Rails 6.1 compatibility
 - [#1287](https://github.com/paper-trail-gem/paper_trail/issues/1287) - Fix 'rails db:migrate' error when run against an app with mysql2 adapter
-
-- [#1285](https://github.com/paper-trail-gem/paper_trail/pull/1285) -
-  Touch callback does not create a new version for skipped or ignored attributes
-  for ActiveRecord 6.0 and higher
 
 ### Dependencies
 

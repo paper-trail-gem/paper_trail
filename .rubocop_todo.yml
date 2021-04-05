@@ -101,22 +101,6 @@ Rails/RedundantForeignKey:
     - 'spec/dummy_app/app/models/family/family_line.rb'
     - 'spec/dummy_app/app/models/person.rb'
 
-# Offense count: 28
-# Configuration parameters: ForbiddenMethods, AllowedMethods.
-# ForbiddenMethods: decrement!, decrement_counter, increment!, increment_counter, insert, insert!, insert_all, insert_all!, toggle!, touch, touch_all, update_all, update_attribute, update_column, update_columns, update_counters, upsert, upsert_all
-Rails/SkipsModelValidations:
-  Exclude:
-    - 'lib/paper_trail/record_trail.rb'
-    - 'spec/models/gadget_spec.rb'
-    - 'spec/models/on/create_spec.rb'
-    - 'spec/models/on/empty_array_spec.rb'
-    - 'spec/models/on/touch_spec.rb'
-    - 'spec/models/on/update_spec.rb'
-    - 'spec/models/widget_spec.rb'
-    - 'spec/paper_trail/cleaner_spec.rb'
-    - 'spec/paper_trail/config_spec.rb'
-    - 'spec/paper_trail/model_spec.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 Rails/WhereNot:

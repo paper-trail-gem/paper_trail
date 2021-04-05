@@ -10,21 +10,23 @@ has been destroyed.
 
 ## Documentation
 
-| Version        | Documentation |
-| -------------- | ------------- |
-| Unreleased     | https://github.com/paper-trail-gem/paper_trail/blob/master/README.md |
-| 12.0.0         | https://github.com/paper-trail-gem/paper_trail/blob/v12.0.0/README.md |
-| 11.1.0         | https://github.com/paper-trail-gem/paper_trail/blob/v11.1.0/README.md |
-| 10.3.1         | https://github.com/paper-trail-gem/paper_trail/blob/v10.3.1/README.md |
-| 9.2.0          | https://github.com/paper-trail-gem/paper_trail/blob/v9.2.0/README.md |
-| 8.1.2          | https://github.com/paper-trail-gem/paper_trail/blob/v8.1.2/README.md |
-| 7.1.3          | https://github.com/paper-trail-gem/paper_trail/blob/v7.1.3/README.md |
-| 6.0.2          | https://github.com/paper-trail-gem/paper_trail/blob/v6.0.2/README.md |
-| 5.2.3          | https://github.com/paper-trail-gem/paper_trail/blob/v5.2.3/README.md |
-| 4.2.0          | https://github.com/paper-trail-gem/paper_trail/blob/v4.2.0/README.md |
-| 3.0.9          | https://github.com/paper-trail-gem/paper_trail/blob/v3.0.9/README.md |
-| 2.7.2          | https://github.com/paper-trail-gem/paper_trail/blob/v2.7.2/README.md |
-| 1.6.5          | https://github.com/paper-trail-gem/paper_trail/blob/v1.6.5/README.md |
+This is the _user guide_. See also, the
+[API reference](https://www.rubydoc.info/gems/paper_trail).
+
+Choose version:
+[Unreleased](https://github.com/paper-trail-gem/paper_trail/blob/master/README.md),
+[12.0](https://github.com/paper-trail-gem/paper_trail/blob/v12.0.0/README.md),
+[11.1](https://github.com/paper-trail-gem/paper_trail/blob/v11.1.0/README.md),
+[10.3](https://github.com/paper-trail-gem/paper_trail/blob/v10.3.1/README.md),
+[9.2](https://github.com/paper-trail-gem/paper_trail/blob/v9.2.0/README.md),
+[8.1](https://github.com/paper-trail-gem/paper_trail/blob/v8.1.2/README.md),
+[7.1](https://github.com/paper-trail-gem/paper_trail/blob/v7.1.3/README.md),
+[6.0](https://github.com/paper-trail-gem/paper_trail/blob/v6.0.2/README.md),
+[5.2](https://github.com/paper-trail-gem/paper_trail/blob/v5.2.3/README.md),
+[4.2](https://github.com/paper-trail-gem/paper_trail/blob/v4.2.0/README.md),
+[3.0](https://github.com/paper-trail-gem/paper_trail/blob/v3.0.9/README.md),
+[2.7](https://github.com/paper-trail-gem/paper_trail/blob/v2.7.2/README.md),
+[1.6](https://github.com/paper-trail-gem/paper_trail/blob/v1.6.5/README.md)
 
 ## Table of Contents
 
@@ -85,8 +87,8 @@ has been destroyed.
 | paper_trail    | branch     | ruby     | activerecord  |
 | -------------- | ---------- | -------- | ------------- |
 | unreleased     | master     | >= 2.5.0 | >= 5.2, < 6.2 |
-| 12             | master     | >= 2.5.0 | >= 5.2, < 6.2 |
-| 11             | master     | >= 2.4.0 | >= 5.2, < 6.1 |
+| 12             | 12-stable  | >= 2.5.0 | >= 5.2, < 6.2 |
+| 11             | 11-stable  | >= 2.4.0 | >= 5.2, < 6.1 |
 | 10             | 10-stable  | >= 2.3.0 | >= 4.2, < 6.1 |
 | 9              | 9-stable   | >= 2.3.0 | >= 4.2, < 5.3 |
 | 8              | 8-stable   | >= 2.2.0 | >= 4.2, < 5.2 |
@@ -720,8 +722,16 @@ PaperTrail::Version.where_object(content: 'Hello', title: 'Article')
 PaperTrail::Version.where_object_changes(atr: 'v')
 ```
 
-Using `where_object_changes` to read YAML from a text column was deprecated in
-8.1.0, and will now raise an error.
+See also:
+
+- `where_object_changes_from`
+- `where_object_changes_to`
+- `where_attribute_changes`
+
+Using `where_object_changes*` or `where_attribute_changes` to read YAML or JSON
+from a text column was deprecated in 8.1.0, and will now raise an error. Use a
+`json` or `jsonb` column if possible. If you must use a `text` column, you'll
+have to write a custom `object_changes_adapter`.
 
 ### 3.c. Diffing Versions
 
