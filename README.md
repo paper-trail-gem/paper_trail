@@ -115,15 +115,7 @@ Experts: to install incompatible versions of activerecord, see
     bundle exec rails generate paper_trail:install [--with-changes]
     ```
 
-    For more information on this generator, see [section 5.c.
-    Generators](#5c-generators).
-
-    If using [rails_admin][38], you must enable the
-    experimental [Associations](#4b-associations) feature.
-
-    If you're getting "Could not find generator 'paper_trail:install'" errors from
-    recent Ruby/Rails versions, try running `spring stop`
-    (see [this thread](https://github.com/paper-trail-gem/paper_trail/issues/459) for more details).
+    See [section 5.c. Generators](#5c-generators) for details.
 
     ```
     bundle exec rake db:migrate
