@@ -14,6 +14,14 @@ module PaperTrail
         ActiveSupport::JSON.encode object
       end
 
+      # Raises an exception as this operation is not allowed from text columns.
+      def where_attribute_changes(*)
+        raise <<-STR.squish.freeze
+          where_attribute_changes does not support reading JSON from a text
+          column. The json and jsonb datatypes are supported.
+        STR
+      end
+
       # Returns a SQL LIKE condition to be used to match the given field and
       # value in the serialized object.
       def where_object_condition(arel_field, field, value)

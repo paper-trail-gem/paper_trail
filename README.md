@@ -1368,6 +1368,7 @@ An adapter can implement any or all of the following methods:
 3. where_object_changes: Returns the records resulting from the given hash of attributes.
 4. where_object_changes_from: Returns the records resulting from the given hash of attributes where the attributes changed *from* the provided value(s).
 5. where_object_changes_to: Returns the records resulting from the given hash of attributes where the attributes changed *to* the provided value(s).
+6. where_attribute_changes: Returns the records where the attribute changed to or from any value.
 
 Depending on what your adapter does, you may have to implement all three.
 

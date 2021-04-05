@@ -11,7 +11,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
-- None
+- `where_attribute_changes` queries for versions where the object's attribute
+  changed to or from any values.
 
 ### Fixed
 
