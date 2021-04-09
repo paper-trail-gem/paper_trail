@@ -3,6 +3,23 @@
 ENV["RAILS_ENV"] ||= "test"
 ENV["DB"] ||= "sqlite"
 
+module PaperTrail
+  module TestEnv
+    # Does the chosen database support json columns?
+    #
+    # - Postgres had json first.
+    # - MySQL added json support in 5.7.
+    # - MariaDB has only partial support, functions but not operators. PT
+    # currently uses operators. The devs consider the addition of operators to
+    # be a low priority feature. (https://jira.mariadb.org/browse/MDEV-13594) PT
+    # may be able to use functions like `json_extract` instead of operators like
+    # `->` but that work has not yet been done. PRs welcome.
+    def self.json?
+      %w[mysql postgres].include?(ENV["DB"])
+    end
+  end
+end
+
 require "byebug"
 require_relative "support/pt_arel_helpers"
 

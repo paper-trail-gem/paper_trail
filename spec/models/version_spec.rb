@@ -114,7 +114,7 @@ module PaperTrail
       # way? We already have a `json_versions` table in our tests, maybe we
       # could use that and add a `jsonb_versions` table?
       column_overrides = [false]
-      if ENV["DB"] == "postgres"
+      if PaperTrail::TestEnv.json?
         column_overrides += %w[json jsonb]
       end
 

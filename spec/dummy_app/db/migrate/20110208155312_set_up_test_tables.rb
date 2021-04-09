@@ -62,7 +62,7 @@ class SetUpTestTables < ::ActiveRecord::Migration::Current
       t.timestamps null: true, limit: 6
     end
 
-    if ENV["DB"] == "postgres"
+    if PaperTrail::TestEnv.json?
       create_table :postgres_users, force: true do |t|
         t.string     :name
         t.integer    :post_ids,    array: true
@@ -127,7 +127,7 @@ class SetUpTestTables < ::ActiveRecord::Migration::Current
     end
     add_index :no_object_versions, %i[item_type item_id]
 
-    if ENV["DB"] == "postgres"
+    if PaperTrail::TestEnv.json?
       create_table :json_versions, force: true do |t|
         t.string   :item_type, null: false
         t.integer  :item_id,   null: false

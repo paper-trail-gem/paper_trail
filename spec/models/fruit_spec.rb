@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-if ENV["DB"] == "postgres" || JsonVersion.table_exists?
+if PaperTrail::TestEnv.json? || JsonVersion.table_exists?
   RSpec.describe Fruit, type: :model, versioning: true do
     describe "have_a_version_with_changes matcher" do
       it "works with Fruit because Fruit uses JsonVersion" do
