@@ -28,6 +28,12 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Breaking Changes
 
+- [#1281](https://github.com/paper-trail-gem/paper_trail/pull/1281) Rails:
+  Instead of an `Engine`, PT now provides a `Railtie`, which is simpler.
+  This was not expected to be a breaking change, but has caused trouble for
+  some people:
+  - Issue with the deprecated `autoloader = :classic` setting
+    (https://github.com/paper-trail-gem/paper_trail/issues/1305)
 - Rails: The deprecated `config.paper_trail` configuration technique
   has been removed. This configuration object was deprecated in 10.2.0. It only
   had one key, `config.paper_trail.enabled`. Please review docs section [2.d.
@@ -42,8 +48,6 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- [#1281](https://github.com/paper-trail-gem/paper_trail/pull/1281) Rails:
-  Instead of an `Engine`, PT now provides a `Railtie`, which is simpler.
 - Expand kwargs passed to `save_with_version` using double splat operator - Rails 6.1 compatibility
 - [#1287](https://github.com/paper-trail-gem/paper_trail/issues/1287) - Fix 'rails db:migrate' error when run against an app with mysql2 adapter
 
