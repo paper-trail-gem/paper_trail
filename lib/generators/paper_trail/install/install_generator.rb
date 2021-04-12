@@ -20,6 +20,12 @@ module PaperTrail
       default: false,
       desc: "Store changeset (diff) with each version"
     )
+    class_option(
+      :with_mysql,
+      type: :boolean,
+      default: false,
+      desc: "Use mysql adapter. Prevents the installer form making a database connection during install. If false (default) the database type will be determined automatically at the cost of a database connection, which might not be available at install time."
+    )
 
     desc "Generates (but does not run) a migration to add a versions table." \
          "  See section 5.c. Generators in README.md for more information."
@@ -48,7 +54,7 @@ module PaperTrail
     end
 
     def mysql?
-      MYSQL_ADAPTERS.include?(ActiveRecord::Base.connection.class.name)
+      options.with_mysql? || MYSQL_ADAPTERS.include?(ActiveRecord::Base.connection.class.name)
     end
 
     # Even modern versions of MySQL still use `latin1` as the default character
