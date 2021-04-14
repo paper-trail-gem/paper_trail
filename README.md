@@ -613,10 +613,6 @@ has_paper_trail limit: 2
 has_paper_trail limit: nil
 ```
 
-To use a per-model limit, your `versions` table must have an
-`item_subtype` column. See [Section
-4.b.1](https://github.com/paper-trail-gem/paper_trail#4b1-the-optional-item_subtype-column).
-
 ## 3. Working With Versions
 
 ### 3.a. Reverting And Undeleting A Model

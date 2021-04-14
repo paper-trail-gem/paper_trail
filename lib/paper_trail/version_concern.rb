@@ -379,16 +379,22 @@ module PaperTrail
     # The version limit can be global or per-model.
     #
     # @api private
-    #
-    # TODO: Duplication: similar `constantize` in Reifier#version_reification_class
     def version_limit
-      if self.class.item_subtype_column_present?
-        klass = (item_subtype || item_type).constantize
-        if klass&.paper_trail_options&.key?(:limit)
-          return klass.paper_trail_options[:limit]
-        end
+      if limit_option?(item.class)
+        item.class.paper_trail_options[:limit]
+      elsif base_class_limit_option?(item.class)
+        item.class.base_class.paper_trail_options[:limit]
+      else
+        PaperTrail.config.version_limit
       end
-      PaperTrail.config.version_limit
+    end
+
+    def limit_option?(klass)
+      klass.respond_to?(:paper_trail_options) && klass.paper_trail_options.key?(:limit)
+    end
+
+    def base_class_limit_option?(klass)
+      klass.respond_to?(:base_class) && limit_option?(klass.base_class)
     end
   end
 end
