@@ -4,7 +4,8 @@ This project follows [semver 2.0.0](http://semver.org/spec/v2.0.0.html) and the
 recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ## Unreleased
-
+- [#1309](https://github.com/paper-trail-gem/paper_trail/pull/1309) -
+  Removes `item_subtype` requirement when specifying model-specific limits.
 ### Breaking Changes
 
 - None
