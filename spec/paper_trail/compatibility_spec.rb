@@ -14,7 +14,7 @@ module PaperTrail
 
       context "when incompatible" do
         it "writes a warning to stderr" do
-          ar_version = ::Gem::Version.new("6.2.0")
+          ar_version = ::Gem::Version.new("7.0.0")
           expect {
             described_class.check_activerecord(ar_version)
           }.to output(/not compatible/).to_stderr
