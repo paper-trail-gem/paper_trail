@@ -49,6 +49,8 @@ Choose version:
   - [3.b. Navigating Versions](#3b-navigating-versions)
   - [3.c. Diffing Versions](#3c-diffing-versions)
   - [3.d. Deleting Old Versions](#3d-deleting-old-versions)
+  - [3.e. Queries](#3e-queries)
+  - [3.f. Defunct `item_id`s](#3f-defunct-item-ids)
 - [4. Saving More Information About Versions](#4-saving-more-information-about-versions)
   - [4.a. Finding Out Who Was Responsible For A Change](#4a-finding-out-who-was-responsible-for-a-change)
   - [4.b. Associations](#4b-associations)
@@ -802,6 +804,32 @@ Only `where_object` supports text columns. Your `object_changes` column should
 be a `json` or `jsonb` column if possible. If you must use a `text` column,
 you'll have to write a [custom
 `object_changes_adapter`](#6c-custom-object-changes).
+
+### 3.f. Defunct `item_id`s
+
+The `item_id`s in your `versions` table can become defunct over time,
+potentially causing application errors when `id`s in the foreign table are
+reused. `id` reuse can be an explicit choice of the application, or implicitly
+caused by sequence cycling. The chance of `id` reuse is reduced (but not
+eliminated) with `bigint` `id`s or `uuid`s, `no cycle`
+[sequences](https://www.postgresql.org/docs/current/sql-createsequence.html),
+and/or when `versions` are periodically deleted.
+
+Ideally, a Foreign Key Constraint (FKC) would set `item_id` to null when an item
+is deleted. However, `items` is a polymorphic relationship. A partial FKC (e.g.
+an FKC with a `where` clause) is possible, but only in Postgres, and it is
+impractical to maintain FKCs for every versioned table unless the number of
+such tables is very small.
+
+If [per-table `Version`
+classes](https://github.com/paper-trail-gem/paper_trail#6a-custom-version-classes)
+are used, then a partial FKC is no longer needed. So, a normal FKC can be
+written in any RDBMS, but it remains impractical to maintain so many FKCs.
+
+Some applications choose to handle this problem by "soft-deleting" version
+records, i.e. marking them as deleted instead of actually deleting them. In
+most applications, this is the only known practical solution to the `id` reuse
+problem.
 
 ## 4. Saving More Information About Versions
 
