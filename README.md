@@ -50,7 +50,7 @@ Choose version:
   - [3.c. Diffing Versions](#3c-diffing-versions)
   - [3.d. Deleting Old Versions](#3d-deleting-old-versions)
   - [3.e. Queries](#3e-queries)
-  - [3.f. Defunct `item_id`s](#3f-defunct-item-ids)
+  - [3.f. Defunct `item_id`s](#3f-defunct-item_ids)
 - [4. Saving More Information About Versions](#4-saving-more-information-about-versions)
   - [4.a. Finding Out Who Was Responsible For A Change](#4a-finding-out-who-was-responsible-for-a-change)
   - [4.b. Associations](#4b-associations)
