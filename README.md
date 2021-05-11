@@ -826,9 +826,10 @@ classes](https://github.com/paper-trail-gem/paper_trail#6a-custom-version-classe
 are used, then a partial FKC is no longer needed. So, a normal FKC can be
 written in any RDBMS, but it remains impractical to maintain so many FKCs.
 
-Some applications choose to handle this problem by "soft-deleting" version
-records, i.e. marking them as deleted instead of actually deleting them. In
-most applications, this is the only known practical solution to the `id` reuse
+Some applications choose to handle this problem by "soft-deleting" versioned
+records, i.e. marking them as deleted instead of actually deleting them. This
+completely prevents `id` reuse, but adds complexity to the application. In most
+applications, this is the only known practical solution to the `id` reuse
 problem.
 
 ## 4. Saving More Information About Versions
