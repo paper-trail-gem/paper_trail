@@ -139,4 +139,4 @@ markdown-toc -i --maxdepth 3 --bullets='-' README.md
   1. cherry-pick the "Release 10.3.0" commit from the `10-stable` branch
   1. git push origin master
 
-[1]: https://github.com/paper-trail-gem/paper_trail/blob/master/.github/ISSUE_TEMPLATE/bug_report.md
+[1]: https://github.com/paper-trail-gem/paper_trail/blob/master/.github/ISSUE_TEMPLATE/bug-report.md

@@ -15,7 +15,7 @@ closed without comment.
 **Is your feature suggestion related to a problem? Please describe.**
 
 A clear and concise description of the problem. You may find the
-[bug report template](https://github.com/paper-trail-gem/paper_trail/blob/master/.github/ISSUE_TEMPLATE/bug_report.md)
+[bug report template](https://github.com/paper-trail-gem/paper_trail/blob/master/.github/ISSUE_TEMPLATE/bug-report.md)
 helpful.
 
 **Describe the solution you'd like to build**
