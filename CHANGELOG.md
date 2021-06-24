@@ -23,6 +23,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 - [#1285](https://github.com/paper-trail-gem/paper_trail/pull/1285) -
   For ActiveRecord >= 6.0, the `touch` callback will no longer create a new
   `Version` for skipped or ignored attributes.
+- Newly generated migrations won't generate a "{:null=>false}" column. Existing
+  tables will need to drop this column and make item_type non-nullable.
 
 ## 12.0.0 (2021-03-29)
 
