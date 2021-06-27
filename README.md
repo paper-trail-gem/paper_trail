@@ -760,12 +760,7 @@ For diffing two strings:
   or arbitrary-boundary-string-wise diffs.  Works very well on non-HTML input.
 * [diff-lcs][21]: old-school, line-wise diffs.
 
-For diffing two ActiveRecord objects:
-
-* [Jeremy Weiskotten's PaperTrail fork][22]: uses ActiveSupport's diff to return
-  an array of hashes of the changes.
-* [activerecord-diff][23]: rather like ActiveRecord::Dirty but also allows you
-  to specify which columns to compare.
+Unfortunately, there is no currently widely available and supported library for diffing two ActiveRecord objects.
 
 ### 3.d. Deleting Old Versions
 
@@ -1728,8 +1723,6 @@ Released under the MIT licence.
 [19]: http://github.com/myobie/htmldiff
 [20]: http://github.com/pvande/differ
 [21]: https://github.com/halostatue/diff-lcs
-[22]: http://github.com/jeremyw/paper_trail/blob/master/lib/paper_trail/has_paper_trail.rb#L151-156
-[23]: http://github.com/tim/activerecord-diff
 [24]: https://github.com/paper-trail-gem/paper_trail/blob/master/lib/paper_trail/serializers/yaml.rb
 [25]: https://github.com/paper-trail-gem/paper_trail/blob/master/lib/paper_trail/serializers/json.rb
 [26]: http://www.postgresql.org/docs/9.4/static/datatype-json.html
