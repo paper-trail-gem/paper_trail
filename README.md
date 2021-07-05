@@ -1221,12 +1221,15 @@ must let ActiveRecord know that the `PaperTrail::Version` class is an
 `abstract_class`.
 
 ```ruby
-# app/models/paper_trail/version.rb
-module PaperTrail
-  class Version < ActiveRecord::Base
-    include PaperTrail::VersionConcern
-    self.abstract_class = true
-  end
+# app/models/application_version.rb
+class ApplicationVersion < ActiveRecord::Base
+  include PaperTrail::VersionConcern
+  self.abstract_class = true
+end
+
+class PostVersion < ApplicationVersion
+  self.table_name = :post_versions
+  self.sequence_name = :post_versions_id_seq
 end
 ```
 
