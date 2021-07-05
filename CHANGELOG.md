@@ -5,6 +5,10 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ## Unreleased
 
+- Add option --with-mysql
+  Prevents the installer form making a database connection during install.
+  If false (default) the database type will be determined automatically at the cost of a database connection, which might not be available at install time.
+
 ### Breaking Changes
 
 - None
