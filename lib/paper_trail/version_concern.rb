@@ -380,7 +380,6 @@ module PaperTrail
     #
     # @api private
     #
-    # TODO: Duplication: similar `constantize` in Reifier#version_reification_class
     def version_limit
       if self.class.item_subtype_column_present?
         klass = (item_subtype || item_type).constantize

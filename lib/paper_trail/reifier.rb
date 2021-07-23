@@ -117,13 +117,19 @@ module PaperTrail
       # this method returns the constant `Dog`. If `attrs["species"]` is blank,
       # this method returns the constant `Animal`. You can see this particular
       # example in action in `spec/models/animal_spec.rb`.
-      #
-      # TODO: Duplication: similar `constantize` in VersionConcern#version_limit
       def version_reification_class(version, attrs)
-        inheritance_column_name = version.item_type.constantize.inheritance_column
+        clazz = version.item_type.constantize
+        inheritance_column_name = clazz.inheritance_column
         inher_col_value = attrs[inheritance_column_name]
-        class_name = inher_col_value.blank? ? version.item_type : inher_col_value
-        class_name.constantize
+        return clazz if inher_col_value.blank?
+
+        # Rails 6.1 adds a public method for clients to use to customize STI classes. If that
+        # method is not available, fall back to using the private one
+        if clazz.public_methods.include?(:sti_class_for)
+          return clazz.sti_class_for(inher_col_value)
+        end
+
+        clazz.send(:find_sti_class, inher_col_value)
       end
     end
   end
