@@ -3,6 +3,12 @@
 ENV["RAILS_ENV"] ||= "test"
 ENV["DB"] ||= "sqlite"
 
+require "simplecov"
+SimpleCov.start do
+  add_filter "spec"
+end
+SimpleCov.minimum_coverage 92.4
+
 require "byebug"
 require_relative "support/pt_arel_helpers"
 
