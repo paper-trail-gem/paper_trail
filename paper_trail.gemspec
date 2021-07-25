@@ -73,6 +73,7 @@ has been destroyed.
   s.add_development_dependency "rubocop-packaging", "~> 0.5.1"
   s.add_development_dependency "rubocop-performance", "~> 1.11.3"
   s.add_development_dependency "rubocop-rspec", "~> 2.4.0"
+  s.add_development_dependency "simplecov", ">= 0.21", "< 0.22"
 
   # ## Database Adapters
   #
