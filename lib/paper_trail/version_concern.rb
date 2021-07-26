@@ -375,7 +375,6 @@ module PaperTrail
     # The version limit can be global or per-model.
     #
     # @api private
-    #
     def version_limit
       if limit_option?(item.class)
         item.class.paper_trail_options[:limit]
