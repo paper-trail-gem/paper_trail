@@ -21,6 +21,21 @@ module PaperTrail
       # 4 versions = 3 updates + 1 create.
     end
 
+    it "cleans up old versions with limit specified on base class" do
+      PaperTrail.config.version_limit = 10
+
+      Animal.paper_trail_options[:limit] = 5
+      Dog.paper_trail_options = Animal.paper_trail_options.without(:limit)
+
+      dog = Dog.create(name: "Fluffy") # Dog specified has_paper_trail with no limit option
+
+      15.times do |i|
+        dog.update(name: "Name #{i}")
+      end
+      expect(Dog.find(dog.id).versions.count).to eq(6) # Dog uses limit option on base class, Animal
+      # 6 versions = 5 updates + 1 create.
+    end
+
     it "cleans up old versions" do
       PaperTrail.config.version_limit = 10
       widget = Widget.create
