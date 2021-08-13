@@ -1644,8 +1644,24 @@ require 'paper_trail/frameworks/rspec'
 ```
 
 ## 8. PaperTrail Plugins
+
+- paper_trail-active_record
 - [paper_trail-association_tracking][6] - track and reify associations
+- paper_trail-audit
+- paper_trail-background
 - [paper_trail-globalid][49] - enhances whodunnit by adding an `actor`
+- paper_trail-hashdiff
+- paper_trail-rails
+- paper_trail-related_changes
+- paper_trail-sinatra
+- paper_trail_actor
+- paper_trail_changes
+- paper_trail_manager
+- paper_trail_scrapbook
+- paper_trail_ui
+- revertible_paper_trail
+- rspec-paper_trail
+- sequel_paper_trail
 
 ## 9. Integration with Other Libraries
 
