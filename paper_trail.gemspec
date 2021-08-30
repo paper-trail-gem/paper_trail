@@ -52,7 +52,7 @@ has been destroyed.
   s.add_dependency "activerecord", ::PaperTrail::Compatibility::ACTIVERECORD_GTE
   s.add_dependency "request_store", "~> 1.1"
 
-  s.add_development_dependency "appraisal", "~> 2.2"
+  s.add_development_dependency "appraisal", "~> 2.4.1"
   s.add_development_dependency "byebug", "~> 11.0"
   s.add_development_dependency "ffaker", "~> 2.11"
   s.add_development_dependency "generator_spec", "~> 0.9.4"
