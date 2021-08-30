@@ -109,19 +109,11 @@ module PaperTrail
         @changed_in_latest_version ||= changes_in_latest_version.keys
       end
 
-      # Rails 5.1 changed the API of `ActiveRecord::Dirty`. See
-      # https://github.com/paper-trail-gem/paper_trail/pull/899
+      # Memoized to reduce memory usage
       #
       # @api private
       def changes_in_latest_version
-        # Memoized to reduce memory usage
-        @changes_in_latest_version ||= begin
-          if @in_after_callback
-            @record.saved_changes
-          else
-            @record.changes
-          end
-        end
+        @changes_in_latest_version ||= load_changes_in_latest_version
       end
 
       # An attributed is "ignored" if it is listed in the `:ignore` option
@@ -132,6 +124,18 @@ module PaperTrail
       def ignored_attr_has_changed?
         ignored = calculated_ignored_array + @record.paper_trail_options[:skip]
         ignored.any? && (changed_in_latest_version & ignored).any?
+      end
+
+      # Rails 5.1 changed the API of `ActiveRecord::Dirty`. See
+      # https://github.com/paper-trail-gem/paper_trail/pull/899
+      #
+      # @api private
+      def load_changes_in_latest_version
+        if @in_after_callback
+          @record.saved_changes
+        else
+          @record.changes
+        end
       end
 
       # PT 10 has a new optional column, `item_subtype`

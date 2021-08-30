@@ -76,9 +76,3 @@ Security/YAMLLoad:
     - 'spec/paper_trail/events/destroy_spec.rb'
     - 'spec/paper_trail/model_spec.rb'
     - 'spec/paper_trail/serializer_spec.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/RedundantBegin:
-  Exclude:
-    - 'lib/paper_trail/events/base.rb'
