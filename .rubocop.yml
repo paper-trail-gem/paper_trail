@@ -123,6 +123,11 @@ Naming/MethodParameterName:
 Naming/VariableNumber:
   Enabled: false
 
+# A valuable optimization in production code, but not valuable in specs.
+Performance/CollectionLiteralInLoop:
+  Exclude:
+    - spec/**/*
+
 # Good advice for rails applications, but not applicable to libraries like PT.
 Rails/SkipsModelValidations:
   Enabled: false

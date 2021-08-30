@@ -3,8 +3,8 @@
 require "spec_helper"
 require "support/custom_json_serializer"
 
-RSpec.describe(PaperTrail, versioning: true) do
-  context "YAML serializer" do
+RSpec.describe("PaperTrail serializers", versioning: true) do
+  context "with YAML serializer" do
     it "saves the expected YAML in the object column" do
       customer = Customer.create(name: "Some text.")
       original_attributes = PaperTrail::Events::Base.
@@ -19,7 +19,7 @@ RSpec.describe(PaperTrail, versioning: true) do
     end
   end
 
-  context "JSON Serializer" do
+  context "with JSON Serializer" do
     before do
       PaperTrail.configure do |config|
         config.serializer = PaperTrail::Serializers::JSON
@@ -55,7 +55,7 @@ RSpec.describe(PaperTrail, versioning: true) do
     end
   end
 
-  context "Custom Serializer" do
+  context "with Custom Serializer" do
     before do
       PaperTrail.configure { |config| config.serializer = CustomJsonSerializer }
     end

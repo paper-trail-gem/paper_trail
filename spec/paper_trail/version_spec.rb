@@ -40,7 +40,7 @@ module PaperTrail
     end
 
     describe ".subsequent" do
-      context "given a timestamp" do
+      context "with a timestamp" do
         it "returns all versions that were created after the timestamp" do
           animal = Animal.create
           2.times do
@@ -54,7 +54,7 @@ module PaperTrail
         end
       end
 
-      context "given a Version" do
+      context "with a Version" do
         it "grab the timestamp from the version and use that as the value" do
           animal = Animal.create
           2.times do
@@ -68,7 +68,7 @@ module PaperTrail
     end
 
     describe ".preceding" do
-      context "given a timestamp" do
+      context "with a timestamp" do
         it "returns all versions that were created before the timestamp" do
           animal = Animal.create
           2.times do
@@ -82,7 +82,7 @@ module PaperTrail
         end
       end
 
-      context "given a Version" do
+      context "with a Version" do
         it "grab the timestamp from the version and use that as the value" do
           animal = Animal.create
           2.times do

@@ -16,7 +16,7 @@ module PaperTrail
           expect(data[:item_subtype]).to eq("Family::CelebrityFamily")
         end
 
-        context "skipper" do
+        context "with skipper" do
           let(:skipper) { Skipper.create!(another_timestamp: Time.current) }
           let(:data) { PaperTrail::Events::Destroy.new(skipper, false).data }
 

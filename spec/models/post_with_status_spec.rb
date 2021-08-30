@@ -22,7 +22,7 @@ RSpec.describe PostWithStatus, type: :model do
       assert_equal %w[draft published], version.changeset["status"]
     end
 
-    context "storing enum object_changes" do
+    context "when storing enum object_changes" do
       it "saves the enum value properly in versions object_changes" do
         post.published!
         post.archived!

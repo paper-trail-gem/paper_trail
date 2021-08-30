@@ -6,7 +6,7 @@ RSpec.describe Skipper, type: :model, versioning: true do
   it { is_expected.to be_versioned }
 
   describe "#update!", versioning: true do
-    context "updating a skipped attribute" do
+    context "when updating a skipped attribute" do
       let(:t1) { Time.zone.local(2015, 7, 15, 20, 34, 0) }
       let(:t2) { Time.zone.local(2015, 7, 15, 20, 34, 30) }
 

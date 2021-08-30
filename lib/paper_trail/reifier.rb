@@ -60,9 +60,7 @@ module PaperTrail
         model = if options[:dup] == true || version.event == "destroy"
                   klass.new
                 else
-                  find_cond = { klass.primary_key => version.item_id }
-
-                  version.item || klass.unscoped.where(find_cond).first || klass.new
+                  version.item || init_model_by_finding_item_id(klass, version) || klass.new
                 end
 
         if options[:unversioned_attributes] == :nil && !model.new_record?
@@ -70,6 +68,11 @@ module PaperTrail
         end
 
         model
+      end
+
+      # @api private
+      def init_model_by_finding_item_id(klass, version)
+        klass.unscoped.where(klass.primary_key => version.item_id).first
       end
 
       # Look for attributes that exist in `model` and not in this version.

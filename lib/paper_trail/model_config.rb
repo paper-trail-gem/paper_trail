@@ -48,13 +48,7 @@ module PaperTrail
     #
     # @api public
     def on_destroy(recording_order = "before")
-      unless %w[after before].include?(recording_order.to_s)
-        raise ArgumentError, 'recording order can only be "after" or "before"'
-      end
-
-      if recording_order.to_s == "after" && cannot_record_after_destroy?
-        raise Error, E_CANNOT_RECORD_AFTER_DESTROY
-      end
+      assert_valid_recording_order_for_on_destroy(recording_order)
 
       @model_class.send(
         "#{recording_order}_destroy",
@@ -138,6 +132,17 @@ module PaperTrail
     def assert_concrete_activerecord_class(class_name)
       if class_name.constantize.abstract_class?
         raise Error, format(E_HPT_ABSTRACT_CLASS, @model_class, class_name)
+      end
+    end
+
+    # @api private
+    def assert_valid_recording_order_for_on_destroy(recording_order)
+      unless %w[after before].include?(recording_order.to_s)
+        raise ArgumentError, 'recording order can only be "after" or "before"'
+      end
+
+      if recording_order.to_s == "after" && cannot_record_after_destroy?
+        raise Error, E_CANNOT_RECORD_AFTER_DESTROY
       end
     end
 

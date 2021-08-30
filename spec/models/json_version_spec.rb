@@ -23,14 +23,14 @@ if JsonVersion.table_exists?
         ).to eq(0)
       end
 
-      context "invalid arguments" do
+      context "with invalid arguments" do
         it "raises an error" do
           expect { described_class.where_object(:foo) }.to raise_error(ArgumentError)
           expect { described_class.where_object([]) }.to raise_error(ArgumentError)
         end
       end
 
-      context "valid arguments", versioning: true do
+      context "with valid arguments", versioning: true do
         it "locates versions according to their `object` contents" do
           fruit = Fruit.create!(name: "apple")
           expect(fruit.versions.length).to eq(1)
@@ -65,14 +65,14 @@ if JsonVersion.table_exists?
         ).to eq(0)
       end
 
-      context "invalid arguments" do
+      context "with invalid arguments" do
         it "raises an error" do
           expect { described_class.where_object_changes(:foo) }.to raise_error(ArgumentError)
           expect { described_class.where_object_changes([]) }.to raise_error(ArgumentError)
         end
       end
 
-      context "valid arguments", versioning: true do
+      context "with valid arguments", versioning: true do
         it "finds versions according to their `object_changes` contents" do
           fruit = Fruit.create!(name: "apple")
           fruit.update!(name: "banana", color: "red")

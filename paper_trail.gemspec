@@ -52,26 +52,23 @@ has been destroyed.
   s.add_dependency "activerecord", ::PaperTrail::Compatibility::ACTIVERECORD_GTE
   s.add_dependency "request_store", "~> 1.1"
 
-  s.add_development_dependency "appraisal", "~> 2.2"
+  s.add_development_dependency "appraisal", "~> 2.4.1"
   s.add_development_dependency "byebug", "~> 11.0"
-  s.add_development_dependency "ffaker", "~> 2.11"
+  s.add_development_dependency "ffaker", "~> 2.19.0"
   s.add_development_dependency "generator_spec", "~> 0.9.4"
-  s.add_development_dependency "memory_profiler", "~> 0.9.14"
+  s.add_development_dependency "memory_profiler", "~> 1.0.0"
 
   # For `spec/dummy_app`. Technically, we only need `actionpack` (as of 2020).
   # However, that might change in the future, and the advantages of specifying a
   # subset (e.g. actionpack only) are unclear.
   s.add_development_dependency "rails", ::PaperTrail::Compatibility::ACTIVERECORD_GTE
 
-  # rake <= 13.0.3 temporarily, because of
-  # https://github.com/thoughtbot/appraisal/pull/184
-  s.add_development_dependency "rake", "~> 13.0", "<= 13.0.3"
-
-  s.add_development_dependency "rspec-rails", "~> 5.0.1"
-  s.add_development_dependency "rubocop", "~> 1.17.0"
-  s.add_development_dependency "rubocop-rails", "~> 2.10.1"
+  s.add_development_dependency "rake", "~> 13.0"
+  s.add_development_dependency "rspec-rails", "~> 5.0.2"
+  s.add_development_dependency "rubocop", "~> 1.20.0"
   s.add_development_dependency "rubocop-packaging", "~> 0.5.1"
-  s.add_development_dependency "rubocop-performance", "~> 1.11.3"
+  s.add_development_dependency "rubocop-performance", "~> 1.11.5"
+  s.add_development_dependency "rubocop-rails", "~> 2.11.3"
   s.add_development_dependency "rubocop-rake", "~> 0.6.0"
   s.add_development_dependency "rubocop-rspec", "~> 2.4.0"
   s.add_development_dependency "simplecov", ">= 0.21", "< 0.22"

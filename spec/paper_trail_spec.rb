@@ -50,7 +50,7 @@ RSpec.describe PaperTrail do
     end
   end
 
-  context "default" do
+  context "when default" do
     it "has versioning off by default" do
       expect(described_class).not_to be_enabled
     end
@@ -63,7 +63,7 @@ RSpec.describe PaperTrail do
       expect(described_class).not_to be_enabled
     end
 
-    context "error within `with_versioning` block" do
+    context "when error within `with_versioning` block" do
       it "reverts the value of `PaperTrail.enabled?` to its previous state" do
         expect(described_class).not_to be_enabled
         expect { with_versioning { raise } }.to raise_error(RuntimeError)
@@ -72,7 +72,7 @@ RSpec.describe PaperTrail do
     end
   end
 
-  context "`versioning: true`", versioning: true do
+  context "with `versioning: true`", versioning: true do
     it "has versioning on by default" do
       expect(described_class).to be_enabled
     end
@@ -86,7 +86,7 @@ RSpec.describe PaperTrail do
     end
   end
 
-  context "`with_versioning` block at class level" do
+  context "with `with_versioning` block at class level" do
     it { expect(described_class).not_to be_enabled }
 
     with_versioning do

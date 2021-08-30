@@ -23,7 +23,7 @@ module PaperTrail
         animals.each { |animal| expect(animal.versions.size).to(eq(3)) }
       end
 
-      context "no options provided" do
+      context "with no options provided" do
         it "removes extra versions for each item" do
           PaperTrail.clean_versions!
           expect(PaperTrail::Version.count).to(eq(3))
@@ -38,7 +38,7 @@ module PaperTrail
         end
       end
 
-      context "keeping 2" do
+      context "when keeping 2" do
         it "keeps two records, instead of the usual one" do
           PaperTrail.clean_versions!(keeping: 2)
           expect(PaperTrail::Version.all.count).to(eq(6))
@@ -67,7 +67,7 @@ module PaperTrail
       end
 
       context "with the :item_id option" do
-        context "single ID received" do
+        context "when a single ID is received" do
           it "only deletes the versions for the Item with that ID" do
             PaperTrail.clean_versions!(item_id: animal.id)
             expect(animal.versions.size).to(eq(1))
@@ -75,7 +75,7 @@ module PaperTrail
           end
         end
 
-        context "collection of IDs received" do
+        context "when a collection of IDs is received" do
           it "only deletes versions for the Item(s) with those IDs" do
             PaperTrail.clean_versions!(item_id: [animal.id, dog.id])
             expect(animal.versions.size).to(eq(1))
@@ -85,8 +85,8 @@ module PaperTrail
         end
       end
 
-      context "options combinations" do
-        context ":date" do
+      context "with options combinations" do
+        context "with :date" do
           before do
             [animal, dog].each do |animal|
               animal.versions.each do |ver|
@@ -105,7 +105,7 @@ module PaperTrail
             end
           end
 
-          context "and :keeping" do
+          context "with :keeping" do
             it "restrict cleaning properly" do
               date = animal.versions.first.created_at.to_date
               PaperTrail.clean_versions!(date: date, keeping: 2)
@@ -118,7 +118,7 @@ module PaperTrail
             end
           end
 
-          context "and :item_id" do
+          context "with :item_id" do
             it "restrict cleaning properly" do
               date = animal.versions.first.created_at.to_date
               PaperTrail.clean_versions!(date: date, item_id: dog.id)
@@ -129,7 +129,7 @@ module PaperTrail
             end
           end
 
-          context ", :item_id, and :keeping" do
+          context "with :item_id, and :keeping" do
             it "restrict cleaning properly" do
               date = animal.versions.first.created_at.to_date
               PaperTrail.clean_versions!(date: date, item_id: dog.id, keeping: 2)
@@ -141,7 +141,7 @@ module PaperTrail
           end
         end
 
-        context ":keeping and :item_id" do
+        context "with :keeping and :item_id" do
           it "restrict cleaning properly" do
             PaperTrail.clean_versions!(keeping: 2, item_id: animal.id)
             expect(animal.versions.size).to(eq(2))
