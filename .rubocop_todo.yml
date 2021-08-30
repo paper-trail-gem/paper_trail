@@ -27,13 +27,6 @@ Rails/ApplicationRecord:
   Enabled: false
 
 # Offense count: 1
-# Configuration parameters: Include, AllowReads, AllowWrites.
-# Include: app/**/*.rb, lib/**/*.rb
-Rails/EnvironmentVariableAccess:
-  Exclude:
-    - 'lib/paper_trail/compatibility.rb'
-
-# Offense count: 1
 # Cop supports --auto-correct.
 Rails/NegateInclude:
   Exclude:
