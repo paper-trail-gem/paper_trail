@@ -4,8 +4,21 @@ This project follows [semver 2.0.0](http://semver.org/spec/v2.0.0.html) and the
 recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ## Unreleased
-- [#1309](https://github.com/paper-trail-gem/paper_trail/pull/1309) -
-  Removes `item_subtype` requirement when specifying model-specific limits.
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- None
+
+## 12.1.0 (2021-08-30)
+
 ### Breaking Changes
 
 - None
@@ -24,6 +37,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 - [#1285](https://github.com/paper-trail-gem/paper_trail/pull/1285) -
   For ActiveRecord >= 6.0, the `touch` callback will no longer create a new
   `Version` for skipped or ignored attributes.
+- [#1309](https://github.com/paper-trail-gem/paper_trail/pull/1309) -
+  Removes `item_subtype` requirement when specifying model-specific limits.
 - [#1333](https://github.com/paper-trail-gem/paper_trail/pull/1333) -
   Improve reification of STI models that use `find_sti_class`/`sti_class_for`
   to customize single table inheritance.
