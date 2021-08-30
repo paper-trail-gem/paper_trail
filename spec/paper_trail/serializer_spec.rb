@@ -3,7 +3,7 @@
 require "spec_helper"
 require "support/custom_json_serializer"
 
-RSpec.describe(PaperTrail, versioning: true) do
+RSpec.describe("PaperTrail serializers", versioning: true) do
   context "with YAML serializer" do
     it "saves the expected YAML in the object column" do
       customer = Customer.create(name: "Some text.")

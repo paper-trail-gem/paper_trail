@@ -21,14 +21,6 @@ Metrics/CyclomaticComplexity:
 Metrics/PerceivedComplexity:
   Max: 9 # Goal: 7
 
-# Offense count: 2
-# Configuration parameters: Include, CustomTransform, IgnoreMethods, SpecSuffixOnly.
-# Include: **/*_spec*rb*, **/spec/**/*
-RSpec/FilePath:
-  Exclude:
-    - 'spec/paper_trail/model_spec.rb'
-    - 'spec/paper_trail/serializer_spec.rb'
-
 # Offense count: 1
 RSpec/IdenticalEqualityAssertion:
   Exclude:
