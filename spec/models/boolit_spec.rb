@@ -16,7 +16,7 @@ RSpec.describe Boolit, type: :model, versioning: true do
     expect { boolit.versions.last.reify.save! }.not_to raise_error
   end
 
-  context "Instance falls out of default scope" do
+  context "when Instance falls out of default scope" do
     before { boolit.update!(scoped: false) }
 
     it "is NOT scoped" do

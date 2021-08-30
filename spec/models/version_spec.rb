@@ -8,7 +8,7 @@ module PaperTrail
       let(:widget) { Widget.create!(name: "Dashboard") }
       let(:value) { widget.versions.last.object_changes }
 
-      context "serializer is YAML" do
+      context "when serializer is YAML" do
         specify { expect(PaperTrail.serializer).to be PaperTrail::Serializers::YAML }
 
         it "store out as a plain hash" do
@@ -42,7 +42,7 @@ module PaperTrail
         end
       end
 
-      context "serializer is JSON" do
+      context "when serializer is JSON" do
         before do
           PaperTrail.serializer = PaperTrail::Serializers::JSON
         end
@@ -58,13 +58,13 @@ module PaperTrail
     end
 
     describe "#paper_trail_originator" do
-      context "no previous versions" do
+      context "with no previous versions" do
         it "returns nil" do
           expect(PaperTrail::Version.new.paper_trail_originator).to be_nil
         end
       end
 
-      context "has previous version", versioning: true do
+      context "with previous version", versioning: true do
         it "returns name of whodunnit" do
           name = FFaker::Name.name
           widget = Widget.create!(name: FFaker::Name.name)
@@ -76,13 +76,13 @@ module PaperTrail
     end
 
     describe "#previous" do
-      context "no previous versions" do
+      context "with no previous versions" do
         it "returns nil" do
           expect(PaperTrail::Version.new.previous).to be_nil
         end
       end
 
-      context "has previous version", versioning: true do
+      context "with previous version", versioning: true do
         it "returns a PaperTrail::Version" do
           name = FFaker::Name.name
           widget = Widget.create!(name: FFaker::Name.name)
@@ -108,7 +108,7 @@ module PaperTrail
       end
     end
 
-    context "changing the data type of database columns on the fly" do
+    context "when changing the data type of database columns on the fly" do
       # TODO: Changing the data type of these database columns in the middle
       # of the test suite adds a fair amount of complexity. Is there a better
       # way? We already have a `json_versions` table in our tests, maybe we
@@ -242,7 +242,7 @@ module PaperTrail
               }.to raise_error(ArgumentError)
             end
 
-            context "YAML serializer" do
+            context "with YAML serializer" do
               it "locates versions according to their `object` contents" do
                 expect(PaperTrail.serializer).to be PaperTrail::Serializers::YAML
                 widget.update!(name: name, an_integer: int)
@@ -260,7 +260,7 @@ module PaperTrail
               end
             end
 
-            context "JSON serializer" do
+            context "with JSON serializer" do
               it "locates versions according to their `object` contents" do
                 PaperTrail.serializer = PaperTrail::Serializers::JSON
                 expect(PaperTrail.serializer).to be PaperTrail::Serializers::JSON

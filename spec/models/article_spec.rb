@@ -11,7 +11,7 @@ RSpec.describe Article, type: :model, versioning: true do
     end
   end
 
-  context "which updates an ignored column" do
+  context "when updating an ignored column" do
     it "not change the number of versions" do
       article = described_class.create
       article.update(title: "My first title")
@@ -19,7 +19,7 @@ RSpec.describe Article, type: :model, versioning: true do
     end
   end
 
-  context "which updates an ignored column with truly Proc" do
+  context "when updating an ignored column with truly Proc" do
     it "not change the number of versions" do
       article = described_class.create
       article.update(abstract: "ignore abstract")
@@ -27,7 +27,7 @@ RSpec.describe Article, type: :model, versioning: true do
     end
   end
 
-  context "which updates an ignored column with falsy Proc" do
+  context "when updating an ignored column with falsy Proc" do
     it "change the number of versions" do
       article = described_class.create
       article.update(abstract: "do not ignore abstract!")
@@ -35,7 +35,7 @@ RSpec.describe Article, type: :model, versioning: true do
     end
   end
 
-  context "which updates an ignored column, ignored with truly Proc and a selected column" do
+  context "when updating an ignored column, ignored with truly Proc and a selected column" do
     it "change the number of versions" do
       article = described_class.create
       article.update(
@@ -59,7 +59,7 @@ RSpec.describe Article, type: :model, versioning: true do
     end
   end
 
-  context "which updates an ignored column, ignored with falsy Proc and a selected column" do
+  context "when updating an ignored column, ignored with falsy Proc and a selected column" do
     it "change the number of versions" do
       article = described_class.create
       article.update(
@@ -86,7 +86,7 @@ RSpec.describe Article, type: :model, versioning: true do
     end
   end
 
-  context "which updates a selected column" do
+  context "when updating a selected column" do
     it "change the number of versions" do
       article = described_class.create
       article.update(content: "Some text here.")
@@ -95,7 +95,7 @@ RSpec.describe Article, type: :model, versioning: true do
     end
   end
 
-  context "which updates a non-ignored and non-selected column" do
+  context "when updating a non-ignored and non-selected column" do
     it "not change the number of versions" do
       article = described_class.create
       article.update(abstract: "Other abstract")
@@ -103,7 +103,7 @@ RSpec.describe Article, type: :model, versioning: true do
     end
   end
 
-  context "which updates a skipped column" do
+  context "when updating a skipped column" do
     it "not change the number of versions" do
       article = described_class.create
       article.update(file_upload: "Your data goes here")
@@ -111,7 +111,7 @@ RSpec.describe Article, type: :model, versioning: true do
     end
   end
 
-  context "which updates a skipped column and a selected column" do
+  context "when updating a skipped column and a selected column" do
     it "change the number of versions" do
       article = described_class.create
       article.update(
@@ -141,7 +141,7 @@ RSpec.describe Article, type: :model, versioning: true do
       ).to(eq("content" => [nil, "Some text here."]))
     end
 
-    context "and when updated again" do
+    context "when updated again" do
       it "have removed the skipped attributes when saving the previous version" do
         article = described_class.create
         article.update(

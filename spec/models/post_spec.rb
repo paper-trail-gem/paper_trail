@@ -12,7 +12,7 @@ RSpec.describe Post, type: :model, versioning: true do
     expect(PaperTrail::Version.count).to(eq(0))
   end
 
-  context "on the first version" do
+  context "with the first version" do
     it "have the correct index" do
       post = Post.create
       version = post.versions.first

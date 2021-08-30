@@ -4,7 +4,7 @@ require "spec_helper"
 
 RSpec.describe ArticlesController, type: :controller do
   describe "PaperTrail.request.enabled?" do
-    context "PaperTrail.enabled? == true" do
+    context "when PaperTrail.enabled? == true" do
       before { PaperTrail.enabled = true }
 
       after { PaperTrail.enabled = false }
@@ -18,7 +18,7 @@ RSpec.describe ArticlesController, type: :controller do
       end
     end
 
-    context "PaperTrail.enabled? == false" do
+    context "when PaperTrail.enabled? == false" do
       it "returns false" do
         expect(PaperTrail.enabled?).to eq(false)
         post :create, params: { article: { title: "Doh", content: FFaker::Lorem.sentence } }

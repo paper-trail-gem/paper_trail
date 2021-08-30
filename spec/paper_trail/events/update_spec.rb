@@ -6,7 +6,7 @@ module PaperTrail
   module Events
     ::RSpec.describe Update do
       describe "#data", versioning: true do
-        context "is_touch false" do
+        context "when is_touch false" do
           it "object_changes is present" do
             carter = Family::CelebrityFamily.create(
               name: "Carter",
@@ -25,7 +25,7 @@ module PaperTrail
           end
         end
 
-        context "is_touch true" do
+        context "when is_touch true" do
           it "object_changes is nil" do
             carter = Family::CelebrityFamily.create(
               name: "Carter",

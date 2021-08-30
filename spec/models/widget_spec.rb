@@ -24,13 +24,13 @@ RSpec.describe Widget, type: :model do
   end
 
   describe "versioning option" do
-    context "enabled", versioning: true do
+    context "when enabled", versioning: true do
       it "enables versioning" do
         expect(widget.versions.size).to eq(1)
       end
     end
 
-    context "disabled (default)" do
+    context "when disabled (default)" do
       it "does not enable versioning" do
         expect(widget.versions.size).to eq(0)
       end
@@ -206,7 +206,7 @@ RSpec.describe Widget, type: :model do
   end
 
   describe "#version_at", versioning: true do
-    context "Timestamp argument is AFTER object has been destroyed" do
+    context "when Timestamp argument is AFTER object has been destroyed" do
       it "returns nil" do
         widget.update_attribute(:name, "foobar")
         widget.destroy
@@ -222,7 +222,7 @@ RSpec.describe Widget, type: :model do
       }.by(+1)
     end
 
-    context "request is disabled" do
+    context "when request is disabled" do
       it "does not create a version" do
         count = widget.versions.count
         PaperTrail.request(enabled: false) do

@@ -18,7 +18,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
       expect(changeset["updated_at"][1].to_i).to eq(widget.updated_at.to_i)
     end
 
-    context "custom object_changes_adapter" do
+    context "with custom object_changes_adapter" do
       after do
         PaperTrail.config.object_changes_adapter = nil
       end
@@ -46,7 +46,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
     end
   end
 
-  context "a new record" do
+  context "with a new record" do
     it "not have any previous versions" do
       expect(Widget.new.versions).to(eq([]))
     end
@@ -56,7 +56,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
     end
   end
 
-  context "a persisted record" do
+  context "with a persisted record" do
     it "have one previous version" do
       widget = Widget.create(name: "Henry", created_at: (Time.current - 1.day))
       expect(widget.versions.length).to(eq(1))
@@ -83,7 +83,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
       expect(widget.versions.first.created_at.to_i).to(eq(widget.updated_at.to_i))
     end
 
-    context "and then updated without any changes" do
+    context "when updated without any changes" do
       it "to have two previous versions" do
         widget = Widget.create(name: "Henry")
         widget.touch
@@ -91,7 +91,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
       end
     end
 
-    context "and then updated with changes" do
+    context "when updated with changes" do
       it "have three previous versions" do
         widget = Widget.create(name: "Henry")
         widget.update(name: "Harry")
@@ -148,7 +148,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
       end
     end
 
-    context "updated, and has one associated object" do
+    context "when updated, and has one associated object" do
       it "not copy the has_one association by default when reifying" do
         widget = Widget.create(name: "Henry")
         widget.update(name: "Harry")
@@ -159,7 +159,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
       end
     end
 
-    context "updated, and has many associated objects" do
+    context "when updated, and has many associated objects" do
       it "copy the has_many associations when reifying" do
         widget = Widget.create(name: "Henry")
         widget.update(name: "Harry")
@@ -173,7 +173,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
       end
     end
 
-    context "updated, and has many associated polymorphic objects" do
+    context "when updated, and has many associated polymorphic objects" do
       it "copy the has_many associations when reifying" do
         widget = Widget.create(name: "Henry")
         widget.update(name: "Harry")
@@ -187,7 +187,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
       end
     end
 
-    context "updated, polymorphic objects by themselves" do
+    context "when updated, polymorphic objects by themselves" do
       it "not fail with a nil pointer on the polymorphic association" do
         widget = Widget.create(name: "Henry")
         widget.update(name: "Harry")
@@ -196,7 +196,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
       end
     end
 
-    context "updated, and then destroyed" do
+    context "when updated, and then destroyed" do
       it "record the correct event" do
         widget = Widget.create(name: "Henry")
         widget.update(name: "Harry")
@@ -279,7 +279,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
     end
   end
 
-  context "a record's papertrail" do
+  context "with a record's papertrail" do
     let!(:d0) { Date.new(2009, 5, 29) }
     let!(:t0) { Time.current }
     let(:previous_widget) { widget.versions.last.reify }
@@ -348,7 +348,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
       expect(previous_widget.a_boolean).to(be_truthy)
     end
 
-    context "after a column is removed from the record's schema" do
+    context "when a column has been removed from the record's schema" do
       let(:last_version) { widget.versions.last }
 
       it "reify previous version" do
@@ -371,7 +371,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
     end
   end
 
-  context "A record" do
+  context "with a record" do
     context "with PaperTrail globally disabled, when updated" do
       after { PaperTrail.enabled = true }
 
@@ -409,7 +409,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
     end
   end
 
-  context "A papertrail with somebody making changes" do
+  context "with somebody making changes" do
     context "when a record is created" do
       it "tracks who made the change" do
         widget = Widget.new(name: "Fidget")
@@ -469,7 +469,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
     expect { wotsit.update!(name: "name2") }.not_to(raise_error)
   end
 
-  context "A subclass" do
+  context "with a subclass" do
     let(:foo) { FooWidget.create }
 
     before do
@@ -498,8 +498,8 @@ RSpec.describe(::PaperTrail, versioning: true) do
     end
   end
 
-  context "An item with versions" do
-    context "which were created over time" do
+  context "with an item with versions" do
+    context "when the versions were created over time" do
       let(:widget) { Widget.create(name: "Widget") }
       let(:t0) { 2.days.ago }
       let(:t1) { 1.day.ago }
@@ -579,7 +579,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
       end
     end
 
-    context "on the first version" do
+    context "with the first version" do
       let(:widget) { Widget.create(name: "Widget") }
       let(:version) { widget.versions.last }
 
@@ -602,7 +602,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
       end
     end
 
-    context "on the last version" do
+    context "with the last version" do
       let(:widget) { Widget.create(name: "Widget") }
       let(:version) { widget.versions.last }
 
@@ -625,11 +625,11 @@ RSpec.describe(::PaperTrail, versioning: true) do
     end
   end
 
-  context "An item" do
+  context "with an item" do
     let(:article) { Article.new(title: initial_title) }
     let(:initial_title) { "Foobar" }
 
-    context "which is created" do
+    context "when it is created" do
       before { article.save }
 
       it "store fixed meta data" do
@@ -653,7 +653,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
       end
     end
 
-    context "created, then updated" do
+    context "when it is created, then updated" do
       before do
         article.save
         article.update!(content: "Better text.", title: "Rhubarb")
@@ -676,7 +676,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
       end
     end
 
-    context "created, then destroyed" do
+    context "when it is created, then destroyed" do
       before do
         article.save
         article.destroy
@@ -700,7 +700,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
     end
   end
 
-  context "A reified item" do
+  context "with a reified item" do
     it "know which version it came from, and return its previous self" do
       widget = Widget.create(name: "Bob")
       %w[Tom Dick Jane].each do |name|
@@ -714,7 +714,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
   end
 
   describe "#next_version" do
-    context "a reified item" do
+    context "with a reified item" do
       it "returns the object (not a Version) as it became next" do
         widget = Widget.create(name: "Bob")
         %w[Tom Dick Jane].each do |name|
@@ -727,7 +727,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
       end
     end
 
-    context "a non-reified item" do
+    context "with a non-reified item" do
       it "always returns nil because cannot ever have a next version" do
         widget = Widget.new
         expect(widget.paper_trail.next_version).to(be_nil)
@@ -741,7 +741,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
   end
 
   describe "#previous_version" do
-    context "a reified item" do
+    context "with a reified item" do
       it "returns the object (not a Version) as it was most recently" do
         widget = Widget.create(name: "Bob")
         %w[Tom Dick Jane].each do |name|
@@ -754,7 +754,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
       end
     end
 
-    context "a non-reified item" do
+    context "with a non-reified item" do
       it "returns the object (not a Version) as it was most recently" do
         widget = Widget.new
         expect(widget.paper_trail.previous_version).to(be_nil)
@@ -767,7 +767,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
     end
   end
 
-  context ":has_many :through" do
+  context "with :has_many :through" do
     it "store version on source <<" do
       book = Book.create(title: "War and Peace")
       dostoyevsky = Person.create(name: "Dostoyevsky")
@@ -815,7 +815,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
     end
   end
 
-  context "the default accessor, length=, is overwritten" do
+  context "when the default accessor, length=, is overwritten" do
     it "returns overwritten value on reified instance" do
       song = Song.create(length: 4)
       song.update(length: 5)
@@ -824,7 +824,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
     end
   end
 
-  context "song name is a virtual attribute (no such db column)" do
+  context "when song name is a virtual attribute (no such db column)" do
     it "returns overwritten virtual attribute on the reified instance" do
       song = Song.create(length: 4)
       song.update(length: 5)
@@ -836,7 +836,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
     end
   end
 
-  context "An unsaved record" do
+  context "with an unsaved record" do
     it "not have a version created on destroy" do
       widget = Widget.new
       widget.destroy
@@ -844,7 +844,7 @@ RSpec.describe(::PaperTrail, versioning: true) do
     end
   end
 
-  context "Memory allocation of" do
+  context "when measuring the memory allocation of" do
     let(:widget) do
       Widget.new(
         name: "Warble",
