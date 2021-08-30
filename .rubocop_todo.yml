@@ -22,11 +22,6 @@ Metrics/PerceivedComplexity:
   Max: 9 # Goal: 7
 
 # Offense count: 1
-RSpec/IdenticalEqualityAssertion:
-  Exclude:
-    - 'spec/models/widget_spec.rb'
-
-# Offense count: 1
 # Cop supports --auto-correct.
 Rails/ApplicationController:
   Exclude:

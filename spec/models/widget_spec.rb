@@ -945,11 +945,9 @@ RSpec.describe Widget, type: :model, versioning: true do
 
     context "when request is disabled" do
       it "does not create a version" do
-        count = widget.versions.count
         PaperTrail.request(enabled: false) do
-          widget.touch
+          expect { widget.touch }.not_to(change { widget.versions.count })
         end
-        expect(count).to eq(count)
       end
     end
   end
