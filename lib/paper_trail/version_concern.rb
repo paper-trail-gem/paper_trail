@@ -40,7 +40,7 @@ module PaperTrail
       end
 
       def not_creates
-        where "event <> ?", "create"
+        where.not(event: "create")
       end
 
       def between(start_time, end_time)

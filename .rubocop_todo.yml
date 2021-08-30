@@ -54,12 +54,6 @@ Rails/RedundantForeignKey:
     - 'spec/dummy_app/app/models/family/family_line.rb'
     - 'spec/dummy_app/app/models/person.rb'
 
-# Offense count: 1
-# Cop supports --auto-correct.
-Rails/WhereNot:
-  Exclude:
-    - 'lib/paper_trail/version_concern.rb'
-
 # It may be possible for us to use safe_load, but we'd have to pass the
 # safelists, like `whitelist_classes` into our serializer, and the serializer
 # interface is a public API, so that would be a breaking change.
