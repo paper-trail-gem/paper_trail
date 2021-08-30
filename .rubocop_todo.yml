@@ -94,6 +94,7 @@ Rails/WhereNot:
 Security/YAMLLoad:
   Exclude:
     - 'lib/paper_trail/serializers/yaml.rb'
+    - 'spec/models/book_spec.rb'
     - 'spec/models/gadget_spec.rb'
     - 'spec/models/no_object_spec.rb'
     - 'spec/models/person_spec.rb'
