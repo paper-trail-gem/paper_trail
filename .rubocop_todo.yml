@@ -22,12 +22,6 @@ Metrics/PerceivedComplexity:
   Max: 9 # Goal: 7
 
 # Offense count: 1
-# Cop supports --auto-correct.
-Performance/BlockGivenWithExplicitBlock:
-  Exclude:
-    - 'lib/paper_trail.rb'
-
-# Offense count: 1
 # Configuration parameters: MinSize.
 Performance/CollectionLiteralInLoop:
   Exclude:

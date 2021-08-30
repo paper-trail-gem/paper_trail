@@ -69,7 +69,7 @@ module PaperTrail
     #
     # @api public
     def request(options = nil, &block)
-      if options.nil? && !block_given?
+      if options.nil? && !block
         Request
       else
         Request.with(options, &block)
