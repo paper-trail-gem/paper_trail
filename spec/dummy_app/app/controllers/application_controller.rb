@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   before_action :modify_current_user
 
   # PT used to add this callback automatically. Now people are required to add
-  # it themsevles, like this, allowing them to control the order of callbacks.
+  # it themselves, like this, allowing them to control the order of callbacks.
   # The `modify_current_user` callback above shows why this control is useful.
   before_action :set_paper_trail_whodunnit
 
