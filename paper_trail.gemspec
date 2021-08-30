@@ -64,7 +64,7 @@ has been destroyed.
   s.add_development_dependency "rails", ::PaperTrail::Compatibility::ACTIVERECORD_GTE
 
   s.add_development_dependency "rake", "~> 13.0"
-  s.add_development_dependency "rspec-rails", "~> 5.0.1"
+  s.add_development_dependency "rspec-rails", "~> 5.0.2"
   s.add_development_dependency "rubocop", "~> 1.20.0"
   s.add_development_dependency "rubocop-rails", "~> 2.11.3"
   s.add_development_dependency "rubocop-packaging", "~> 0.5.1"
