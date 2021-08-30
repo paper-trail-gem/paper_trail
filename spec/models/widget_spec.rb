@@ -843,19 +843,6 @@ RSpec.describe Widget, type: :model, versioning: true do
     end
   end
 
-  # TODO: I think IdentityMap no longer exists
-  if defined?(ActiveRecord::IdentityMap) && ActiveRecord::IdentityMap.respond_to?(:without)
-    describe "IdentityMap", versioning: true do
-      it "does not clobber the IdentityMap when reifying" do
-        widget.update name: "Henry", created_at: Time.current - 1.day
-        widget.update name: "Harry"
-        allow(ActiveRecord::IdentityMap).to receive(:without)
-        widget.versions.last.reify
-        expect(ActiveRecord::IdentityMap).to have_receive(:without).once
-      end
-    end
-  end
-
   describe "#create", versioning: true do
     let(:widget) { Widget.create! name: "Bob", an_integer: 1 }
 
