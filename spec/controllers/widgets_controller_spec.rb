@@ -8,7 +8,7 @@ RSpec.describe WidgetsController, type: :controller, versioning: true do
   after { RequestStore.store[:paper_trail] = nil }
 
   describe "#create" do
-    context "PT enabled" do
+    context "with PT enabled" do
       it "stores information like IP address in version" do
         post(:create, params: { widget: { name: "Flugel" } })
         widget = assigns(:widget)
@@ -29,7 +29,7 @@ RSpec.describe WidgetsController, type: :controller, versioning: true do
       end
     end
 
-    context "PT disabled" do
+    context "with PT disabled" do
       it "does not save a version, and metadata is not set" do
         request.env["HTTP_USER_AGENT"] = "Disable User-Agent"
         post :create, params: { widget: { name: "Flugel" } }

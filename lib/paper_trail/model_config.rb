@@ -18,11 +18,6 @@ module PaperTrail
       `abstract_class`. This is fine, but all application models must be
       configured to use concrete (not abstract) version models.
     STR
-    E_MODEL_LIMIT_REQUIRES_ITEM_SUBTYPE = <<~STR.squish.freeze
-      To use PaperTrail's per-model limit in your %s model, you must have an
-      item_subtype column in your versions table. See documentation sections
-      2.e.1 Per-model limit, and 4.b.1 The optional item_subtype column.
-    STR
     DPR_PASSING_ASSOC_NAME_DIRECTLY_TO_VERSIONS_OPTION = <<~STR.squish
       Passing versions association name as `has_paper_trail versions: %{versions_name}`
       is deprecated. Use `has_paper_trail versions: {name: %{versions_name}}` instead.
@@ -53,13 +48,7 @@ module PaperTrail
     #
     # @api public
     def on_destroy(recording_order = "before")
-      unless %w[after before].include?(recording_order.to_s)
-        raise ArgumentError, 'recording order can only be "after" or "before"'
-      end
-
-      if recording_order.to_s == "after" && cannot_record_after_destroy?
-        raise E_CANNOT_RECORD_AFTER_DESTROY
-      end
+      assert_valid_recording_order_for_on_destroy(recording_order)
 
       @model_class.send(
         "#{recording_order}_destroy",
@@ -97,11 +86,18 @@ module PaperTrail
     end
 
     # Adds a callback that records a version after a "touch" event.
+    #
+    # Rails < 6.0 has a bug where dirty-tracking does not occur during
+    # a `touch`. (https://github.com/rails/rails/issues/33429) See also:
+    # https://github.com/paper-trail-gem/paper_trail/issues/1121
+    # https://github.com/paper-trail-gem/paper_trail/issues/1161
+    # https://github.com/paper-trail-gem/paper_trail/pull/1285
+    #
     # @api public
     def on_touch
       @model_class.after_touch { |r|
         r.paper_trail.record_update(
-          force: true,
+          force: RAILS_LT_6_0,
           in_after_callback: true,
           is_touch: true
         )
@@ -117,7 +113,6 @@ module PaperTrail
       @model_class.send :include, ::PaperTrail::Model::InstanceMethods
       setup_options(options)
       setup_associations(options)
-      check_presence_of_item_subtype_column(options)
       @model_class.after_rollback { paper_trail.clear_rolled_back_versions }
       setup_callbacks_from_options options[:on]
     end
@@ -129,26 +124,30 @@ module PaperTrail
 
     private
 
+    RAILS_LT_6_0 = ::ActiveRecord.gem_version < ::Gem::Version.new("6.0.0")
+    private_constant :RAILS_LT_6_0
+
     # Raises an error if the provided class is an `abstract_class`.
     # @api private
     def assert_concrete_activerecord_class(class_name)
       if class_name.constantize.abstract_class?
-        raise format(E_HPT_ABSTRACT_CLASS, @model_class, class_name)
+        raise Error, format(E_HPT_ABSTRACT_CLASS, @model_class, class_name)
+      end
+    end
+
+    # @api private
+    def assert_valid_recording_order_for_on_destroy(recording_order)
+      unless %w[after before].include?(recording_order.to_s)
+        raise ArgumentError, 'recording order can only be "after" or "before"'
+      end
+
+      if recording_order.to_s == "after" && cannot_record_after_destroy?
+        raise Error, E_CANNOT_RECORD_AFTER_DESTROY
       end
     end
 
     def cannot_record_after_destroy?
       ::ActiveRecord::Base.belongs_to_required_by_default
-    end
-
-    # Some options require the presence of the `item_subtype` column. Currently
-    # only `limit`, but in the future there may be others.
-    #
-    # @api private
-    def check_presence_of_item_subtype_column(options)
-      return unless options.key?(:limit)
-      return if version_class.item_subtype_column_present?
-      raise format(E_MODEL_LIMIT_REQUIRES_ITEM_SUBTYPE, @model_class.name)
     end
 
     def check_version_class_name(options)

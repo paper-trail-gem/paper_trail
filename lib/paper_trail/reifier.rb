@@ -60,9 +60,7 @@ module PaperTrail
         model = if options[:dup] == true || version.event == "destroy"
                   klass.new
                 else
-                  find_cond = { klass.primary_key => version.item_id }
-
-                  version.item || klass.unscoped.where(find_cond).first || klass.new
+                  version.item || init_model_by_finding_item_id(klass, version) || klass.new
                 end
 
         if options[:unversioned_attributes] == :nil && !model.new_record?
@@ -70,6 +68,11 @@ module PaperTrail
         end
 
         model
+      end
+
+      # @api private
+      def init_model_by_finding_item_id(klass, version)
+        klass.unscoped.where(klass.primary_key => version.item_id).first
       end
 
       # Look for attributes that exist in `model` and not in this version.
@@ -109,21 +112,35 @@ module PaperTrail
       end
 
       # Given a `version`, return the class to reify. This method supports
-      # Single Table Inheritance (STI) with custom inheritance columns.
+      # Single Table Inheritance (STI) with custom inheritance columns and
+      # custom inheritance column values.
       #
       # For example, imagine a `version` whose `item_type` is "Animal". The
       # `animals` table is an STI table (it has cats and dogs) and it has a
       # custom inheritance column, `species`. If `attrs["species"]` is "Dog",
       # this method returns the constant `Dog`. If `attrs["species"]` is blank,
-      # this method returns the constant `Animal`. You can see this particular
-      # example in action in `spec/models/animal_spec.rb`.
+      # this method returns the constant `Animal`.
       #
-      # TODO: Duplication: similar `constantize` in VersionConcern#version_limit
+      # The values contained in the inheritance columns may be non-camelized
+      # strings (e.g. 'dog' instead of 'Dog'). To reify classes in this case
+      # we need to call the parents class `sti_class_for` method to retrieve
+      # the correct record class.
+      #
+      # You can see these particular examples in action in
+      # `spec/models/animal_spec.rb` and `spec/models/plant_spec.rb`
       def version_reification_class(version, attrs)
-        inheritance_column_name = version.item_type.constantize.inheritance_column
+        clazz = version.item_type.constantize
+        inheritance_column_name = clazz.inheritance_column
         inher_col_value = attrs[inheritance_column_name]
-        class_name = inher_col_value.blank? ? version.item_type : inher_col_value
-        class_name.constantize
+        return clazz if inher_col_value.blank?
+
+        # Rails 6.1 adds a public method for clients to use to customize STI classes. If that
+        # method is not available, fall back to using the private one
+        if clazz.public_methods.include?(:sti_class_for)
+          return clazz.sti_class_for(inher_col_value)
+        end
+
+        clazz.send(:find_sti_class, inher_col_value)
       end
     end
   end

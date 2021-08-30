@@ -103,8 +103,8 @@ module PaperTrail
     end
 
     describe ".with" do
-      context "block given" do
-        context "all allowed options" do
+      context "with a block given" do
+        context "with all allowed options" do
           it "sets options only for the block passed" do
             described_class.whodunnit = "some_whodunnit"
             described_class.enabled_for_model(Widget, true)
@@ -132,7 +132,7 @@ module PaperTrail
           end
         end
 
-        context "some invalid options" do
+        context "with some invalid options" do
           it "raises an invalid option error" do
             subject = proc do
               described_class.with(whodunnit: "blah", invalid_option: "foo") do
@@ -140,13 +140,13 @@ module PaperTrail
               end
             end
 
-            expect { subject.call }.to raise_error(PaperTrail::Request::InvalidOption) do |e|
+            expect { subject.call }.to raise_error(PaperTrail::InvalidOption) do |e|
               expect(e.message).to eq "Invalid option: invalid_option"
             end
           end
         end
 
-        context "all invalid options" do
+        context "with all invalid options" do
           it "raises an invalid option error" do
             subject = proc do
               described_class.with(invalid_option: "foo", other_invalid_option: "blah") do
@@ -154,7 +154,7 @@ module PaperTrail
               end
             end
 
-            expect { subject.call }.to raise_error(PaperTrail::Request::InvalidOption) do |e|
+            expect { subject.call }.to raise_error(PaperTrail::InvalidOption) do |e|
               expect(e.message).to eq "Invalid option: invalid_option"
             end
           end

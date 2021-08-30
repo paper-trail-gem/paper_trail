@@ -10,21 +10,23 @@ has been destroyed.
 
 ## Documentation
 
-| Version        | Documentation |
-| -------------- | ------------- |
-| Unreleased     | https://github.com/paper-trail-gem/paper_trail/blob/master/README.md |
-| 12.0.0         | https://github.com/paper-trail-gem/paper_trail/blob/v12.0.0/README.md |
-| 11.1.0         | https://github.com/paper-trail-gem/paper_trail/blob/v11.1.0/README.md |
-| 10.3.1         | https://github.com/paper-trail-gem/paper_trail/blob/v10.3.1/README.md |
-| 9.2.0          | https://github.com/paper-trail-gem/paper_trail/blob/v9.2.0/README.md |
-| 8.1.2          | https://github.com/paper-trail-gem/paper_trail/blob/v8.1.2/README.md |
-| 7.1.3          | https://github.com/paper-trail-gem/paper_trail/blob/v7.1.3/README.md |
-| 6.0.2          | https://github.com/paper-trail-gem/paper_trail/blob/v6.0.2/README.md |
-| 5.2.3          | https://github.com/paper-trail-gem/paper_trail/blob/v5.2.3/README.md |
-| 4.2.0          | https://github.com/paper-trail-gem/paper_trail/blob/v4.2.0/README.md |
-| 3.0.9          | https://github.com/paper-trail-gem/paper_trail/blob/v3.0.9/README.md |
-| 2.7.2          | https://github.com/paper-trail-gem/paper_trail/blob/v2.7.2/README.md |
-| 1.6.5          | https://github.com/paper-trail-gem/paper_trail/blob/v1.6.5/README.md |
+This is the _user guide_. See also, the
+[API reference](https://www.rubydoc.info/gems/paper_trail).
+
+Choose version:
+[Unreleased](https://github.com/paper-trail-gem/paper_trail/blob/master/README.md),
+[12.0](https://github.com/paper-trail-gem/paper_trail/blob/v12.0.0/README.md),
+[11.1](https://github.com/paper-trail-gem/paper_trail/blob/v11.1.0/README.md),
+[10.3](https://github.com/paper-trail-gem/paper_trail/blob/v10.3.1/README.md),
+[9.2](https://github.com/paper-trail-gem/paper_trail/blob/v9.2.0/README.md),
+[8.1](https://github.com/paper-trail-gem/paper_trail/blob/v8.1.2/README.md),
+[7.1](https://github.com/paper-trail-gem/paper_trail/blob/v7.1.3/README.md),
+[6.0](https://github.com/paper-trail-gem/paper_trail/blob/v6.0.2/README.md),
+[5.2](https://github.com/paper-trail-gem/paper_trail/blob/v5.2.3/README.md),
+[4.2](https://github.com/paper-trail-gem/paper_trail/blob/v4.2.0/README.md),
+[3.0](https://github.com/paper-trail-gem/paper_trail/blob/v3.0.9/README.md),
+[2.7](https://github.com/paper-trail-gem/paper_trail/blob/v2.7.2/README.md),
+[1.6](https://github.com/paper-trail-gem/paper_trail/blob/v1.6.5/README.md)
 
 ## Table of Contents
 
@@ -47,6 +49,8 @@ has been destroyed.
   - [3.b. Navigating Versions](#3b-navigating-versions)
   - [3.c. Diffing Versions](#3c-diffing-versions)
   - [3.d. Deleting Old Versions](#3d-deleting-old-versions)
+  - [3.e. Queries](#3e-queries)
+  - [3.f. Defunct `item_id`s](#3f-defunct-item_ids)
 - [4. Saving More Information About Versions](#4-saving-more-information-about-versions)
   - [4.a. Finding Out Who Was Responsible For A Change](#4a-finding-out-who-was-responsible-for-a-change)
   - [4.b. Associations](#4b-associations)
@@ -60,6 +64,7 @@ has been destroyed.
   - [6.a. Custom Version Classes](#6a-custom-version-classes)
   - [6.b. Custom Serializer](#6b-custom-serializer)
   - [6.c. Custom Object Changes](#6c-custom-object-changes)
+  - [6.d. Excluding the Object Column](#6d-excluding-the-object-column)
 - [7. Testing](#7-testing)
   - [7.a. Minitest](#7a-minitest)
   - [7.b. RSpec](#7b-rspec)
@@ -85,8 +90,8 @@ has been destroyed.
 | paper_trail    | branch     | ruby     | activerecord  |
 | -------------- | ---------- | -------- | ------------- |
 | unreleased     | master     | >= 2.5.0 | >= 5.2, < 6.2 |
-| 12             | master     | >= 2.5.0 | >= 5.2, < 6.2 |
-| 11             | master     | >= 2.4.0 | >= 5.2, < 6.1 |
+| 12             | 12-stable  | >= 2.5.0 | >= 5.2, < 6.2 |
+| 11             | 11-stable  | >= 2.4.0 | >= 5.2, < 6.1 |
 | 10             | 10-stable  | >= 2.3.0 | >= 4.2, < 6.1 |
 | 9              | 9-stable   | >= 2.3.0 | >= 4.2, < 5.3 |
 | 8              | 8-stable   | >= 2.2.0 | >= 4.2, < 5.2 |
@@ -113,15 +118,7 @@ Experts: to install incompatible versions of activerecord, see
     bundle exec rails generate paper_trail:install [--with-changes]
     ```
 
-    For more information on this generator, see [section 5.c.
-    Generators](#5c-generators).
-
-    If using [rails_admin][38], you must enable the
-    experimental [Associations](#4b-associations) feature.
-
-    If you're getting "Could not find generator 'paper_trail:install'" errors from
-    recent Ruby/Rails versions, try running `spring stop`
-    (see [this thread](https://github.com/paper-trail-gem/paper_trail/issues/459) for more details).
+    See [section 5.c. Generators](#5c-generators) for details.
 
     ```
     bundle exec rake db:migrate
@@ -616,10 +613,6 @@ has_paper_trail limit: 2
 has_paper_trail limit: nil
 ```
 
-To use a per-model limit, your `versions` table must have an
-`item_subtype` column. See [Section
-4.b.1](https://github.com/paper-trail-gem/paper_trail#4b1-the-optional-item_subtype-column).
-
 ## 3. Working With Versions
 
 ### 3.a. Reverting And Undeleting A Model
@@ -710,34 +703,20 @@ widget = widget.paper_trail.previous_version
 widget.paper_trail.live?            # false
 ```
 
-And you can perform `WHERE` queries for object versions based on attributes:
-
-```ruby
-# Find versions that meet these criteria.
-PaperTrail::Version.where_object(content: 'Hello', title: 'Article')
-
-# Find versions before and after attribute `atr` had value `v`:
-PaperTrail::Version.where_object_changes(atr: 'v')
-```
-
-Using `where_object_changes` to read YAML from a text column was deprecated in
-8.1.0, and will now raise an error.
+See also: Section 3.e. Queries
 
 ### 3.c. Diffing Versions
 
 There are two scenarios: diffing adjacent versions and diffing non-adjacent
 versions.
 
-The best way to diff adjacent versions is to get PaperTrail to do it for you.
-If you add an `object_changes` text column to your `versions` table, either at
-installation time with the `rails generate paper_trail:install --with-changes`
-option or manually, PaperTrail will store the `changes` diff (excluding any
-attributes PaperTrail is ignoring) in each `update` version.  You can use the
-`version.changeset` method to retrieve it.  For example:
+The best way to diff adjacent versions is to get PaperTrail to do it for you. If
+you add an `object_changes` column to your `versions` table, PaperTrail will
+store the `changes` diff in each version. Ignored attributes are omitted.
 
 ```ruby
 widget = Widget.create name: 'Bob'
-widget.versions.last.changeset
+widget.versions.last.changeset # reads object_changes column
 # {
 #   "name"=>[nil, "Bob"],
 #   "created_at"=>[nil, 2015-08-10 04:10:40 UTC],
@@ -758,11 +737,12 @@ widget.versions.last.changeset
 Prior to 10.0.0, the `object_changes` were only stored for create and update
 events. As of 10.0.0, they are stored for all three events.
 
-Please be aware that PaperTrail doesn't use diffs internally.  When I designed
-PaperTrail I wanted simplicity and robustness so I decided to make each version
-of an object self-contained.  A version stores all of its object's data, not a
-diff from the previous version.  This means you can delete any version without
-affecting any other.
+PaperTrail doesn't use diffs internally.
+
+> When I designed PaperTrail I wanted simplicity and robustness so I decided to
+> make each version of an object self-contained.  A version stores all of its
+> object's data, not a diff from the previous version.  This means you can
+> delete any version without affecting any other. -Andy
 
 To diff non-adjacent versions you'll have to write your own code.  These
 libraries may help:
@@ -777,12 +757,7 @@ For diffing two strings:
   or arbitrary-boundary-string-wise diffs.  Works very well on non-HTML input.
 * [diff-lcs][21]: old-school, line-wise diffs.
 
-For diffing two ActiveRecord objects:
-
-* [Jeremy Weiskotten's PaperTrail fork][22]: uses ActiveSupport's diff to return
-  an array of hashes of the changes.
-* [activerecord-diff][23]: rather like ActiveRecord::Dirty but also allows you
-  to specify which columns to compare.
+Unfortunately, there is no currently widely available and supported library for diffing two ActiveRecord objects.
 
 ### 3.d. Deleting Old Versions
 
@@ -797,6 +772,57 @@ sql> delete from versions where created_at < '2010-06-01';
 ```ruby
 PaperTrail::Version.where('created_at < ?', 1.day.ago).delete_all
 ```
+
+### 3.e. Queries
+
+You can query records in the `versions` table based on their `object` or
+`object_changes` columns.
+
+```ruby
+# Find versions that meet these criteria.
+PaperTrail::Version.where_object(content: 'Hello', title: 'Article')
+
+# Find versions before and after attribute `atr` had value `v`:
+PaperTrail::Version.where_object_changes(atr: 'v')
+```
+
+See also:
+
+- `where_object_changes_from`
+- `where_object_changes_to`
+- `where_attribute_changes`
+
+Only `where_object` supports text columns. Your `object_changes` column should
+be a `json` or `jsonb` column if possible. If you must use a `text` column,
+you'll have to write a [custom
+`object_changes_adapter`](#6c-custom-object-changes).
+
+### 3.f. Defunct `item_id`s
+
+The `item_id`s in your `versions` table can become defunct over time,
+potentially causing application errors when `id`s in the foreign table are
+reused. `id` reuse can be an explicit choice of the application, or implicitly
+caused by sequence cycling. The chance of `id` reuse is reduced (but not
+eliminated) with `bigint` `id`s or `uuid`s, `no cycle`
+[sequences](https://www.postgresql.org/docs/current/sql-createsequence.html),
+and/or when `versions` are periodically deleted.
+
+Ideally, a Foreign Key Constraint (FKC) would set `item_id` to null when an item
+is deleted. However, `items` is a polymorphic relationship. A partial FKC (e.g.
+an FKC with a `where` clause) is possible, but only in Postgres, and it is
+impractical to maintain FKCs for every versioned table unless the number of
+such tables is very small.
+
+If [per-table `Version`
+classes](https://github.com/paper-trail-gem/paper_trail#6a-custom-version-classes)
+are used, then a partial FKC is no longer needed. So, a normal FKC can be
+written in any RDBMS, but it remains impractical to maintain so many FKCs.
+
+Some applications choose to handle this problem by "soft-deleting" versioned
+records, i.e. marking them as deleted instead of actually deleting them. This
+completely prevents `id` reuse, but adds complexity to the application. In most
+applications, this is the only known practical solution to the `id` reuse
+problem.
 
 ## 4. Saving More Information About Versions
 
@@ -1095,10 +1121,12 @@ Be advised that redefining an association is an undocumented feature of Rails.
 ### 5.c. Generators
 
 PaperTrail has one generator, `paper_trail:install`. It writes, but does not
-run, a migration file.
-The migration adds (at least) the `versions` table. The
-most up-to-date documentation for this generator can be found by running `rails
-generate paper_trail:install --help`, but a copy is included here for
+run, a migration file. The migration creates the `versions` table.
+
+#### Reference
+
+The most up-to-date documentation for this generator can be found by running
+`rails generate paper_trail:install --help`, but a copy is included here for
 convenience.
 
 ```
@@ -1363,15 +1391,24 @@ reading `::PaperTrail::Events::Base#recordable_object_changes`.
 
 An adapter can implement any or all of the following methods:
 
-1. diff: Returns the changeset in the desired format given the changeset in the original format
+1. diff: Returns the changeset in the desired format given the changeset in the
+  original format
 2. load_changeset: Returns the changeset for a given version object
-3. where_object_changes: Returns the records resulting from the given hash of attributes.
-4. where_object_changes_from: Returns the records resulting from the given hash of attributes where the attributes changed *from* the provided value(s).
+3. where_object_changes: Returns the records resulting from the given hash of
+  attributes.
+4. where_object_changes_from: Returns the records resulting from the given hash
+  of attributes where the attributes changed *from* the provided value(s).
+5. where_object_changes_to: Returns the records resulting from the given hash of
+  attributes where the attributes changed *to* the provided value(s).
+6. where_attribute_changes: Returns the records where the attribute changed to
+  or from any value.
 
-Depending on what your adapter does, you may have to implement all three.
+Depending on your needs, you may choose to implement only a subset of these
+methods.
 
-For an example of a complete and useful adapter, see
-[paper_trail-hashdiff](https://github.com/hashwin/paper_trail-hashdiff)
+#### Known Adapters
+
+- [paper_trail-hashdiff](https://github.com/hashwin/paper_trail-hashdiff)
 
 ### 6.d. Excluding the Object Column
 
@@ -1607,8 +1644,24 @@ require 'paper_trail/frameworks/rspec'
 ```
 
 ## 8. PaperTrail Plugins
+
+- paper_trail-active_record
 - [paper_trail-association_tracking][6] - track and reify associations
+- paper_trail-audit
+- paper_trail-background
 - [paper_trail-globalid][49] - enhances whodunnit by adding an `actor`
+- paper_trail-hashdiff
+- paper_trail-rails
+- paper_trail-related_changes
+- paper_trail-sinatra
+- paper_trail_actor
+- paper_trail_changes
+- paper_trail_manager
+- paper_trail_scrapbook
+- paper_trail_ui
+- revertible_paper_trail
+- rspec-paper_trail
+- sequel_paper_trail
 
 ## 9. Integration with Other Libraries
 
@@ -1683,8 +1736,6 @@ Released under the MIT licence.
 [19]: http://github.com/myobie/htmldiff
 [20]: http://github.com/pvande/differ
 [21]: https://github.com/halostatue/diff-lcs
-[22]: http://github.com/jeremyw/paper_trail/blob/master/lib/paper_trail/has_paper_trail.rb#L151-156
-[23]: http://github.com/tim/activerecord-diff
 [24]: https://github.com/paper-trail-gem/paper_trail/blob/master/lib/paper_trail/serializers/yaml.rb
 [25]: https://github.com/paper-trail-gem/paper_trail/blob/master/lib/paper_trail/serializers/json.rb
 [26]: http://www.postgresql.org/docs/9.4/static/datatype-json.html

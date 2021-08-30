@@ -10,11 +10,19 @@ class CustomObjectChangesAdapter
     version.changeset
   end
 
+  def where_attribute_changes(klass, attribute)
+    klass.where(attribute)
+  end
+
   def where_object_changes(klass, attributes)
     klass.where(attributes)
   end
 
   def where_object_changes_from(klass, attributes)
+    klass.where(attributes)
+  end
+
+  def where_object_changes_to(klass, attributes)
     klass.where(attributes)
   end
 end

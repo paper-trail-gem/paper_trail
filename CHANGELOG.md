@@ -4,23 +4,40 @@ This project follows [semver 2.0.0](http://semver.org/spec/v2.0.0.html) and the
 recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ## Unreleased
-
+- [#1309](https://github.com/paper-trail-gem/paper_trail/pull/1309) -
+  Removes `item_subtype` requirement when specifying model-specific limits.
 ### Breaking Changes
 
 - None
 
 ### Added
 
-- None
+- [#1292](https://github.com/paper-trail-gem/paper_trail/pull/1292) -
+  `where_attribute_changes` queries for versions where the object's attribute
+  changed to or from any values.
+- [#1291](https://github.com/paper-trail-gem/paper_trail/pull/1291) -
+  `where_object_changes_to` queries for versions where the object's attributes
+  changed to one set of known values from any other set of values.
 
 ### Fixed
 
-- None
+- [#1285](https://github.com/paper-trail-gem/paper_trail/pull/1285) -
+  For ActiveRecord >= 6.0, the `touch` callback will no longer create a new
+  `Version` for skipped or ignored attributes.
+- [#1333](https://github.com/paper-trail-gem/paper_trail/pull/1333) -
+  Improve reification of STI models that use `find_sti_class`/`sti_class_for`
+  to customize single table inheritance.
 
 ## 12.0.0 (2021-03-29)
 
 ### Breaking Changes
 
+- [#1281](https://github.com/paper-trail-gem/paper_trail/pull/1281) Rails:
+  Instead of an `Engine`, PT now provides a `Railtie`, which is simpler.
+  This was not expected to be a breaking change, but has caused trouble for
+  some people:
+  - Issue with the deprecated `autoloader = :classic` setting
+    (https://github.com/paper-trail-gem/paper_trail/issues/1305)
 - Rails: The deprecated `config.paper_trail` configuration technique
   has been removed. This configuration object was deprecated in 10.2.0. It only
   had one key, `config.paper_trail.enabled`. Please review docs section [2.d.

@@ -4,11 +4,11 @@ require "spec_helper"
 
 module PaperTrail
   ::RSpec.describe Version, type: :model do
-    describe "object_changes column", versioning: true do
+    describe "#object_changes", versioning: true do
       let(:widget) { Widget.create!(name: "Dashboard") }
       let(:value) { widget.versions.last.object_changes }
 
-      context "serializer is YAML" do
+      context "when serializer is YAML" do
         specify { expect(PaperTrail.serializer).to be PaperTrail::Serializers::YAML }
 
         it "store out as a plain hash" do
@@ -42,7 +42,7 @@ module PaperTrail
         end
       end
 
-      context "serializer is JSON" do
+      context "when serializer is JSON" do
         before do
           PaperTrail.serializer = PaperTrail::Serializers::JSON
         end
@@ -58,13 +58,13 @@ module PaperTrail
     end
 
     describe "#paper_trail_originator" do
-      context "no previous versions" do
+      context "with no previous versions" do
         it "returns nil" do
           expect(PaperTrail::Version.new.paper_trail_originator).to be_nil
         end
       end
 
-      context "has previous version", versioning: true do
+      context "with previous version", versioning: true do
         it "returns name of whodunnit" do
           name = FFaker::Name.name
           widget = Widget.create!(name: FFaker::Name.name)
@@ -76,13 +76,13 @@ module PaperTrail
     end
 
     describe "#previous" do
-      context "no previous versions" do
+      context "with no previous versions" do
         it "returns nil" do
           expect(PaperTrail::Version.new.previous).to be_nil
         end
       end
 
-      context "has previous version", versioning: true do
+      context "with previous version", versioning: true do
         it "returns a PaperTrail::Version" do
           name = FFaker::Name.name
           widget = Widget.create!(name: FFaker::Name.name)
@@ -108,7 +108,7 @@ module PaperTrail
       end
     end
 
-    context "changing the data type of database columns on the fly" do
+    context "when changing the data type of database columns on the fly" do
       # TODO: Changing the data type of these database columns in the middle
       # of the test suite adds a fair amount of complexity. Is there a better
       # way? We already have a `json_versions` table in our tests, maybe we
@@ -148,6 +148,87 @@ module PaperTrail
             end
           end
 
+          describe "#where_attribute_changes", versioning: true do
+            it "requires its argument to be a string or a symbol" do
+              expect {
+                PaperTrail::Version.where_attribute_changes({})
+              }.to raise_error(ArgumentError)
+              expect {
+                PaperTrail::Version.where_attribute_changes([])
+              }.to raise_error(ArgumentError)
+            end
+
+            context "with object_changes_adapter configured" do
+              after do
+                PaperTrail.config.object_changes_adapter = nil
+              end
+
+              it "calls the adapter's where_attribute_changes method" do
+                adapter = instance_spy("CustomObjectChangesAdapter")
+                bicycle = Bicycle.create!(name: "abc")
+                bicycle.update!(name: "xyz")
+
+                allow(adapter).to(
+                  receive(:where_attribute_changes).with(Version, :name)
+                ).and_return([bicycle.versions[0], bicycle.versions[1]])
+
+                PaperTrail.config.object_changes_adapter = adapter
+                expect(
+                  bicycle.versions.where_attribute_changes(:name)
+                ).to match_array([bicycle.versions[0], bicycle.versions[1]])
+                expect(adapter).to have_received(:where_attribute_changes)
+              end
+
+              it "defaults to the original behavior" do
+                adapter = Class.new.new
+                PaperTrail.config.object_changes_adapter = adapter
+                bicycle = Bicycle.create!(name: "abc")
+                bicycle.update!(name: "xyz")
+
+                if column_datatype_override
+                  expect(
+                    bicycle.versions.where_attribute_changes(:name)
+                  ).to match_array([bicycle.versions[0], bicycle.versions[1]])
+                else
+                  expect {
+                    bicycle.versions.where_attribute_changes(:name)
+                  }.to raise_error(
+                    UnsupportedColumnType,
+                    "where_attribute_changes expected json or jsonb column, got text"
+                  )
+                end
+              end
+            end
+
+            # Only test json and jsonb columns. where_attribute_changes does
+            # not support text columns.
+            if column_datatype_override
+              it "locates versions according to their object_changes contents" do
+                widget.update!(name: "foobar", an_integer: 100)
+                widget.update!(an_integer: 17)
+
+                expect(
+                  widget.versions.where_attribute_changes(:name)
+                ).to eq([widget.versions[0]])
+                expect(
+                  widget.versions.where_attribute_changes("an_integer")
+                ).to eq([widget.versions[0], widget.versions[1]])
+                expect(
+                  widget.versions.where_attribute_changes(:a_float)
+                ).to eq([])
+              end
+            else
+              it "raises error" do
+                expect {
+                  widget.versions.where_attribute_changes(:name).to_a
+                }.to raise_error(
+                  UnsupportedColumnType,
+                  "where_attribute_changes expected json or jsonb column, got text"
+                )
+              end
+            end
+          end
+
           describe "#where_object", versioning: true do
             it "requires its argument to be a Hash" do
               widget.update!(name: name, an_integer: int)
@@ -161,7 +242,7 @@ module PaperTrail
               }.to raise_error(ArgumentError)
             end
 
-            context "YAML serializer" do
+            context "with YAML serializer" do
               it "locates versions according to their `object` contents" do
                 expect(PaperTrail.serializer).to be PaperTrail::Serializers::YAML
                 widget.update!(name: name, an_integer: int)
@@ -179,7 +260,7 @@ module PaperTrail
               end
             end
 
-            context "JSON serializer" do
+            context "with JSON serializer" do
               it "locates versions according to their `object` contents" do
                 PaperTrail.serializer = PaperTrail::Serializers::JSON
                 expect(PaperTrail.serializer).to be PaperTrail::Serializers::JSON
@@ -236,9 +317,12 @@ module PaperTrail
                     bicycle.versions.where_object_changes(name: "abc")
                   ).to match_array(bicycle.versions[0..1])
                 else
-                  expect do
+                  expect {
                     bicycle.versions.where_object_changes(name: "abc")
-                  end.to raise_error(/no longer supports reading YAML/)
+                  }.to raise_error(
+                    UnsupportedColumnType,
+                    "where_object_changes expected json or jsonb column, got text"
+                  )
                 end
               end
             end
@@ -267,7 +351,10 @@ module PaperTrail
               it "raises error" do
                 expect {
                   widget.versions.where_object_changes(name: "foo").to_a
-                }.to(raise_error(/no longer supports reading YAML from a text column/))
+                }.to raise_error(
+                  UnsupportedColumnType,
+                  "where_object_changes expected json or jsonb column, got text"
+                )
               end
             end
           end
@@ -314,9 +401,12 @@ module PaperTrail
                     bicycle.versions.where_object_changes_from(name: "abc")
                   ).to match_array([bicycle.versions[1]])
                 else
-                  expect do
+                  expect {
                     bicycle.versions.where_object_changes_from(name: "abc")
-                  end.to raise_error(/does not support reading YAML/)
+                  }.to raise_error(
+                    UnsupportedColumnType,
+                    "where_object_changes_from expected json or jsonb column, got text"
+                  )
                 end
               end
             end
@@ -346,7 +436,98 @@ module PaperTrail
               it "raises error" do
                 expect {
                   widget.versions.where_object_changes_from(name: "foo").to_a
-                }.to(raise_error(/does not support reading YAML from a text column/))
+                }.to raise_error(
+                  UnsupportedColumnType,
+                  "where_object_changes_from expected json or jsonb column, got text"
+                )
+              end
+            end
+          end
+
+          describe "#where_object_changes_to", versioning: true do
+            it "requires its argument to be a Hash" do
+              expect {
+                PaperTrail::Version.where_object_changes_to(:foo)
+              }.to raise_error(ArgumentError)
+              expect {
+                PaperTrail::Version.where_object_changes_to([])
+              }.to raise_error(ArgumentError)
+            end
+
+            context "with object_changes_adapter configured" do
+              after do
+                PaperTrail.config.object_changes_adapter = nil
+              end
+
+              it "calls the adapter's where_object_changes_to method" do
+                adapter = instance_spy("CustomObjectChangesAdapter")
+                bicycle = Bicycle.create!(name: "abc")
+                bicycle.update!(name: "xyz")
+
+                allow(adapter).to(
+                  receive(:where_object_changes_to).with(Version, name: "xyz")
+                ).and_return([bicycle.versions[1]])
+
+                PaperTrail.config.object_changes_adapter = adapter
+                expect(
+                  bicycle.versions.where_object_changes_to(name: "xyz")
+                ).to match_array([bicycle.versions[1]])
+                expect(adapter).to have_received(:where_object_changes_to)
+              end
+
+              it "defaults to the original behavior" do
+                adapter = Class.new.new
+                PaperTrail.config.object_changes_adapter = adapter
+                bicycle = Bicycle.create!(name: "abc")
+                bicycle.update!(name: "xyz")
+
+                if column_datatype_override
+                  expect(
+                    bicycle.versions.where_object_changes_to(name: "xyz")
+                  ).to match_array([bicycle.versions[1]])
+                else
+                  expect {
+                    bicycle.versions.where_object_changes_to(name: "xyz")
+                  }.to raise_error(
+                    UnsupportedColumnType,
+                    "where_object_changes_to expected json or jsonb column, got text"
+                  )
+                end
+              end
+            end
+
+            # Only test json and jsonb columns. where_object_changes_to does
+            # not support text columns.
+            if column_datatype_override
+              it "locates versions according to their object_changes contents" do
+                widget.update!(name: name, an_integer: 0)
+                widget.update!(name: "foobar", an_integer: 100)
+                widget.update!(name: FFaker::Name.last_name, an_integer: int)
+
+                expect(
+                  widget.versions.where_object_changes_to(name: name)
+                ).to eq([widget.versions[0]])
+                expect(
+                  widget.versions.where_object_changes_to(an_integer: 100)
+                ).to eq([widget.versions[1]])
+                expect(
+                  widget.versions.where_object_changes_to(an_integer: int)
+                ).to eq([widget.versions[2]])
+                expect(
+                  widget.versions.where_object_changes_to(an_integer: 100, name: "foobar")
+                ).to eq([widget.versions[1]])
+                expect(
+                  widget.versions.where_object_changes_to(an_integer: -1)
+                ).to eq([])
+              end
+            else
+              it "raises error" do
+                expect {
+                  widget.versions.where_object_changes_to(name: "foo").to_a
+                }.to raise_error(
+                  UnsupportedColumnType,
+                  "where_object_changes_to expected json or jsonb column, got text"
+                )
               end
             end
           end

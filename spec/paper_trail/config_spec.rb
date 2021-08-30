@@ -52,17 +52,6 @@ module PaperTrail
         limited_bike.save
         assert_equal 2, limited_bike.versions.length
       end
-
-      context "when item_subtype column is absent" do
-        it "uses global version_limit" do
-          PaperTrail.config.version_limit = 6
-          names = PaperTrail::Version.column_names - ["item_subtype"]
-          allow(PaperTrail::Version).to receive(:column_names).and_return(names)
-          bike = LimitedBicycle.create!(name: "My Bike") # has_paper_trail limit: 3
-          10.times { bike.update(name: SecureRandom.hex(8)) }
-          assert_equal 7, bike.versions.length
-        end
-      end
     end
   end
 end

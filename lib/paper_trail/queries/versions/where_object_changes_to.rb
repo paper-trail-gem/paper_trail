@@ -3,10 +3,10 @@
 module PaperTrail
   module Queries
     module Versions
-      # For public API documentation, see `where_object_changes_from` in
+      # For public API documentation, see `where_object_changes_to` in
       # `paper_trail/version_concern.rb`.
       # @api private
-      class WhereObjectChangesFrom
+      class WhereObjectChangesTo
         # - version_model_class - The class that VersionConcern was mixed into.
         # - attributes - A `Hash` of attributes and values. See the public API
         #   documentation for details.
@@ -18,8 +18,8 @@ module PaperTrail
 
         # @api private
         def execute
-          if PaperTrail.config.object_changes_adapter.respond_to?(:where_object_changes_from)
-            return PaperTrail.config.object_changes_adapter.where_object_changes_from(
+          if PaperTrail.config.object_changes_adapter.respond_to?(:where_object_changes_to)
+            return PaperTrail.config.object_changes_adapter.where_object_changes_to(
               @version_model_class, @attributes
             )
           end
@@ -29,7 +29,7 @@ module PaperTrail
             json
           else
             raise UnsupportedColumnType.new(
-              method: "where_object_changes_from",
+              method: "where_object_changes_to",
               expected: "json or jsonb",
               actual: column_type
             )
@@ -46,7 +46,7 @@ module PaperTrail
             predicates.push(
               "(object_changes->>? ILIKE ?)"
             )
-            values.concat([field, "[#{value.to_json},%"])
+            values.concat([field, "[%#{value.to_json}]"])
           end
           sql = predicates.join(" and ")
           @version_model_class.where(sql, *values)

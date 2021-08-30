@@ -12,9 +12,6 @@ module PaperTrail
   #
   # @api private
   module Request
-    class InvalidOption < RuntimeError
-    end
-
     class << self
       # Sets any data from the controller that you want PaperTrail to store.
       # See also `PaperTrail::Rails::Controller#info_for_paper_trail`.

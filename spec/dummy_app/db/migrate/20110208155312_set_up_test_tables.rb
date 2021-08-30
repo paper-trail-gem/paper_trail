@@ -230,6 +230,10 @@ class SetUpTestTables < ::ActiveRecord::Migration::Current
       t.integer :animal_id
     end
 
+    create_table :plants, force: true do |t|
+      t.string :species # custom single table inheritance column
+    end
+
     create_table :documents, force: true do |t|
       t.string :name
     end

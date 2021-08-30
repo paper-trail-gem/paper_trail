@@ -42,8 +42,8 @@ RSpec.describe NoObject, versioning: true do
       v = n.versions.last
       expect { v.reify }.to(
         raise_error(
-          ::RuntimeError,
-          "reify can't be called without an object column"
+          ::PaperTrail::Error,
+          "reify requires an object column"
         )
       )
     end
@@ -56,8 +56,8 @@ RSpec.describe NoObject, versioning: true do
         n.versions.where_object(foo: "bar")
       }.to(
         raise_error(
-          ::RuntimeError,
-          "where_object can't be called without an object column"
+          ::PaperTrail::Error,
+          "where_object requires an object column"
         )
       )
     end

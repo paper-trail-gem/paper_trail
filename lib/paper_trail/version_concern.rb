@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 require "paper_trail/attribute_serializers/object_changes_attribute"
+require "paper_trail/queries/versions/where_attribute_changes"
 require "paper_trail/queries/versions/where_object"
 require "paper_trail/queries/versions/where_object_changes"
 require "paper_trail/queries/versions/where_object_changes_from"
+require "paper_trail/queries/versions/where_object_changes_to"
 
 module PaperTrail
   # Originally, PaperTrail did not provide this module, and all of this
@@ -21,10 +23,6 @@ module PaperTrail
 
     # :nodoc:
     module ClassMethods
-      def item_subtype_column_present?
-        column_names.include?("item_subtype")
-      end
-
       def with_item_keys(item_type, item_id)
         where item_type: item_type, item_id: item_id
       end
@@ -42,7 +40,7 @@ module PaperTrail
       end
 
       def not_creates
-        where "event <> ?", "create"
+        where.not(event: "create")
       end
 
       def between(start_time, end_time)
@@ -58,6 +56,18 @@ module PaperTrail
         [arel_table[:created_at].send(direction.downcase)].tap do |array|
           array << arel_table[primary_key].send(direction.downcase) if primary_key_is_int?
         end
+      end
+
+      # Given an attribute like `"name"`, query the `versions.object_changes`
+      # column for any changes that modified the provided attribute.
+      #
+      # @api public
+      def where_attribute_changes(attribute)
+        unless attribute.is_a?(String) || attribute.is_a?(Symbol)
+          raise ArgumentError, "expected to receive a String or Symbol"
+        end
+
+        Queries::Versions::WhereAttributeChanges.new(self, attribute).execute
       end
 
       # Given a hash of attributes like `name: 'Joan'`, query the
@@ -129,6 +139,21 @@ module PaperTrail
       def where_object_changes_from(args = {})
         raise ArgumentError, "expected to receive a Hash" unless args.is_a?(Hash)
         Queries::Versions::WhereObjectChangesFrom.new(self, args).execute
+      end
+
+      # Given a hash of attributes like `name: 'Joan'`, query the
+      # `versions.objects_changes` column for changes where the version changed
+      # to the hash of attributes from other values.
+      #
+      # This is useful for finding versions where the attribute started with an
+      # unknown value and changed to a known value. This is in comparison to
+      # `where_object_changes` which will find both the changes before and
+      # after.
+      #
+      # @api public
+      def where_object_changes_to(args = {})
+        raise ArgumentError, "expected to receive a Hash" unless args.is_a?(Hash)
+        Queries::Versions::WhereObjectChangesTo.new(self, args).execute
       end
 
       def primary_key_is_int?
@@ -237,7 +262,7 @@ module PaperTrail
     #
     def reify(options = {})
       unless self.class.column_names.include? "object"
-        raise "reify can't be called without an object column"
+        raise Error, "reify requires an object column"
       end
       return nil if object.nil?
       ::PaperTrail::Reifier.reify(self, options)
@@ -350,16 +375,22 @@ module PaperTrail
     # The version limit can be global or per-model.
     #
     # @api private
-    #
-    # TODO: Duplication: similar `constantize` in Reifier#version_reification_class
     def version_limit
-      if self.class.item_subtype_column_present?
-        klass = (item_subtype || item_type).constantize
-        if klass&.paper_trail_options&.key?(:limit)
-          return klass.paper_trail_options[:limit]
-        end
+      if limit_option?(item.class)
+        item.class.paper_trail_options[:limit]
+      elsif base_class_limit_option?(item.class)
+        item.class.base_class.paper_trail_options[:limit]
+      else
+        PaperTrail.config.version_limit
       end
-      PaperTrail.config.version_limit
+    end
+
+    def limit_option?(klass)
+      klass.respond_to?(:paper_trail_options) && klass.paper_trail_options.key?(:limit)
+    end
+
+    def base_class_limit_option?(klass)
+      klass.respond_to?(:base_class) && limit_option?(klass.base_class)
     end
   end
 end
