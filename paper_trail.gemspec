@@ -65,10 +65,10 @@ has been destroyed.
 
   s.add_development_dependency "rake", "~> 13.0"
   s.add_development_dependency "rspec-rails", "~> 5.0.1"
-  s.add_development_dependency "rubocop", "~> 1.17.0"
-  s.add_development_dependency "rubocop-rails", "~> 2.10.1"
+  s.add_development_dependency "rubocop", "~> 1.20.0"
+  s.add_development_dependency "rubocop-rails", "~> 2.11.3"
   s.add_development_dependency "rubocop-packaging", "~> 0.5.1"
-  s.add_development_dependency "rubocop-performance", "~> 1.11.3"
+  s.add_development_dependency "rubocop-performance", "~> 1.11.5"
   s.add_development_dependency "rubocop-rake", "~> 0.6.0"
   s.add_development_dependency "rubocop-rspec", "~> 2.4.0"
   s.add_development_dependency "simplecov", ">= 0.21", "< 0.22"
