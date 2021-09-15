@@ -9,7 +9,7 @@ module PaperTrail
       extend self # makes all instance methods become module methods as well
 
       def load(string)
-        ::YAML.load string
+        ::YAML.respond_to?(:unsafe_load) ? ::YAML.unsafe_load(string) : ::YAML.load(string)
       end
 
       # @param object (Hash | HashWithIndifferentAccess) - Coming from
