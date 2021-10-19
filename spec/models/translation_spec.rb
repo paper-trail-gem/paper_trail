@@ -69,7 +69,7 @@ RSpec.describe Translation, type: :model, versioning: true do
         expect(PaperTrail::Version.count).to(eq(1))
       end
 
-      it "update does not change the number of versions" do
+      it "update changes the number of versions" do
         translation = described_class.create!(headline: "Headline", language_code: "US")
         translation.update(content: "Content")
         expect(PaperTrail::Version.count).to(eq(2))
@@ -83,7 +83,7 @@ RSpec.describe Translation, type: :model, versioning: true do
         expect(translation.versions.size).to(eq(2))
       end
 
-      it "destroy does not change the number of versions" do
+      it "destroy changes the number of versions" do
         translation = described_class.new(headline: "Headline")
         translation.language_code = "US"
         translation.save!
