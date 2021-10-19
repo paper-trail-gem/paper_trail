@@ -96,11 +96,13 @@ module PaperTrail
     # @api public
     def on_touch
       @model_class.after_touch { |r|
-        r.paper_trail.record_update(
-          force: RAILS_LT_6_0,
-          in_after_callback: true,
-          is_touch: true
-        )
+        if r.paper_trail.save_version?
+          r.paper_trail.record_update(
+            force: RAILS_LT_6_0,
+            in_after_callback: true,
+            is_touch: true
+          )
+        end
       }
     end
 
