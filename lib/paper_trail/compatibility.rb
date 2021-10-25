@@ -8,7 +8,7 @@ module PaperTrail
   #
   # It is not safe to assume that a new version of rails will be compatible with
   # PaperTrail. PT is only compatible with the versions of rails that it is
-  # tested against. See `.travis.yml`.
+  # tested against. See `.github/workflows/test.yml`.
   #
   # However, as of
   # [#1213](https://github.com/paper-trail-gem/paper_trail/pull/1213) our

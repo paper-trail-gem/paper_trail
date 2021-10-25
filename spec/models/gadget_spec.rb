@@ -3,7 +3,7 @@
 require "spec_helper"
 
 RSpec.describe Gadget, type: :model do
-  let(:gadget) { Gadget.create!(name: "Wrench", brand: "Acme") }
+  let(:gadget) { described_class.create!(name: "Wrench", brand: "Acme") }
 
   it { is_expected.to be_versioned }
 

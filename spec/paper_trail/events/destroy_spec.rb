@@ -11,14 +11,14 @@ module PaperTrail
             name: "Carter",
             path_to_stardom: "Mexican radio"
           )
-          data = PaperTrail::Events::Destroy.new(carter, true).data
+          data = described_class.new(carter, true).data
           expect(data[:item_type]).to eq("Family::Family")
           expect(data[:item_subtype]).to eq("Family::CelebrityFamily")
         end
 
         context "with skipper" do
           let(:skipper) { Skipper.create!(another_timestamp: Time.current) }
-          let(:data) { PaperTrail::Events::Destroy.new(skipper, false).data }
+          let(:data) { described_class.new(skipper, false).data }
 
           it "includes `object` without skipped attributes" do
             object = YAML.load(data[:object])

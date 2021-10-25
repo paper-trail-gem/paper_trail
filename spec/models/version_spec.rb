@@ -60,7 +60,7 @@ module PaperTrail
     describe "#paper_trail_originator" do
       context "with no previous versions" do
         it "returns nil" do
-          expect(PaperTrail::Version.new.paper_trail_originator).to be_nil
+          expect(described_class.new.paper_trail_originator).to be_nil
         end
       end
 
@@ -78,7 +78,7 @@ module PaperTrail
     describe "#previous" do
       context "with no previous versions" do
         it "returns nil" do
-          expect(PaperTrail::Version.new.previous).to be_nil
+          expect(described_class.new.previous).to be_nil
         end
       end
 
@@ -88,7 +88,7 @@ module PaperTrail
           widget = Widget.create!(name: FFaker::Name.name)
           widget.versions.first.update!(whodunnit: name)
           widget.update!(name: FFaker::Name.first_name)
-          expect(widget.versions.last.previous).to be_instance_of(PaperTrail::Version)
+          expect(widget.versions.last.previous).to be_instance_of(described_class)
         end
       end
     end
@@ -96,14 +96,14 @@ module PaperTrail
     describe "#terminator" do
       it "is an alias for the `whodunnit` attribute" do
         attributes = { whodunnit: FFaker::Name.first_name }
-        version = PaperTrail::Version.new(attributes)
+        version = described_class.new(attributes)
         expect(version.terminator).to eq(attributes[:whodunnit])
       end
     end
 
     describe "#version_author" do
       it "is an alias for the `terminator` method" do
-        version = PaperTrail::Version.new
+        version = described_class.new
         expect(version.method(:version_author)).to eq(version.method(:terminator))
       end
     end
@@ -135,7 +135,7 @@ module PaperTrail
                   "ALTER TABLE versions ADD COLUMN #{column} #{column_datatype_override};"
                 )
               end
-              PaperTrail::Version.reset_column_information
+              described_class.reset_column_information
             end
           end
 
@@ -144,17 +144,17 @@ module PaperTrail
 
             if column_datatype_override
               ActiveRecord::Base.connection.execute("ROLLBACK TO SAVEPOINT pgtest;")
-              PaperTrail::Version.reset_column_information
+              described_class.reset_column_information
             end
           end
 
           describe "#where_attribute_changes", versioning: true do
             it "requires its argument to be a string or a symbol" do
               expect {
-                PaperTrail::Version.where_attribute_changes({})
+                described_class.where_attribute_changes({})
               }.to raise_error(ArgumentError)
               expect {
-                PaperTrail::Version.where_attribute_changes([])
+                described_class.where_attribute_changes([])
               }.to raise_error(ArgumentError)
             end
 
@@ -169,7 +169,7 @@ module PaperTrail
                 bicycle.update!(name: "xyz")
 
                 allow(adapter).to(
-                  receive(:where_attribute_changes).with(Version, :name)
+                  receive(:where_attribute_changes).with(described_class, :name)
                 ).and_return([bicycle.versions[0], bicycle.versions[1]])
 
                 PaperTrail.config.object_changes_adapter = adapter
@@ -235,10 +235,10 @@ module PaperTrail
               widget.update!(name: "foobar", an_integer: 100)
               widget.update!(name: FFaker::Name.last_name, an_integer: 15)
               expect {
-                PaperTrail::Version.where_object(:foo)
+                described_class.where_object(:foo)
               }.to raise_error(ArgumentError)
               expect {
-                PaperTrail::Version.where_object([])
+                described_class.where_object([])
               }.to raise_error(ArgumentError)
             end
 
@@ -249,13 +249,13 @@ module PaperTrail
                 widget.update!(name: "foobar", an_integer: 100)
                 widget.update!(name: FFaker::Name.last_name, an_integer: 15)
                 expect(
-                  PaperTrail::Version.where_object(an_integer: int)
+                  described_class.where_object(an_integer: int)
                 ).to eq([widget.versions[1]])
                 expect(
-                  PaperTrail::Version.where_object(name: name)
+                  described_class.where_object(name: name)
                 ).to eq([widget.versions[1]])
                 expect(
-                  PaperTrail::Version.where_object(an_integer: 100)
+                  described_class.where_object(an_integer: 100)
                 ).to eq([widget.versions[2]])
               end
             end
@@ -268,13 +268,13 @@ module PaperTrail
                 widget.update!(name: "foobar", an_integer: 100)
                 widget.update!(name: FFaker::Name.last_name, an_integer: 15)
                 expect(
-                  PaperTrail::Version.where_object(an_integer: int)
+                  described_class.where_object(an_integer: int)
                 ).to eq([widget.versions[1]])
                 expect(
-                  PaperTrail::Version.where_object(name: name)
+                  described_class.where_object(name: name)
                 ).to eq([widget.versions[1]])
                 expect(
-                  PaperTrail::Version.where_object(an_integer: 100)
+                  described_class.where_object(an_integer: 100)
                 ).to eq([widget.versions[2]])
               end
             end
@@ -283,10 +283,10 @@ module PaperTrail
           describe "#where_object_changes", versioning: true do
             it "requires its argument to be a Hash" do
               expect {
-                PaperTrail::Version.where_object_changes(:foo)
+                described_class.where_object_changes(:foo)
               }.to raise_error(ArgumentError)
               expect {
-                PaperTrail::Version.where_object_changes([])
+                described_class.where_object_changes([])
               }.to raise_error(ArgumentError)
             end
 
@@ -299,7 +299,7 @@ module PaperTrail
                 adapter = instance_spy("CustomObjectChangesAdapter")
                 bicycle = Bicycle.create!(name: "abc")
                 allow(adapter).to(
-                  receive(:where_object_changes).with(Version, name: "abc")
+                  receive(:where_object_changes).with(described_class, name: "abc")
                 ).and_return(bicycle.versions[0..1])
                 PaperTrail.config.object_changes_adapter = adapter
                 expect(
@@ -362,10 +362,10 @@ module PaperTrail
           describe "#where_object_changes_from", versioning: true do
             it "requires its argument to be a Hash" do
               expect {
-                PaperTrail::Version.where_object_changes_from(:foo)
+                described_class.where_object_changes_from(:foo)
               }.to raise_error(ArgumentError)
               expect {
-                PaperTrail::Version.where_object_changes_from([])
+                described_class.where_object_changes_from([])
               }.to raise_error(ArgumentError)
             end
 
@@ -380,7 +380,7 @@ module PaperTrail
                 bicycle.update!(name: "xyz")
 
                 allow(adapter).to(
-                  receive(:where_object_changes_from).with(Version, name: "abc")
+                  receive(:where_object_changes_from).with(described_class, name: "abc")
                 ).and_return([bicycle.versions[1]])
 
                 PaperTrail.config.object_changes_adapter = adapter
@@ -447,10 +447,10 @@ module PaperTrail
           describe "#where_object_changes_to", versioning: true do
             it "requires its argument to be a Hash" do
               expect {
-                PaperTrail::Version.where_object_changes_to(:foo)
+                described_class.where_object_changes_to(:foo)
               }.to raise_error(ArgumentError)
               expect {
-                PaperTrail::Version.where_object_changes_to([])
+                described_class.where_object_changes_to([])
               }.to raise_error(ArgumentError)
             end
 
@@ -465,7 +465,7 @@ module PaperTrail
                 bicycle.update!(name: "xyz")
 
                 allow(adapter).to(
-                  receive(:where_object_changes_to).with(Version, name: "xyz")
+                  receive(:where_object_changes_to).with(described_class, name: "xyz")
                 ).and_return([bicycle.versions[1]])
 
                 PaperTrail.config.object_changes_adapter = adapter

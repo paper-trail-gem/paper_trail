@@ -6,7 +6,7 @@ require "support/performance_helpers"
 RSpec.describe Widget, type: :model, versioning: true do
   describe "#changeset" do
     it "has expected values" do
-      widget = Widget.create(name: "Henry")
+      widget = described_class.create(name: "Henry")
       changeset = widget.versions.last.changeset
       expect(changeset["name"]).to eq([nil, "Henry"])
       expect(changeset["id"]).to eq([nil, widget.id])
@@ -24,7 +24,7 @@ RSpec.describe Widget, type: :model, versioning: true do
       end
 
       it "calls the adapter's load_changeset method" do
-        widget = Widget.create(name: "Henry")
+        widget = described_class.create(name: "Henry")
         adapter = instance_spy("CustomObjectChangesAdapter")
         PaperTrail.config.object_changes_adapter = adapter
         allow(adapter).to(
@@ -39,7 +39,7 @@ RSpec.describe Widget, type: :model, versioning: true do
       it "defaults to the original behavior" do
         adapter = Class.new.new
         PaperTrail.config.object_changes_adapter = adapter
-        widget = Widget.create(name: "Henry")
+        widget = described_class.create(name: "Henry")
         changeset = widget.versions.last.changeset
         expect(changeset[:name]).to eq([nil, "Henry"])
       end
@@ -48,44 +48,44 @@ RSpec.describe Widget, type: :model, versioning: true do
 
   context "with a new record" do
     it "not have any previous versions" do
-      expect(Widget.new.versions).to(eq([]))
+      expect(described_class.new.versions).to(eq([]))
     end
 
     it "be live" do
-      expect(Widget.new.paper_trail.live?).to(eq(true))
+      expect(described_class.new.paper_trail.live?).to(eq(true))
     end
   end
 
   context "with a persisted record" do
     it "have one previous version" do
-      widget = Widget.create(name: "Henry", created_at: (Time.current - 1.day))
+      widget = described_class.create(name: "Henry", created_at: (Time.current - 1.day))
       expect(widget.versions.length).to(eq(1))
     end
 
     it "be nil in its previous version" do
-      widget = Widget.create(name: "Henry")
+      widget = described_class.create(name: "Henry")
       expect(widget.versions.first.object).to(be_nil)
       expect(widget.versions.first.reify).to(be_nil)
     end
 
     it "record the correct event" do
-      widget = Widget.create(name: "Henry")
+      widget = described_class.create(name: "Henry")
       expect(widget.versions.first.event).to(match(/create/i))
     end
 
     it "be live" do
-      widget = Widget.create(name: "Henry")
+      widget = described_class.create(name: "Henry")
       expect(widget.paper_trail.live?).to(eq(true))
     end
 
     it "use the widget `updated_at` as the version's `created_at`" do
-      widget = Widget.create(name: "Henry")
+      widget = described_class.create(name: "Henry")
       expect(widget.versions.first.created_at.to_i).to(eq(widget.updated_at.to_i))
     end
 
     context "when updated without any changes" do
       it "to have two previous versions" do
-        widget = Widget.create(name: "Henry")
+        widget = described_class.create(name: "Henry")
         widget.touch
         expect(widget.versions.length).to eq(2)
       end
@@ -93,13 +93,13 @@ RSpec.describe Widget, type: :model, versioning: true do
 
     context "when updated with changes" do
       it "have three previous versions" do
-        widget = Widget.create(name: "Henry")
+        widget = described_class.create(name: "Henry")
         widget.update(name: "Harry")
         expect(widget.versions.length).to(eq(2))
       end
 
       it "be available in its previous version" do
-        widget = Widget.create(name: "Henry")
+        widget = described_class.create(name: "Henry")
         widget.update(name: "Harry")
         expect(widget.name).to(eq("Harry"))
         expect(widget.versions.last.object).not_to(be_nil)
@@ -109,19 +109,19 @@ RSpec.describe Widget, type: :model, versioning: true do
       end
 
       it "have the same ID in its previous version" do
-        widget = Widget.create(name: "Henry")
+        widget = described_class.create(name: "Henry")
         widget.update(name: "Harry")
         expect(widget.versions.last.reify.id).to(eq(widget.id))
       end
 
       it "record the correct event" do
-        widget = Widget.create(name: "Henry")
+        widget = described_class.create(name: "Henry")
         widget.update(name: "Harry")
         expect(widget.versions.last.event).to(match(/update/i))
       end
 
       it "have versions that are not live" do
-        widget = Widget.create(name: "Henry")
+        widget = described_class.create(name: "Henry")
         widget.update(name: "Harry")
         widget.versions.map(&:reify).compact.each do |v|
           expect(v.paper_trail).not_to be_live
@@ -129,7 +129,7 @@ RSpec.describe Widget, type: :model, versioning: true do
       end
 
       it "have stored changes" do
-        widget = Widget.create(name: "Henry")
+        widget = described_class.create(name: "Henry")
         widget.update(name: "Harry")
         last_obj_changes = widget.versions.last.object_changes
         actual = PaperTrail.serializer.load(last_obj_changes).reject do |k, _v|
@@ -141,7 +141,7 @@ RSpec.describe Widget, type: :model, versioning: true do
       end
 
       it "return changes with indifferent access" do
-        widget = Widget.create(name: "Henry")
+        widget = described_class.create(name: "Henry")
         widget.update(name: "Harry")
         expect(widget.versions.last.changeset[:name]).to(eq(%w[Henry Harry]))
         expect(widget.versions.last.changeset["name"]).to(eq(%w[Henry Harry]))
@@ -150,7 +150,7 @@ RSpec.describe Widget, type: :model, versioning: true do
 
     context "when updated, and has one associated object" do
       it "not copy the has_one association by default when reifying" do
-        widget = Widget.create(name: "Henry")
+        widget = described_class.create(name: "Henry")
         widget.update(name: "Harry")
         wotsit = widget.create_wotsit name: "John"
         reified_widget = widget.versions.last.reify
@@ -161,7 +161,7 @@ RSpec.describe Widget, type: :model, versioning: true do
 
     context "when updated, and has many associated objects" do
       it "copy the has_many associations when reifying" do
-        widget = Widget.create(name: "Henry")
+        widget = described_class.create(name: "Henry")
         widget.update(name: "Harry")
         widget.fluxors.create(name: "f-zero")
         widget.fluxors.create(name: "f-one")
@@ -175,7 +175,7 @@ RSpec.describe Widget, type: :model, versioning: true do
 
     context "when updated, and has many associated polymorphic objects" do
       it "copy the has_many associations when reifying" do
-        widget = Widget.create(name: "Henry")
+        widget = described_class.create(name: "Henry")
         widget.update(name: "Harry")
         widget.whatchamajiggers.create(name: "f-zero")
         widget.whatchamajiggers.create(name: "f-zero")
@@ -189,7 +189,7 @@ RSpec.describe Widget, type: :model, versioning: true do
 
     context "when updated, polymorphic objects by themselves" do
       it "not fail with a nil pointer on the polymorphic association" do
-        widget = Widget.create(name: "Henry")
+        widget = described_class.create(name: "Henry")
         widget.update(name: "Harry")
         widget = Whatchamajigger.new(name: "f-zero")
         widget.save!
@@ -198,21 +198,21 @@ RSpec.describe Widget, type: :model, versioning: true do
 
     context "when updated, and then destroyed" do
       it "record the correct event" do
-        widget = Widget.create(name: "Henry")
+        widget = described_class.create(name: "Henry")
         widget.update(name: "Harry")
         widget.destroy
         expect(PaperTrail::Version.last.event).to(match(/destroy/i))
       end
 
       it "have three previous versions" do
-        widget = Widget.create(name: "Henry")
+        widget = described_class.create(name: "Henry")
         widget.update(name: "Harry")
         widget.destroy
         expect(PaperTrail::Version.with_item_keys("Widget", widget.id).length).to(eq(3))
       end
 
       it "returns the expected attributes for the reified widget" do
-        widget = Widget.create(name: "Henry")
+        widget = described_class.create(name: "Henry")
         widget.update(name: "Harry")
         widget.destroy
         reified_widget = PaperTrail::Version.last.reify
@@ -239,7 +239,7 @@ RSpec.describe Widget, type: :model, versioning: true do
       end
 
       it "be re-creatable from its previous version" do
-        widget = Widget.create(name: "Henry")
+        widget = described_class.create(name: "Henry")
         widget.update(name: "Harry")
         widget.destroy
         reified_widget = PaperTrail::Version.last.reify
@@ -247,7 +247,7 @@ RSpec.describe Widget, type: :model, versioning: true do
       end
 
       it "restore its associations on its previous version" do
-        widget = Widget.create(name: "Henry")
+        widget = described_class.create(name: "Henry")
         widget.update(name: "Harry")
         widget.fluxors.create(name: "flux")
         widget.destroy
@@ -257,7 +257,7 @@ RSpec.describe Widget, type: :model, versioning: true do
       end
 
       it "have nil item for last version" do
-        widget = Widget.create(name: "Henry")
+        widget = described_class.create(name: "Henry")
         widget.update(name: "Harry")
         widget.destroy
         expect(widget.versions.last.item).to be_nil
@@ -270,7 +270,7 @@ RSpec.describe Widget, type: :model, versioning: true do
     let!(:t0) { Time.current }
     let(:previous_widget) { widget.versions.last.reify }
     let(:widget) {
-      Widget.create(
+      described_class.create(
         name: "Warble",
         a_text: "The quick brown fox",
         an_integer: 42,
@@ -338,7 +338,7 @@ RSpec.describe Widget, type: :model, versioning: true do
       let(:last_version) { widget.versions.last }
 
       it "reify previous version" do
-        assert_kind_of(Widget, last_version.reify)
+        assert_kind_of(described_class, last_version.reify)
       end
 
       it "restore all forward-compatible attributes" do
@@ -362,7 +362,7 @@ RSpec.describe Widget, type: :model, versioning: true do
       after { PaperTrail.enabled = true }
 
       it "not add to its trail" do
-        widget = Widget.create(name: "Zaphod")
+        widget = described_class.create(name: "Zaphod")
         PaperTrail.enabled = false
         count = widget.versions.length
         widget.update(name: "Beeblebrox")
@@ -372,23 +372,23 @@ RSpec.describe Widget, type: :model, versioning: true do
 
     context "with its paper trail turned off, when updated" do
       after do
-        PaperTrail.request.enable_model(Widget)
+        PaperTrail.request.enable_model(described_class)
       end
 
       it "not add to its trail" do
-        widget = Widget.create(name: "Zaphod")
-        PaperTrail.request.disable_model(Widget)
+        widget = described_class.create(name: "Zaphod")
+        PaperTrail.request.disable_model(described_class)
         count = widget.versions.length
         widget.update(name: "Beeblebrox")
         expect(widget.versions.length).to(eq(count))
       end
 
       it "add to its trail" do
-        widget = Widget.create(name: "Zaphod")
-        PaperTrail.request.disable_model(Widget)
+        widget = described_class.create(name: "Zaphod")
+        PaperTrail.request.disable_model(described_class)
         count = widget.versions.length
         widget.update(name: "Beeblebrox")
-        PaperTrail.request.enable_model(Widget)
+        PaperTrail.request.enable_model(described_class)
         widget.update(name: "Ford")
         expect(widget.versions.length).to(eq((count + 1)))
       end
@@ -398,7 +398,7 @@ RSpec.describe Widget, type: :model, versioning: true do
   context "with somebody making changes" do
     context "when a record is created" do
       it "tracks who made the change" do
-        widget = Widget.new(name: "Fidget")
+        widget = described_class.new(name: "Fidget")
         PaperTrail.request.whodunnit = "Alice"
         widget.save
         version = widget.versions.last
@@ -411,7 +411,7 @@ RSpec.describe Widget, type: :model, versioning: true do
 
     context "when created, then updated" do
       it "tracks who made the change" do
-        widget = Widget.new(name: "Fidget")
+        widget = described_class.new(name: "Fidget")
         PaperTrail.request.whodunnit = "Alice"
         widget.save
         PaperTrail.request.whodunnit = "Bob"
@@ -426,7 +426,7 @@ RSpec.describe Widget, type: :model, versioning: true do
 
     context "when created, updated, and destroyed" do
       it "tracks who made the change" do
-        widget = Widget.new(name: "Fidget")
+        widget = described_class.new(name: "Fidget")
         PaperTrail.request.whodunnit = "Alice"
         widget.save
         PaperTrail.request.whodunnit = "Bob"
@@ -444,7 +444,7 @@ RSpec.describe Widget, type: :model, versioning: true do
 
   context "with an item with versions" do
     context "when the versions were created over time" do
-      let(:widget) { Widget.create(name: "Widget") }
+      let(:widget) { described_class.create(name: "Widget") }
       let(:t0) { 2.days.ago }
       let(:t1) { 1.day.ago }
       let(:t2) { 1.hour.ago }
@@ -501,7 +501,7 @@ RSpec.describe Widget, type: :model, versioning: true do
 
     describe ".versions_between" do
       it "return versions in the time period" do
-        widget = Widget.create(name: "Widget")
+        widget = described_class.create(name: "Widget")
         widget.update(name: "Fidget")
         widget.update(name: "Digit")
         widget.versions[0].update(created_at: 30.days.ago)
@@ -524,11 +524,11 @@ RSpec.describe Widget, type: :model, versioning: true do
     end
 
     context "with the first version" do
-      let(:widget) { Widget.create(name: "Widget") }
+      let(:widget) { described_class.create(name: "Widget") }
       let(:version) { widget.versions.last }
 
       before do
-        widget = Widget.create(name: "Widget")
+        widget = described_class.create(name: "Widget")
         widget.update(name: "Fidget")
         widget.update(name: "Digit")
       end
@@ -547,7 +547,7 @@ RSpec.describe Widget, type: :model, versioning: true do
     end
 
     context "with the last version" do
-      let(:widget) { Widget.create(name: "Widget") }
+      let(:widget) { described_class.create(name: "Widget") }
       let(:version) { widget.versions.last }
 
       before do
@@ -571,7 +571,7 @@ RSpec.describe Widget, type: :model, versioning: true do
 
   context "with a reified item" do
     it "know which version it came from, and return its previous self" do
-      widget = Widget.create(name: "Bob")
+      widget = described_class.create(name: "Bob")
       %w[Tom Dick Jane].each do |name|
         widget.update(name: name)
       end
@@ -585,7 +585,7 @@ RSpec.describe Widget, type: :model, versioning: true do
   describe "#next_version" do
     context "with a reified item" do
       it "returns the object (not a Version) as it became next" do
-        widget = Widget.create(name: "Bob")
+        widget = described_class.create(name: "Bob")
         %w[Tom Dick Jane].each do |name|
           widget.update(name: name)
         end
@@ -598,7 +598,7 @@ RSpec.describe Widget, type: :model, versioning: true do
 
     context "with a non-reified item" do
       it "always returns nil because cannot ever have a next version" do
-        widget = Widget.new
+        widget = described_class.new
         expect(widget.paper_trail.next_version).to(be_nil)
         widget.save
         %w[Tom Dick Jane].each do |name|
@@ -612,7 +612,7 @@ RSpec.describe Widget, type: :model, versioning: true do
   describe "#previous_version" do
     context "with a reified item" do
       it "returns the object (not a Version) as it was most recently" do
-        widget = Widget.create(name: "Bob")
+        widget = described_class.create(name: "Bob")
         %w[Tom Dick Jane].each do |name|
           widget.update(name: name)
         end
@@ -625,7 +625,7 @@ RSpec.describe Widget, type: :model, versioning: true do
 
     context "with a non-reified item" do
       it "returns the object (not a Version) as it was most recently" do
-        widget = Widget.new
+        widget = described_class.new
         expect(widget.paper_trail.previous_version).to(be_nil)
         widget.save
         %w[Tom Dick Jane].each do |name|
@@ -638,7 +638,7 @@ RSpec.describe Widget, type: :model, versioning: true do
 
   context "with an unsaved record" do
     it "not have a version created on destroy" do
-      widget = Widget.new
+      widget = described_class.new
       widget.destroy
       expect(widget.versions.empty?).to(eq(true))
     end
@@ -646,7 +646,7 @@ RSpec.describe Widget, type: :model, versioning: true do
 
   context "when measuring the memory allocation of" do
     let(:widget) do
-      Widget.new(
+      described_class.new(
         name: "Warble",
         a_text: "The quick brown fox",
         an_integer: 42,
@@ -725,7 +725,7 @@ RSpec.describe Widget, type: :model, versioning: true do
   end
 
   describe "`have_a_version_with` matcher", versioning: true do
-    let(:widget) { Widget.create! name: "Bob", an_integer: 1 }
+    let(:widget) { described_class.create! name: "Bob", an_integer: 1 }
 
     before do
       widget.update!(name: "Leonard", an_integer: 1)
@@ -743,21 +743,21 @@ RSpec.describe Widget, type: :model, versioning: true do
   describe "versioning option" do
     context "when enabled", versioning: true do
       it "enables versioning" do
-        widget = Widget.create! name: "Bob", an_integer: 1
+        widget = described_class.create! name: "Bob", an_integer: 1
         expect(widget.versions.size).to eq(1)
       end
     end
 
     context "when disabled", versioning: false do
       it "does not enable versioning" do
-        widget = Widget.create! name: "Bob", an_integer: 1
+        widget = described_class.create! name: "Bob", an_integer: 1
         expect(widget.versions.size).to eq(0)
       end
     end
   end
 
   describe "Callbacks", versioning: true do
-    let(:widget) { Widget.create! name: "Bob", an_integer: 1 }
+    let(:widget) { described_class.create! name: "Bob", an_integer: 1 }
 
     describe "before_save" do
       it "resets value for timestamp attrs for update so that value gets updated properly" do
@@ -768,7 +768,7 @@ RSpec.describe Widget, type: :model, versioning: true do
     end
 
     describe "after_create" do
-      let(:widget) { Widget.create!(name: "Foobar", created_at: Time.current - 1.week) }
+      let(:widget) { described_class.create!(name: "Foobar", created_at: Time.current - 1.week) }
 
       it "corresponding version uses the widget's `updated_at`" do
         expect(widget.versions.last.created_at.to_i).to eq(widget.updated_at.to_i)
@@ -832,7 +832,7 @@ RSpec.describe Widget, type: :model, versioning: true do
   end
 
   describe "Association", versioning: true do
-    let(:widget) { Widget.create! name: "Bob", an_integer: 1 }
+    let(:widget) { described_class.create! name: "Bob", an_integer: 1 }
 
     describe "sort order" do
       it "sorts by the timestamp order from the `VersionConcern`" do
@@ -844,19 +844,19 @@ RSpec.describe Widget, type: :model, versioning: true do
   end
 
   describe "#create", versioning: true do
-    let(:widget) { Widget.create! name: "Bob", an_integer: 1 }
+    let(:widget) { described_class.create! name: "Bob", an_integer: 1 }
 
     it "creates a version record" do
-      wordget = Widget.create
+      wordget = described_class.create
       assert_equal 1, wordget.versions.length
     end
   end
 
   describe "#destroy", versioning: true do
-    let(:widget) { Widget.create! name: "Bob", an_integer: 1 }
+    let(:widget) { described_class.create! name: "Bob", an_integer: 1 }
 
     it "creates a version record" do
-      widget = Widget.create
+      widget = described_class.create
       assert_equal 1, widget.versions.length
       widget.destroy
       versions_for_widget = PaperTrail::Version.with_item_keys("Widget", widget.id)
@@ -869,7 +869,7 @@ RSpec.describe Widget, type: :model, versioning: true do
         # the `widget.versions` association, instead of `with_item_keys`.
         PaperTrail::Version.with_item_keys("Widget", widget.id)
       }
-      widget = Widget.create
+      widget = described_class.create
       assert_equal 1, widget.versions.length
       widget.destroy
       assert_equal 2, versions.call(widget).length
@@ -883,7 +883,7 @@ RSpec.describe Widget, type: :model, versioning: true do
   end
 
   describe "#paper_trail.originator", versioning: true do
-    let(:widget) { Widget.create! name: "Bob", an_integer: 1 }
+    let(:widget) { described_class.create! name: "Bob", an_integer: 1 }
 
     describe "return value" do
       let(:orig_name) { FFaker::Name.name }
@@ -923,7 +923,7 @@ RSpec.describe Widget, type: :model, versioning: true do
   end
 
   describe "#version_at", versioning: true do
-    let(:widget) { Widget.create! name: "Bob", an_integer: 1 }
+    let(:widget) { described_class.create! name: "Bob", an_integer: 1 }
 
     context "when Timestamp argument is AFTER object has been destroyed" do
       it "returns nil" do
@@ -935,7 +935,7 @@ RSpec.describe Widget, type: :model, versioning: true do
   end
 
   describe "touch", versioning: true do
-    let(:widget) { Widget.create! name: "Bob", an_integer: 1 }
+    let(:widget) { described_class.create! name: "Bob", an_integer: 1 }
 
     it "creates a version" do
       expect { widget.touch }.to change {
@@ -953,10 +953,10 @@ RSpec.describe Widget, type: :model, versioning: true do
   end
 
   describe ".paper_trail.update_columns", versioning: true do
-    let(:widget) { Widget.create! name: "Bob", an_integer: 1 }
+    let(:widget) { described_class.create! name: "Bob", an_integer: 1 }
 
     it "creates a version record" do
-      widget = Widget.create
+      widget = described_class.create
       expect(widget.versions.count).to eq(1)
       widget.paper_trail.update_columns(name: "Bugle")
       expect(widget.versions.count).to eq(2)
@@ -966,10 +966,10 @@ RSpec.describe Widget, type: :model, versioning: true do
   end
 
   describe "#update", versioning: true do
-    let(:widget) { Widget.create! name: "Bob", an_integer: 1 }
+    let(:widget) { described_class.create! name: "Bob", an_integer: 1 }
 
     it "creates a version record" do
-      widget = Widget.create
+      widget = described_class.create
       assert_equal 1, widget.versions.length
       widget.update(name: "Bugle")
       assert_equal 2, widget.versions.length

@@ -5,7 +5,7 @@ require "support/performance_helpers"
 
 RSpec.describe(FooWidget, versioning: true) do
   context "with a subclass" do
-    let(:foo) { FooWidget.create }
+    let(:foo) { described_class.create }
 
     before do
       foo.update!(name: "Foo")
@@ -26,7 +26,7 @@ RSpec.describe(FooWidget, versioning: true) do
       before { foo.destroy }
 
       it "reify with the correct type" do
-        assert_kind_of(FooWidget, foo.versions.last.reify)
+        assert_kind_of(described_class, foo.versions.last.reify)
         expect(PaperTrail::Version.last.previous).to(eq(foo.versions[1]))
         expect(PaperTrail::Version.last.next).to(be_nil)
       end

@@ -9,21 +9,21 @@ require "spec_helper"
 RSpec.describe Person, type: :model, versioning: true do
   describe "#time_zone" do
     it "returns an ActiveSupport::TimeZone" do
-      person = Person.new(time_zone: "Samoa")
+      person = described_class.new(time_zone: "Samoa")
       expect(person.time_zone.class).to(eq(ActiveSupport::TimeZone))
     end
   end
 
   context "when the model is saved" do
     it "version.object_changes should store long serialization of TimeZone object" do
-      person = Person.new(time_zone: "Samoa")
+      person = described_class.new(time_zone: "Samoa")
       person.save!
       len = person.versions.last.object_changes.length
       expect((len < 105)).to(be_truthy)
     end
 
     it "version.object_changes attribute should have stored the value from serializer" do
-      person = Person.new(time_zone: "Samoa")
+      person = described_class.new(time_zone: "Samoa")
       person.save!
       as_stored_in_version = HashWithIndifferentAccess[
         YAML.load(person.versions.last.object_changes)
@@ -34,14 +34,14 @@ RSpec.describe Person, type: :model, versioning: true do
     end
 
     it "version.changeset should convert attribute to original, unserialized value" do
-      person = Person.new(time_zone: "Samoa")
+      person = described_class.new(time_zone: "Samoa")
       person.save!
       unserialized_value = Person::TimeZoneSerializer.load(person.time_zone)
       expect(person.versions.last.changeset[:time_zone].last).to(eq(unserialized_value))
     end
 
     it "record.changes (before save) returns the original, unserialized values" do
-      person = Person.new(time_zone: "Samoa")
+      person = described_class.new(time_zone: "Samoa")
       changes_before_save = person.changes.dup
       person.save!
       expect(
@@ -50,7 +50,7 @@ RSpec.describe Person, type: :model, versioning: true do
     end
 
     it "version.changeset should be the same as record.changes was before the save" do
-      person = Person.new(time_zone: "Samoa")
+      person = described_class.new(time_zone: "Samoa")
       changes_before_save = person.changes.dup
       person.save!
       actual = person.versions.last.changeset.delete_if { |k, _v| (k.to_sym == :id) }
@@ -61,7 +61,7 @@ RSpec.describe Person, type: :model, versioning: true do
 
     context "when that attribute is updated" do
       it "object should not store long serialization of TimeZone object" do
-        person = Person.new(time_zone: "Samoa")
+        person = described_class.new(time_zone: "Samoa")
         person.save!
         person.assign_attributes(time_zone: "Pacific Time (US & Canada)")
         person.save!
@@ -70,7 +70,7 @@ RSpec.describe Person, type: :model, versioning: true do
       end
 
       it "object_changes should not store long serialization of TimeZone object" do
-        person = Person.new(time_zone: "Samoa")
+        person = described_class.new(time_zone: "Samoa")
         person.save!
         person.assign_attributes(time_zone: "Pacific Time (US & Canada)")
         person.save!
@@ -79,7 +79,7 @@ RSpec.describe Person, type: :model, versioning: true do
       end
 
       it "version.object attribute should have stored value from serializer" do
-        person = Person.new(time_zone: "Samoa")
+        person = described_class.new(time_zone: "Samoa")
         person.save!
         attribute_value_before_change = person.time_zone
         person.assign_attributes(time_zone: "Pacific Time (US & Canada)")
@@ -93,7 +93,7 @@ RSpec.describe Person, type: :model, versioning: true do
       end
 
       it "version.object_changes attribute should have stored value from serializer" do
-        person = Person.new(time_zone: "Samoa")
+        person = described_class.new(time_zone: "Samoa")
         person.save!
         person.assign_attributes(time_zone: "Pacific Time (US & Canada)")
         person.save!
@@ -106,7 +106,7 @@ RSpec.describe Person, type: :model, versioning: true do
       end
 
       it "version.reify should convert attribute to original, unserialized value" do
-        person = Person.new(time_zone: "Samoa")
+        person = described_class.new(time_zone: "Samoa")
         person.save!
         attribute_value_before_change = person.time_zone
         person.assign_attributes(time_zone: "Pacific Time (US & Canada)")
@@ -116,7 +116,7 @@ RSpec.describe Person, type: :model, versioning: true do
       end
 
       it "version.changeset should convert attribute to original, unserialized value" do
-        person = Person.new(time_zone: "Samoa")
+        person = described_class.new(time_zone: "Samoa")
         person.save!
         person.assign_attributes(time_zone: "Pacific Time (US & Canada)")
         person.save!
@@ -125,7 +125,7 @@ RSpec.describe Person, type: :model, versioning: true do
       end
 
       it "record.changes (before save) returns the original, unserialized values" do
-        person = Person.new(time_zone: "Samoa")
+        person = described_class.new(time_zone: "Samoa")
         person.save!
         person.assign_attributes(time_zone: "Pacific Time (US & Canada)")
         changes_before_save = person.changes.dup
@@ -136,7 +136,7 @@ RSpec.describe Person, type: :model, versioning: true do
       end
 
       it "version.changeset should be the same as record.changes was before the save" do
-        person = Person.new(time_zone: "Samoa")
+        person = described_class.new(time_zone: "Samoa")
         person.save!
         person.assign_attributes(time_zone: "Pacific Time (US & Canada)")
         changes_before_save = person.changes.dup
@@ -151,7 +151,7 @@ RSpec.describe Person, type: :model, versioning: true do
 
   describe "#cars and bicycles" do
     it "can be reified" do
-      person = Person.create(name: "Frank")
+      person = described_class.create(name: "Frank")
       car = Car.create(name: "BMW 325")
       bicycle = Bicycle.create(name: "BMX 1.0")
 
