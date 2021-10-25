@@ -56,19 +56,10 @@ Layout/MultilineOperationIndentation:
 Layout/ParameterAlignment:
   EnforcedStyle: with_fixed_indentation
 
-Layout/SpaceAroundMethodCallOperator:
-  Enabled: true
-
 # Use exactly one space on each side of an operator. Do not align operators
 # because it makes the code harder to edit, and makes lines unnecessarily long.
 Layout/SpaceAroundOperators:
   AllowForAlignment: false
-
-Lint/RaiseException:
-  Enabled: true
-
-Lint/StructNewOverride:
-  Enabled: true
 
 # Migrations often contain long up/down methods, and extracting smaller methods
 # from these is of questionable value.
