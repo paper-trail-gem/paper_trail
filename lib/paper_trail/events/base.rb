@@ -196,17 +196,25 @@ module PaperTrail
         if value.respond_to?(:call)
           value.call(@record)
         elsif value.is_a?(Symbol) && @record.respond_to?(value, true)
-          # If it is an attribute that is changing in an existing object,
-          # be sure to grab the current version.
-          if event != "create" &&
-              @record.has_attribute?(value) &&
-              attribute_changed_in_latest_version?(value)
-            attribute_in_previous_version(value, false)
-          else
-            @record.send(value)
-          end
+          metadatum_from_model_method(event, value)
         else
           value
+        end
+      end
+
+      # The model method can either be an attribute or a non-attribute method.
+      #
+      # If it is an attribute that is changing in an existing object,
+      # be sure to grab the correct version.
+      #
+      # @api private
+      def metadatum_from_model_method(event, method)
+        if event != "create" &&
+            @record.has_attribute?(method) &&
+            attribute_changed_in_latest_version?(method)
+          attribute_in_previous_version(method, false)
+        else
+          @record.send(method)
         end
       end
 
