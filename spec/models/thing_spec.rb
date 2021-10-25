@@ -4,10 +4,10 @@ require "spec_helper"
 
 RSpec.describe Thing, type: :model do
   describe "#versions", versioning: true do
-    let(:thing) { Thing.create! }
+    let(:thing) { described_class.create! }
 
     it "applies the scope option" do
-      expect(Thing.reflect_on_association(:versions).scope).to be_a Proc
+      expect(described_class.reflect_on_association(:versions).scope).to be_a Proc
       expect(thing.versions.to_sql).to end_with "ORDER BY id desc"
     end
 

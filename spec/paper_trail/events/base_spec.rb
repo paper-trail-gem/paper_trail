@@ -9,7 +9,7 @@ module PaperTrail
         context "with a new record" do
           it "returns true" do
             g = Gadget.new(created_at: Time.current)
-            event = PaperTrail::Events::Base.new(g, false)
+            event = described_class.new(g, false)
             expect(event.changed_notably?).to eq(true)
           end
         end
@@ -18,14 +18,14 @@ module PaperTrail
           it "only acknowledges non-ignored attrs" do
             gadget = Gadget.create!(created_at: Time.current)
             gadget.name = "Wrench"
-            event = PaperTrail::Events::Base.new(gadget, false)
+            event = described_class.new(gadget, false)
             expect(event.changed_notably?).to eq(true)
           end
 
           it "does not acknowledge ignored attr (brand)" do
             gadget = Gadget.create!(created_at: Time.current)
             gadget.brand = "Acme"
-            event = PaperTrail::Events::Base.new(gadget, false)
+            event = described_class.new(gadget, false)
             expect(event.changed_notably?).to eq(false)
           end
         end
@@ -35,7 +35,7 @@ module PaperTrail
             gadget = Gadget.create!(created_at: Time.current)
             gadget.name = "Wrench"
             gadget.updated_at = Time.current
-            event = PaperTrail::Events::Base.new(gadget, false)
+            event = described_class.new(gadget, false)
             expect(event.changed_notably?).to eq(true)
           end
 
@@ -43,7 +43,7 @@ module PaperTrail
             gadget = Gadget.create!(created_at: Time.current)
             gadget.brand = "Acme"
             gadget.updated_at = Time.current
-            event = PaperTrail::Events::Base.new(gadget, false)
+            event = described_class.new(gadget, false)
             expect(event.changed_notably?).to eq(false)
           end
         end
@@ -53,7 +53,7 @@ module PaperTrail
         it "returns a hash lacking the skipped attribute" do
           # Skipper has_paper_trail(..., skip: [:another_timestamp])
           skipper = Skipper.create!(another_timestamp: Time.current)
-          event = PaperTrail::Events::Base.new(skipper, false)
+          event = described_class.new(skipper, false)
           attributes = event.send(:nonskipped_attributes_before_change, false)
           expect(attributes).not_to have_key("another_timestamp")
         end

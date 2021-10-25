@@ -4,10 +4,10 @@ require "spec_helper"
 
 RSpec.describe JoinedVersion, type: :model, versioning: true do
   let(:widget) { Widget.create!(name: FFaker::Name.name) }
-  let(:version) { JoinedVersion.first }
+  let(:version) { described_class.first }
 
   describe "default_scope" do
-    it { expect(JoinedVersion.default_scopes).not_to be_empty }
+    it { expect(described_class.default_scopes).not_to be_empty }
   end
 
   describe "VersionConcern::ClassMethods" do
@@ -15,19 +15,19 @@ RSpec.describe JoinedVersion, type: :model, versioning: true do
 
     describe "#subsequent" do
       it "does not raise error when there is a default_scope that joins" do
-        JoinedVersion.subsequent(version).first
+        described_class.subsequent(version).first
       end
     end
 
     describe "#preceding" do
       it "does not raise error when there is a default scope that joins" do
-        JoinedVersion.preceding(version).first
+        described_class.preceding(version).first
       end
     end
 
     describe "#between" do
       it "does not raise error when there is a default scope that joins" do
-        JoinedVersion.between(Time.current, 1.minute.from_now).first
+        described_class.between(Time.current, 1.minute.from_now).first
       end
     end
   end

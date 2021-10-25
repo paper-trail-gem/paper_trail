@@ -5,7 +5,7 @@ require "spec_helper"
 RSpec.describe Document, type: :model, versioning: true do
   describe "have_a_version_with matcher" do
     it "works with custom versions association" do
-      document = Document.create!(name: "Foo")
+      document = described_class.create!(name: "Foo")
       document.update!(name: "Bar")
       expect(document).to have_a_version_with(name: "Foo")
     end
@@ -13,7 +13,7 @@ RSpec.describe Document, type: :model, versioning: true do
 
   describe "#paper_trail.next_version" do
     it "returns the expected document" do
-      doc = Document.create
+      doc = described_class.create
       doc.update(name: "Doc 1")
       reified = doc.paper_trail_versions.last.reify
       expect(doc.name).to(eq(reified.paper_trail.next_version.name))
@@ -22,7 +22,7 @@ RSpec.describe Document, type: :model, versioning: true do
 
   describe "#paper_trail.previous_version" do
     it "returns the expected document" do
-      doc = Document.create
+      doc = described_class.create
       doc.update(name: "Doc 1")
       doc.update(name: "Doc 2")
       expect(doc.paper_trail_versions.length).to(eq(3))
@@ -32,7 +32,7 @@ RSpec.describe Document, type: :model, versioning: true do
 
   describe "#paper_trail_versions" do
     it "returns the expected version records" do
-      doc = Document.create
+      doc = described_class.create
       doc.update(name: "Doc 1")
       expect(doc.paper_trail_versions.length).to(eq(2))
       expect(doc.paper_trail_versions.map(&:event)).to(
@@ -43,7 +43,7 @@ RSpec.describe Document, type: :model, versioning: true do
 
   describe "#versions" do
     it "does not respond to versions method" do
-      doc = Document.create
+      doc = described_class.create
       doc.update(name: "Doc 1")
       expect(doc).not_to respond_to(:versions)
     end
