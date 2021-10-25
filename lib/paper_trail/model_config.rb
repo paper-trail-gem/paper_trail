@@ -40,8 +40,7 @@ module PaperTrail
       @model_class.after_create { |r|
         r.paper_trail.record_create if r.paper_trail.save_version?
       }
-      return if @model_class.paper_trail_options[:on].include?(:create)
-      @model_class.paper_trail_options[:on] << :create
+      append_option_uniquely(:on, :create)
     end
 
     # Adds a callback that records a version before or after a "destroy" event.
@@ -49,7 +48,6 @@ module PaperTrail
     # @api public
     def on_destroy(recording_order = "before")
       assert_valid_recording_order_for_on_destroy(recording_order)
-
       @model_class.send(
         "#{recording_order}_destroy",
         lambda do |r|
@@ -57,9 +55,7 @@ module PaperTrail
           r.paper_trail.record_destroy(recording_order)
         end
       )
-
-      return if @model_class.paper_trail_options[:on].include?(:destroy)
-      @model_class.paper_trail_options[:on] << :destroy
+      append_option_uniquely(:on, :destroy)
     end
 
     # Adds a callback that records a version after an "update" event.
@@ -81,8 +77,7 @@ module PaperTrail
       @model_class.after_update { |r|
         r.paper_trail.clear_version_instance
       }
-      return if @model_class.paper_trail_options[:on].include?(:update)
-      @model_class.paper_trail_options[:on] << :update
+      append_option_uniquely(:on, :update)
     end
 
     # Adds a callback that records a version after a "touch" event.
@@ -126,6 +121,13 @@ module PaperTrail
 
     RAILS_LT_6_0 = ::ActiveRecord.gem_version < ::Gem::Version.new("6.0.0")
     private_constant :RAILS_LT_6_0
+
+    # @api private
+    def append_option_uniquely(option, value)
+      collection = @model_class.paper_trail_options.fetch(option)
+      return if collection.include?(value)
+      collection << value
+    end
 
     # Raises an error if the provided class is an `abstract_class`.
     # @api private
