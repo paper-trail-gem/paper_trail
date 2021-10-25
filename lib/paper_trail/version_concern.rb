@@ -376,10 +376,11 @@ module PaperTrail
     #
     # @api private
     def version_limit
-      if limit_option?(item.class)
-        item.class.paper_trail_options[:limit]
-      elsif base_class_limit_option?(item.class)
-        item.class.base_class.paper_trail_options[:limit]
+      klass = item.class
+      if limit_option?(klass)
+        klass.paper_trail_options[:limit]
+      elsif base_class_limit_option?(klass)
+        klass.base_class.paper_trail_options[:limit]
       else
         PaperTrail.config.version_limit
       end
