@@ -207,6 +207,14 @@ module PaperTrail
       options
     end
 
+    # Process an `ignore`, `skip`, or `only` option.
+    def event_attribute_option(option_name)
+      [@model_class.paper_trail_options[option_name]].
+        flatten.
+        compact.
+        map { |attr| attr.is_a?(Hash) ? attr.stringify_keys : attr.to_s }
+    end
+
     def get_versions_scope(options)
       options[:versions][:scope] || -> { order(model.timestamp_sort_order) }
     end
@@ -241,12 +249,8 @@ module PaperTrail
       @model_class.paper_trail_options = options.dup
 
       %i[ignore skip only].each do |k|
-        @model_class.paper_trail_options[k] = [@model_class.paper_trail_options[k]].
-          flatten.
-          compact.
-          map { |attr| attr.is_a?(Hash) ? attr.stringify_keys : attr.to_s }
+        @model_class.paper_trail_options[k] = event_attribute_option(k)
       end
-
       @model_class.paper_trail_options[:meta] ||= {}
     end
   end
