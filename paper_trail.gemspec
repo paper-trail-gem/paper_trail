@@ -43,9 +43,7 @@ has been destroyed.
   # about 3 years, per https://www.ruby-lang.org/en/downloads/branches/
   #
   # See "Lowest supported ruby version" in CONTRIBUTING.md
-  #
-  # Ruby 2.5 reaches EoL on 2021-03-31.
-  s.required_ruby_version = ">= 2.5.0"
+  s.required_ruby_version = ">= 2.6.0"
 
   # We no longer specify a maximum activerecord version.
   # See discussion in paper_trail/compatibility.rb

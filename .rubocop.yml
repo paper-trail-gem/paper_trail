@@ -22,7 +22,7 @@ AllCops:
   NewCops: enable
 
   # See "Lowest supported ruby version" in CONTRIBUTING.md
-  TargetRubyVersion: 2.5
+  TargetRubyVersion: 2.6
 
 Bundler/OrderedGems:
   Exclude:
