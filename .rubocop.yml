@@ -90,12 +90,9 @@ Naming/FileName:
     - Appraisals
 
 # Heredocs are usually assigned to a variable or constant, which already has a
-# name, so naming the heredoc doesn't add much value. Feel free to name
-# heredocs that are used as anonymous values (not a variable, constant, or
-# named parameter).
-#
-# All heredocs containing SQL should be named SQL, to support editor syntax
-# highlighting.
+# name, so naming the delimiter doesn't add much value unless doing so improves
+# syntax highlighting. For example, all heredocs containing SQL should be named
+# SQL, to support editor syntax highlighting.
 Naming/HeredocDelimiterNaming:
   Enabled: false
 
@@ -147,10 +144,6 @@ Style/BlockDelimiters:
 # Use double negation wherever it would otherwise be impractical to convert
 # a value to an actual boolean.
 Style/DoubleNegation:
-  Enabled: false
-
-# This cop is unimportant in this repo.
-Style/ExponentialNotation:
   Enabled: false
 
 # Avoid annotated tokens except in desperately complicated format strings.
