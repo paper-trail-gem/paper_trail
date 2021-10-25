@@ -116,6 +116,20 @@ module PaperTrail
         @changes_in_latest_version ||= load_changes_in_latest_version
       end
 
+      # @api private
+      def evaluate_only
+        only = @record.paper_trail_options[:only].dup
+        # Remove Hash arguments and then evaluate whether the attributes (the
+        # keys of the hash) should also get pushed into the collection.
+        only.delete_if do |obj|
+          obj.is_a?(Hash) &&
+            obj.each { |attr, condition|
+              only << attr if condition.respond_to?(:call) && condition.call(@record)
+            }
+        end
+        only
+      end
+
       # An attributed is "ignored" if it is listed in the `:ignore` option
       # and/or the `:skip` option.  Returns true if an ignored attribute has
       # changed.
@@ -207,16 +221,9 @@ module PaperTrail
       def notably_changed
         # Memoized to reduce memory usage
         @notably_changed ||= begin
-          only = @record.paper_trail_options[:only].dup
-          # Remove Hash arguments and then evaluate whether the attributes (the
-          # keys of the hash) should also get pushed into the collection.
-          only.delete_if do |obj|
-            obj.is_a?(Hash) &&
-              obj.each { |attr, condition|
-                only << attr if condition.respond_to?(:call) && condition.call(@record)
-              }
-          end
-          only.empty? ? changed_and_not_ignored : (changed_and_not_ignored & only)
+          only = evaluate_only
+          cani = changed_and_not_ignored
+          only.empty? ? cani : (cani & only)
         end
       end
 
