@@ -31,8 +31,10 @@ Bundler/OrderedGems:
 Layout/ArgumentAlignment:
   EnforcedStyle: with_fixed_indentation
 
+# This cop has a bug in 1.22.2 (https://github.com/rubocop/rubocop/issues/10210)
+# When the bug is fixed, we'll return to using `EnforcedStyle: trailing`.
 Layout/DotPosition:
-  EnforcedStyle: trailing
+  Enabled: false
 
 # Avoid blank lines inside methods. They are a sign that the method is too big.
 Layout/EmptyLineAfterGuardClause:
