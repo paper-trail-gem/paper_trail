@@ -4,8 +4,8 @@ require "spec_helper"
 
 RSpec.describe Animal, type: :model, versioning: true do
   it "baseline test setup" do
-    expect(Animal.new).to be_versioned
-    expect(Animal.inheritance_column).to eq("species")
+    expect(described_class.new).to be_versioned
+    expect(described_class.inheritance_column).to eq("species")
   end
 
   describe "#descends_from_active_record?" do
@@ -15,7 +15,7 @@ RSpec.describe Animal, type: :model, versioning: true do
   end
 
   it "works with custom STI inheritance column" do
-    animal = Animal.create(name: "Animal")
+    animal = described_class.create(name: "Animal")
     animal.update(name: "Animal from the Muppets")
     animal.update(name: "Animal Muppet")
     animal.destroy
@@ -46,7 +46,7 @@ RSpec.describe Animal, type: :model, versioning: true do
   it "allows the inheritance_column (species) to be updated" do
     cat = Cat.create!(name: "Leo")
     cat.update(name: "Spike", species: "Dog")
-    dog = Animal.find(cat.id)
+    dog = described_class.find(cat.id)
     expect(dog).to be_instance_of(Dog)
   end
 

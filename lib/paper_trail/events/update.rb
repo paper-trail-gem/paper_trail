@@ -35,15 +35,20 @@ module PaperTrail
         if record_object?
           data[:object] = recordable_object(@is_touch)
         end
-        if record_object_changes?
-          changes = @force_changes.nil? ? notable_changes : @force_changes
-          data[:object_changes] = prepare_object_changes(changes)
-        end
+        merge_object_changes_into(data)
         merge_item_subtype_into(data)
         merge_metadata_into(data)
       end
 
       private
+
+      # @api private
+      def merge_object_changes_into(data)
+        if record_object_changes?
+          changes = @force_changes.nil? ? notable_changes : @force_changes
+          data[:object_changes] = prepare_object_changes(changes)
+        end
+      end
 
       # `touch` cannot record `object_changes` because rails' `touch` does not
       # perform dirty-tracking. Specifically, methods from `Dirty`, like

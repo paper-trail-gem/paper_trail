@@ -14,7 +14,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           # See "Lowest supported ruby version" in CONTRIBUTING.md
-          ruby-version: '2.5'
+          ruby-version: '2.6'
       - name: Bundle
         run: |
           gem install bundler
@@ -63,7 +63,7 @@ jobs:
         # in case it still produces any deprecation warnings.
         #
         # See "Lowest supported ruby version" in CONTRIBUTING.md
-        ruby: [ '2.5', '2.7', '3.0' ]
+        ruby: [ '2.6', '2.7', '3.0' ]
 
         exclude:
           # rails 5.2 requires ruby < 3.0

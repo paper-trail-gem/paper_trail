@@ -38,7 +38,7 @@ RSpec.describe NoObject, versioning: true do
 
   describe "reify" do
     it "raises error" do
-      n = NoObject.create!(letter: "A")
+      n = described_class.create!(letter: "A")
       v = n.versions.last
       expect { v.reify }.to(
         raise_error(
@@ -51,7 +51,7 @@ RSpec.describe NoObject, versioning: true do
 
   describe "where_object" do
     it "raises error" do
-      n = NoObject.create!(letter: "A")
+      n = described_class.create!(letter: "A")
       expect {
         n.versions.where_object(foo: "bar")
       }.to(

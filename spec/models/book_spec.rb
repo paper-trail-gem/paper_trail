@@ -5,7 +5,7 @@ require "spec_helper"
 RSpec.describe Book, versioning: true do
   context "with :has_many :through" do
     it "store version on source <<" do
-      book = Book.create(title: "War and Peace")
+      book = described_class.create(title: "War and Peace")
       dostoyevsky = Person.create(name: "Dostoyevsky")
       Person.create(name: "Solzhenitsyn")
       count = PaperTrail::Version.count
@@ -15,7 +15,7 @@ RSpec.describe Book, versioning: true do
     end
 
     it "store version on source create" do
-      book = Book.create(title: "War and Peace")
+      book = described_class.create(title: "War and Peace")
       Person.create(name: "Dostoyevsky")
       Person.create(name: "Solzhenitsyn")
       count = PaperTrail::Version.count
@@ -27,7 +27,7 @@ RSpec.describe Book, versioning: true do
     end
 
     it "store version on join destroy" do
-      book = Book.create(title: "War and Peace")
+      book = described_class.create(title: "War and Peace")
       dostoyevsky = Person.create(name: "Dostoyevsky")
       Person.create(name: "Solzhenitsyn")
       (book.authors << dostoyevsky)
@@ -39,7 +39,7 @@ RSpec.describe Book, versioning: true do
     end
 
     it "store version on join clear" do
-      book = Book.create(title: "War and Peace")
+      book = described_class.create(title: "War and Peace")
       dostoyevsky = Person.create(name: "Dostoyevsky")
       Person.create(name: "Solzhenitsyn")
       book.authors << dostoyevsky
@@ -53,7 +53,7 @@ RSpec.describe Book, versioning: true do
 
   context "when a persisted record is updated then destroyed" do
     it "has changes" do
-      book = Book.create! title: "A"
+      book = described_class.create! title: "A"
       changes = YAML.load book.versions.last.attributes["object_changes"]
       expect(changes).to eq("id" => [nil, book.id], "title" => [nil, "A"])
 
