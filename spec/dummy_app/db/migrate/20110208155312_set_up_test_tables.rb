@@ -249,10 +249,10 @@ class SetUpTestTables < ::ActiveRecord::Migration::Current
     end
 
     create_table :translations, force: true do |t|
-      t.string    :headline
       t.string    :content
+      t.string    :draft_status
+      t.string    :headline
       t.string    :language_code
-      t.string    :type
     end
 
     create_table :gadgets, force: true do |t|

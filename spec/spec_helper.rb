@@ -53,7 +53,7 @@ end
 # in `dummy_app/config/*`. By consolidating it here,
 #
 # - It can better be understood, and documented in one place
-# - It can more closely resememble a conventional app boot. For example, loading
+# - It can more closely resemble a conventional app boot. For example, loading
 # gems (like rspec-rails) _before_ loading the app.
 
 # First, `config/boot.rb` would add gems to $LOAD_PATH.
