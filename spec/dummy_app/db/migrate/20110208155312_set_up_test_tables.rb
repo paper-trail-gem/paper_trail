@@ -128,16 +128,19 @@ class SetUpTestTables < ::ActiveRecord::Migration::Current
     add_index :no_object_versions, %i[item_type item_id]
 
     if ENV["DB"] == "postgres"
-      create_table :json_versions, force: true do |t|
-        t.string   :item_type, null: false
-        t.integer  :item_id,   null: false
-        t.string   :event,     null: false
-        t.string   :whodunnit
-        t.json     :object
-        t.json     :object_changes
-        t.datetime :created_at, limit: 6
+      %w[json jsonb].each do |j|
+        table_name = j + "_versions"
+        create_table table_name, force: true do |t|
+          t.string :item_type, null: false
+          t.integer :item_id, null: false
+          t.string :event, null: false
+          t.string :whodunnit
+          t.public_send j, :object
+          t.public_send j, :object_changes
+          t.datetime :created_at, limit: 6
+        end
+        add_index table_name, %i[item_type item_id]
       end
-      add_index :json_versions, %i[item_type item_id]
     end
 
     create_table :not_on_updates, force: true do |t|
@@ -249,10 +252,10 @@ class SetUpTestTables < ::ActiveRecord::Migration::Current
     end
 
     create_table :translations, force: true do |t|
-      t.string    :headline
       t.string    :content
+      t.string    :draft_status
+      t.string    :headline
       t.string    :language_code
-      t.string    :type
     end
 
     create_table :gadgets, force: true do |t|
@@ -277,8 +280,9 @@ class SetUpTestTables < ::ActiveRecord::Migration::Current
     end
 
     create_table :fruits, force: true do |t|
-      t.string :name
       t.string :color
+      t.integer :mass
+      t.string :name
     end
 
     create_table :boolits, force: true do |t|
@@ -357,6 +361,12 @@ class SetUpTestTables < ::ActiveRecord::Migration::Current
       t.string :path_to_stardom # Only used for celebrity families
       t.integer :parent_id
       t.integer :partner_id
+    end
+
+    create_table :vegetables, force: true do |t|
+      t.string :color
+      t.integer :mass
+      t.string :name
     end
   end
 

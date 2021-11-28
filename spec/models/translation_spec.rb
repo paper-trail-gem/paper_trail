@@ -39,7 +39,7 @@ RSpec.describe Translation, type: :model, versioning: true do
       it "creation does not change the number of versions" do
         translation = described_class.new(headline: "Headline")
         translation.language_code = "US"
-        translation.type = "DRAFT"
+        translation.draft_status = "DRAFT"
         translation.save!
         expect(PaperTrail::Version.count).to(eq(0))
       end
@@ -47,7 +47,7 @@ RSpec.describe Translation, type: :model, versioning: true do
       it "update does not change the number of versions" do
         translation = described_class.new(headline: "Headline")
         translation.language_code = "US"
-        translation.type = "DRAFT"
+        translation.draft_status = "DRAFT"
         translation.save!
         translation.update(content: "Content")
         expect(PaperTrail::Version.count).to(eq(0))
@@ -56,7 +56,7 @@ RSpec.describe Translation, type: :model, versioning: true do
       it "touch does not change the number of versions" do
         translation = described_class.new(headline: "Headline")
         translation.language_code = "US"
-        translation.type = "DRAFT"
+        translation.draft_status = "DRAFT"
         translation.save!
         translation.touch
         expect(PaperTrail::Version.count).to(eq(0))
