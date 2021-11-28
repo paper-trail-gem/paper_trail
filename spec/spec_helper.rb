@@ -7,7 +7,7 @@ require "simplecov"
 SimpleCov.start do
   add_filter "spec"
 end
-SimpleCov.minimum_coverage 92.4
+SimpleCov.minimum_coverage(ENV["DB"] == "postgres" ? 97.3 : 92.4)
 
 require "byebug"
 require_relative "support/pt_arel_helpers"
