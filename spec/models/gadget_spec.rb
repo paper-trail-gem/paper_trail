@@ -35,7 +35,11 @@ RSpec.describe Gadget, type: :model do
         gadget.update_attribute(:updated_at, Time.current + 1)
       }.to(change { gadget.versions.size }.by(1))
       expect(
-        YAML.load(gadget.versions.last.object_changes).keys
+        if ::YAML.respond_to?(:unsafe_load)
+          YAML.unsafe_load(gadget.versions.last.object_changes).keys
+        else
+          YAML.load(gadget.versions.last.object_changes).keys
+        end
       ).to eq(["updated_at"])
     end
   end

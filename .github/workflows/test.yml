@@ -63,12 +63,14 @@ jobs:
         # in case it still produces any deprecation warnings.
         #
         # See "Lowest supported ruby version" in CONTRIBUTING.md
-        ruby: [ '2.6', '2.7', '3.0' ]
+        ruby: [ '2.6', '2.7', '3.0', '3.1' ]
 
         exclude:
           # rails 5.2 requires ruby < 3.0
           # https://github.com/rails/rails/issues/40938
           - ruby: '3.0'
+            gemfile: 'rails_5.2'
+          - ruby: '3.1'
             gemfile: 'rails_5.2'
     steps:
       - name: Checkout source
