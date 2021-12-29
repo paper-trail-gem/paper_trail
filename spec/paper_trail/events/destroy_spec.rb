@@ -21,7 +21,11 @@ module PaperTrail
           let(:data) { described_class.new(skipper, false).data }
 
           it "includes `object` without skipped attributes" do
-            object = YAML.load(data[:object])
+            object = if ::YAML.respond_to?(:unsafe_load)
+                       YAML.unsafe_load(data[:object])
+                     else
+                       YAML.load(data[:object])
+                     end
             expect(object["id"]).to eq(skipper.id)
             expect(object).to have_key("updated_at")
             expect(object).to have_key("created_at")
@@ -29,7 +33,11 @@ module PaperTrail
           end
 
           it "includes `object_changes` without skipped and ignored attributes" do
-            changes = YAML.load(data[:object_changes])
+            changes = if ::YAML.respond_to?(:unsafe_load)
+                        YAML.unsafe_load(data[:object_changes])
+                      else
+                        YAML.load(data[:object_changes])
+                      end
             expect(changes["id"]).to eq([skipper.id, nil])
             expect(changes["updated_at"][0]).to be_present
             expect(changes["updated_at"][1]).to be_nil
