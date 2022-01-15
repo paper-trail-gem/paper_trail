@@ -26,7 +26,6 @@ module PaperTrail
           expect(the_thing.serialize(word_array)).to eq(word_array)
         end
       end
-
     end
   end
 end
