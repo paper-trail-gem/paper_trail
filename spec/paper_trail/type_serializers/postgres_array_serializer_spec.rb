@@ -16,8 +16,9 @@ module PaperTrail
         end
 
         it "deserializes string to Ruby array" do
-          expect(the_thing).to have_received(:deserialize_with_ar).and_return(word_array)
+          allow(the_thing).to receive(:deserialize_with_ar).and_return(word_array)
           expect(the_thing.deserialize(word_array_as_string)).to eq(word_array)
+          expect(the_thing).to have_received(:deserialize_with_ar)
         end
       end
 
