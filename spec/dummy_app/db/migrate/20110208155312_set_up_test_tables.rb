@@ -77,8 +77,13 @@ class SetUpTestTables < ::ActiveRecord::Migration::Current
       t.string   :item_subtype, **item_type_options(null: true)
       t.string   :event, null: false
       t.string   :whodunnit
-      t.text     :object, limit: TEXT_BYTES
-      t.text     :object_changes, limit: TEXT_BYTES
+      if ENV["DB"] == "postgres"
+        t.jsonb     :object
+        t.jsonb     :object_changes
+      else
+        t.text     :object, limit: TEXT_BYTES
+        t.text     :object_changes, limit: TEXT_BYTES
+      end
       t.integer  :transaction_id
       t.datetime :created_at, limit: 6
 
