@@ -30,6 +30,5 @@ RSpec.describe Car, type: :model do
       car.reload
       expect(car.versions.first.reify.top_speed).to eq(80)
     end
-
   end
 end
