@@ -2,7 +2,7 @@
 
 # See also `Fruit` which uses `JsonVersion`.
 class Vegetable < ActiveRecord::Base
-  if ENV["DB"] == "postgres"
-    has_paper_trail versions: { class_name: "JsonbVersion" }
-  end
+  has_paper_trail versions: {
+    class_name: ENV["DB"] == "postgres" ? "JsonbVersion" : "PaperTrail::Version"
+  }, on: %i[create update]
 end

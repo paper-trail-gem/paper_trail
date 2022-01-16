@@ -77,13 +77,8 @@ class SetUpTestTables < ::ActiveRecord::Migration::Current
       t.string   :item_subtype, **item_type_options(null: true)
       t.string   :event, null: false
       t.string   :whodunnit
-      if ENV["DB"] == "postgres"
-        t.jsonb     :object
-        t.jsonb     :object_changes
-      else
-        t.text     :object, limit: TEXT_BYTES
-        t.text     :object_changes, limit: TEXT_BYTES
-      end
+      t.text     :object, limit: TEXT_BYTES
+      t.text     :object_changes, limit: TEXT_BYTES
       t.integer  :transaction_id
       t.datetime :created_at, limit: 6
 
@@ -136,10 +131,10 @@ class SetUpTestTables < ::ActiveRecord::Migration::Current
       %w[json jsonb].each do |j|
         table_name = j + "_versions"
         create_table table_name, force: true do |t|
-          t.string :item_type, null: false
-          t.integer :item_id, null: false
-          t.string :event, null: false
-          t.string :whodunnit
+          t.string   :item_type, null: false
+          t.bigint   :item_id, null: false
+          t.string   :event, null: false
+          t.string   :whodunnit
           t.public_send j, :object
           t.public_send j, :object_changes
           t.datetime :created_at, limit: 6

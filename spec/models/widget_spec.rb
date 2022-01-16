@@ -569,41 +569,6 @@ RSpec.describe Widget, type: :model, versioning: true do
         expect(version.index).to(eq((widget.versions.length - 1)))
       end
     end
-
-    describe "queries of versions" do
-      let(:widget) { described_class.create(name: "Widget") }
-      let(:eternal_widget) { described_class.create(name: "Ewigkeit") }
-      let(:version) { widget.versions.last }
-
-      before do
-        widget.update(name: "Fidget")
-        widget.update(name: "Digit")
-      end
-
-      if ENV["DB"] == "postgres"
-        it "return the widget whose name has changed" do
-          expect(PaperTrail::Version.where_attribute_changes(:name)).to include(widget)
-        end
-
-        it "returns the widget whose name was Fidget" do
-          expect(PaperTrail::Version.where_object_changes_from({ name: "Fidget" })).to
-            include(widget)
-        end
-
-        it "returns the widget whose name became Digit" do
-          expect(PaperTrail::Version.where.object_changes_to({ name: "Digit"} )). to
-            include(widget)
-        end
-
-        it "returns the widget where the object is eternal" do
-          expect(PaperTrail::Version.where_object({ name: "Ewigkeit" })).to include(widget)
-        end
-
-        it "returns the widget that changed to Fidget" do
-          expect(PaperTrail::Version.where_object_changes({ name: "Fidget" })).to include(widget)
-        end
-      end
-    end
   end
 
   context "with a reified item" do
