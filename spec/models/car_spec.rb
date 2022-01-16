@@ -24,7 +24,7 @@ RSpec.describe Car, type: :model do
     it "reifies attributes that once were attributes but now just attr_accessor" do
       car = described_class.create name: "Pinto", color: "green"
       car.update color: "yellow"
-      changes = YAML.safe_load(car.versions.last.object)
+      changes = PaperTrail::Serializers::YAML.load(car.versions.last.attributes['object'])
       changes[:top_speed] = 80
       car.versions.first.update object: changes.to_yaml
       car.reload
