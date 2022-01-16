@@ -24,8 +24,8 @@ RSpec.describe Car, type: :model do
     it "reifies attributes that once were attributes but now just attr_accessor" do
       car = described_class.create name: "Pinto", color: "green"
       car.update color: "yellow"
-      changes = YAML.load car.versions.last.object
-      changes.merge! top_speed: 80
+      changes = YAML.safe_load(car.versions.last.object)
+      changes[:top_speed] = 80
       car.versions.first.update object: changes.to_yaml
       car.reload
       expect(car.versions.first.reify.top_speed).to eq(80)

@@ -15,23 +15,28 @@ if ENV["DB"] == "postgres" || JsonbVersion.table_exists?
       end
 
       it "return the vegetable whose name has changed" do
-        expect(JsonbVersion.where_attribute_changes(:name).map(&:item)).to include(vegetable)
+        result = JsonbVersion.where_attribute_changes(:name).map(&:item)
+        expect(result).to include(vegetable)
       end
 
       it "returns the vegetable whose name was Fidget" do
-        expect(JsonbVersion.where_object_changes_from({ name: "Fidget" }).map(&:item)).to include(vegetable)
+        result = JsonbVersion.where_object_changes_from({ name: "Fidget" }).map(&:item)
+        expect(result).to include(vegetable)
       end
 
       it "returns the vegetable whose name became Digit" do
-        expect(JsonbVersion.where_object_changes_to({ name: "Digit" }).map(&:item)).to include(vegetable)
+        result = JsonbVersion.where_object_changes_to({ name: "Digit" }).map(&:item)
+        expect(result).to include(vegetable)
       end
 
       it "returns the vegetable where the object was named Fidget before it changed" do
-        expect(JsonbVersion.where_object({ name: "Fidget" }).map(&:item)).to include(vegetable)
+        result = JsonbVersion.where_object({ name: "Fidget" }).map(&:item)
+        expect(result).to include(vegetable)
       end
 
       it "returns the vegetable that changed to Fidget" do
-        expect(JsonbVersion.where_object_changes({ name: "Fidget" }).map(&:item)).to include(vegetable)
+        result = JsonbVersion.where_object_changes({ name: "Fidget" }).map(&:item)
+        expect(result).to include(vegetable)
       end
     end
   end

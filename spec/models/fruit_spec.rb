@@ -27,23 +27,28 @@ if ENV["DB"] == "postgres" || JsonVersion.table_exists?
       end
 
       it "return the fruit whose name has changed" do
-        expect(JsonVersion.where_attribute_changes(:name).map(&:item)).to include(fruit)
+        result = JsonVersion.where_attribute_changes(:name).map(&:item)
+        expect(result).to include(fruit)
       end
 
       it "returns the fruit whose name was Fidget" do
-        expect(JsonVersion.where_object_changes_from({ name: "Fidget" }).map(&:item)).to include(fruit)
+        result = JsonVersion.where_object_changes_from({ name: "Fidget" }).map(&:item)
+        expect(result).to include(fruit)
       end
 
       it "returns the fruit whose name became Digit" do
-        expect(JsonVersion.where_object_changes_to({ name: "Digit" }).map(&:item)).to include(fruit)
+        result = JsonVersion.where_object_changes_to({ name: "Digit" }).map(&:item)
+        expect(result).to include(fruit)
       end
 
       it "returns the fruit where the object was named Fidget before it changed" do
-        expect(JsonVersion.where_object({ name: "Fidget" }).map(&:item)).to include(fruit)
+        result = JsonVersion.where_object({ name: "Fidget" }).map(&:item)
+        expect(result).to include(fruit)
       end
 
       it "returns the fruit that changed to Fidget" do
-        expect(JsonVersion.where_object_changes({ name: "Fidget" }).map(&:item)).to include(fruit)
+        result = JsonVersion.where_object_changes({ name: "Fidget" }).map(&:item)
+        expect(result).to include(fruit)
       end
     end
   end
