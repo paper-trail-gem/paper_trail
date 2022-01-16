@@ -17,12 +17,11 @@ if ENV["DB"] == "postgres" || JsonVersion.table_exists?
       end
     end
 
-    describe "queries of versions" do
+    describe "queries of versions", versioning: true do
       let!(:fruit) { described_class.create(name: "Apple", mass: 1, color: "green") }
-      let!(:fruit2) { described_class.create(name: "Pear") }
 
       before do
-        PaperTrail.enabled = true
+        described_class.create(name: "Pear")
         fruit.update(name: "Fidget")
         fruit.update(name: "Digit")
       end

@@ -5,14 +5,13 @@ require "support/performance_helpers"
 
 if ENV["DB"] == "postgres" || JsonbVersion.table_exists?
   ::RSpec.describe Vegetable do
-    describe "queries of versions" do
+    describe "queries of versions", versioning: true do
       let!(:vegetable) { described_class.create(name: "Veggie", mass: 1, color: "green") }
-      let!(:vegetable2) { described_class.create(name: "Cucumber") }
 
       before do
-        PaperTrail.enabled = true
         vegetable.update(name: "Fidget")
         vegetable.update(name: "Digit")
+        described_class.create(name: "Cucumber")
       end
 
       it "return the vegetable whose name has changed" do
