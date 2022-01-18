@@ -41,9 +41,9 @@ module PaperTrail
     # See https://github.com/paper-trail-gem/paper_trail/issues/651
     def item_type_options
       if mysql?
-        ", { null: false, limit: 191 }"
+        ", null: false, limit: 191"
       else
-        ", { null: false }"
+        ", null: false"
       end
     end
 
