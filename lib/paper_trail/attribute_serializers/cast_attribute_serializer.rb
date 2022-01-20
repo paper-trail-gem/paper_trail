@@ -35,6 +35,8 @@ module PaperTrail
         elsif PaperTrail::RAILS_GTE_7_0 && val.is_a?(ActiveRecord::Type::Time::Value)
           # Because Rails 7 time attribute throws a delegation error when you deserialize
           # it with the factory.
+          # See ActiveRecord::Type::Time::Value crashes when loaded from YAML on rails 7.0
+          # https://github.com/rails/rails/issues/43966
           val.instance_variable_get(:@time)
         else
           AttributeSerializerFactory.for(@klass, attr).deserialize(val)

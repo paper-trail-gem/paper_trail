@@ -16,23 +16,9 @@ module PaperTrail
     extend ::ActiveSupport::Concern
 
     included do
-      belongs_to :item, polymorphic: true, optional: true
+      belongs_to :item, polymorphic: true, optional: true, inverse_of: false
       validates_presence_of :event
       after_create :enforce_version_limit!
-
-      # As of Rails 7.0, when you call #versions on an item, and then call #item on one of the
-      # versions, you'll get back the exact same object as the original item. Two strange side
-      # effects result:
-      # 1. If the reifier uses version.item to reify, then it also modifies the original item
-      #    object. If you just deleted that item and it is frozen, then you'll get an error that
-      #    it can't modify a frozen object.
-      # 2. If you delete an item and then get the "last" version's item, you'll get the item you
-      #    just deleted rather than nil. That is because the belongs_to association's stale target
-      #    checking now thinks that the association hasn't gone stale and thus returns the
-      #    original item object.
-      if PaperTrail::RAILS_GTE_7_0
-        after_find { association(:item).instance_variable_set(:@stale_state, nil) }
-      end
     end
 
     # :nodoc:
