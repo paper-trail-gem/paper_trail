@@ -16,7 +16,7 @@ module PaperTrail
     extend ::ActiveSupport::Concern
 
     included do
-      belongs_to :item, polymorphic: true, optional: true
+      belongs_to :item, polymorphic: true, optional: true, inverse_of: false
       validates_presence_of :event
       after_create :enforce_version_limit!
     end

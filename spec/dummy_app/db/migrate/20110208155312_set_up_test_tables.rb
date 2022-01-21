@@ -131,10 +131,10 @@ class SetUpTestTables < ::ActiveRecord::Migration::Current
       %w[json jsonb].each do |j|
         table_name = j + "_versions"
         create_table table_name, force: true do |t|
-          t.string :item_type, null: false
-          t.integer :item_id, null: false
-          t.string :event, null: false
-          t.string :whodunnit
+          t.string   :item_type, null: false
+          t.bigint   :item_id, null: false
+          t.string   :event, null: false
+          t.string   :whodunnit
           t.public_send j, :object
           t.public_send j, :object_changes
           t.datetime :created_at, limit: 6

@@ -38,11 +38,8 @@ task :clean do
   end
 end
 
-desc <<~EOS
-  Write a database.yml for the specified RDBMS, and create database. Does not
-  migrate. Migration happens later in spec_helper.
-EOS
-task prepare: %i[clean install_database_yml] do
+desc "Create the database."
+task :create_db do
   puts format("creating %s database", ENV["DB"])
   case ENV["DB"]
   when "mysql"
@@ -58,6 +55,12 @@ task prepare: %i[clean install_database_yml] do
     raise "Don't know how to create specified DB: #{ENV['DB']}"
   end
 end
+
+desc <<~EOS
+  Write a database.yml for the specified RDBMS, and create database. Does not
+  migrate. Migration happens later in spec_helper.
+EOS
+task prepare: %i[clean install_database_yml create_db]
 
 require "rspec/core/rake_task"
 desc "Run tests on PaperTrail with RSpec"

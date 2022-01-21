@@ -260,6 +260,8 @@ RSpec.describe Widget, type: :model, versioning: true do
         widget = described_class.create(name: "Henry")
         widget.update(name: "Harry")
         widget.destroy
+        expect(widget.versions.first.item.object_id).not_to eq(widget.object_id)
+        expect(widget.versions.last.item.object_id).not_to eq(widget.object_id)
         expect(widget.versions.last.item).to be_nil
       end
     end
