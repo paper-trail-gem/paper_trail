@@ -22,6 +22,19 @@ module PaperTrail
           expect(described_class.load(hash.to_yaml)).to eq(hash)
           expect(described_class.load(array.to_yaml)).to eq(array)
         end
+
+        it "calls the expected load method based on Psych version" do
+          # Psych 4+ implements .unsafe_load
+          if ::YAML.respond_to?(:unsafe_load)
+            allow(::YAML).to receive(:unsafe_load)
+            described_class.load("string")
+            expect(::YAML).to have_received(:unsafe_load)
+          else # Psych < 4
+            allow(::YAML).to receive(:load)
+            described_class.load("string")
+            expect(::YAML).to have_received(:load)
+          end
+        end
       end
 
       describe ".dump" do

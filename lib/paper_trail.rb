@@ -26,6 +26,8 @@ module PaperTrail
     named created_at.
   EOS
 
+  RAILS_GTE_7_0 = ::ActiveRecord.gem_version >= ::Gem::Version.new("7.0.0")
+
   extend PaperTrail::Cleaner
 
   class << self

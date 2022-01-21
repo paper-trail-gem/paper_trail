@@ -8,7 +8,7 @@ module PaperTrail
   #
   # It is not safe to assume that a new version of rails will be compatible with
   # PaperTrail. PT is only compatible with the versions of rails that it is
-  # tested against. See `.travis.yml`.
+  # tested against. See `.github/workflows/test.yml`.
   #
   # However, as of
   # [#1213](https://github.com/paper-trail-gem/paper_trail/pull/1213) our
@@ -18,7 +18,7 @@ module PaperTrail
   # versions.
   module Compatibility
     ACTIVERECORD_GTE = ">= 5.2" # enforced in gemspec
-    ACTIVERECORD_LT = "< 7.0" # not enforced in gemspec
+    ACTIVERECORD_LT = "< 7.1" # not enforced in gemspec
 
     E_INCOMPATIBLE_AR = <<-EOS
       PaperTrail %s is not compatible with ActiveRecord %s. We allow PT

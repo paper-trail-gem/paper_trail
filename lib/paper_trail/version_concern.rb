@@ -16,7 +16,7 @@ module PaperTrail
     extend ::ActiveSupport::Concern
 
     included do
-      belongs_to :item, polymorphic: true, optional: true
+      belongs_to :item, polymorphic: true, optional: true, inverse_of: false
       validates_presence_of :event
       after_create :enforce_version_limit!
     end
@@ -376,10 +376,11 @@ module PaperTrail
     #
     # @api private
     def version_limit
-      if limit_option?(item.class)
-        item.class.paper_trail_options[:limit]
-      elsif base_class_limit_option?(item.class)
-        item.class.base_class.paper_trail_options[:limit]
+      klass = item.class
+      if limit_option?(klass)
+        klass.paper_trail_options[:limit]
+      elsif base_class_limit_option?(klass)
+        klass.base_class.paper_trail_options[:limit]
       else
         PaperTrail.config.version_limit
       end

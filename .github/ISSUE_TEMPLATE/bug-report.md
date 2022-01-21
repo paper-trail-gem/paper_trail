@@ -32,11 +32,11 @@ require "bundler/inline"
 
 # STEP ONE: What versions are you using?
 gemfile(true) do
-  ruby "2.5.1"
+  ruby "3.0.2"
   source "https://rubygems.org"
-  gem "activerecord", "5.2.0"
+  gem "activerecord", "6.1.4.1"
   gem "minitest", "5.11.3"
-  gem "paper_trail", "9.2.0", require: false
+  gem "paper_trail", "12.1.0", require: false
   gem "sqlite3", "1.3.13"
 end
 
