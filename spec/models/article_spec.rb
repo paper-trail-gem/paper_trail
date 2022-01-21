@@ -187,7 +187,7 @@ RSpec.describe Article, type: :model, versioning: true do
   end
 
   context "with an item" do
-    let(:article) { Article.new(title: initial_title) }
+    let(:article) { described_class.new(title: initial_title) }
     let(:initial_title) { "Foobar" }
 
     context "when it is created" do

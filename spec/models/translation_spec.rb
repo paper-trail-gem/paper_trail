@@ -24,6 +24,14 @@ RSpec.describe Translation, type: :model, versioning: true do
         expect(PaperTrail::Version.count).to(eq(0))
       end
     end
+
+    context "when after touch" do
+      it "not change the number of versions" do
+        translation = described_class.create!(headline: "Headline")
+        translation.touch
+        expect(PaperTrail::Version.count).to(eq(0))
+      end
+    end
   end
 
   context "with US translations" do
@@ -31,7 +39,7 @@ RSpec.describe Translation, type: :model, versioning: true do
       it "creation does not change the number of versions" do
         translation = described_class.new(headline: "Headline")
         translation.language_code = "US"
-        translation.type = "DRAFT"
+        translation.draft_status = "DRAFT"
         translation.save!
         expect(PaperTrail::Version.count).to(eq(0))
       end
@@ -39,9 +47,18 @@ RSpec.describe Translation, type: :model, versioning: true do
       it "update does not change the number of versions" do
         translation = described_class.new(headline: "Headline")
         translation.language_code = "US"
-        translation.type = "DRAFT"
+        translation.draft_status = "DRAFT"
         translation.save!
         translation.update(content: "Content")
+        expect(PaperTrail::Version.count).to(eq(0))
+      end
+
+      it "touch does not change the number of versions" do
+        translation = described_class.new(headline: "Headline")
+        translation.language_code = "US"
+        translation.draft_status = "DRAFT"
+        translation.save!
+        translation.touch
         expect(PaperTrail::Version.count).to(eq(0))
       end
     end
@@ -52,14 +69,21 @@ RSpec.describe Translation, type: :model, versioning: true do
         expect(PaperTrail::Version.count).to(eq(1))
       end
 
-      it "update does not change the number of versions" do
+      it "update changes the number of versions" do
         translation = described_class.create!(headline: "Headline", language_code: "US")
         translation.update(content: "Content")
         expect(PaperTrail::Version.count).to(eq(2))
         expect(translation.versions.size).to(eq(2))
       end
 
-      it "destroy does not change the number of versions" do
+      it "touch changes the number of versions" do
+        translation = described_class.create!(headline: "Headline", language_code: "US")
+        translation.touch
+        expect(PaperTrail::Version.count).to(eq(2))
+        expect(translation.versions.size).to(eq(2))
+      end
+
+      it "destroy changes the number of versions" do
         translation = described_class.new(headline: "Headline")
         translation.language_code = "US"
         translation.save!

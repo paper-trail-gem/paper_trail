@@ -4,8 +4,8 @@ require "spec_helper"
 
 RSpec.describe Plant, type: :model, versioning: true do
   it "baseline test setup" do
-    expect(Plant.new).to be_versioned
-    expect(Plant.inheritance_column).to eq("species")
+    expect(described_class.new).to be_versioned
+    expect(described_class.inheritance_column).to eq("species")
   end
 
   describe "#descends_from_active_record?" do
@@ -15,14 +15,14 @@ RSpec.describe Plant, type: :model, versioning: true do
   end
 
   it "works with non standard STI column contents" do
-    plant = Plant.create
+    plant = described_class.create
     plant.destroy
 
     tomato = Tomato.create
     tomato.destroy
 
     reified = plant.versions.last.reify
-    expect(reified.class).to eq(Plant)
+    expect(reified.class).to eq(described_class)
 
     reified = tomato.versions.last.reify
     expect(reified.class).to eq(Tomato)

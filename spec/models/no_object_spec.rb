@@ -27,7 +27,11 @@ RSpec.describe NoObject, versioning: true do
 
     # New feature: destroy populates object_changes
     # https://github.com/paper-trail-gem/paper_trail/pull/1123
-    h = YAML.load a["object_changes"]
+    h = if ::YAML.respond_to?(:unsafe_load)
+          YAML.unsafe_load a["object_changes"]
+        else
+          YAML.load a["object_changes"]
+        end
     expect(h["id"]).to eq([n.id, nil])
     expect(h["letter"]).to eq([n.letter, nil])
     expect(h["created_at"][0]).to be_present
@@ -38,7 +42,7 @@ RSpec.describe NoObject, versioning: true do
 
   describe "reify" do
     it "raises error" do
-      n = NoObject.create!(letter: "A")
+      n = described_class.create!(letter: "A")
       v = n.versions.last
       expect { v.reify }.to(
         raise_error(
@@ -51,7 +55,7 @@ RSpec.describe NoObject, versioning: true do
 
   describe "where_object" do
     it "raises error" do
-      n = NoObject.create!(letter: "A")
+      n = described_class.create!(letter: "A")
       expect {
         n.versions.where_object(foo: "bar")
       }.to(

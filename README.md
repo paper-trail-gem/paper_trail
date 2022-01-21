@@ -15,7 +15,7 @@ This is the _user guide_. See also, the
 
 Choose version:
 [Unreleased](https://github.com/paper-trail-gem/paper_trail/blob/master/README.md),
-[12.1](https://github.com/paper-trail-gem/paper_trail/blob/v12.1.0/README.md),
+[12.2](https://github.com/paper-trail-gem/paper_trail/blob/v12.2.0/README.md),
 [11.1](https://github.com/paper-trail-gem/paper_trail/blob/v11.1.0/README.md),
 [10.3](https://github.com/paper-trail-gem/paper_trail/blob/v10.3.1/README.md),
 [9.2](https://github.com/paper-trail-gem/paper_trail/blob/v9.2.0/README.md),
@@ -1208,17 +1208,20 @@ class PostVersion < PaperTrail::Version
 end
 ```
 
-If you only use custom version classes and don't have a `versions` table, you
-must let ActiveRecord know that the `PaperTrail::Version` class is an
-`abstract_class`.
+If you only use custom version classes and don't have a `versions` table, you must
+let ActiveRecord know that your base version class (eg. `ApplicationVersion` below)
+class is an `abstract_class`.
 
 ```ruby
-# app/models/paper_trail/version.rb
-module PaperTrail
-  class Version < ActiveRecord::Base
-    include PaperTrail::VersionConcern
-    self.abstract_class = true
-  end
+# app/models/application_version.rb
+class ApplicationVersion < ActiveRecord::Base
+  include PaperTrail::VersionConcern
+  self.abstract_class = true
+end
+
+class PostVersion < ApplicationVersion
+  self.table_name = :post_versions
+  self.sequence_name = :post_versions_id_seq
 end
 ```
 

@@ -18,7 +18,7 @@ class PaperTrailSpecMigrator
     @migrations_path = dummy_app_migrations_dir
   end
 
-  # Looks like the API for programatically running migrations will change
+  # Looks like the API for programmatically running migrations will change
   # in rails 5.2. This is an undocumented change, AFAICT. Then again,
   # how many people use the programmatic interface? Most people probably
   # just use rake. Maybe we're doing it wrong.

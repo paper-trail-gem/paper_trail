@@ -4,7 +4,7 @@ require "spec_helper"
 require "support/custom_json_serializer"
 
 RSpec.describe Boolit, type: :model, versioning: true do
-  let(:boolit) { Boolit.create! }
+  let(:boolit) { described_class.create! }
 
   before { boolit.update!(name: FFaker::Name.name) }
 
@@ -20,7 +20,7 @@ RSpec.describe Boolit, type: :model, versioning: true do
     before { boolit.update!(scoped: false) }
 
     it "is NOT scoped" do
-      expect(Boolit.first).to be_nil
+      expect(described_class.first).to be_nil
     end
 
     it "still can be reified and persisted" do

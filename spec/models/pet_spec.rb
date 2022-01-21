@@ -5,7 +5,7 @@ require "rails/generators"
 
 RSpec.describe Pet, type: :model, versioning: true do
   it "baseline test setup" do
-    expect(Pet.new).to be_versioned
+    expect(described_class.new).to be_versioned
   end
 
   it "can be reified" do
@@ -13,8 +13,8 @@ RSpec.describe Pet, type: :model, versioning: true do
     dog = Dog.create(name: "Snoopy")
     cat = Cat.create(name: "Garfield")
 
-    person.pets << Pet.create(animal: dog)
-    person.pets << Pet.create(animal: cat)
+    person.pets << described_class.create(animal: dog)
+    person.pets << described_class.create(animal: cat)
     person.update(name: "Steve")
 
     dog.update(name: "Beethoven")
