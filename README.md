@@ -110,8 +110,11 @@ Experts: to install incompatible versions of activerecord, see
 
 1. Add PaperTrail to your `Gemfile`.
 
-    `gem 'paper_trail'`
-
+    ```ruby
+    gem 'paper_trail' 
+    $ bundle install # Run this in your terminal
+    ```
+ 
 1. Add a `versions` table to your database:
 
     ```
