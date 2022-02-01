@@ -15,10 +15,8 @@ RSpec.describe NotOnUpdate, type: :model do
     it "captures changes when in_after_callback is true" do
       record.name = "test"
       record.paper_trail.save_with_version(in_after_callback: true)
-      as_stored_in_version = HashWithIndifferentAccess[
-        YAML.load(record.versions.last.object_changes)
-      ]
-      expect(as_stored_in_version[:name].last).to(eq("test"))
+      changeset = record.versions.last.changeset
+      expect(changeset[:name]).to eq([nil, "test"])
     end
   end
 end
