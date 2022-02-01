@@ -144,6 +144,7 @@ class SetUpTestTables < ::ActiveRecord::Migration::Current
     end
 
     create_table :not_on_updates, force: true do |t|
+      t.string :name
       t.timestamps null: true, limit: 6
     end
 
