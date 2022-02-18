@@ -109,7 +109,7 @@ RSpec.describe PaperTrail::InstallGenerator, type: :generator do
       run_generator %w[--uuid]
     end
 
-    expected_item_id_type = "uuid"
+    expected_item_id_type = "string"
 
     it "generates a migration for creating the 'versions' table with item_id type uuid" do
       expect(destination_root).to(

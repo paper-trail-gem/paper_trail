@@ -46,7 +46,7 @@ module PaperTrail
 
     # To use uuid instead of integer for primary key
     def item_id_type_options
-      options.uuid? ? "uuid" : "bigint"
+      options.uuid? ? "string" : "bigint"
     end
 
     # MySQL 5.6 utf8mb4 limit is 191 chars for keys used in indexes.
