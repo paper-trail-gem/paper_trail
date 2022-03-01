@@ -267,6 +267,7 @@ class SetUpTestTables < ::ActiveRecord::Migration::Current
 
     create_table :customers, force: true do |t|
       t.string :name
+      t.datetime :touched_at, limit: 6
     end
 
     create_table :orders, force: true do |t|
