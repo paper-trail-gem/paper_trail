@@ -33,9 +33,9 @@ RSpec.describe PaperTrail::InstallGenerator, type: :generator do
       }.call
       expected_item_type_options = lambda {
         if described_class::MYSQL_ADAPTERS.include?(ActiveRecord::Base.connection.class.name)
-          ", { null: false, limit: 191 }"
+          ", null: false, limit: 191"
         else
-          ", { null: false }"
+          ", null: false"
         end
       }.call
       expect(destination_root).to(
