@@ -5,6 +5,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ## Unreleased
 
+- Added option `--uuid` when generating new migration. This can be used to set the type of item_id column to uuid for use with paper_trail on a database that uses uuid as primary key.
+
 ### Breaking Changes
 
 - None
