@@ -11,5 +11,12 @@ RSpec.describe NotOnUpdate, type: :model do
         PaperTrail::Version.count
       }.by(+1)
     end
+
+    it "captures changes when in_after_callback is true" do
+      record.name = "test"
+      record.paper_trail.save_with_version(in_after_callback: true)
+      changeset = record.versions.last.changeset
+      expect(changeset[:name]).to eq([nil, "test"])
+    end
   end
 end

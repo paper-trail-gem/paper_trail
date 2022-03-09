@@ -5,6 +5,10 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ## Unreleased
 
+- Added `in_after_callback` argument to `PaperTrail::RecordTrail#save_with_version`,
+  to allow the caller to indicate if this method is being called during an `after`
+  callback. Defaults to `false`.
+
 ### Breaking Changes
 
 - None
