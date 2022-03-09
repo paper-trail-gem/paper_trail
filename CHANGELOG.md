@@ -7,6 +7,10 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 - Added option `--uuid` when generating new migration. This can be used to set the type of item_id column to uuid for use with paper_trail on a database that uses uuid as primary key.
 
+- Added `in_after_callback` argument to `PaperTrail::RecordTrail#save_with_version`,
+  to allow the caller to indicate if this method is being called during an `after`
+  callback. Defaults to `false`.
+
 ### Breaking Changes
 
 - None
@@ -17,7 +21,9 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- None
+- [#1376](https://github.com/paper-trail-gem/paper_trail/pull/1376) -
+  Create a version record when associated object was changed the same as
+  PaperTrail < v12.1.0.
 
 ## 12.2.0 (2022-01-21)
 
