@@ -108,7 +108,7 @@ Experts: to install incompatible versions of activerecord, see
 
 ### 1.b. Installation
 
-1. Add PaperTrail to your `Gemfile`.
+1. Add PaperTrail to your `Gemfile` and run [`bundle`][57].
 
     `gem 'paper_trail'`
 
@@ -1772,3 +1772,4 @@ Released under the MIT licence.
 [54]: https://rubygems.org/gems/paper_trail
 [55]: https://api.dependabot.com/badges/compatibility_score?dependency-name=paper_trail&package-manager=bundler&version-scheme=semver
 [56]: https://dependabot.com/compatibility-score.html?dependency-name=paper_trail&package-manager=bundler&version-scheme=semver
+[57]: https://bundler.io/v2.3/man/bundle-install.1.html
