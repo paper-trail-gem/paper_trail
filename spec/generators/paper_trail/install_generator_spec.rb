@@ -102,4 +102,26 @@ RSpec.describe PaperTrail::InstallGenerator, type: :generator do
       )
     end
   end
+
+  describe "`--uuid` option set to `true`" do
+    before do
+      prepare_destination
+      run_generator %w[--uuid]
+    end
+
+    it "generates a migration for creating the 'versions' table with item_id type uuid" do
+      expected_item_id_type = "string"
+      expect(destination_root).to(
+        have_structure {
+          directory("db") {
+            directory("migrate") {
+              migration("create_versions") {
+                contains "t.#{expected_item_id_type}   :item_id,   null: false"
+              }
+            }
+          }
+        }
+      )
+    end
+  end
 end

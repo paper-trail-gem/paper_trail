@@ -117,6 +117,11 @@ Experts: to install incompatible versions of activerecord, see
     ```
     bundle exec rails generate paper_trail:install [--with-changes]
     ```
+    
+    If tables in your project use `uuid` instead of `integers` for `id`, then use:  
+    ```
+    bundle exec rails generate paper_trail:install [--uuid]
+    ```
 
     See [section 5.c. Generators](#5c-generators) for details.
 
@@ -1135,6 +1140,7 @@ Usage:
 
 Options:
   [--with-changes], [--no-with-changes]            # Store changeset (diff) with each version
+  [--uuid]                                         # To use paper_trail with projects using uuid for id
 
 Runtime options:
   -f, [--force]                    # Overwrite files that already exist
