@@ -40,6 +40,20 @@ module PaperTrail
         merge_metadata_into(data)
       end
 
+      # If it is a touch event, and changed are empty, it is assumed to be
+      # implicit `touch` mutation, and will a version is created.
+      #
+      # See https://github.com/rails/rails/commit/dcb825902d79d0f6baba956f7c6ec5767611353e
+      #
+      # @api private
+      def changed_notably?
+        if @is_touch && changes_in_latest_version.empty?
+          true
+        else
+          super
+        end
+      end
+
       private
 
       # @api private

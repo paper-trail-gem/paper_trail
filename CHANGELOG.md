@@ -15,7 +15,9 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- None
+- [#1376](https://github.com/paper-trail-gem/paper_trail/pull/1376) -
+  Create a version record when associated object was changed the same as
+  PaperTrail < v12.1.0.
 
 ## 12.2.0 (2022-01-21)
 
