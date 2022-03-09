@@ -21,6 +21,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
+- [#1373](https://github.com/paper-trail-gem/paper_trail/issues/1373) - Add instruction to use uuid type for item_id in migration.
+
 - [#1376](https://github.com/paper-trail-gem/paper_trail/pull/1376) -
   Create a version record when associated object was changed the same as
   PaperTrail < v12.1.0.
