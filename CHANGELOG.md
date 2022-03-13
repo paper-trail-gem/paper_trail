@@ -11,6 +11,20 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
+- None
+
+### Fixed
+
+- None
+
+## 12.3.0 (2022-03-13)
+
+### Breaking Changes
+
+- None
+
+### Added
+
 - [#1371](https://github.com/paper-trail-gem/paper_trail/pull/1371) - Added
   `in_after_callback` argument to `PaperTrail::RecordTrail#save_with_version`,
   to allow the caller to indicate if this method is being called during an
@@ -102,6 +116,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
+- [#1281](https://github.com/paper-trail-gem/paper_trail/pull/1281) Rails:
+  Instead of an `Engine`, PT now provides a `Railtie`, which is simpler.
 - Expand kwargs passed to `save_with_version` using double splat operator - Rails 6.1 compatibility
 - [#1287](https://github.com/paper-trail-gem/paper_trail/issues/1287) - Fix 'rails db:migrate' error when run against an app with mysql2 adapter
 
