@@ -56,7 +56,7 @@ jobs:
       # have set this up with each database as a separate job, but then we'd be
       # duplicating the matrix configuration three times.
       matrix:
-        gemfile: [ 'rails_5.2', 'rails_6.0', 'rails_6.1' ]
+        gemfile: [ 'rails_5.2', 'rails_6.0', 'rails_6.1', 'rails_7.0' ]
 
         # To keep matrix size down, only test highest and lowest rubies.
         # Ruby 3.0 is an exception. For now, let's continue to test against 2.7
@@ -72,6 +72,9 @@ jobs:
             gemfile: 'rails_5.2'
           - ruby: '3.1'
             gemfile: 'rails_5.2'
+          # rails 7 requires ruby > 2.7
+          - ruby: '2.6'
+            gemfile: 'rails_7.0'
     steps:
       - name: Checkout source
         uses: actions/checkout@v2
@@ -79,10 +82,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-      - name: Bundle
-        run: |
-          gem install bundler
-          bundle install --jobs 4 --retry 3
+          bundler-cache: true # 'bundle install' and cache
         env:
           BUNDLE_GEMFILE: gemfiles/${{ matrix.gemfile }}.gemfile
 

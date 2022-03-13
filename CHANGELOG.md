@@ -17,6 +17,31 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 - None
 
+## 12.3.0 (2022-03-13)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- [#1371](https://github.com/paper-trail-gem/paper_trail/pull/1371) - Added
+  `in_after_callback` argument to `PaperTrail::RecordTrail#save_with_version`,
+  to allow the caller to indicate if this method is being called during an
+  `after` callback. Defaults to `false`.
+- [#1374](https://github.com/paper-trail-gem/paper_trail/pull/1374) - Added
+  option `--uuid` when generating new migration. This can be used to set the
+  type of item_id column to uuid for use with paper_trail on a database that
+  uses uuid as primary key.
+
+### Fixed
+
+- [#1373](https://github.com/paper-trail-gem/paper_trail/issues/1373) - Add
+  CLI option to use uuid type for item_id when generating migration.
+- [#1376](https://github.com/paper-trail-gem/paper_trail/pull/1376) - Create a
+  version record when associated object is touched. Restores the behavior of
+  PaperTrail < v12.1.0.
+
 ## 12.2.0 (2022-01-21)
 
 ### Breaking Changes
@@ -32,7 +57,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- None
+- [#1366](https://github.com/paper-trail-gem/paper_trail/pull/1366) -
+  Fixed a bug where the `create_versions` migration lead to a broken `db/schema.rb` for Ruby 3
 
 ### Dependencies
 
