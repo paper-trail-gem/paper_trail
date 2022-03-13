@@ -15,7 +15,7 @@ This is the _user guide_. See also, the
 
 Choose version:
 [Unreleased](https://github.com/paper-trail-gem/paper_trail/blob/master/README.md),
-[12.2](https://github.com/paper-trail-gem/paper_trail/blob/v12.2.0/README.md),
+[12.3](https://github.com/paper-trail-gem/paper_trail/blob/v12.3.0/README.md),
 [11.1](https://github.com/paper-trail-gem/paper_trail/blob/v11.1.0/README.md),
 [10.3](https://github.com/paper-trail-gem/paper_trail/blob/v10.3.1/README.md),
 [9.2](https://github.com/paper-trail-gem/paper_trail/blob/v9.2.0/README.md),
@@ -88,9 +88,9 @@ Choose version:
 ### 1.a. Compatibility
 
 | paper_trail    | branch     | ruby     | activerecord  |
-| -------------- | ---------- | -------- | ------------- |
-| unreleased     | master     | >= 2.5.0 | >= 5.2, < 6.2 |
-| 12             | 12-stable  | >= 2.5.0 | >= 5.2, < 6.2 |
+| -------------- | ---------- |----------|---------------|
+| unreleased     | master     | >= 2.6.0 | >= 5.2, < 7.1 |
+| 12             | 12-stable  | >= 2.6.0 | >= 5.2, < 7.1 |
 | 11             | 11-stable  | >= 2.4.0 | >= 5.2, < 6.1 |
 | 10             | 10-stable  | >= 2.3.0 | >= 4.2, < 6.1 |
 | 9              | 9-stable   | >= 2.3.0 | >= 4.2, < 5.3 |
@@ -108,7 +108,7 @@ Experts: to install incompatible versions of activerecord, see
 
 ### 1.b. Installation
 
-1. Add PaperTrail to your `Gemfile`.
+1. Add PaperTrail to your `Gemfile` and run [`bundle`][57].
 
     `gem 'paper_trail'`
 
@@ -116,6 +116,11 @@ Experts: to install incompatible versions of activerecord, see
 
     ```
     bundle exec rails generate paper_trail:install [--with-changes]
+    ```
+    
+    If tables in your project use `uuid` instead of `integers` for `id`, then use:  
+    ```
+    bundle exec rails generate paper_trail:install [--uuid]
     ```
 
     See [section 5.c. Generators](#5c-generators) for details.
@@ -1135,6 +1140,7 @@ Usage:
 
 Options:
   [--with-changes], [--no-with-changes]            # Store changeset (diff) with each version
+  [--uuid]                                         # To use paper_trail with projects using uuid for id
 
 Runtime options:
   -f, [--force]                    # Overwrite files that already exist
@@ -1772,3 +1778,4 @@ Released under the MIT licence.
 [54]: https://rubygems.org/gems/paper_trail
 [55]: https://api.dependabot.com/badges/compatibility_score?dependency-name=paper_trail&package-manager=bundler&version-scheme=semver
 [56]: https://dependabot.com/compatibility-score.html?dependency-name=paper_trail&package-manager=bundler&version-scheme=semver
+[57]: https://bundler.io/v2.3/man/bundle-install.1.html

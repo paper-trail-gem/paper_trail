@@ -20,6 +20,12 @@ module PaperTrail
       default: false,
       desc: "Store changeset (diff) with each version"
     )
+    class_option(
+      :uuid,
+      type: :boolean,
+      default: false,
+      desc: "Use uuid instead of bigint for item_id type (use only if tables use UUIDs)"
+    )
 
     desc "Generates (but does not run) a migration to add a versions table." \
          "  See section 5.c. Generators in README.md for more information."
@@ -28,7 +34,8 @@ module PaperTrail
       add_paper_trail_migration(
         "create_versions",
         item_type_options: item_type_options,
-        versions_table_options: versions_table_options
+        versions_table_options: versions_table_options,
+        item_id_type_options: item_id_type_options
       )
       if options.with_changes?
         add_paper_trail_migration("add_object_changes_to_versions")
@@ -37,13 +44,18 @@ module PaperTrail
 
     private
 
+    # To use uuid instead of integer for primary key
+    def item_id_type_options
+      options.uuid? ? "string" : "bigint"
+    end
+
     # MySQL 5.6 utf8mb4 limit is 191 chars for keys used in indexes.
     # See https://github.com/paper-trail-gem/paper_trail/issues/651
     def item_type_options
       if mysql?
-        ", { null: false, limit: 191 }"
+        ", null: false, limit: 191"
       else
-        ", { null: false }"
+        ", null: false"
       end
     end
 

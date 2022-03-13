@@ -33,9 +33,9 @@ RSpec.describe PaperTrail::InstallGenerator, type: :generator do
       }.call
       expected_item_type_options = lambda {
         if described_class::MYSQL_ADAPTERS.include?(ActiveRecord::Base.connection.class.name)
-          ", { null: false, limit: 191 }"
+          ", null: false, limit: 191"
         else
-          ", { null: false }"
+          ", null: false"
         end
       }.call
       expect(destination_root).to(
@@ -95,6 +95,28 @@ RSpec.describe PaperTrail::InstallGenerator, type: :generator do
                 contains "class AddObjectChangesToVersions"
                 contains "def change"
                 contains "add_column :versions, :object_changes, :text"
+              }
+            }
+          }
+        }
+      )
+    end
+  end
+
+  describe "`--uuid` option set to `true`" do
+    before do
+      prepare_destination
+      run_generator %w[--uuid]
+    end
+
+    it "generates a migration for creating the 'versions' table with item_id type uuid" do
+      expected_item_id_type = "string"
+      expect(destination_root).to(
+        have_structure {
+          directory("db") {
+            directory("migrate") {
+              migration("create_versions") {
+                contains "t.#{expected_item_id_type}   :item_id,   null: false"
               }
             }
           }

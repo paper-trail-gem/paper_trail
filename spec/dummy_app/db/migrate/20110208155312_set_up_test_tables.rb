@@ -144,6 +144,7 @@ class SetUpTestTables < ::ActiveRecord::Migration::Current
     end
 
     create_table :not_on_updates, force: true do |t|
+      t.string :name
       t.timestamps null: true, limit: 6
     end
 
@@ -267,6 +268,7 @@ class SetUpTestTables < ::ActiveRecord::Migration::Current
 
     create_table :customers, force: true do |t|
       t.string :name
+      t.datetime :touched_at, limit: 6
     end
 
     create_table :orders, force: true do |t|
