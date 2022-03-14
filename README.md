@@ -376,8 +376,8 @@ end
 ```
 
 The `paper_trail.on_destroy` method can be further configured to happen
-`:before` or `:after` the destroy event. In PaperTrail 4, the default is
-`:after`. In PaperTrail 5, the default will be `:before`, to support
+`:before` or `:after` the destroy event. Until PaperTrail 4, the default was
+`:after`. Starting with PaperTrail 5, the default is `:before`, to support
 ActiveRecord 5. (see https://github.com/paper-trail-gem/paper_trail/pull/683)
 
 ### 2.b. Choosing When To Save New Versions
