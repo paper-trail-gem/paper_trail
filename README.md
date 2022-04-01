@@ -162,7 +162,7 @@ Once you have a version, you can find out what happened:
 
 ```ruby
 v = widget.versions.last
-v.event # 'update', 'create', 'destroy'. See also: Custom Event Names
+v.event # 'update', 'create', 'destroy'. See also: "The versions.event Column"
 v.created_at
 v.whodunnit # ID of `current_user`. Requires `set_paper_trail_whodunnit` callback.
 widget = v.reify # The widget as it was before the update (nil for a create event)
