@@ -1,5 +1,8 @@
 name: gha-workflow-pt-test
 on: [push, pull_request]
+permissions:
+  contents: read
+
 jobs:
 
   # Linting is a separate job, primary because it only needs to be done once,
