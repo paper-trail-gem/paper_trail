@@ -13,9 +13,9 @@ RSpec.describe CustomIdKeyRecord, type: :model do
       expect(version).to be_a(CustomPrimaryKeyRecordVersion)
       version_from_db = CustomPrimaryKeyRecordVersion.last
       expect(version_from_db.item_id).to eq(custom_id_key_record.uuid)
-      expect(version_from_db.reify).to be_a(CustomIdKeyRecord)
+      expect(version_from_db.reify).to be_a(described_class)
       custom_id_key_record.destroy
-      expect(CustomPrimaryKeyRecordVersion.last.reify).to be_a(CustomIdKeyRecord)
+      expect(CustomPrimaryKeyRecordVersion.last.reify).to be_a(described_class)
     end
   end
 end
