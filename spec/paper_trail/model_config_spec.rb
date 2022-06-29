@@ -8,6 +8,7 @@ module PaperTrail
       describe "versions:" do
         it "name can be passed instead of an options hash", :deprecated do
           allow(::ActiveSupport::Deprecation).to receive(:warn)
+          # just a comment to see test
           klass = Class.new(ActiveRecord::Base) do
             has_paper_trail versions: :drafts
           end
