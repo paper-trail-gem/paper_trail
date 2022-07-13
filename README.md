@@ -413,7 +413,7 @@ my_model.paper_trail.save_with_version
 
 #### Ignore
 
-You can `ignore` changes to certain attributes:
+If you don't want a version created when only a certain attribute changes, you can `ignore` that attribute:
 
 ```ruby
 class Article < ActiveRecord::Base
@@ -433,6 +433,8 @@ a.update title: 'Greeting', content: 'Hello'
 a.versions.length                         # 2
 a.paper_trail.previous_version.title      # 'My Title'
 ```
+
+Note: ignored fields will be stored in the version records. If you want to keep a field out of the versions table, use [`:skip`](#skip) instead of `:ignore`; skipped fields are also implicitly ignored.
 
 The `:ignore` option can also accept `Hash` arguments that we are considering deprecating.
 
@@ -497,16 +499,30 @@ article being saved if a changed attribute is included in `:only` but not in
 
 #### Skip
 
-You can skip attributes completely with the `:skip` option.  As with `:ignore`,
+If you never want a field's values in the versions table, you can `:skip` the attribute.  As with `:ignore`,
 updates to these attributes will not create a version record.  In addition, if a
 version record is created for some other reason, these attributes will not be
 persisted.
 
 ```ruby
-class Article < ActiveRecord::Base
-  has_paper_trail skip: [:file_upload]
+class Author < ActiveRecord::Base
+  has_paper_trail skip: [:social_security_number]
 end
 ```
+
+Author's social security numbers will never appear in the versions log, and if an author updates only their social security number, it won't create a version record.
+
+#### Comparing `:ignore`, `:only`, and `:skip`
+
+- `:only` is basically the same as `:ignore`, but its inverse.
+- `:ignore` controls whether paper_trail will create a version record or not.
+- `:skip` controls whether paper_trail will save that field with the version record.
+- Skipped fields are also implicitly ignored. paper_trail does this internally.
+- Ignored fields are not implicitly skipped.
+
+So:
+- Ignore a field if you don't want a version record created when it's the only field to change.
+- Skip a field if you don't want it to be saved with any version records.
 
 ### 2.d. Turning PaperTrail Off
 
