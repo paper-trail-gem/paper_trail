@@ -46,6 +46,21 @@ RSpec.describe Widget, type: :model, versioning: true do
     end
   end
 
+  describe "#object_changes_deserialized" do
+    context "when the serializer raises a Psych::DisallowedClass error" do
+      it "prints a warning to stderr" do
+        allow(PaperTrail.serializer).to(
+          receive(:load).and_raise(::Psych::Exception, "kaboom")
+        )
+        widget = described_class.create(name: "Henry")
+        ver = widget.versions.last
+        expect { ver.send(:object_changes_deserialized) }.to(
+          output(/kaboom/).to_stderr
+        )
+      end
+    end
+  end
+
   context "with a new record" do
     it "not have any previous versions" do
       expect(described_class.new.versions).to(eq([]))

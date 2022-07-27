@@ -27,5 +27,19 @@ module Dummy
         ::Gem::Requirement.new("~> 5.2").satisfied_by?(::Rails.gem_version)
       config.active_record.sqlite3.represent_boolean_as_integer = true
     end
+
+    # `use_yaml_unsafe_load` was added in 7.0.3.1, will be removed in 7.1.0?
+    if ::ActiveRecord.respond_to?(:use_yaml_unsafe_load)
+      ::ActiveRecord.use_yaml_unsafe_load = false
+      ::ActiveRecord.yaml_column_permitted_classes = [
+        ::ActiveRecord::Type::Time::Value,
+        ::ActiveSupport::TimeWithZone,
+        ::ActiveSupport::TimeZone,
+        ::BigDecimal,
+        ::Date,
+        ::Symbol,
+        ::Time
+      ]
+    end
   end
 end

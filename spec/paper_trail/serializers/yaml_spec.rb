@@ -24,8 +24,13 @@ module PaperTrail
         end
 
         it "calls the expected load method based on Psych version" do
+          # `use_yaml_unsafe_load` was added in 7.0.3.1, will be removed in 7.1.0?
+          if defined?(ActiveRecord.use_yaml_unsafe_load) && !ActiveRecord.use_yaml_unsafe_load
+            allow(::YAML).to receive(:safe_load)
+            described_class.load("string")
+            expect(::YAML).to have_received(:safe_load)
           # Psych 4+ implements .unsafe_load
-          if ::YAML.respond_to?(:unsafe_load)
+          elsif ::YAML.respond_to?(:unsafe_load)
             allow(::YAML).to receive(:unsafe_load)
             described_class.load("string")
             expect(::YAML).to have_received(:unsafe_load)
