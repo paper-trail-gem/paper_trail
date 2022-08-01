@@ -15,7 +15,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- None
+- [#1395](https://github.com/paper-trail-gem/paper_trail/issues/1395) Fix invalid
+  `Version#created_at` value when using `PaperTrail::RecordTrail#update_columns`
 
 ## 12.3.0 (2022-03-13)
 
