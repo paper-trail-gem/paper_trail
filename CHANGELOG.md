@@ -25,8 +25,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
   `ActiveRecord.use_yaml_unsafe_load`. This change only affects users whose
   `versions` table has `object` or `object_changes` columns of type `text`, and
   who use the YAML serializer. People who use the JSON serializer, or those with
-  `json(b)` columns, are unaffected. Please see [doc/pt_13_yaml_safe_load.md] for
-  details.
+  `json(b)` columns, are unaffected. Please see
+  [doc/pt_13_yaml_safe_load.md](doc/pt_13_yaml_safe_load.md) for details.
 
 ### Added
 
