@@ -5,7 +5,7 @@ ENV["DB"] ||= "sqlite"
 
 require "simplecov"
 SimpleCov.start do
-  add_filter "spec"
+  add_filter %w[Appraisals Gemfile Rakefile doc gemfiles spec]
 end
 SimpleCov.minimum_coverage(ENV["DB"] == "postgres" ? 97.3 : 92.4)
 
