@@ -24,12 +24,12 @@ module PaperTrail
         end
 
         it "calls the expected load method based on Psych version" do
-          # `use_yaml_unsafe_load` was added in 7.0.3.1, will be removed in 7.1.0?
-          if defined?(ActiveRecord.use_yaml_unsafe_load) && !ActiveRecord.use_yaml_unsafe_load
+          # `use_yaml_unsafe_load` was added in 5.2.8.1, 6.0.5.1, 6.1.6.1, and 7.0.3.1
+          if rails_supports_safe_load?
             allow(::YAML).to receive(:safe_load)
             described_class.load("string")
             expect(::YAML).to have_received(:safe_load)
-          # Psych 4+ implements .unsafe_load
+            # Psych 4+ implements .unsafe_load
           elsif ::YAML.respond_to?(:unsafe_load)
             allow(::YAML).to receive(:unsafe_load)
             described_class.load("string")
@@ -59,6 +59,16 @@ module PaperTrail
           expect(matches.instance_of?(Arel::Nodes::Matches)).to(eq(true))
           expect(arel_value(matches.right)).to eq("%\narg1: Val 1\n%")
         end
+      end
+
+      private
+
+      def rails_supports_safe_load?
+        # Rails 7.0.3.1 onwards will always support YAML safe loading
+        return true if ::ActiveRecord.gem_version >= Gem::Version.new("7.0.3.1")
+
+        # Older Rails versions may or may not, depending on whether they have been patched.
+        defined?(ActiveRecord::Base.use_yaml_unsafe_load)
       end
     end
   end
