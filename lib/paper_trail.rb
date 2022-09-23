@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# Rails 7 (and Rails 6 with Zeitwerk) requires explicit loading of AR.
+require "active_record"
+
 # AR does not require all of AS, but PT does. PT uses core_ext like
 # `String#squish`, so we require `active_support/all`. Instead of eagerly
 # loading all of AS here, we could put specific `require`s in only the various
