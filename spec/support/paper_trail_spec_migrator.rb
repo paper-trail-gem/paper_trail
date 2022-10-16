@@ -18,22 +18,11 @@ class PaperTrailSpecMigrator
     @migrations_path = dummy_app_migrations_dir
   end
 
-  # Looks like the API for programmatically running migrations will change
-  # in rails 5.2. This is an undocumented change, AFAICT. Then again,
-  # how many people use the programmatic interface? Most people probably
-  # just use rake. Maybe we're doing it wrong.
-  #
-  # See also discussion in https://github.com/rails/rails/pull/40806, when
-  # MigrationContext#migrate became public.
   def migrate
-    if ::ActiveRecord.gem_version >= ::Gem::Version.new("6.0.0.rc2")
-      ::ActiveRecord::MigrationContext.new(
-        @migrations_path,
-        ::ActiveRecord::Base.connection.schema_migration
-      ).migrate
-    else
-      ::ActiveRecord::MigrationContext.new(@migrations_path).migrate
-    end
+    ::ActiveRecord::MigrationContext.new(
+      @migrations_path,
+      ::ActiveRecord::Base.connection.schema_migration
+    ).migrate
   end
 
   # Generate a migration, run it, and delete it. We use this for testing the

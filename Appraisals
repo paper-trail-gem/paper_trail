@@ -8,12 +8,6 @@
 # > appraisal. If something is specified in both the Gemfile and an appraisal,
 # > the version from the appraisal takes precedence.
 # > https://github.com/thoughtbot/appraisal
-#
-#
-appraise "rails-5.2" do
-  gem "rails", "~> 5.2.4"
-  gem "rails-controller-testing", "~> 1.0.2"
-end
 
 appraise "rails-6.0" do
   gem "rails", "~> 6.0.3"
