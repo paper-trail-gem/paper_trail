@@ -7,7 +7,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Breaking Changes
 
-- [PR-1399](https://github.com/paper-trail-gem/paper_trail/pull/1399) - Same
+- [#1399](https://github.com/paper-trail-gem/paper_trail/pull/1399) - Same
   change re: `YAML.safe_load` as in 13.0.0, but this time for Rails 6.0 and 6.1.
 
 ### Dependencies
