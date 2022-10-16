@@ -48,29 +48,18 @@ Testing is a little awkward because the test suite:
 1. Contains a "dummy" rails app with three databases (test, foo, and bar)
 1. Supports three different RDBMS': sqlite, mysql, and postgres
 
-### Test sqlite, AR 6
+### Test
+
+For most development, testing with sqlite only is easiest and sufficient. CI
+will run the rest.
 
 ```
 DB=sqlite bundle exec appraisal rails-6.0 rake
-```
-
-### Test sqlite, AR 5
-
-```
-DB=sqlite bundle exec appraisal rails-5.2 rake
-```
-
-### Test mysql, AR 5
-
-```
-DB=mysql bundle exec appraisal rails-5.2 rake
-```
-
-### Test postgres, AR 5
-
-```
+DB=sqlite bundle exec appraisal rails-6.1 rake
+DB=sqlite bundle exec appraisal rails-7.0 rake
+DB=mysql bundle exec appraisal rails-7.0 rake
 createuser --superuser postgres
-DB=postgres bundle exec appraisal rails-5.2 rake
+DB=postgres bundle exec appraisal rails-7.0 rake
 ```
 
 ## The dummy_app
@@ -80,7 +69,7 @@ In the rare event you need a `console` in the `dummy_app`:
 ```
 cd spec/dummy_app
 cp config/database.mysql.yml config/database.yml
-BUNDLE_GEMFILE='../../gemfiles/rails_5.2.gemfile' bin/rails console -e test
+BUNDLE_GEMFILE='../../gemfiles/rails_7.0.gemfile' bin/rails console -e test
 ```
 
 ## Adding new schema

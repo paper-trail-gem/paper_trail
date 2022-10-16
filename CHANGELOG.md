@@ -7,7 +7,11 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Breaking Changes
 
-- None
+- None, but see Dependencies below
+
+### Dependencies
+
+- Drop support for Rails 5.2, which reached EoL on 2022-06-01
 
 ### Added
 
