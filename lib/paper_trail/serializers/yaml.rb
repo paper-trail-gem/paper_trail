@@ -41,8 +41,8 @@ module PaperTrail
 
       def use_safe_load?
         if ::ActiveRecord.gem_version >= Gem::Version.new("7.0.3.1")
-          # `use_yaml_unsafe_load` may be removed in the future, at which point safe loading will be
-          # the default.
+          # `use_yaml_unsafe_load` may be removed in the future, at which point
+          # safe loading will be the default.
           !defined?(ActiveRecord.use_yaml_unsafe_load) || !ActiveRecord.use_yaml_unsafe_load
         elsif defined?(ActiveRecord::Base.use_yaml_unsafe_load)
           # Rails 5.2.8.1, 6.0.5.1, 6.1.6.1
@@ -53,7 +53,8 @@ module PaperTrail
       end
 
       def yaml_column_permitted_classes
-        if ::ActiveRecord.gem_version >= Gem::Version.new("7.0.3.1")
+        if defined?(ActiveRecord.yaml_column_permitted_classes)
+          # Rails >= 7.0.3.1
           ActiveRecord.yaml_column_permitted_classes
         elsif defined?(ActiveRecord::Base.yaml_column_permitted_classes)
           # Rails 5.2.8.1, 6.0.5.1, 6.1.6.1

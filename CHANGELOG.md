@@ -7,7 +7,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Breaking Changes
 
-- None, but see Dependencies below
+- [PR-1399](https://github.com/paper-trail-gem/paper_trail/pull/1399) - Same
+  change re: `YAML.safe_load` as in 13.0.0, but this time for Rails 6.0 and 6.1.
 
 ### Dependencies
 
@@ -26,7 +27,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Breaking Changes
 
-- The default serializer will now use `YAML.safe_load` unless
+- For Rails >= 7.0, the default serializer will now use `YAML.safe_load` unless
   `ActiveRecord.use_yaml_unsafe_load`. This change only affects users whose
   `versions` table has `object` or `object_changes` columns of type `text`, and
   who use the YAML serializer. People who use the JSON serializer, or those with
