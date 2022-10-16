@@ -31,11 +31,12 @@ module Dummy
     config.active_support.test_order = :sorted
     config.secret_key_base = "A fox regularly kicked the screaming pile of biscuits."
 
-    # `use_yaml_unsafe_load` was added in 5.2.8.1, 6.0.5.1, 6.1.6.1, and 7.0.3.1
-    if ::ActiveRecord.gem_version >= Gem::Version.new("7.0.3.1")
+    # `use_yaml_unsafe_load` was added in 5.2.8.1, 6.0.5.1, 6.1.6.1, and 7.0.3.1.
+    # Will be removed in 7.1.0?
+    if ::ActiveRecord.respond_to?(:use_yaml_unsafe_load) # 7.0.3.1
       ::ActiveRecord.use_yaml_unsafe_load = false
       ::ActiveRecord.yaml_column_permitted_classes = YAML_COLUMN_PERMITTED_CLASSES
-    elsif ::ActiveRecord::Base.respond_to?(:use_yaml_unsafe_load)
+    elsif ::ActiveRecord::Base.respond_to?(:use_yaml_unsafe_load) # 5.2.8.1, 6.0.5.1, 6.1.6.1
       ::ActiveRecord::Base.use_yaml_unsafe_load = false
       ::ActiveRecord::Base.yaml_column_permitted_classes = YAML_COLUMN_PERMITTED_CLASSES
     end
