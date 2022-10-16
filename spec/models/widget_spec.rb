@@ -138,7 +138,7 @@ RSpec.describe Widget, type: :model, versioning: true do
       it "have versions that are not live" do
         widget = described_class.create(name: "Henry")
         widget.update(name: "Harry")
-        widget.versions.map(&:reify).compact.each do |v|
+        widget.versions.filter_map(&:reify).each do |v|
           expect(v.paper_trail).not_to be_live
         end
       end
