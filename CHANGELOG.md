@@ -21,6 +21,9 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
+- [#1395](https://github.com/paper-trail-gem/paper_trail/issues/1395) -
+  Fix incorrect `Version#created_at` value when using
+  `PaperTrail::RecordTrail#update_columns`
 - [#1404](https://github.com/paper-trail-gem/paper_trail/pull/1404) -
   Delay referencing ActiveRecord until after Railtie is loaded
 
