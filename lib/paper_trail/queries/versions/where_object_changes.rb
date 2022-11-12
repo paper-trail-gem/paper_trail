@@ -15,7 +15,7 @@ module PaperTrail
           @version_model_class = version_model_class
 
           # Currently, this `deep_dup` is necessary because the `jsonb` branch
-          # modifies `@attributes`, and that would be a nasty suprise for
+          # modifies `@attributes`, and that would be a nasty surprise for
           # consumers of this class.
           # TODO: Stop modifying `@attributes`, then remove `deep_dup`.
           @attributes = attributes.deep_dup

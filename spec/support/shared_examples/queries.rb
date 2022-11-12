@@ -159,7 +159,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
         adapter = instance_spy("CustomObjectChangesAdapter")
         bicycle = model.create!(name: "abc")
         allow(adapter).to(
-          receive(:where_object_changes).with(model.paper_trail.version_class, name: "abc")
+          receive(:where_object_changes).with(model.paper_trail.version_class, { name: "abc" })
         ).and_return(bicycle.versions[0..1])
         PaperTrail.config.object_changes_adapter = adapter
         expect(
@@ -238,7 +238,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
         bicycle.update!(name: "xyz")
 
         allow(adapter).to(
-          receive(:where_object_changes_from).with(model.paper_trail.version_class, name: "abc")
+          receive(:where_object_changes_from).with(model.paper_trail.version_class, { name: "abc" })
         ).and_return([bicycle.versions[1]])
 
         PaperTrail.config.object_changes_adapter = adapter
@@ -321,7 +321,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
         bicycle.update!(name: "xyz")
 
         allow(adapter).to(
-          receive(:where_object_changes_to).with(model.paper_trail.version_class, name: "xyz")
+          receive(:where_object_changes_to).with(model.paper_trail.version_class, { name: "xyz" })
         ).and_return([bicycle.versions[1]])
 
         PaperTrail.config.object_changes_adapter = adapter

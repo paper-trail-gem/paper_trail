@@ -21,7 +21,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- None
+- [#1404](https://github.com/paper-trail-gem/paper_trail/pull/1404) -
+  Delay referencing ActiveRecord until after Railtie is loaded
 
 ## 13.0.0 (2022-08-15)
 
