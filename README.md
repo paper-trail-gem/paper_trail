@@ -1040,13 +1040,19 @@ PaperTrail::Version.where(author_id: author_id)
 inserted into its own columns.
 
 | *PT Column*    | *How bad of an idea?* | *Alternative*                 |
-| -------------- | --------------------- | ----------------------------- |
-| item_type      | terrible idea         |                               |
-| item_id        | terrible idea         |                               |
+|----------------|-----------------------|-------------------------------|
+| created_at     | forbidden*            |                               |
 | event          | meh                   | paper_trail_event             |
-| whodunnit      | meh                   | PaperTrail.request.whodunnit= |
+| id             | forbidden             |                               |
+| item_id        | forbidden             |                               |
+| item_subtype   | forbidden             |                               |
+| item_type      | forbidden             |                               |
 | object         | a little dangerous    |                               |
 | object_changes | a little dangerous    |                               |
+| updated_at     | forbidden             |                               |
+| whodunnit      | meh                   | PaperTrail.request.whodunnit= |
+
+\* forbidden - raises a `PaperTrail::InvalidOption` error as of PT 14
 
 ## 5. ActiveRecord
 
