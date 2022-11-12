@@ -150,7 +150,12 @@ module PaperTrail
       return unless enabled?
       data = Events::Update.new(@record, false, false, changes).data
 
-      # use AR default timestamp value instead of record.updated_at value
+      # Normally, `Events::Update` copies `@record.updated_at` into
+      # `created_at`. This copy makes sense for normal updates, but
+      # update_columns does not update timestamps, so it would be incorrect
+      # here. Deleting `created_at` allows AR to set its default timestamp value
+      # instead.
+      # https://github.com/paper-trail-gem/paper_trail/pull/1396
       data.delete(:created_at)
 
       # Merge data from `Event` with data from PT-AT. We no longer use

@@ -971,18 +971,19 @@ RSpec.describe Widget, type: :model, versioning: true do
 
   describe ".paper_trail.update_columns", versioning: true do
     it "creates a version record" do
-      widget = described_class.create(updated_at: "2015-01-01 15:00")
+      widget = described_class.create
       expect(widget.versions.count).to eq(1)
-      now = nil
-      freeze_time do
-        now = Time.zone.now
-        widget.paper_trail.update_columns(name: "Bugle")
-      end
-
+      widget.paper_trail.update_columns(name: "Bugle")
       expect(widget.versions.count).to eq(2)
       expect(widget.versions.last.event).to(eq("update"))
       expect(widget.versions.last.changeset[:name]).to eq([nil, "Bugle"])
-      expect(widget.versions.last.created_at.to_i).to eq(now.to_i)
+    end
+
+    it "uses current time for the version created_at" do
+      widget = described_class.create(updated_at: "2015-01-01 15:00")
+      widget.paper_trail.update_columns(name: "Bugle")
+      version = widget.versions.where(event: "update").last
+      expect(version.created_at.to_f).to be_within(5.0).of(Time.now.to_f)
     end
   end
 

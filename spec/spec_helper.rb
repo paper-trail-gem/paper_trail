@@ -10,7 +10,6 @@ end
 SimpleCov.minimum_coverage(ENV["DB"] == "postgres" ? 96.8 : 92.4)
 
 require "byebug"
-require "active_support/testing/time_helpers"
 require_relative "support/pt_arel_helpers"
 
 unless ENV["BUNDLE_GEMFILE"].match?(/rails_\d\.\d\.gemfile/)
@@ -42,7 +41,6 @@ RSpec.configure do |config|
   end
   config.order = :random
   config.include PTArelHelpers
-  config.include ActiveSupport::Testing::TimeHelpers
   Kernel.srand config.seed
 end
 
