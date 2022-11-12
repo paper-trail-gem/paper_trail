@@ -9,9 +9,9 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 - [#1399](https://github.com/paper-trail-gem/paper_trail/pull/1399) - Same
   change re: `YAML.safe_load` as in 13.0.0, but this time for Rails 6.0 and 6.1.
-- Certain [Metadata](https://github.com/paper-trail-gem/paper_trail#4c-storing-metadata)
-  keys are now forbidden, like `id`, and `item_type`. These keys are reserved
-  by PT.
+- [#1406](https://github.com/paper-trail-gem/paper_trail/pull/1406) -
+  Certain [Metadata][1] keys are now forbidden, like `id`, and `item_type`.
+  These keys are reserved by PT.
 
 ### Dependencies
 
@@ -1385,3 +1385,5 @@ in the `PaperTrail::Version` class through a `Rails::Engine` when the gem is use
   - [#160](https://github.com/paper-trail-gem/paper_trail/pull/160) - Fixed failing tests and resolved out of date dependency issues.
   - [#157](https://github.com/paper-trail-gem/paper_trail/pull/157) - Refactored `class_attribute` names on the `ClassMethods` module
     for names that are not obviously pertaining to PaperTrail to prevent method name collision.
+
+[1]: https://github.com/paper-trail-gem/paper_trail#4c-storing-metadata

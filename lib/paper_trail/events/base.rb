@@ -58,7 +58,7 @@ module PaperTrail
       private
 
       # @api private
-      def assert_metadatum_key_is_permitted?(key)
+      def assert_metadatum_key_is_permitted(key)
         return unless FORBIDDEN_METADATA_KEYS.include?(key.to_sym)
         raise PaperTrail::InvalidOption,
           format(E_FORBIDDEN_METADATA_KEY, key, FORBIDDEN_METADATA_KEYS)
@@ -196,7 +196,7 @@ module PaperTrail
       # @api private
       def merge_metadata_from_controller_into(data)
         metadata = PaperTrail.request.controller_info || {}
-        metadata.keys.each { |k| assert_metadatum_key_is_permitted?(k) }
+        metadata.keys.each { |k| assert_metadatum_key_is_permitted(k) }
         data.merge(metadata)
       end
 
@@ -205,7 +205,7 @@ module PaperTrail
       # @api private
       def merge_metadata_from_model_into(data)
         @record.paper_trail_options[:meta].each do |k, v|
-          assert_metadatum_key_is_permitted?(k)
+          assert_metadatum_key_is_permitted(k)
           data[k] = model_metadatum(v, data[:event])
         end
       end
