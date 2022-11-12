@@ -8,6 +8,12 @@
 # can revisit this decision.
 require "active_support/all"
 
+# We used to `require "active_record"` here, but that was [replaced with a
+# Railtie](https://github.com/paper-trail-gem/paper_trail/pull/1281) in PT 12.
+# As a result, we cannot reference `ActiveRecord` in this file (ie. until our
+# Railtie has loaded). If we did, it would cause [problems with non-Rails
+# projects](https://github.com/paper-trail-gem/paper_trail/pull/1401).
+
 require "paper_trail/errors"
 require "paper_trail/cleaner"
 require "paper_trail/compatibility"
@@ -25,8 +31,6 @@ module PaperTrail
     longer configurable. The timestamp column in the versions table must now be
     named created_at.
   EOS
-
-  RAILS_GTE_7_0 = ::ActiveRecord.gem_version >= ::Gem::Version.new("7.0.0")
 
   extend PaperTrail::Cleaner
 
