@@ -25,14 +25,6 @@ module PaperTrail
       @record.send("#{@record.class.version_association_name}=", nil)
     end
 
-    # Is PT enabled for this particular record?
-    # @api private
-    def enabled?
-      PaperTrail.enabled? &&
-        PaperTrail.request.enabled? &&
-        PaperTrail.request.enabled_for_model?(@record.class)
-    end
-
     # Returns true if this instance is the current, live one;
     # returns false if this instance came from a previous version.
     def live?
@@ -75,13 +67,6 @@ module PaperTrail
       end
     end
 
-    # PT-AT extends this method to add its transaction id.
-    #
-    # @api private
-    def data_for_create
-      {}
-    end
-
     # `recording_order` is "after" or "before". See ModelConfig#on_destroy.
     #
     # @api private
@@ -103,13 +88,6 @@ module PaperTrail
         assign_and_reset_version_association(version)
         version
       end
-    end
-
-    # PT-AT extends this method to add its transaction id.
-    #
-    # @api private
-    def data_for_destroy
-      {}
     end
 
     # @api private
@@ -139,40 +117,6 @@ module PaperTrail
       else
         log_version_errors(version, :update)
       end
-    end
-
-    # PT-AT extends this method to add its transaction id.
-    #
-    # @api private
-    def data_for_update
-      {}
-    end
-
-    # @api private
-    # @return - The created version object, so that plugins can use it, e.g.
-    # paper_trail-association_tracking
-    def record_update_columns(changes)
-      return unless enabled?
-      data = Events::Update.new(@record, false, false, changes).data
-
-      # Merge data from `Event` with data from PT-AT. We no longer use
-      # `data_for_update_columns` but PT-AT still does.
-      data.merge!(data_for_update_columns)
-
-      versions_assoc = @record.send(@record.class.versions_association_name)
-      version = versions_assoc.create(data)
-      if version.errors.any?
-        log_version_errors(version, :update)
-      else
-        version
-      end
-    end
-
-    # PT-AT extends this method to add its transaction id.
-    #
-    # @api private
-    def data_for_update_columns
-      {}
     end
 
     # Invoked via callback when a user attempts to persist a reified
@@ -298,11 +242,67 @@ module PaperTrail
       @record.class.paper_trail.version_class.new(data)
     end
 
+    # PT-AT extends this method to add its transaction id.
+    #
+    # @api public
+    def data_for_create
+      {}
+    end
+
+    # PT-AT extends this method to add its transaction id.
+    #
+    # @api public
+    def data_for_destroy
+      {}
+    end
+
+    # PT-AT extends this method to add its transaction id.
+    #
+    # @api public
+    def data_for_update
+      {}
+    end
+
+    # PT-AT extends this method to add its transaction id.
+    #
+    # @api public
+    def data_for_update_columns
+      {}
+    end
+
+    # Is PT enabled for this particular record?
+    # @api private
+    def enabled?
+      PaperTrail.enabled? &&
+        PaperTrail.request.enabled? &&
+        PaperTrail.request.enabled_for_model?(@record.class)
+    end
+
     def log_version_errors(version, action)
       version.logger&.warn(
         "Unable to create version for #{action} of #{@record.class.name}" \
         "##{@record.id}: " + version.errors.full_messages.join(", ")
       )
+    end
+
+    # @api private
+    # @return - The created version object, so that plugins can use it, e.g.
+    # paper_trail-association_tracking
+    def record_update_columns(changes)
+      return unless enabled?
+      data = Events::Update.new(@record, false, false, changes).data
+
+      # Merge data from `Event` with data from PT-AT. We no longer use
+      # `data_for_update_columns` but PT-AT still does.
+      data.merge!(data_for_update_columns)
+
+      versions_assoc = @record.send(@record.class.versions_association_name)
+      version = versions_assoc.create(data)
+      if version.errors.any?
+        log_version_errors(version, :update)
+      else
+        version
+      end
     end
 
     def version

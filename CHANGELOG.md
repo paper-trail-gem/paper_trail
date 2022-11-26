@@ -29,6 +29,10 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
   `PaperTrail::RecordTrail#update_columns`
 - [#1404](https://github.com/paper-trail-gem/paper_trail/pull/1404) -
   Delay referencing ActiveRecord until after Railtie is loaded
+- Where possible, methods which are not part of PaperTrail's public API have
+  had their access changed to private. All of these methods had been clearly
+  marked as `@api private` in the documentation, for years. This is not expected
+  to be a breaking change.
 
 ## 13.0.0 (2022-08-15)
 
