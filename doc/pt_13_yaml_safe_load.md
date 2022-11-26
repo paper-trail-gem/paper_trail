@@ -1,8 +1,12 @@
 # PT 13 uses YAML.safe_load
 
-Starting with 13.0.0, PT's default serializer (`PaperTrail::Serializers::YAML`)
-will use `safe_load` unless `ActiveRecord.use_yaml_unsafe_load`. Earlier
-versions of PT use `unsafe_load`.
+Starting with 13.0.0, in Rails >= 7.0, PT's default serializer
+(`PaperTrail::Serializers::YAML`) will use `safe_load` unless
+`ActiveRecord.use_yaml_unsafe_load`.
+
+PT 14.0.0 extends this protection to Rails 6.
+
+Earlier versions of PT use `unsafe_load`.
 
 ## Motivation
 
