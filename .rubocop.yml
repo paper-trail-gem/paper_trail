@@ -115,6 +115,10 @@ Performance/CollectionLiteralInLoop:
   Exclude:
     - spec/**/*
 
+# This cop only applies to app dev, not gem dev.
+Rails/RakeEnvironment:
+  Enabled: false
+
 # Good advice for rails applications, but not applicable to libraries like PT.
 Rails/SkipsModelValidations:
   Enabled: false
