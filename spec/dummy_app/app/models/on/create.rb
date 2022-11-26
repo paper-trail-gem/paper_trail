@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module On
-  class Create < ActiveRecord::Base
+  class Create < ApplicationRecord
     self.table_name = :on_create
     has_paper_trail on: [:create]
   end

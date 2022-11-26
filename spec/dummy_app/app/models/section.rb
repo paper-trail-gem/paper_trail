@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Section < ActiveRecord::Base
+class Section < ApplicationRecord
   belongs_to :chapter
   has_many :paragraphs, dependent: :destroy
 

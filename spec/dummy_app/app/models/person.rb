@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Person < ActiveRecord::Base
+class Person < ApplicationRecord
   has_many :authorships, foreign_key: :author_id, dependent: :destroy
   has_many :books, through: :authorships
 

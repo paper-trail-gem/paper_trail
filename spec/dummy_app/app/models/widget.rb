@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Widget < ActiveRecord::Base
+class Widget < ApplicationRecord
   EXCLUDED_NAME = "Biglet"
   has_paper_trail
   has_one :wotsit

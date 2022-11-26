@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Song < ActiveRecord::Base
+class Song < ApplicationRecord
   has_paper_trail
   attribute :name, :string
 
