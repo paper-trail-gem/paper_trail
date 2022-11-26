@@ -13,8 +13,9 @@ jobs:
       pull-requests: write  # for actions/stale to close stale PRs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/stale@v3
+      - uses: actions/stale@v6
         with:
+          exempt-issue-labels: keep
           stale-issue-message: >
             This issue has been automatically marked as stale due to inactivity.
 
