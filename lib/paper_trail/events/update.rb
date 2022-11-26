@@ -29,9 +29,6 @@ module PaperTrail
           event: @record.paper_trail_event || "update",
           whodunnit: PaperTrail.request.whodunnit
         }
-        if @record.respond_to?(:updated_at)
-          data[:created_at] = @record.updated_at
-        end
         if record_object?
           data[:object] = recordable_object(@is_touch)
         end

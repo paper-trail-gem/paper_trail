@@ -150,14 +150,6 @@ module PaperTrail
       return unless enabled?
       data = Events::Update.new(@record, false, false, changes).data
 
-      # Normally, `Events::Update` copies `@record.updated_at` into
-      # `created_at`. This copy makes sense for normal updates, but
-      # update_columns does not update timestamps, so it would be incorrect
-      # here. Deleting `created_at` allows AR to set its default timestamp value
-      # instead.
-      # https://github.com/paper-trail-gem/paper_trail/pull/1396
-      data.delete(:created_at)
-
       # Merge data from `Event` with data from PT-AT. We no longer use
       # `data_for_update_columns` but PT-AT still does.
       data.merge!(data_for_update_columns)
@@ -277,11 +269,22 @@ module PaperTrail
     def build_version_on_update(force:, in_after_callback:, is_touch:)
       event = Events::Update.new(@record, in_after_callback, is_touch, nil)
       return unless force || event.changed_notably?
+      data = event.data
+
+      # Copy the (recently set) `updated_at` from the record to the `created_at`
+      # of the `Version`. Without this feature, these two timestamps would
+      # differ by a few milliseconds. To some people, it seems a little
+      # unnatural to tamper with creation timestamps in this way. But, this
+      # feature has existed for a long time, almost a decade now, and some users
+      # may rely on it now.
+      if @record.respond_to?(:updated_at)
+        data[:created_at] = @record.updated_at
+      end
 
       # Merge data from `Event` with data from PT-AT. We no longer use
       # `data_for_update` but PT-AT still does. To save memory, we use `merge!`
       # instead of `merge`.
-      data = event.data.merge!(data_for_update)
+      data.merge!(data_for_update)
 
       # Using `version_class.new` reduces memory usage compared to
       # `versions_assoc.build`. It's a trade-off though. We have to clear

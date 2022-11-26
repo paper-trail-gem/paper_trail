@@ -22,6 +22,19 @@ module PaperTrail
     #
     # @api private
     class Base
+      E_FORBIDDEN_METADATA_KEY = <<-EOS.squish
+        Forbidden metadata key: %s. As of PT 14, the following metadata keys are
+        forbidden: %s
+      EOS
+      FORBIDDEN_METADATA_KEYS = %i[
+        created_at
+        id
+        item_id
+        item_subtype
+        item_type
+        updated_at
+      ].freeze
+
       # @api private
       def initialize(record, in_after_callback)
         @record = record
@@ -43,6 +56,13 @@ module PaperTrail
       end
 
       private
+
+      # @api private
+      def assert_metadatum_key_is_permitted(key)
+        return unless FORBIDDEN_METADATA_KEYS.include?(key.to_sym)
+        raise PaperTrail::InvalidOption,
+          format(E_FORBIDDEN_METADATA_KEY, key, FORBIDDEN_METADATA_KEYS)
+      end
 
       # Rails 5.1 changed the API of `ActiveRecord::Dirty`. See
       # https://github.com/paper-trail-gem/paper_trail/pull/899
@@ -175,7 +195,9 @@ module PaperTrail
       #
       # @api private
       def merge_metadata_from_controller_into(data)
-        data.merge(PaperTrail.request.controller_info || {})
+        metadata = PaperTrail.request.controller_info || {}
+        metadata.keys.each { |k| assert_metadatum_key_is_permitted(k) }
+        data.merge(metadata)
       end
 
       # Updates `data` from the model's `meta` option.
@@ -183,6 +205,7 @@ module PaperTrail
       # @api private
       def merge_metadata_from_model_into(data)
         @record.paper_trail_options[:meta].each do |k, v|
+          assert_metadatum_key_is_permitted(k)
           data[k] = model_metadatum(v, data[:event])
         end
       end
