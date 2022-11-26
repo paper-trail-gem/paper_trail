@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Customer < ActiveRecord::Base
+class Customer < ApplicationRecord
   has_many :orders, dependent: :destroy
   has_paper_trail
 end

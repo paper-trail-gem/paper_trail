@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Demonstrates the `only` and `ignore` attributes, among other things.
-class Article < ActiveRecord::Base
+class Article < ApplicationRecord
   has_paper_trail(
     ignore: [
       :title, {

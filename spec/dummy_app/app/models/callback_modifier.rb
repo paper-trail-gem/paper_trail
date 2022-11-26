@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CallbackModifier < ActiveRecord::Base
+class CallbackModifier < ApplicationRecord
   has_paper_trail on: []
 
   def test_destroy

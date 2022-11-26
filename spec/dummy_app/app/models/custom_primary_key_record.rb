@@ -2,7 +2,7 @@
 
 require "securerandom"
 
-class CustomPrimaryKeyRecord < ActiveRecord::Base
+class CustomPrimaryKeyRecord < ApplicationRecord
   self.primary_key = :uuid
 
   has_paper_trail versions: { class_name: "CustomPrimaryKeyRecordVersion" }

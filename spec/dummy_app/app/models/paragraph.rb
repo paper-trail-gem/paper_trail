@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Paragraph < ActiveRecord::Base
+class Paragraph < ApplicationRecord
   belongs_to :section
 
   has_paper_trail

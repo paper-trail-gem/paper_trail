@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class Fluxor < ActiveRecord::Base
+class Fluxor < ApplicationRecord
   belongs_to :widget, optional: true
 end

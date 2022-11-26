@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Whatchamajigger < ActiveRecord::Base
+class Whatchamajigger < ApplicationRecord
   has_paper_trail
   belongs_to :owner, polymorphic: true, optional: true
 end

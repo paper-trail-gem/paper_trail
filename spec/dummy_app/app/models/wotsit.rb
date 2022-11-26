@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Wotsit < ActiveRecord::Base
+class Wotsit < ApplicationRecord
   has_paper_trail
 
   belongs_to :widget, optional: true

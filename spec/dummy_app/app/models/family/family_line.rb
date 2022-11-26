@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Family
-  class FamilyLine < ActiveRecord::Base
+  class FamilyLine < ApplicationRecord
     has_paper_trail
     belongs_to :parent,
       class_name: "::Family::Family",

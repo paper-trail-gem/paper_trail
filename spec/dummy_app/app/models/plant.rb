@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Plant < ActiveRecord::Base
+class Plant < ApplicationRecord
   has_paper_trail
   self.inheritance_column = "species"
 

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Book < ActiveRecord::Base
+class Book < ApplicationRecord
   has_many :authorships, dependent: :destroy
   has_many :authors, through: :authorships
 
