@@ -244,7 +244,7 @@ module PaperTrail
       # @api private
       def notable_changes
         changes_in_latest_version.delete_if { |k, _v|
-          !notably_changed.include?(k)
+          notably_changed.exclude?(k)
         }
       end
 

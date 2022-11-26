@@ -8,12 +8,6 @@
 
 # Offense count: 1
 # Cop supports --auto-correct.
-Rails/NegateInclude:
-  Exclude:
-    - 'lib/paper_trail/events/base.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
 Rails/Presence:
   Exclude:
     - 'lib/paper_trail/reifier.rb'
