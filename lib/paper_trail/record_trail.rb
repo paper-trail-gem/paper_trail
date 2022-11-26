@@ -113,6 +113,11 @@ module PaperTrail
     end
 
     # @api private
+    # @param force [boolean] Insert a `Version` even if `@record` has not
+    #   `changed_notably?`.
+    # @param in_after_callback [boolean] True when called from an `after_update`
+    #   or `after_touch` callback.
+    # @param is_touch [boolean] True when called from an `after_touch` callback.
     # @return - The created version object, so that plugins can use it, e.g.
     # paper_trail-association_tracking
     def record_update(force:, in_after_callback:, is_touch:)
