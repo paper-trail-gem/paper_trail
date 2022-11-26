@@ -17,6 +17,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 - Drop support for Rails 5.2, which reached EoL on 2022-06-01
 - Drop support for Ruby 2.6, which reached EoL on 2022-03-31
+- Drop support for request_store < 1.4
 
 ### Added
 
