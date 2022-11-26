@@ -14,7 +14,7 @@ class Person < ApplicationRecord
 
   has_one :thing
 
-  belongs_to :mentor, class_name: "Person", foreign_key: :mentor_id, optional: true
+  belongs_to :mentor, class_name: "Person", optional: true
 
   has_paper_trail
 

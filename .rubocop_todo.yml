@@ -6,14 +6,6 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-# Offense count: 4
-# Cop supports --auto-correct.
-Rails/RedundantForeignKey:
-  Exclude:
-    - 'spec/dummy_app/app/models/family/family.rb'
-    - 'spec/dummy_app/app/models/family/family_line.rb'
-    - 'spec/dummy_app/app/models/person.rb'
-
 # It may be possible for us to use safe_load, but we'd have to pass the
 # safelists, like `whitelist_classes` into our serializer, and the serializer
 # interface is a public API, so that would be a breaking change.
