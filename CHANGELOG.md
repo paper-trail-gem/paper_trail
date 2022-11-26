@@ -23,9 +23,15 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 - [#1399](https://github.com/paper-trail-gem/paper_trail/pull/1399) - Same
   change re: `YAML.safe_load` as in 13.0.0, but this time for Rails 6.0 and 6.1.
+  - This change only affects users whose `versions` table has `object` or
+    `object_changes` columns of type `text`, and who use the YAML serializer. People
+    who use the JSON serializer, or those with `json(b)` columns, are unaffected.
+  - Please see [doc/pt_13_yaml_safe_load.md](doc/pt_13_yaml_safe_load.md) for details.
 - [#1406](https://github.com/paper-trail-gem/paper_trail/pull/1406) -
   Certain [Metadata][1] keys are now forbidden, like `id`, and `item_type`.
   These keys are reserved by PT.
+  - This change is unlikely to affect anyone. It is not expected that anyone
+    uses these metadata keys. Most people probably don't use PT metadata at all.
 
 ### Dependencies
 
