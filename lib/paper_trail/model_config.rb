@@ -93,7 +93,7 @@ module PaperTrail
       @model_class.after_touch { |r|
         if r.paper_trail.save_version?
           r.paper_trail.record_update(
-            force: RAILS_LT_6_0,
+            force: false,
             in_after_callback: true,
             is_touch: true
           )
@@ -120,9 +120,6 @@ module PaperTrail
     end
 
     private
-
-    RAILS_LT_6_0 = ::ActiveRecord.gem_version < ::Gem::Version.new("6.0.0")
-    private_constant :RAILS_LT_6_0
 
     # @api private
     def append_option_uniquely(option, value)
