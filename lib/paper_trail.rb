@@ -102,7 +102,7 @@ module PaperTrail
 
     # Returns PaperTrail's global configuration object, a singleton. These
     # settings affect all threads.
-    # @api private
+    # @api public
     def config
       @config ||= PaperTrail::Config.instance
       yield @config if block_given?
@@ -110,6 +110,7 @@ module PaperTrail
     end
     alias configure config
 
+    # @api public
     def version
       VERSION::STRING
     end

@@ -75,28 +75,6 @@ module PaperTrail
           !!store.fetch(:"enabled_for_#{model}", true)
       end
 
-      # @api private
-      def merge(options)
-        options.to_h.each do |k, v|
-          store[k] = v
-        end
-      end
-
-      # @api private
-      def set(options)
-        store.clear
-        merge(options)
-      end
-
-      # Returns a deep copy of the internal hash from our RequestStore. Keys are
-      # all symbols. Values are mostly primitives, but whodunnit can be a Proc.
-      # We cannot use Marshal.dump here because it doesn't support Proc. It is
-      # unclear exactly how `deep_dup` handles a Proc, but it doesn't complain.
-      # @api private
-      def to_h
-        store.deep_dup
-      end
-
       # Temporarily set `options` and execute a block.
       # @api private
       def with(options)
@@ -133,12 +111,34 @@ module PaperTrail
 
       private
 
+      # @api private
+      def merge(options)
+        options.to_h.each do |k, v|
+          store[k] = v
+        end
+      end
+
+      # @api private
+      def set(options)
+        store.clear
+        merge(options)
+      end
+
       # Returns a Hash, initializing with default values if necessary.
       # @api private
       def store
         RequestStore.store[:paper_trail] ||= {
           enabled: true
         }
+      end
+
+      # Returns a deep copy of the internal hash from our RequestStore. Keys are
+      # all symbols. Values are mostly primitives, but whodunnit can be a Proc.
+      # We cannot use Marshal.dump here because it doesn't support Proc. It is
+      # unclear exactly how `deep_dup` handles a Proc, but it doesn't complain.
+      # @api private
+      def to_h
+        store.deep_dup
       end
 
       # Provide a helpful error message if someone has a typo in one of their
