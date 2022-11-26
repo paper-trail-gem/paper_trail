@@ -48,7 +48,9 @@ has been destroyed.
   # We no longer specify a maximum activerecord version.
   # See discussion in paper_trail/compatibility.rb
   s.add_dependency "activerecord", ::PaperTrail::Compatibility::ACTIVERECORD_GTE
-  s.add_dependency "request_store", "~> 1.1"
+
+  # PT supports request_store versions for 3 years.
+  s.add_dependency "request_store", "~> 1.4"
 
   s.add_development_dependency "appraisal", "~> 2.4.1"
   s.add_development_dependency "byebug", "~> 11.1"
