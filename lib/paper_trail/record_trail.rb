@@ -150,9 +150,13 @@ module PaperTrail
     # This is an "update" event. That is, we record the same data we would in
     # the case of a normal AR `update`.
     def save_with_version(in_after_callback: false, **options)
-      ::PaperTrail.request(enabled: false) do
-        @record.save(**options)
-      end
+      save_result =
+        ::PaperTrail.request(enabled: false) do
+          @record.save(**options)
+        end
+
+      return save_result unless enabled?
+
       record_update(force: true, in_after_callback: in_after_callback, is_touch: false)
     end
 

@@ -3,4 +3,6 @@
 # This model does not record versions when updated.
 class NotOnUpdate < ApplicationRecord
   has_paper_trail on: %i[create destroy]
+
+  validates_presence_of :name
 end
