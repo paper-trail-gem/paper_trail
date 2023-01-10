@@ -109,7 +109,7 @@ RSpec.describe PaperTrail::InstallGenerator, type: :generator do
       run_generator %w[--uuid]
     end
 
-    it "generates a migration for creating the 'versions' table with item_id type uuid" do
+    it "generates a migration for creating the 'versions' table with item_id type string" do
       expected_item_id_type = "string"
       expect(destination_root).to(
         have_structure {
@@ -117,6 +117,21 @@ RSpec.describe PaperTrail::InstallGenerator, type: :generator do
             directory("migrate") {
               migration("create_versions") {
                 contains "t.#{expected_item_id_type}   :item_id,   null: false"
+              }
+            }
+          }
+        }
+      )
+    end
+
+    it "generates a migration for creating the 'versions' table with primary key as uuid type" do
+      expected_primary_key_type = "uuid"
+      expect(destination_root).to(
+        have_structure {
+          directory("db") {
+            directory("migrate") {
+              migration("create_versions") {
+                contains ", id: :#{expected_primary_key_type}"
               }
             }
           }

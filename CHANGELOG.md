@@ -22,6 +22,9 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
   issue that unencrypted plaintext values are versioned with ActiveRecord
   encryption (since Rails 7) when using JSON serialization on PostgreSQL json
   columns.
+- [#1414](https://github.com/paper-trail-gem/paper_trail/pull/1414) - When
+  generating the migration, the version table will use uuid as primary key type
+  if `--uuid` flag is specified.
 
 ### Dependencies
 
