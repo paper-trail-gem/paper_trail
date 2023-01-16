@@ -153,6 +153,7 @@ RSpec.describe PaperTrail::InstallGenerator, type: :generator do
       run_generator %w[--with-changes --json]
     end
 
+    # rubocop:disable Layout/LineLength
     it "generates a migration for adding the 'object_changes' column to the 'versions' table with type json" do
       expect(destination_root).to(
         have_structure {
@@ -168,5 +169,6 @@ RSpec.describe PaperTrail::InstallGenerator, type: :generator do
         }
       )
     end
+    # rubocop:enable Layout/LineLength
   end
 end
