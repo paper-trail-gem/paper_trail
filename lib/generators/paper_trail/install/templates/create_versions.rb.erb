@@ -14,7 +14,7 @@ class CreateVersions < ActiveRecord::Migration<%= migration_version %>
       t.<%= item_id_type_options %>   :item_id,   null: false
       t.string   :event,     null: false
       t.string   :whodunnit
-      t.text     :object, limit: TEXT_BYTES
+      t.<%= object_column_type %>     :object, limit: TEXT_BYTES
 
       # Known issue in MySQL: fractional second precision
       # -------------------------------------------------

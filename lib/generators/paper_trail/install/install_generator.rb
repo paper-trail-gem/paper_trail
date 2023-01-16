@@ -26,6 +26,12 @@ module PaperTrail
       default: false,
       desc: "Use uuid instead of bigint for item_id type (use only if tables use UUIDs)"
     )
+    class_option(
+      :json,
+      type: :boolean,
+      default: false,
+      desc: "Use json instead of text for object column (use only if database supports json)"
+    )
 
     desc "Generates (but does not run) a migration to add a versions table." \
          "  See section 5.c. Generators in README.md for more information."
@@ -47,6 +53,11 @@ module PaperTrail
     # To use uuid instead of integer for primary key
     def item_id_type_options
       options.uuid? ? "string" : "bigint"
+    end
+
+    # To use uuid instead of integer for primary key
+    def object_column_type
+      options.json? ? "json" : "text"
     end
 
     # MySQL 5.6 utf8mb4 limit is 191 chars for keys used in indexes.

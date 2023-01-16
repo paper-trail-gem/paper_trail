@@ -47,6 +47,7 @@ RSpec.describe PaperTrail::InstallGenerator, type: :generator do
                 contains "def change"
                 contains "create_table :versions#{expected_create_table_options}"
                 contains "  t.string   :item_type#{expected_item_type_options}"
+                contains "  t.text     :object, limit: TEXT_BYTES"
               }
             }
           }
@@ -117,6 +118,50 @@ RSpec.describe PaperTrail::InstallGenerator, type: :generator do
             directory("migrate") {
               migration("create_versions") {
                 contains "t.#{expected_item_id_type}   :item_id,   null: false"
+              }
+            }
+          }
+        }
+      )
+    end
+  end
+
+  describe "`--json` option set to `true`" do
+    before do
+      prepare_destination
+      run_generator %w[--json]
+    end
+
+    it "generates a migration for creating the 'versions' table with `object` type json" do
+      expect(destination_root).to(
+        have_structure {
+          directory("db") {
+            directory("migrate") {
+              migration("create_versions") {
+                contains "t.json     :object, limit: TEXT_BYTES"
+              }
+            }
+          }
+        }
+      )
+    end
+  end
+
+  describe "`--with-changes` and `--json` option set to `true`" do
+    before do
+      prepare_destination
+      run_generator %w[--with-changes --json]
+    end
+
+    it "generates a migration for adding the 'object_changes' column to the 'versions' table with type json" do
+      expect(destination_root).to(
+        have_structure {
+          directory("db") {
+            directory("migrate") {
+              migration("add_object_changes_to_versions") {
+                contains "class AddObjectChangesToVersions"
+                contains "def change"
+                contains "add_column :versions, :object_changes, :json"
               }
             }
           }
