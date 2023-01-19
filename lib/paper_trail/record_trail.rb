@@ -226,7 +226,8 @@ module PaperTrail
       # unnatural to tamper with creation timestamps in this way. But, this
       # feature has existed for a long time, almost a decade now, and some users
       # may rely on it now.
-      if @record.respond_to?(:updated_at)
+      if @record.respond_to?(:updated_at) &&
+          @record.paper_trail_options[:synchronize_version_creation_timestamp] != false
         data[:created_at] = @record.updated_at
       end
 
