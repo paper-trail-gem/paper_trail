@@ -48,6 +48,11 @@ class SetUpTestTables < ::ActiveRecord::Migration::Current
       t.timestamps null: true, limit: 6
     end
 
+    create_table :gizmos, force: true do |t|
+      t.string :name
+      t.timestamps null: true, limit: 6
+    end
+
     create_table :widgets, force: true do |t|
       t.string    :name
       t.text      :a_text

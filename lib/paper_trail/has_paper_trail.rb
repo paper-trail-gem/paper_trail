@@ -53,6 +53,10 @@ module PaperTrail
       #   - A Hash - options passed to `has_many`, plus `name:` and `scope:`.
       # - :version - The name to use for the method which returns the version
       #   the instance was reified from. Default is `:version`.
+      # - :synchronize_version_creation_timestamp - By default, paper trail
+      #   sets the `created_at` field for a new Version equal to the `updated_at`
+      #   column of the model being updated. If you instead want `created_at` to
+      #   populate with the current timestamp, set this option to `false`.
       #
       # Plugins like the experimental `paper_trail-association_tracking` gem
       # may accept additional options.
