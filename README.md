@@ -1326,11 +1326,14 @@ add_column :versions, :new_object, :jsonb # or :json
 
 PaperTrail::Version.where.not(object: nil).find_each do |version|
   version.update_column(:new_object, YAML.load(version.object))
+  # version.update_column(:new_object, YAML.unsafe_load(version.object))  # needed for Psych 4
+  
 
   # if version.object_changes
   #   version.update_column(
   #     :new_object_changes,
   #     YAML.load(version.object_changes)
+  ##    YAML.unsafe_load(version.object_changes)  # needed for Psych 4
   #   )
   # end
 end
