@@ -375,6 +375,14 @@ class SetUpTestTables < ::ActiveRecord::Migration::Current
       t.integer :mass
       t.string :name
     end
+
+    create_table :secret_agents do |t|
+      t.string :name
+    end
+
+    create_table :secret_agent_bs do |t|
+      t.string :name
+    end
   end
 
   def down

@@ -2,6 +2,7 @@
 
 require "spec_helper"
 require "support/shared_examples/queries"
+require "support/shared_examples/active_record_encryption"
 
 module PaperTrail
   ::RSpec.describe Version, type: :model do
@@ -121,6 +122,10 @@ module PaperTrail
           ::Fruit, # uses JsonVersion
           :mass
         )
+
+        if ::Rails::VERSION::MAJOR >= 7 # Rails 7 added Active Record Encryption
+          include_examples("active_record_encryption", ::SecretAgent)
+        end
       end
 
       context "with jsonb columns", versioning: true do
@@ -130,6 +135,10 @@ module PaperTrail
           ::Vegetable, # uses JsonbVersion
           :mass
         )
+
+        if ::Rails::VERSION::MAJOR >= 7 # Rails 7 added Active Record Encryption
+          include_examples("active_record_encryption", ::SecretAgentB)
+        end
       end
     end
   end

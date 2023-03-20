@@ -23,14 +23,19 @@ module PaperTrail
       # Modifies `changes` in place.
       # TODO: Return a new hash instead.
       def alter(changes, serialization_method)
-        # Don't serialize before values before inserting into columns of type
-        # `JSON` on `PostgreSQL` databases.
-        return changes if object_changes_col_is_json?
+        # for columns of type `JSON` on `PostgreSQL` databases,
+        # only serialize values for encrypted columns
+        if object_changes_col_is_json?
+          encrypted_attributes = @item_class.try(:encrypted_attributes)
+          return changes if encrypted_attributes.blank?
+        end
 
         serializer = CastAttributeSerializer.new(@item_class)
         changes.clone.each do |key, change|
           # `change` is an Array with two elements, representing before and after.
           changes[key] = Array(change).map do |value|
+            next(value) if encrypted_attributes&.exclude? key.to_sym
+
             serializer.send(serialization_method, key, value)
           end
         end
