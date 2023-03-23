@@ -18,7 +18,10 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- None
+- [#1422](https://github.com/paper-trail-gem/paper_trail/pull/1422) - Fix the
+  issue that unencrypted plaintext values are versioned with ActiveRecord
+  encryption (since Rails 7) when using JSON serialization on PostgreSQL json
+  columns.
 
 ## 14.0.0 (2022-11-26)
 
