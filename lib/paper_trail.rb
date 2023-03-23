@@ -114,6 +114,10 @@ module PaperTrail
     def version
       VERSION::STRING
     end
+
+    def active_record_gte_7_0?
+      @active_record_gte_7_0 ||= ::ActiveRecord.gem_version >= ::Gem::Version.new("7.0.0")
+    end
   end
 end
 
