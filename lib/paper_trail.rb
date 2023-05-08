@@ -100,6 +100,18 @@ module PaperTrail
       PaperTrail.config.serializer
     end
 
+    # Set the storage method for storing the object after change instead of before change
+    # @api public
+    def store_after_change=(value)
+      PaperTrail.config.store_after_change= value
+    end
+
+    # Get the storage method: storage before or after applying the changes
+    # @api public
+    def store_after_change
+      PaperTrail.config.store_after_change
+    end
+
     # Returns PaperTrail's global configuration object, a singleton. These
     # settings affect all threads.
     # @api public

@@ -105,6 +105,16 @@ module PaperTrail
       end
 
       # @api private
+      def nonskipped_attributes_after_change
+        record_attributes = @record.attributes.except(*@record.paper_trail_options[:skip])
+        record_attributes.each_key do |k|
+          if @record.class.column_names.include?(k)
+            record_attributes[k] = @record.attributes[k.to_s]
+          end
+        end
+      end
+
+      # @api private
       def calculated_ignored_array
         ignore = @record.paper_trail_options[:ignore].dup
         # Remove Hash arguments and then evaluate whether the attributes (the
@@ -263,7 +273,11 @@ module PaperTrail
       #
       # @api private
       def object_attrs_for_paper_trail(is_touch)
-        attrs = nonskipped_attributes_before_change(is_touch)
+        attrs = if PaperTrail.config.store_after_change
+                  nonskipped_attributes_after_change
+                else
+                  nonskipped_attributes_before_change(is_touch)
+                end
         AttributeSerializers::ObjectAttribute.new(@record.class).serialize(attrs)
         attrs
       end
