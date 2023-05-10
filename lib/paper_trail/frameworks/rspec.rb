@@ -20,9 +20,15 @@ RSpec.configure do |config|
   end
 end
 
-RSpec::Matchers.define :be_versioned do
+RSpec::Matchers.define :be_versioned do |**attributes|
   # check to see if the model has `has_paper_trail` declared on it
-  match { |actual| actual.is_a?(::PaperTrail::Model::InstanceMethods) }
+  match do |actual|
+    return false unless actual.is_a?(::PaperTrail::Model::InstanceMethods)
+    if attributes.key?(:with_meta)
+      return false unless actual.class.paper_trail_options[:meta].keys.map(&:to_sym).sort == attributes[:with_meta].map(&:to_sym).sort
+    end
+    true
+  end
 end
 
 RSpec::Matchers.define :have_a_version_with do |attributes|

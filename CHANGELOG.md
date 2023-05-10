@@ -15,6 +15,9 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
   model-configurable option `synchronize_version_creation_timestamp` which, if
   set to false, opts out of synchronizing timestamps between `Version.created_at`
   and the record's `updated_at`.
+- [#1428](https://github.com/paper-trail-gem/paper_trail/pull/1428) - Adds a
+  `with_meta` option to the `be_versioned` rspec matcher to check if the
+  requested `meta` keys are included in the version
 
 ### Fixed
 

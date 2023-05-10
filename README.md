@@ -1567,6 +1567,24 @@ describe Widget do
 end
 ```
 
+Extra paramters can be added to verify the wanted [meta data](#4c-storing-metadata) keys are included:
+
+```ruby
+describe Widget do
+  describe 'add versioning to the `Widget` class' do
+    before(:all) do
+      class Widget < ActiveRecord::Base
+        has_paper_trail meta: { organization_id: :orgainization_id }
+      end
+    end
+
+    it 'enables paper trail' do
+      is_expected.to be_versioned with_meta: [:organization_id]
+    end
+  end
+end
+```
+
 #### Matchers
 
 The `have_a_version_with` matcher makes assertions about versions using
