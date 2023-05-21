@@ -290,6 +290,7 @@ class SetUpTestTables < ::ActiveRecord::Migration::Current
       t.string :color
       t.integer :mass
       t.string :name
+      t.text :supplier
     end
 
     create_table :boolits, force: true do |t|
@@ -374,6 +375,7 @@ class SetUpTestTables < ::ActiveRecord::Migration::Current
       t.string :color
       t.integer :mass
       t.string :name
+      t.text :supplier
     end
   end
 

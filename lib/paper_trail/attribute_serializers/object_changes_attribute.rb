@@ -8,6 +8,12 @@ module PaperTrail
     class ObjectChangesAttribute
       def initialize(item_class)
         @item_class = item_class
+
+        # ActiveRecord since 7.0 has a built-in encryption mechanism
+        @encrypted_attributes =
+          if PaperTrail.active_record_gte_7_0?
+            @item_class.encrypted_attributes&.map(&:to_s)
+          end
       end
 
       def serialize(changes)
@@ -23,17 +29,21 @@ module PaperTrail
       # Modifies `changes` in place.
       # TODO: Return a new hash instead.
       def alter(changes, serialization_method)
-        # Don't serialize before values before inserting into columns of type
+        # Don't serialize non-encrypted before values before inserting into columns of type
         # `JSON` on `PostgreSQL` databases.
-        return changes if object_changes_col_is_json?
+        changes_to_serialize =
+          object_changes_col_is_json? ? changes.slice(*@encrypted_attributes) : changes.clone
+        return changes if changes_to_serialize.blank?
 
         serializer = CastAttributeSerializer.new(@item_class)
-        changes.clone.each do |key, change|
+        changes_to_serialize.each do |key, change|
           # `change` is an Array with two elements, representing before and after.
           changes[key] = Array(change).map do |value|
             serializer.send(serialization_method, key, value)
           end
         end
+
+        changes
       end
 
       def object_changes_col_is_json?
