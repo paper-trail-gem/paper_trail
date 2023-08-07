@@ -9,7 +9,7 @@ class CreateVersions < ActiveRecord::Migration<%= migration_version %>
   TEXT_BYTES = 1_073_741_823
 
   def change
-    create_table :versions<%= versions_table_options %> do |t|
+    create_table :versions<%= versions_table_options %><%= version_table_primary_key_type %> do |t|
       t.string   :item_type<%= item_type_options %>
       t.<%= item_id_type_options %>   :item_id,   null: false
       t.string   :event,     null: false
