@@ -29,6 +29,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 ### Dependencies
 
 - Drop support for Rails 6.0, which [reached EoL on 2023-06-01][2]
+- Drop support for Ruby 2.7, which [reached EoL on 2023-03-31][3]
 
 ## 14.0.0 (2022-11-26)
 
@@ -1425,3 +1426,4 @@ in the `PaperTrail::Version` class through a `Rails::Engine` when the gem is use
 
 [1]: https://github.com/paper-trail-gem/paper_trail#4c-storing-metadata
 [2]: https://guides.rubyonrails.org/maintenance_policy.html
+[3]: https://www.ruby-lang.org/en/downloads/branches/

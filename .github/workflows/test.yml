@@ -17,7 +17,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           # See "Lowest supported ruby version" in CONTRIBUTING.md
-          ruby-version: '2.7'
+          ruby-version: '3.0'
       - name: Bundle
         run: |
           gem install bundler
@@ -62,11 +62,8 @@ jobs:
         gemfile: [ 'rails_6.1', 'rails_7.0' ]
 
         # To keep matrix size down, only test highest and lowest rubies.
-        # Ruby 3.0 is an exception. For now, let's continue to test against 2.7
-        # in case it still produces any deprecation warnings.
-        #
         # See "Lowest supported ruby version" in CONTRIBUTING.md
-        ruby: [ '2.7', '3.0', '3.1' ]
+        ruby: [ '3.0', '3.1' ]
     steps:
       - name: Checkout source
         uses: actions/checkout@v2
