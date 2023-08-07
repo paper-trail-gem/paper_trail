@@ -119,19 +119,11 @@ Experts: to install incompatible versions of activerecord, see
 1. Add a `versions` table to your database:
 
     ```
-    bundle exec rails generate paper_trail:install [--with-changes]
-    ```
-    
-    If tables in your project use `uuid` instead of `integers` for `id`, then use:  
-    ```
-    bundle exec rails generate paper_trail:install [--uuid]
+    bundle exec rails generate paper_trail:install [--with-changes] [--uuid]
+    bundle exec rails db:migrate
     ```
 
     See [section 5.c. Generators](#5c-generators) for details.
-
-    ```
-    bundle exec rake db:migrate
-    ```
 
 1. Add `has_paper_trail` to the models you want to track.
 
