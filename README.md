@@ -15,6 +15,7 @@ This is the _user guide_. See also, the
 
 Choose version:
 [Unreleased](https://github.com/paper-trail-gem/paper_trail/blob/master/README.md),
+[15.0](https://github.com/paper-trail-gem/paper_trail/blob/v15.0.0/README.md),
 [14.0](https://github.com/paper-trail-gem/paper_trail/blob/v14.0.0/README.md),
 [13.0](https://github.com/paper-trail-gem/paper_trail/blob/v13.0.0/README.md),
 [12.3](https://github.com/paper-trail-gem/paper_trail/blob/v12.3.0/README.md),
@@ -92,6 +93,7 @@ Choose version:
 | paper_trail | branch     | ruby     | activerecord  |
 |-------------|------------|----------|---------------|
 | unreleased  | master     | >= 3.0.0 | >= 6.1, < 7.1 |
+| 15          | 15-stable  | >= 3.0.0 | >= 6.1, < 7.1 |
 | 14          | 14-stable  | >= 2.7.0 | >= 6.0, < 7.1 |
 | 13          | 13-stable  | >= 2.6.0 | >= 5.2, < 7.1 |
 | 12          | 12-stable  | >= 2.6.0 | >= 5.2, < 7.1 |

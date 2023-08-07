@@ -111,10 +111,10 @@ markdown-toc -i --maxdepth 3 --bullets='-' README.md
     - Replace "Unreleased" with the date in ISO-8601 format
     - Add a new "Unreleased" section
   1. In the readme, update references to version number, including
-    - documentation links table
+    - list of documentation versions
     - compatability table, if necessary
   1. git commit -am 'Release 10.3.0'
-  1. git push origin release-10.3.0
+  1. git push -u origin release-10.3.0
   1. Pull request into `10-stable`, CI pass, merge PR
 1. Release
   1. git checkout 10-stable && git pull
