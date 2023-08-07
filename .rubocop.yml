@@ -23,7 +23,7 @@ AllCops:
   NewCops: enable
 
   # See "Lowest supported ruby version" in CONTRIBUTING.md
-  TargetRubyVersion: 2.7
+  TargetRubyVersion: 3.0
 
 Layout/ArgumentAlignment:
   EnforcedStyle: with_fixed_indentation
