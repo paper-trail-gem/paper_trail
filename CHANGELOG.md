@@ -11,6 +11,20 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
+- None
+
+### Fixed
+
+- None
+
+## 15.0.0 (2023-08-06)
+
+### Breaking Changes
+
+- None
+
+### Added
+
 - [#1416](https://github.com/paper-trail-gem/paper_trail/pull/1416) - Adds a
   model-configurable option `synchronize_version_creation_timestamp` which, if
   set to false, opts out of synchronizing timestamps between `Version.created_at`
