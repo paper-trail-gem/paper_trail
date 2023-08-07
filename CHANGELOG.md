@@ -23,6 +23,10 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
   encryption (since Rails 7) when using JSON serialization on PostgreSQL json
   columns.
 
+### Dependencies
+
+- Drop support for Rails 6.0, which [reached EoL on 2023-06-01][2]
+
 ## 14.0.0 (2022-11-26)
 
 ### Breaking Changes
@@ -233,8 +237,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Dependencies
 
-- Drop support for rails <= 5.1 (reached EOL when 6.0 was released,
-  per https://guides.rubyonrails.org/maintenance_policy.html)
+- Drop support for rails <= 5.1, which [reached EOL when 6.0 was released][2]
 - Drop support for ruby 2.3 (reached EOL on 2019-04-01)
 
 ## 10.3.1 (2019-07-31)
@@ -1418,3 +1421,4 @@ in the `PaperTrail::Version` class through a `Rails::Engine` when the gem is use
     for names that are not obviously pertaining to PaperTrail to prevent method name collision.
 
 [1]: https://github.com/paper-trail-gem/paper_trail#4c-storing-metadata
+[2]: https://guides.rubyonrails.org/maintenance_policy.html

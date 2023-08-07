@@ -59,7 +59,7 @@ jobs:
       # have set this up with each database as a separate job, but then we'd be
       # duplicating the matrix configuration three times.
       matrix:
-        gemfile: [ 'rails_6.0', 'rails_6.1', 'rails_7.0' ]
+        gemfile: [ 'rails_6.1', 'rails_7.0' ]
 
         # To keep matrix size down, only test highest and lowest rubies.
         # Ruby 3.0 is an exception. For now, let's continue to test against 2.7
