@@ -289,6 +289,7 @@ Global configuration options affect all threads.
 - object_changes_adapter
 - serializer
 - version_limit
+- association_touch_versions
 
 Syntax example: (options described in detail later)
 
@@ -305,6 +306,16 @@ These options are intended to be set only once, during app initialization (eg.
 in `config/initializers`). It is unsafe to change them while the app is running.
 In contrast, `PaperTrail.request` has various options that only apply to a
 single HTTP request and thus are safe to use while the app is running.
+
+##### Association touch versions
+By default if you have an ActiveRecord association with `touch: true` then a new version will be created on the association with an empty object changeset.  This will happen regardless of if you have ignore or skip set on the updated attribute.  Thus this setting allows you to disable the version creation triggered by associations with `touch: true`.
+
+To disable set to false:
+```ruby
+PaperTrail.config.association_touch_versions = false
+```
+
+For more details see: https://github.com/paper-trail-gem/paper_trail/pull/1376
 
 ## 2. Limiting What is Versioned, and When
 

@@ -5,6 +5,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ## Unreleased
 
+- Provide option to disable association touch versions
+
 ### Breaking Changes
 
 - None

@@ -44,7 +44,8 @@ module PaperTrail
       #
       # @api private
       def changed_notably?
-        if @is_touch && changes_in_latest_version.empty?
+        if @is_touch && changes_in_latest_version.empty? \
+            && PaperTrail.config.association_touch_versions
           true
         else
           super
