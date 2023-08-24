@@ -5,6 +5,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ## Unreleased
 
+- Added `debounce_ms` option, to override versions within a specified period
+
 ### Breaking Changes
 
 - None

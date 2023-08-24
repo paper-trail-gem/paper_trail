@@ -70,6 +70,7 @@ require "paper_trail"
 require "ffaker"
 require "rspec/rails"
 require "rails-controller-testing"
+require "timecop"
 
 # Now we can load our dummy app. Its boot process does not perfectly match a
 # conventional Rails app, but it's what we were able to fit in our test suite.

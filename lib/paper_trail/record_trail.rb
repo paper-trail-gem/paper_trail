@@ -106,7 +106,15 @@ module PaperTrail
         in_after_callback: in_after_callback,
         is_touch: is_touch
       )
+
       return unless version
+
+      # Update previous version if within debounce period
+      if update_previous_version?
+        version = merge_versions(
+          versions.last, version, in_after_callback: in_after_callback
+        )
+      end
 
       if version.save
         # Because the version object was created using version_class.new instead
@@ -312,6 +320,38 @@ module PaperTrail
 
     def versions
       @record.public_send(@record.class.versions_association_name)
+    end
+
+    def merge_versions(previous_version, new_version, in_after_callback:)
+      changeset = merge_changesets(
+        previous_version.changeset,
+        new_version.changeset
+      )
+
+      previous_version.object = new_version.object
+      previous_version.object_changes = PaperTrail::Events::Base
+        .new(@record, in_after_callback)
+        .send(:prepare_object_changes, changeset)
+
+      previous_version
+    end
+
+    def update_previous_version?
+      return false unless @record.paper_trail_options[:debounce_ms]
+      return false if versions.last.event == "create"
+
+      ((Time.current - versions.last.created_at) * 1000) < @record.paper_trail_options[:debounce_ms]
+    end
+
+    def merge_changesets(original_changeset, new_changeset)
+      combined_keys = original_changeset.keys | new_changeset.keys
+
+      combined_keys.each_with_object({}) do |k, h|
+        before = original_changeset[k] ? original_changeset.dig(k, 0) : new_changeset.dig(k, 0)
+        after = new_changeset[k] ? new_changeset.dig(k, 1) : original_changeset.dig(k, 1)
+
+        h[k] = [before, after]
+      end
     end
   end
 end

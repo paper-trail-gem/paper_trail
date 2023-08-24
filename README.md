@@ -407,6 +407,15 @@ the record has not changed.
 my_model.paper_trail.save_with_version
 ```
 
+#### Overriding versions within a specific period
+
+If your application has functionality that saves a model frequently, such as saving after every user input keypress you'll end up with a large number of versions with small changes that aren't easy to reconcile.  To prevent this and create more meaningful changes you can use the `debounce_ms` option on a per model basis.  If more than one update happens within the debounce_ms period, your previous version will be overwritten to include the changes from the newest update.
+
+```ruby
+has_paper_trail debounce_ms: 3000
+```
+*Note this implementation does not debounce in the traditional sense of waiting for multiple inputs, it instead overrides the existing version as many times as necessary in the debounce window.*
+
 ### 2.c. Choosing Attributes To Monitor
 
 #### Ignore
