@@ -15,6 +15,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
+- [#1437](https://github.com/paper-trail-gem/paper_trail/issues/1437) - Fix the issue where the "paper_trail" initializer is not guaranteed to execute before the "load_config_initializers" initializer.
+
 - None
 
 ## 15.0.0 (2023-08-06)
