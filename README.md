@@ -92,7 +92,7 @@ Choose version:
 
 | paper_trail | branch     | ruby     | activerecord  |
 |-------------|------------|----------|---------------|
-| unreleased  | master     | >= 3.0.0 | >= 6.1, < 7.1 |
+| unreleased  | master     | >= 3.0.0 | >= 6.1, < 7.2 |
 | 15          | 15-stable  | >= 3.0.0 | >= 6.1, < 7.1 |
 | 14          | 14-stable  | >= 2.7.0 | >= 6.0, < 7.1 |
 | 13          | 13-stable  | >= 2.6.0 | >= 5.2, < 7.1 |
