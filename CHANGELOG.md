@@ -9,14 +9,14 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 - None
 
-### Added
-
-- support for Rails 7.1
-- support for Ruby 3.2
-
 ### Fixed
 
 - None
+
+### Dependencies
+
+- Add support for Rails 7.1
+- Add support for Ruby 3.2
 
 ## 15.0.0 (2023-08-06)
 

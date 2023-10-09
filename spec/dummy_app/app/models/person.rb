@@ -49,5 +49,10 @@ class Person < ApplicationRecord
     end
   end
 
-  serialize :time_zone, TimeZoneSerializer.new
+  # Rails 7.1 deprecates positional argument for coder
+  if Rails.gem_version >= Gem::Version.new("7.1")
+    serialize :time_zone, coder: TimeZoneSerializer.new
+  else
+    serialize :time_zone, TimeZoneSerializer.new
+  end
 end
