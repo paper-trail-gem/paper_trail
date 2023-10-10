@@ -12,6 +12,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 ### Added
 
 - support for Rails 7.1
+- support for Ruby 3.2
 
 ### Fixed
 
