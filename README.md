@@ -15,7 +15,7 @@ This is the _user guide_. See also, the
 
 Choose version:
 [Unreleased](https://github.com/paper-trail-gem/paper_trail/blob/master/README.md),
-[15.0](https://github.com/paper-trail-gem/paper_trail/blob/v15.0.0/README.md),
+[15.1](https://github.com/paper-trail-gem/paper_trail/blob/v15.1.0/README.md),
 [14.0](https://github.com/paper-trail-gem/paper_trail/blob/v14.0.0/README.md),
 [13.0](https://github.com/paper-trail-gem/paper_trail/blob/v13.0.0/README.md),
 [12.3](https://github.com/paper-trail-gem/paper_trail/blob/v12.3.0/README.md),
@@ -90,24 +90,24 @@ Choose version:
 
 ### 1.a. Compatibility
 
-| paper_trail | branch     | ruby     | activerecord  |
-|-------------|------------|----------|---------------|
-| unreleased  | master     | >= 3.0.0 | >= 6.1, < 7.2 |
-| 15          | 15-stable  | >= 3.0.0 | >= 6.1, < 7.1 |
-| 14          | 14-stable  | >= 2.7.0 | >= 6.0, < 7.1 |
-| 13          | 13-stable  | >= 2.6.0 | >= 5.2, < 7.1 |
-| 12          | 12-stable  | >= 2.6.0 | >= 5.2, < 7.1 |
-| 11          | 11-stable  | >= 2.4.0 | >= 5.2, < 6.1 |
-| 10          | 10-stable  | >= 2.3.0 | >= 4.2, < 6.1 |
-| 9           | 9-stable   | >= 2.3.0 | >= 4.2, < 5.3 |
-| 8           | 8-stable   | >= 2.2.0 | >= 4.2, < 5.2 |
-| 7           | 7-stable   | >= 2.1.0 | >= 4.0, < 5.2 |
-| 6           | 6-stable   | >= 1.9.3 | >= 4.0, < 5.2 |
-| 5           | 5-stable   | >= 1.9.3 | >= 3.0, < 5.1 |
-| 4           | 4-stable   | >= 1.8.7 | >= 3.0, < 5.1 |
-| 3           | 3.0-stable | >= 1.8.7 | >= 3.0, < 5   |
-| 2           | 2.7-stable | >= 1.8.7 | >= 3.0, < 4   |
-| 1           | rails2     | >= 1.8.7 | >= 2.3, < 3   |
+| paper_trail | ruby     | activerecord  |
+|-------------|----------|---------------|
+| unreleased  | >= 3.0.0 | >= 6.1, < 7.2 |
+| 15          | >= 3.0.0 | >= 6.1, < 7.2 |
+| 14          | >= 2.7.0 | >= 6.0, < 7.1 |
+| 13          | >= 2.6.0 | >= 5.2, < 7.1 |
+| 12          | >= 2.6.0 | >= 5.2, < 7.1 |
+| 11          | >= 2.4.0 | >= 5.2, < 6.1 |
+| 10          | >= 2.3.0 | >= 4.2, < 6.1 |
+| 9           | >= 2.3.0 | >= 4.2, < 5.3 |
+| 8           | >= 2.2.0 | >= 4.2, < 5.2 |
+| 7           | >= 2.1.0 | >= 4.0, < 5.2 |
+| 6           | >= 1.9.3 | >= 4.0, < 5.2 |
+| 5           | >= 1.9.3 | >= 3.0, < 5.1 |
+| 4           | >= 1.8.7 | >= 3.0, < 5.1 |
+| 3           | >= 1.8.7 | >= 3.0, < 5   |
+| 2           | >= 1.8.7 | >= 3.0, < 4   |
+| 1           | >= 1.8.7 | >= 2.3, < 3   |
 
 Experts: to install incompatible versions of activerecord, see
 `paper_trail/compatibility.rb`.
