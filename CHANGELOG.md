@@ -9,6 +9,20 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 - None
 
+### Added
+
+- None
+
+### Fixed
+
+- None
+
+## 15.1.0 (2023-10-22)
+
+### Breaking Changes
+
+- None
+
 ### Fixed
 
 - None
