@@ -27,7 +27,7 @@ module PaperTrail
           it "raises an error on create" do
             expect {
               Comment.create!(content: "Henry")
-            }.to raise_error(ActiveRecord::NotNullViolation)
+            }.to raise_error(ActiveRecord::RecordInvalid)
           end
 
           it "raises an error on update" do
@@ -37,7 +37,7 @@ module PaperTrail
 
             expect {
               comment.update!(content: "Brad")
-            }.to raise_error(ActiveRecord::NotNullViolation)
+            }.to raise_error(ActiveRecord::RecordInvalid)
           end
 
           it "raises an error on update_columns" do
@@ -57,7 +57,7 @@ module PaperTrail
 
             expect {
               comment.destroy!
-            }.to raise_error(ActiveRecord::NotNullViolation)
+            }.to raise_error(ActiveRecord::RecordInvalid)
           end
         end
       end
@@ -69,7 +69,7 @@ module PaperTrail
           it "raises an error on create" do
             expect {
               Comment.create!(content: "Henry")
-            }.to raise_error(ActiveRecord::NotNullViolation)
+            }.to raise_error(ActiveRecord::RecordInvalid)
           end
 
           it "does not raise an error on update" do
