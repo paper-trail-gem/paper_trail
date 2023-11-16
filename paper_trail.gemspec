@@ -49,9 +49,6 @@ has been destroyed.
   # See discussion in paper_trail/compatibility.rb
   s.add_dependency "activerecord", ::PaperTrail::Compatibility::ACTIVERECORD_GTE
 
-  # PT supports request_store versions for 3 years.
-  s.add_dependency "request_store", "~> 1.4"
-
   s.add_development_dependency "appraisal", "~> 2.4.1"
   s.add_development_dependency "byebug", "~> 11.1"
   s.add_development_dependency "ffaker", "~> 2.20"

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "request_store"
+require "paper_trail/request/current_attributes"
 
 module PaperTrail
   # Manages variables that affect the current HTTP request, such as `whodunnit`.
@@ -20,9 +20,7 @@ module PaperTrail
       #   PaperTrail.request.controller_info # => { ip: '127.0.0.1' }
       #
       # @api public
-      def controller_info=(value)
-        store[:controller_info] = value
-      end
+      delegate :controller_info=, to: :current_attributes
 
       # Returns the data from the controller that you want PaperTrail to store.
       # See also `PaperTrail::Rails::Controller#info_for_paper_trail`.
@@ -31,9 +29,7 @@ module PaperTrail
       #   PaperTrail.request.controller_info # => { ip: '127.0.0.1' }
       #
       # @api public
-      def controller_info
-        store[:controller_info]
-      end
+      delegate :controller_info, to: :current_attributes
 
       # Switches PaperTrail off for the given model.
       # @api public
@@ -49,22 +45,20 @@ module PaperTrail
 
       # Sets whether PaperTrail is enabled or disabled for the current request.
       # @api public
-      def enabled=(value)
-        store[:enabled] = value
-      end
+      delegate :enabled=, to: :current_attributes
 
       # Returns `true` if PaperTrail is enabled for the request, `false` otherwise.
       # See `PaperTrail::Rails::Controller#paper_trail_enabled_for_controller`.
       # @api public
       def enabled?
-        !!store[:enabled]
+        !!current_attributes.enabled
       end
 
       # Sets whether PaperTrail is enabled or disabled for this model in the
       # current request.
       # @api public
       def enabled_for_model(model, value)
-        store[:"enabled_for_#{model}"] = value
+        current_attributes.enabled_for[model] = value
       end
 
       # Returns `true` if PaperTrail is enabled for this model in the current
@@ -72,19 +66,16 @@ module PaperTrail
       # @api public
       def enabled_for_model?(model)
         model.include?(::PaperTrail::Model::InstanceMethods) &&
-          !!store.fetch(:"enabled_for_#{model}", true)
+          !!(current_attributes.enabled_for[model] ||
+            current_attributes.enabled_for[model].nil?)
       end
 
       # Temporarily set `options` and execute a block.
       # @api private
-      def with(options)
-        return unless block_given?
-        validate_public_options(options)
-        before = to_h
-        merge(options)
-        yield
-      ensure
-        set(before)
+      def with(options, &block)
+        validate_public_options!(options)
+        transform_public_options!(options)
+        current_attributes.set(options, &block)
       end
 
       # Sets who is responsible for any changes that occur during request. You
@@ -97,65 +88,60 @@ module PaperTrail
       # inserting a `Version` record.
       #
       # @api public
-      def whodunnit=(value)
-        store[:whodunnit] = value
-      end
+      delegate :whodunnit=, to: :current_attributes
 
-      # Returns who is reponsible for any changes that occur during request.
+      # Returns who is responsible for any changes that occur during request.
       #
       # @api public
       def whodunnit
-        who = store[:whodunnit]
+        who = current_attributes.whodunnit
         who.respond_to?(:call) ? who.call : who
       end
 
       private
 
+      # Returns the current request attributes with default values initialized if necessary.
       # @api private
-      def merge(options)
-        options.to_h.each do |k, v|
-          store[k] = v
+      def current_attributes
+        CurrentAttributes.tap do |attrs|
+          attrs.enabled = true if attrs.enabled.nil?
         end
       end
 
-      # @api private
-      def set(options)
-        store.clear
-        merge(options)
-      end
-
-      # Returns a Hash, initializing with default values if necessary.
-      # @api private
-      def store
-        RequestStore.store[:paper_trail] ||= {
-          enabled: true
-        }
-      end
-
-      # Returns a deep copy of the internal hash from our RequestStore. Keys are
+      # Returns a deep copy of the current attributes. Keys are
       # all symbols. Values are mostly primitives, but whodunnit can be a Proc.
       # We cannot use Marshal.dump here because it doesn't support Proc. It is
       # unclear exactly how `deep_dup` handles a Proc, but it doesn't complain.
       # @api private
       def to_h
-        store.deep_dup
+        current_attributes.attributes.except(:skip_reset).deep_dup
       end
 
       # Provide a helpful error message if someone has a typo in one of their
       # option keys. We don't validate option values here. That's traditionally
       # been handled with casting (`to_s`, `!!`) in the accessor method.
       # @api private
-      def validate_public_options(options)
-        options.each do |k, _v|
-          case k
-          when :controller_info,
-              /enabled_for_/,
-              :enabled,
-              :whodunnit
+      def validate_public_options!(options)
+        options.keys.each do |key|
+          case key
+          when :enabled,
+               /^enabled_for_/,
+               :controller_info,
+               :whodunnit
             next
           else
-            raise InvalidOption, "Invalid option: #{k}"
+            raise InvalidOption, "Invalid option: #{key}"
           end
+        end
+      end
+
+      # Transform public options into internal attributes.
+      # @api private
+      def transform_public_options!(options)
+        options[:enabled_for] = current_attributes.enabled_for.deep_dup
+        options.keys.grep(/^enabled_for_/).each do |key|
+          model_klass = key.to_s.sub("enabled_for_", "").constantize
+          options[:enabled_for][model_klass] = options.delete(key)
         end
       end
     end

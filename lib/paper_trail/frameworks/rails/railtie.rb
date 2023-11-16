@@ -26,5 +26,12 @@ module PaperTrail
         require "paper_trail/frameworks/active_record"
       end
     end
+
+    # ActiveSupport::CurrentAttributes resets all attributes before and after each request.
+    # Resetting after a request breaks backwards compatibility with the previous RequestStore
+    # implementation. This initializer ensures this reset is skipped.
+    initializer "active_support.reset_all_current_attributes_instances" do |app|
+      app.executor.to_run { PaperTrail::Request::CurrentAttributes.skip_reset = true }
+    end
   end
 end

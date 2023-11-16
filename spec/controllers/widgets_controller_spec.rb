@@ -5,8 +5,6 @@ require "spec_helper"
 RSpec.describe WidgetsController, type: :controller, versioning: true do
   before { request.env["REMOTE_ADDR"] = "127.0.0.1" }
 
-  after { RequestStore.store[:paper_trail] = nil }
-
   describe "#create" do
     context "with PT enabled" do
       it "stores information like IP address in version" do
