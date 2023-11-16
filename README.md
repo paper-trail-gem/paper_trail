@@ -1752,8 +1752,8 @@ Released under the MIT licence.
 [1]: http://api.rubyonrails.org/classes/ActiveRecord/Locking/Optimistic.html
 [2]: https://github.com/paper-trail-gem/paper_trail/issues/163
 [3]: http://railscasts.com/episodes/255-undo-with-paper-trail
-[4]: https://api.travis-ci.org/paper-trail-gem/paper_trail.svg?branch=master
-[5]: https://travis-ci.org/paper-trail-gem/paper_trail
+[4]: https://github.com/paper-trail-gem/paper_trail/actions/workflows/test.yml/badge.svg
+[5]: https://github.com/paper-trail-gem/paper_trail/actions/workflows/test.yml
 [6]: https://github.com/westonganger/paper_trail-association_tracking
 [9]: https://github.com/paper-trail-gem/paper_trail/tree/3.0-stable
 [10]: https://github.com/paper-trail-gem/paper_trail/tree/2.7-stable
