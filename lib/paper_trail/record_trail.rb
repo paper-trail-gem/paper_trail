@@ -72,6 +72,7 @@ module PaperTrail
     # @api private
     # @return - The created version object, so that plugins can use it, e.g.
     # paper_trail-association_tracking
+    # rubocop:disable Metrics/AbcSize
     def record_destroy(recording_order)
       return unless enabled? && !@record.new_record?
       in_after_callback = recording_order == "after"
@@ -94,6 +95,7 @@ module PaperTrail
         end
       end
     end
+    # rubocop:enable Metrics/AbcSize
 
     # @api private
     # @param force [boolean] Insert a `Version` even if `@record` has not
