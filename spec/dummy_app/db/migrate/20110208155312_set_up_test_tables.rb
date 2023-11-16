@@ -114,6 +114,17 @@ class SetUpTestTables < ::ActiveRecord::Migration::Current
     end
     add_index :post_versions, %i[item_type item_id]
 
+    # Requires whodunnit column.
+    create_table :comment_versions, force: true do |t|
+      t.string   :item_type, null: false
+      t.integer  :item_id,   null: false
+      t.string   :event,     null: false
+      t.string   :whodunnit, null: false
+      t.text     :object
+      t.datetime :created_at, limit: 6
+    end
+    add_index :comment_versions, %i[item_type item_id]
+
     # Uses custom versions table `no_object_versions`.
     create_table :no_objects, force: true do |t|
       t.string :letter, null: false, limit: 1
@@ -221,6 +232,10 @@ class SetUpTestTables < ::ActiveRecord::Migration::Current
 
     create_table :posts, force: true do |t|
       t.string :title
+      t.string :content
+    end
+
+    create_table :comments, force: true do |t|
       t.string :content
     end
 

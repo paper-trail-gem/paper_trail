@@ -17,6 +17,94 @@ module PaperTrail
       end
     end
 
+    describe ".always_raise_on_error", versioning: true do
+      context "when true" do
+        context "when version cannot be created" do
+          before { PaperTrail.config.always_raise_on_error = true }
+
+          after { PaperTrail.config.always_raise_on_error = false }
+
+          it "raises an error on create" do
+            expect {
+              Comment.create!(content: "Henry")
+            }.to raise_error(ActiveRecord::NotNullViolation)
+          end
+
+          it "raises an error on update" do
+            comment = PaperTrail.request(whodunnit: "Foo") do
+              Comment.create!(content: "Henry")
+            end
+
+            expect {
+              comment.update!(content: "Brad")
+            }.to raise_error(ActiveRecord::NotNullViolation)
+          end
+
+          it "raises an error on update_columns" do
+            comment = PaperTrail.request(whodunnit: "Foo") do
+              Comment.create!(content: "Henry")
+            end
+
+            expect {
+              comment.update_columns(content: "Brad")
+            }.not_to raise_error
+          end
+
+          it "raises an error on destroy" do
+            comment = PaperTrail.request(whodunnit: "Foo") do
+              Comment.create!(content: "Henry")
+            end
+
+            expect {
+              comment.destroy!
+            }.to raise_error(ActiveRecord::NotNullViolation)
+          end
+        end
+      end
+
+      context "when false" do
+        context "when version cannot be created" do
+          before { PaperTrail.config.always_raise_on_error = false }
+
+          it "raises an error on create" do
+            expect {
+              Comment.create!(content: "Henry")
+            }.to raise_error(ActiveRecord::NotNullViolation)
+          end
+
+          it "does not raise an error on update" do
+            comment = PaperTrail.request(whodunnit: "Foo") do
+              Comment.create!(content: "Henry")
+            end
+
+            expect {
+              comment.update!(content: "Brad")
+            }.not_to raise_error
+          end
+
+          it "does not raise an error on update_columns" do
+            comment = PaperTrail.request(whodunnit: "Foo") do
+              Comment.create!(content: "Henry")
+            end
+
+            expect {
+              comment.update_columns(content: "Brad")
+            }.not_to raise_error
+          end
+
+          it "does not raises an error on destroy" do
+            comment = PaperTrail.request(whodunnit: "Foo") do
+              Comment.create!(content: "Henry")
+            end
+
+            expect {
+              comment.destroy!
+            }.not_to raise_error
+          end
+        end
+      end
+    end
+
     describe ".version_limit", versioning: true do
       after { PaperTrail.config.version_limit = nil }
 

@@ -14,7 +14,8 @@ module PaperTrail
       :object_changes_adapter,
       :serializer,
       :version_limit,
-      :has_paper_trail_defaults
+      :has_paper_trail_defaults,
+      :always_raise_on_error
     )
 
     def initialize
