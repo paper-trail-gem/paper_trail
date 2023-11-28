@@ -355,7 +355,7 @@ module PaperTrail
         begin
           PaperTrail.serializer.load(object_changes)
         rescue StandardError => e
-          if defined?(::Psych::Exception) && e.instance_of?(::Psych::Exception)
+          if defined?(::Psych::Exception) && e.is_a?(::Psych::Exception)
             ::Kernel.warn format(E_YAML_PERMITTED_CLASSES, e)
           end
           {}
