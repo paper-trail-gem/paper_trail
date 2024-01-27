@@ -10,11 +10,7 @@ class CreateVersions < ActiveRecord::Migration<%= migration_version %>
 
   def change
     create_table :versions<%= versions_table_options %><%= version_table_primary_key_type %> do |t|
-      t.string   :item_type<%= item_type_options %>
-      t.<%= item_id_type_options %>   :item_id,   null: false
-      t.string   :event,     null: false
       t.string   :whodunnit
-      t.text     :object, limit: TEXT_BYTES
 
       # Known issue in MySQL: fractional second precision
       # -------------------------------------------------
@@ -32,6 +28,11 @@ class CreateVersions < ActiveRecord::Migration<%= migration_version %>
       # MySQL users should use the following line for `created_at`
       # t.datetime :created_at, limit: 6
       t.datetime :created_at
+
+      t.<%= item_id_type_options %>   :item_id,   null: false
+      t.string   :item_type<%= item_type_options %>
+      t.string   :event,     null: false
+      t.text     :object, limit: TEXT_BYTES
     end
     add_index :versions, %i[item_type item_id]
   end
