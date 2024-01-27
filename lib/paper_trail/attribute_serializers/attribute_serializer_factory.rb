@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "paper_trail/type_serializers/date_time_serializer"
 require "paper_trail/type_serializers/postgres_array_serializer"
 
 module PaperTrail
@@ -20,12 +21,21 @@ module PaperTrail
               active_record_serializer.subtype,
               active_record_serializer.delimiter
             )
+          elsif ar_date_time?(active_record_serializer)
+            TypeSerializers::DateTimeSerializer.new(active_record_serializer)
           else
             active_record_serializer
           end
         end
 
         private
+
+        DATE_TIME_TYPES = %i[timestamp timestamptz datetime date time].freeze
+        private_constant :DATE_TIME_TYPES
+
+        def ar_date_time?(obj)
+          DATE_TIME_TYPES.include?(obj.type)
+        end
 
         # @api private
         def ar_pg_array?(obj)
