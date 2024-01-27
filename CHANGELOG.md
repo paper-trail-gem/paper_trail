@@ -15,7 +15,9 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- None
+- [#1458](https://github.com/paper-trail-gem/paper_trail/pull/1416) - Fix serializing
+  of time/date columns using yaml serializer. Previously, these were serialized as ruby
+  objects which uses a lot of space. Now they are serialized into strings.
 
 ## 15.1.0 (2023-10-22)
 

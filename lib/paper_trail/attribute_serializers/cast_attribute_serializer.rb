@@ -44,7 +44,13 @@ module PaperTrail
       end
 
       def serialize(attr, val)
-        AttributeSerializerFactory.for(@klass, attr).serialize(val)
+        serialized = AttributeSerializerFactory.for(@klass, attr).serialize(val)
+        case serialized
+        when Date, Time
+          @klass.connection.type_cast(serialized)
+        else
+          serialized
+        end
       end
     end
   end

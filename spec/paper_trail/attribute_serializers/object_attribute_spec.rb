@@ -40,6 +40,32 @@ module PaperTrail
           end
         end
       end
+
+      describe "#serialize" do
+        it "serializes a time object into a plain string" do
+          time = Time.zone.local(2015, 7, 15, 20, 34, 0)
+          attrs = { "created_at" => time }
+          described_class.new(Widget).serialize(attrs)
+
+          if ENV["DB"] == "postgres" || ENV["DB"] == "sqlite"
+            expect(attrs["created_at"]).not_to be_a(ActiveSupport::TimeWithZone)
+            expect(attrs["created_at"]).to be_a(String)
+            expect(attrs["created_at"]).to match(/2015/)
+          else
+            expect(attrs["created_at"].to_i).to eq(time.to_i)
+          end
+        end
+      end
+
+      describe "#deserialize" do
+        it "deserializes a time object correctly" do
+          time = 1.day.ago
+          attrs = { "created_at" => time }
+          described_class.new(Widget).serialize(attrs)
+          described_class.new(Widget).deserialize(attrs)
+          expect(attrs["created_at"].to_i).to eq(time.to_i)
+        end
+      end
     end
   end
 end
