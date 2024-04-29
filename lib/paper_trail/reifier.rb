@@ -92,7 +92,7 @@ module PaperTrail
       # @api private
       def reify_attribute(k, v, model, version)
         if model.has_attribute?(k)
-          model[k.to_sym] = v
+          model[k.to_sym] = v unless model.class.readonly_attribute?(k.to_s)
         elsif model.respond_to?("#{k}=")
           model.send("#{k}=", v)
         elsif version.logger
