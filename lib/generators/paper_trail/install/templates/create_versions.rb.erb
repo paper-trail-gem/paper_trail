@@ -10,6 +10,8 @@ class CreateVersions < ActiveRecord::Migration<%= migration_version %>
 
   def change
     create_table :versions<%= versions_table_options %><%= version_table_primary_key_type %> do |t|
+      # Consider using bigint type for performance if you are going to store only numeric ids.
+      # t.bigint   :whodunnit
       t.string   :whodunnit
 
       # Known issue in MySQL: fractional second precision
