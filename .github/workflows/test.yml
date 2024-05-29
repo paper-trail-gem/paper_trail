@@ -17,7 +17,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           # See "Lowest supported ruby version" in CONTRIBUTING.md
-          ruby-version: '3.0'
+          ruby-version: '2.7'
       - name: Bundle
         run: |
           gem install bundler
@@ -63,7 +63,7 @@ jobs:
 
         # To keep matrix size down, only test highest and lowest rubies.
         # See "Lowest supported ruby version" in CONTRIBUTING.md
-        ruby: [ '3.0', '3.2' ]
+        ruby: [ '2.7', '3.0', '3.2' ]
     steps:
       - name: Checkout source
         uses: actions/checkout@v4

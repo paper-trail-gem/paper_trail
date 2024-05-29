@@ -12,6 +12,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 ### Added
 
 - Change `versions` table layout for performance
+- Support for Ruby 2.7
 
 ### Fixed
 
