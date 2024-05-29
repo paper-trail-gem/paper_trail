@@ -15,7 +15,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- None
+- [#1473](https://github.com/paper-trail-gem/paper_trail/pull/1473) - Only set the attribute value in `reify` when it's different. This potentially prevents default readonly attributes from being set again, and aligns with Rails 7.1's new config default `raise_on_assign_to_attr_readonly`.
 
 ## 15.1.0 (2023-10-22)
 
