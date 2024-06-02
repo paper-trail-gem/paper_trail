@@ -156,7 +156,7 @@ module PaperTrail
       # @api private - `version_class_name`
       @model_class.class_attribute :version_class_name
       if options[:class_name]
-        ::ActiveSupport::Deprecation.warn(
+        PaperTrail.deprecator.warn(
           format(
             DPR_CLASS_NAME_OPTION,
             class_name: options[:class_name].inspect
@@ -192,7 +192,7 @@ module PaperTrail
     def ensure_versions_option_is_hash(options)
       unless options[:versions].is_a?(Hash)
         if options[:versions]
-          ::ActiveSupport::Deprecation.warn(
+          PaperTrail.deprecator.warn(
             format(
               DPR_PASSING_ASSOC_NAME_DIRECTLY_TO_VERSIONS_OPTION,
               versions_name: options[:versions].inspect
