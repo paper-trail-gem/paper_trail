@@ -52,7 +52,7 @@ has been destroyed.
   # PT supports request_store versions for 3 years.
   s.add_dependency "request_store", "~> 1.4"
 
-  s.add_development_dependency "appraisal", "~> 2.4.1"
+  s.add_development_dependency "appraisal", "~> 2.5.0"
   s.add_development_dependency "byebug", "~> 11.1"
   s.add_development_dependency "ffaker", "~> 2.20"
   s.add_development_dependency "generator_spec", "~> 0.9.4"
