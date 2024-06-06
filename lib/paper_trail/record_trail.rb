@@ -72,7 +72,6 @@ module PaperTrail
     # @api private
     # @return - The created version object, so that plugins can use it, e.g.
     # paper_trail-association_tracking
-    # rubocop:disable Metrics/AbcSize
     def record_destroy(recording_order)
       return unless enabled? && !@record.new_record?
       in_after_callback = recording_order == "after"
@@ -88,14 +87,9 @@ module PaperTrail
         assign_and_reset_version_association(version)
         version
       rescue StandardError => e
-        if PaperTrail.config.always_raise_on_error
-          raise e
-        else
-          log_version_errors(version, :destroy)
-        end
+        handle_version_errors e, version, :destroy
       end
     end
-    # rubocop:enable Metrics/AbcSize
 
     # @api private
     # @param force [boolean] Insert a `Version` even if `@record` has not
@@ -123,11 +117,7 @@ module PaperTrail
         versions.reset
         version
       rescue StandardError => e
-        if PaperTrail.config.always_raise_on_error
-          raise e
-        else
-          log_version_errors(version, :update)
-        end
+        handle_version_errors e, version, :update
       end
     end
 
@@ -298,6 +288,16 @@ module PaperTrail
       )
     end
 
+    # Centralized handler for version errors
+    # @api private
+    def handle_version_errors(e, version, action)
+      if PaperTrail.config.always_raise_on_error
+        raise e
+      else
+        log_version_errors(version, action)
+      end
+    end
+
     # @api private
     # @return - The created version object, so that plugins can use it, e.g.
     # paper_trail-association_tracking
@@ -315,11 +315,7 @@ module PaperTrail
         version.save!
         version
       rescue StandardError => e
-        if PaperTrail.config.always_raise_on_error
-          raise e
-        else
-          log_version_errors(version, :update)
-        end
+        handle_version_errors e, version, :update
       end
     end
 
