@@ -5,6 +5,16 @@ require "spec_helper"
 module PaperTrail
   ::RSpec.describe ModelConfig do
     describe "has_paper_trail" do
+      it "raises when called multiple times" do
+        klass = Class.new(ApplicationRecord) do
+          has_paper_trail
+        end
+
+        expect do
+          klass.has_paper_trail
+        end.to raise_error(Error, "has_paper_trail must be called only once")
+      end
+
       describe "versions:" do
         it "name can be passed instead of an options hash", :deprecated do
           allow(::ActiveSupport::Deprecation).to receive(:warn)
