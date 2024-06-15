@@ -68,6 +68,8 @@ module PaperTrail
       #
       # @api public
       def has_paper_trail(options = {})
+        raise Error, "has_paper_trail must be called only once" if self < InstanceMethods
+
         defaults = PaperTrail.config.has_paper_trail_defaults
         paper_trail.setup(defaults.merge(options))
       end
