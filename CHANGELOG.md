@@ -7,7 +7,10 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Breaking Changes
 
-- None
+- [#1478](https://github.com/paper-trail-gem/paper_trail/issues/1478) Do not allow
+  multiple `has_paper_trail` definitions for models. Previously, when `has_paper_trail`
+  was called on a parent and a child from STI, then possibly multiple `version` records
+  will be created per event (`create`, `destroy` etc).
 
 ### Added
 

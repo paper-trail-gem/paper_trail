@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
-class CallbackModifier < ApplicationRecord
-  has_paper_trail on: []
+module CallbackModifier
+  extend ActiveSupport::Concern
+
+  included do
+    self.table_name = "callback_modifiers"
+  end
 
   def test_destroy
     transaction do
@@ -17,33 +21,45 @@ class CallbackModifier < ApplicationRecord
   end
 end
 
-class BeforeDestroyModifier < CallbackModifier
+class BeforeDestroyModifier < ApplicationRecord
+  include CallbackModifier
+
   has_paper_trail on: []
   paper_trail.on_destroy :before
 end
 
 unless ActiveRecord::Base.belongs_to_required_by_default
-  class AfterDestroyModifier < CallbackModifier
+  class AfterDestroyModifier < ApplicationRecord
+    include CallbackModifier
+
     has_paper_trail on: []
     paper_trail.on_destroy :after
   end
 end
 
-class NoArgDestroyModifier < CallbackModifier
+class NoArgDestroyModifier < ApplicationRecord
+  include CallbackModifier
+
   has_paper_trail on: []
   paper_trail.on_destroy
 end
 
-class UpdateModifier < CallbackModifier
+class UpdateModifier < ApplicationRecord
+  include CallbackModifier
+
   has_paper_trail on: []
   paper_trail.on_update
 end
 
-class CreateModifier < CallbackModifier
+class CreateModifier < ApplicationRecord
+  include CallbackModifier
+
   has_paper_trail on: []
   paper_trail.on_create
 end
 
-class DefaultModifier < CallbackModifier
+class DefaultModifier < ApplicationRecord
+  include CallbackModifier
+
   has_paper_trail
 end
