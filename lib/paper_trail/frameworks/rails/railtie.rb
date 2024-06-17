@@ -10,7 +10,7 @@ module PaperTrail
     # We specify `before: "load_config_initializers"` to ensure that the PT
     # initializer happens before "app initializers" (those defined in
     # the app's `config/initalizers`).
-    initializer "paper_trail", before: "load_config_initializers" do
+    initializer "paper_trail", before: "load_config_initializers" do |app|
       # `on_load` is a "lazy load hook". It "declares a block that will be
       # executed when a Rails component is fully loaded". (See
       # `active_support/lazy_load_hooks.rb`)
@@ -24,6 +24,10 @@ module PaperTrail
 
       ActiveSupport.on_load(:active_record) do
         require "paper_trail/frameworks/active_record"
+      end
+
+      if ::Rails::VERSION::STRING >= "7.1"
+        app.deprecators[:paper_trail] = PaperTrail.deprecator
       end
     end
   end

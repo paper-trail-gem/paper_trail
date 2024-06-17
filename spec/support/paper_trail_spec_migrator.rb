@@ -21,7 +21,7 @@ class PaperTrailSpecMigrator
   def migrate
     ::ActiveRecord::MigrationContext.new(
       @migrations_path,
-      ::ActiveRecord::Base.connection.schema_migration
+      schema_migration
     ).migrate
   end
 
@@ -44,6 +44,14 @@ class PaperTrailSpecMigrator
   end
 
   private
+
+  def schema_migration
+    if Rails::VERSION::STRING >= "7.2"
+      ::ActiveRecord::Base.connection_pool.schema_migration
+    else
+      ::ActiveRecord::Base.connection.schema_migration
+    end
+  end
 
   def dummy_app_migrations_dir
     Pathname.new(File.expand_path("../dummy_app/db/migrate", __dir__))
