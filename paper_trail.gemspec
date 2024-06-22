@@ -19,6 +19,10 @@ has been destroyed.
   s.email = "jared@jaredbeck.com"
   s.license = "MIT"
 
+  s.metadata = {
+    "changelog_uri" => "https://github.com/paper-trail-gem/paper_trail/blob/master/CHANGELOG.md"
+  }
+
   # > Files included in this gem. .. Only add files you can require to this
   # > list, not directories, etc.
   # > https://guides.rubygems.org/specification-reference/#files
