@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "paper_trail/active_record_version_concern"
+
 module PaperTrail
   # Configures an ActiveRecord model, mostly at application boot time, but also
   # sometimes mid-request, with methods like enable/disable.
@@ -156,7 +158,7 @@ module PaperTrail
       # @api private - `version_class_name`
       @model_class.class_attribute :version_class_name
       if options[:class_name]
-        ::ActiveSupport::Deprecation.warn(
+        ActiveRecordVersionConcern.deprecation.warn(
           format(
             DPR_CLASS_NAME_OPTION,
             class_name: options[:class_name].inspect
@@ -192,7 +194,7 @@ module PaperTrail
     def ensure_versions_option_is_hash(options)
       unless options[:versions].is_a?(Hash)
         if options[:versions]
-          ::ActiveSupport::Deprecation.warn(
+          ActiveRecordVersionConcern.deprecation.warn(
             format(
               DPR_PASSING_ASSOC_NAME_DIRECTLY_TO_VERSIONS_OPTION,
               versions_name: options[:versions].inspect
