@@ -13,8 +13,8 @@ module PaperTrail
     module AttributeSerializerFactory
       class << self
         # @api private
-        def for(klass, attr)
-          active_record_serializer = klass.type_for_attribute(attr)
+        def for(model_class, attr)
+          active_record_serializer = model_class.type_for_attribute(attr)
           if ar_pg_array?(active_record_serializer)
             TypeSerializers::PostgresArraySerializer.new(
               active_record_serializer.subtype,

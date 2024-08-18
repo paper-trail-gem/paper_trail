@@ -9,8 +9,8 @@ module PaperTrail
     # example, the string "1.99" serializes into the integer `1` when assigned
     # to an attribute of type `ActiveRecord::Type::Integer`.
     class CastAttributeSerializer
-      def initialize(klass)
-        @klass = klass
+      def initialize(model_class)
+        @model_class = model_class
       end
 
       private
@@ -25,7 +25,7 @@ module PaperTrail
       # ActiveRecord::Enum was added in AR 4.1
       # http://edgeguides.rubyonrails.org/4_1_release_notes.html#active-record-enums
       def defined_enums
-        @defined_enums ||= (@klass.respond_to?(:defined_enums) ? @klass.defined_enums : {})
+        @defined_enums ||= (@model_class.respond_to?(:defined_enums) ? @model_class.defined_enums : {})
       end
 
       def deserialize(attr, val)
@@ -39,12 +39,12 @@ module PaperTrail
           # https://github.com/rails/rails/issues/43966
           val.instance_variable_get(:@time)
         else
-          AttributeSerializerFactory.for(@klass, attr).deserialize(val)
+          AttributeSerializerFactory.for(@model_class, attr).deserialize(val)
         end
       end
 
       def serialize(attr, val)
-        AttributeSerializerFactory.for(@klass, attr).serialize(val)
+        AttributeSerializerFactory.for(@model_class, attr).serialize(val)
       end
     end
   end
