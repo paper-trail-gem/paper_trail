@@ -8,15 +8,21 @@ module PaperTrail
       if ENV["DB"] == "postgres"
         describe "postgres-specific column types" do
           describe "#serialize" do
-            it "serializes a postgres array into a plain array" do
+            it "serializes a postgres array into a ruby array" do
               attrs = { "post_ids" => [1, 2, 3] }
               described_class.new(PostgresUser).serialize(attrs)
               expect(attrs["post_ids"]).to eq [1, 2, 3]
             end
+
+            it "serializes a postgres range into a ruby array" do
+              attrs = { "range" => 1..5 }
+              described_class.new(PostgresUser).serialize(attrs)
+              expect(attrs["range"]).to eq 1..5
+            end
           end
 
           describe "#deserialize" do
-            it "deserializes a plain array correctly" do
+            it "deserializes a ruby array correctly" do
               attrs = { "post_ids" => [1, 2, 3] }
               described_class.new(PostgresUser).deserialize(attrs)
               expect(attrs["post_ids"]).to eq [1, 2, 3]
@@ -36,6 +42,12 @@ module PaperTrail
               described_class.new(PostgresUser).serialize(attrs)
               described_class.new(PostgresUser).deserialize(attrs)
               expect(attrs["post_ids"]).to eq [date1, date2, date3]
+            end
+
+            it "deserializes a ruby range correctly" do
+              attrs = { "range" => 1..5 }
+              described_class.new(PostgresUser).deserialize(attrs)
+              expect(attrs["range"]).to eq 1..5
             end
           end
         end

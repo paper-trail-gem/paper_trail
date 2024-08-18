@@ -25,7 +25,8 @@ module PaperTrail
       # ActiveRecord::Enum was added in AR 4.1
       # http://edgeguides.rubyonrails.org/4_1_release_notes.html#active-record-enums
       def defined_enums
-        @defined_enums ||= (@model_class.respond_to?(:defined_enums) ? @model_class.defined_enums : {})
+        @defined_enums ||=
+          @model_class.respond_to?(:defined_enums) ? @model_class.defined_enums : {}
       end
 
       def deserialize(attr, val)
