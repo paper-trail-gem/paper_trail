@@ -26,7 +26,7 @@ module PaperTrail
         require "paper_trail/frameworks/active_record"
       end
 
-      if ::Rails::VERSION::STRING >= "7.1"
+      if Gem::Version.new(::Rails::VERSION::STRING) >= Gem::Version.new("7.1")
         app.deprecators[:paper_trail] = PaperTrail.deprecator
       end
     end
