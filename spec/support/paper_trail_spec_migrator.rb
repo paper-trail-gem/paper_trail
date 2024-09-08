@@ -19,10 +19,15 @@ class PaperTrailSpecMigrator
   end
 
   def migrate
-    ::ActiveRecord::MigrationContext.new(
-      @migrations_path,
-      ::ActiveRecord::Base.connection.schema_migration
-    ).migrate
+    schema_migration = if Gem::Version.new(ActiveRecord::VERSION::STRING) < Gem::Version.new("7.2")
+                         ::ActiveRecord::Base.connection.schema_migration
+                       else
+                         ::ActiveRecord::SchemaMigration.new(
+                           ActiveRecord::Tasks::DatabaseTasks.migration_connection_pool
+                         )
+                       end
+
+    ::ActiveRecord::MigrationContext.new(@migrations_path, schema_migration).migrate
   end
 
   # Generate a migration, run it, and delete it. We use this for testing the

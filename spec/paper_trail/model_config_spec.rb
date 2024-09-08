@@ -7,14 +7,14 @@ module PaperTrail
     describe "has_paper_trail" do
       describe "versions:" do
         it "name can be passed instead of an options hash", :deprecated do
-          allow(::ActiveSupport::Deprecation).to receive(:warn)
+          allow(PaperTrail.deprecator).to receive(:warn)
           klass = Class.new(ApplicationRecord) do
             has_paper_trail versions: :drafts
           end
           expect(klass.reflect_on_association(:drafts)).to be_a(
             ActiveRecord::Reflection::HasManyReflection
           )
-          expect(::ActiveSupport::Deprecation).to have_received(:warn).once.with(
+          expect(PaperTrail.deprecator).to have_received(:warn).once.with(
             a_string_starting_with("Passing versions association name"),
             array_including(/#{__FILE__}:/)
           )
@@ -78,14 +78,14 @@ module PaperTrail
 
       describe "class_name:" do
         it "can be used instead of versions: {class_name: ...}", :deprecated do
-          allow(::ActiveSupport::Deprecation).to receive(:warn)
+          allow(PaperTrail.deprecator).to receive(:warn)
           klass = Class.new(ApplicationRecord) do
             has_paper_trail class_name: "NoObjectVersion"
           end
           expect(klass.reflect_on_association(:versions).options[:class_name]).to eq(
             "NoObjectVersion"
           )
-          expect(::ActiveSupport::Deprecation).to have_received(:warn).once.with(
+          expect(PaperTrail.deprecator).to have_received(:warn).once.with(
             a_string_starting_with("Passing Version class name"),
             array_including(/#{__FILE__}:/)
           )

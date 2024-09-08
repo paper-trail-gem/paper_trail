@@ -118,6 +118,10 @@ module PaperTrail
     def active_record_gte_7_0?
       @active_record_gte_7_0 ||= ::ActiveRecord.gem_version >= ::Gem::Version.new("7.0.0")
     end
+
+    def deprecator
+      @deprecator ||= ActiveSupport::Deprecation.new("16.0", "PaperTrail")
+    end
   end
 end
 
