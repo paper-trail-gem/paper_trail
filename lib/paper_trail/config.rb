@@ -15,7 +15,7 @@ module PaperTrail
       :serializer,
       :version_limit,
       :has_paper_trail_defaults,
-      :always_raise_on_error
+      :version_error_behavior
     )
 
     def initialize
@@ -26,6 +26,7 @@ module PaperTrail
       # Variables which affect all threads, whose access is *not* synchronized.
       @serializer = PaperTrail::Serializers::YAML
       @has_paper_trail_defaults = {}
+      @version_error_behavior = :legacy
     end
 
     # Indicates whether PaperTrail is on or off. Default: true.

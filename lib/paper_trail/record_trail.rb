@@ -64,6 +64,8 @@ module PaperTrail
         # of versions_assoc.build?, the association cache is unaware. So, we
         # invalidate the `versions` association cache with `reset`.
         versions.reset
+      rescue StandardError => e
+        handle_version_errors e, version, :create
       end
     end
 
@@ -291,10 +293,20 @@ module PaperTrail
     # Centralized handler for version errors
     # @api private
     def handle_version_errors(e, version, action)
-      if PaperTrail.config.always_raise_on_error
-        raise e
-      else
+      case PaperTrail.config.version_error_behavior
+      when :legacy
+        # legacy behavior was to raise on create and log on update/delete
+        if action == :create
+          raise e
+        else
+          log_version_errors(version, action)
+        end
+      when :log
         log_version_errors(version, action)
+      when :exception
+        raise e
+      when :silent
+        # noop
       end
     end
 

@@ -17,30 +17,45 @@ module PaperTrail
       end
     end
 
-    describe ".always_raise_on_error", versioning: true do
-      context "when true" do
+    describe ".version_error_behavior", versioning: true do
+      let(:logger) { instance_double(Logger) }
+
+      before do
+        allow(logger).to receive(:warn)
+        allow(logger).to receive(:debug?).and_return(false)
+
+        ActiveRecord::Base.logger = logger
+      end
+
+      after do
+        ActiveRecord::Base.logger = nil
+      end
+
+      context "when :legacy" do
         context "when version cannot be created" do
-          before { PaperTrail.config.always_raise_on_error = true }
+          before { PaperTrail.config.version_error_behavior = :legacy }
 
-          after { PaperTrail.config.always_raise_on_error = false }
-
-          it "raises an error on create" do
+          it "raises an error but does not log on create" do
             expect {
               Comment.create!(content: "Henry")
             }.to raise_error(ActiveRecord::RecordInvalid)
+
+            expect(logger).not_to have_received(:warn)
           end
 
-          it "raises an error on update" do
+          it "logs but does not raise error on update" do
             comment = PaperTrail.request(whodunnit: "Foo") do
               Comment.create!(content: "Henry")
             end
 
             expect {
               comment.update!(content: "Brad")
-            }.to raise_error(ActiveRecord::RecordInvalid)
+            }.not_to raise_error
+
+            expect(logger).to have_received(:warn)
           end
 
-          it "raises an error on update_columns" do
+          it "does not raise error or log on update_columns" do
             comment = PaperTrail.request(whodunnit: "Foo") do
               Comment.create!(content: "Henry")
             end
@@ -48,41 +63,51 @@ module PaperTrail
             expect {
               comment.update_columns(content: "Brad")
             }.not_to raise_error
+
+            expect(logger).not_to have_received(:warn)
           end
 
-          it "raises an error on destroy" do
+          it "logs but does not raise error on destroy" do
             comment = PaperTrail.request(whodunnit: "Foo") do
               Comment.create!(content: "Henry")
             end
 
             expect {
               comment.destroy!
-            }.to raise_error(ActiveRecord::RecordInvalid)
+            }.not_to raise_error
+
+            expect(logger).to have_received(:warn)
           end
         end
       end
 
-      context "when false" do
+      context "when exception" do
         context "when version cannot be created" do
-          before { PaperTrail.config.always_raise_on_error = false }
+          before { PaperTrail.config.version_error_behavior = :exception }
 
-          it "raises an error on create" do
+          after { PaperTrail.config.version_error_behavior = :legacy }
+
+          it "raises an error but does not log on create" do
             expect {
               Comment.create!(content: "Henry")
             }.to raise_error(ActiveRecord::RecordInvalid)
+
+            expect(logger).not_to have_received(:warn)
           end
 
-          it "does not raise an error on update" do
+          it "raises an error but does not on update" do
             comment = PaperTrail.request(whodunnit: "Foo") do
               Comment.create!(content: "Henry")
             end
 
             expect {
               comment.update!(content: "Brad")
-            }.not_to raise_error
+            }.to raise_error(ActiveRecord::RecordInvalid)
+
+            expect(logger).not_to have_received(:warn)
           end
 
-          it "does not raise an error on update_columns" do
+          it "does not raise an error or log on update_columns" do
             comment = PaperTrail.request(whodunnit: "Foo") do
               Comment.create!(content: "Henry")
             end
@@ -90,9 +115,63 @@ module PaperTrail
             expect {
               comment.update_columns(content: "Brad")
             }.not_to raise_error
+
+            expect(logger).not_to have_received(:warn)
           end
 
-          it "does not raises an error on destroy" do
+          it "raises an error but does not log on destroy" do
+            comment = PaperTrail.request(whodunnit: "Foo") do
+              Comment.create!(content: "Henry")
+            end
+
+            expect {
+              comment.destroy!
+            }.to raise_error(ActiveRecord::RecordInvalid)
+
+            expect(logger).not_to have_received(:warn)
+          end
+        end
+      end
+
+      context "when log" do
+        context "when version cannot be created" do
+          before { PaperTrail.config.version_error_behavior = :log }
+
+          after { PaperTrail.config.version_error_behavior = :legacy }
+
+          it "logs and does not raise an error on create" do
+            expect {
+              Comment.create!(content: "Henry")
+            }.not_to raise_error
+
+            expect(logger).to have_received(:warn)
+          end
+
+          it "logs and does not raise an error on update" do
+            comment = PaperTrail.request(whodunnit: "Foo") do
+              Comment.create!(content: "Henry")
+            end
+
+            expect {
+              comment.update!(content: "Brad")
+            }.not_to raise_error
+
+            expect(logger).to have_received(:warn)
+          end
+
+          it "does not raise an error or log on update_columns" do
+            comment = PaperTrail.request(whodunnit: "Foo") do
+              Comment.create!(content: "Henry")
+            end
+
+            expect {
+              comment.update_columns(content: "Brad")
+            }.not_to raise_error
+
+            expect(logger).not_to have_received(:warn)
+          end
+
+          it "logs and does not raise an error on destroy" do
             comment = PaperTrail.request(whodunnit: "Foo") do
               Comment.create!(content: "Henry")
             end
@@ -100,6 +179,60 @@ module PaperTrail
             expect {
               comment.destroy!
             }.not_to raise_error
+
+            expect(logger).to have_received(:warn)
+          end
+        end
+      end
+
+      context "when silent" do
+        context "when version cannot be created" do
+          before { PaperTrail.config.version_error_behavior = :silent }
+
+          after { PaperTrail.config.version_error_behavior = :legacy }
+
+          it "does not log or raise an error on create" do
+            expect {
+              Comment.create!(content: "Henry")
+            }.not_to raise_error
+
+            expect(logger).not_to have_received(:warn)
+          end
+
+          it "does not log or raise an error on update" do
+            comment = PaperTrail.request(whodunnit: "Foo") do
+              Comment.create!(content: "Henry")
+            end
+
+            expect {
+              comment.update!(content: "Brad")
+            }.not_to raise_error
+
+            expect(logger).not_to have_received(:warn)
+          end
+
+          it "does not log or raise an error on update_columns" do
+            comment = PaperTrail.request(whodunnit: "Foo") do
+              Comment.create!(content: "Henry")
+            end
+
+            expect {
+              comment.update_columns(content: "Brad")
+            }.not_to raise_error
+
+            expect(logger).not_to have_received(:warn)
+          end
+
+          it "does not log or raise an error on destroy" do
+            comment = PaperTrail.request(whodunnit: "Foo") do
+              Comment.create!(content: "Henry")
+            end
+
+            expect {
+              comment.destroy!
+            }.not_to raise_error
+
+            expect(logger).not_to have_received(:warn)
           end
         end
       end

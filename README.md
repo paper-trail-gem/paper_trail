@@ -289,7 +289,7 @@ Global configuration options affect all threads.
 - object_changes_adapter
 - serializer
 - version_limit
-- always_raise_on_error
+- version_error_behavior
 
 Syntax example: (options described in detail later)
 

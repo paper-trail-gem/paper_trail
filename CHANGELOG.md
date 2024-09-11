@@ -11,8 +11,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
-- [#1422](https://github.com/paper-trail-gem/paper_trail/pull/1450) - Add `always_raise_on_error`
-  config option to consistently surface errors when creating `Version` records.
+- [#1422](https://github.com/paper-trail-gem/paper_trail/pull/1450) - Add `version_error_behavior` config
+  config option to control error handling when creating/updating/deleting `Version` records.
 
 ### Fixed
 
