@@ -67,6 +67,25 @@ class SetUpTestTables < ::ActiveRecord::Migration::Current
       t.timestamps null: true, limit: 6
     end
 
+    create_table :users, force: true do |t|
+      t.string :name, null: false
+      t.timestamps null: true, limit: 6
+    end
+
+    create_table :planets, force: true do |t|
+      t.string :name, null: false
+      t.timestamps null: true, limit: 6
+    end
+
+    create_table :planet_versions, force: true do |t|
+      t.string     :item_type, null: false
+      t.integer    :item_id,   null: false
+      t.string     :event,     null: false
+      t.references :whodunnit, null: true, foreign_key: { to_table: :users }
+      t.text       :object
+      t.datetime   :created_at, limit: 6
+    end
+
     if ENV["DB"] == "postgres"
       create_table :postgres_users, force: true do |t|
         t.string     :name

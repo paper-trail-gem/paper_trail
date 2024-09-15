@@ -80,7 +80,7 @@ module PaperTrail
       def with(options)
         return unless block_given?
         validate_public_options(options)
-        before = to_h
+        before = store.dup
         merge(options)
         yield
       ensure
@@ -130,15 +130,6 @@ module PaperTrail
         RequestStore.store[:paper_trail] ||= {
           enabled: true
         }
-      end
-
-      # Returns a deep copy of the internal hash from our RequestStore. Keys are
-      # all symbols. Values are mostly primitives, but whodunnit can be a Proc.
-      # We cannot use Marshal.dump here because it doesn't support Proc. It is
-      # unclear exactly how `deep_dup` handles a Proc, but it doesn't complain.
-      # @api private
-      def to_h
-        store.deep_dup
       end
 
       # Provide a helpful error message if someone has a typo in one of their
