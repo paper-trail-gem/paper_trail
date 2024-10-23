@@ -5,5 +5,9 @@
 class PostWithStatus < ApplicationRecord
   has_paper_trail
 
-  enum status: { draft: 0, published: 1, archived: 2 }
+  if ActiveRecord::VERSION::MAJOR >= 7
+    enum :status, { draft: 0, published: 1, archived: 2 }
+  else
+    enum status: { draft: 0, published: 1, archived: 2 }
+  end
 end
