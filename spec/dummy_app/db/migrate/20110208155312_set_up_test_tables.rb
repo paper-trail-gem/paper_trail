@@ -392,6 +392,8 @@ class SetUpTestTables < ::ActiveRecord::Migration::Current
       t.string :name
       t.text :supplier
     end
+
+    create_table :users, force: true
   end
 
   def down

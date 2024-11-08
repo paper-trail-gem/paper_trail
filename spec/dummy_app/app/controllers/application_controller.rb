@@ -27,6 +27,6 @@ class ApplicationController < ActionController::Base
   private
 
   def modify_current_user
-    @current_user = OpenStruct.new(id: 153)
+    @current_user = User.new(id: 153)
   end
 end
