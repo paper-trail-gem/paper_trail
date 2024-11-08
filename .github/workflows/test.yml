@@ -63,10 +63,20 @@ jobs:
 
         # To keep matrix size down, only test highest and lowest rubies.
         # See "Lowest supported ruby version" in CONTRIBUTING.md
-        ruby: [ '3.1', '3.3' ]
+        ruby: [ '3.0', '3.3' ]
         exclude:
           # Rails 8 requires ruby 3.2+.
           - gemfile: 'rails_8.0'
+            ruby: '3.0'
+          # Rails 7.2 requires ruby 3.1+.
+          - gemfile: 'rails_7.2'
+            ruby: '3.0'
+        include:
+          # Rails 8 requires ruby 3.2+.
+          - gemfile: 'rails_8.0'
+            ruby: '3.2'
+          # Rails 7.2 requires ruby 3.1+.
+          - gemfile: 'rails_7.2'
             ruby: '3.1'
     steps:
       - name: Checkout source
