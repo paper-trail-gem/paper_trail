@@ -71,13 +71,6 @@ jobs:
           # Rails 7.2 requires ruby 3.1+.
           - gemfile: 'rails_7.2'
             ruby: '3.0'
-        include:
-          # Rails 8 requires ruby 3.2+.
-          - gemfile: 'rails_8.0'
-            ruby: '3.2'
-          # Rails 7.2 requires ruby 3.1+.
-          - gemfile: 'rails_7.2'
-            ruby: '3.1'
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
