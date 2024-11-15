@@ -13,6 +13,7 @@ module PaperTrail
   module Model
     def self.included(base)
       base.extend ClassMethods
+      base.thread_mattr_accessor :_paper_trail_reifying, instance_accessor: false
     end
 
     # :nodoc:
@@ -77,6 +78,12 @@ module PaperTrail
       # @api public
       def paper_trail
         ::PaperTrail::ModelConfig.new(self)
+      end
+
+      def readonly_attribute?(name)
+        return false if _paper_trail_reifying
+
+        super
       end
     end
 
