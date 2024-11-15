@@ -13,7 +13,9 @@ module PaperTrail
         options = apply_defaults_to(options, version)
         attrs = version.object_deserialized
         model = init_model(attrs, options, version)
+        model.class._paper_trail_reifying = true
         reify_attributes(model, version, attrs)
+        model.class._paper_trail_reifying = false
         model.send "#{model.class.version_association_name}=", version
         model
       end

@@ -15,7 +15,10 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- None
+- [#1467](https://github.com/paper-trail-gem/paper_trail/issues/1467) - Rails 7.1
+  enables ActiveRecord.raise_on_assign_to_attr_readonly so that writing to a
+  attr_readonly raises an exception. Fixes paper trail to allow setting the value
+  of an attr_readonly attribute to the value of the previous version when reifying.
 
 ## 16.0.0 (2024-11-08)
 
