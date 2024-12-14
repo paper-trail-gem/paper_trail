@@ -283,19 +283,26 @@ module PaperTrail
       # @api private
       # @param changes HashWithIndifferentAccess
       def recordable_object_changes(changes)
-        if PaperTrail.config.object_changes_adapter.respond_to?(:diff)
-          # We'd like to avoid the `to_hash` here, because it increases memory
-          # usage, but that would be a breaking change because
-          # `object_changes_adapter` expects a plain `Hash`, not a
-          # `HashWithIndifferentAccess`.
-          changes = PaperTrail.config.object_changes_adapter.diff(changes.to_hash)
-        end
+        adapter = object_changes_adapter_for_record
+        changes = apply_diff(changes, adapter) if adapter.respond_to?(:diff)
 
         if @record.class.paper_trail.version_class.object_changes_col_is_json?
           changes
         else
           PaperTrail.serializer.dump(changes)
         end
+      end
+
+      def object_changes_adapter_for_record
+        if @record.class.paper_trail.object_changes_adapter.respond_to?(:diff)
+          @record.class.paper_trail.object_changes_adapter
+        else
+          PaperTrail.config.object_changes_adapter
+        end
+      end
+
+      def apply_diff(changes, adapter)
+        adapter.diff(changes.to_hash)
       end
 
       # Returns a boolean indicating whether to store serialized version diffs

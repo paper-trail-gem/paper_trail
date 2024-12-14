@@ -57,6 +57,7 @@ module PaperTrail
       #   sets the `created_at` field for a new Version equal to the `updated_at`
       #   column of the model being updated. If you instead want `created_at` to
       #   populate with the current timestamp, set this option to `false`.
+      # - :object_changes_adapter - uses a custom object_changes.
       #
       # Plugins like the experimental `paper_trail-association_tracking` gem
       # may accept additional options.
