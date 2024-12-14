@@ -120,6 +120,10 @@ module PaperTrail
       @version_class ||= @model_class.version_class_name.constantize
     end
 
+    def object_changes_adapter
+      @model_class.paper_trail_options[:object_changes_adapter]
+    end
+
     private
 
     # @api private
@@ -252,6 +256,7 @@ module PaperTrail
         @model_class.paper_trail_options[k] = event_attribute_option(k)
       end
       @model_class.paper_trail_options[:meta] ||= {}
+      @model_class.paper_trail_options[:object_changes_adapter] = options[:object_changes_adapter]
     end
   end
 end
