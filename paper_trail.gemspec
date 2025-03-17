@@ -70,6 +70,7 @@ has been destroyed.
   s.add_development_dependency "ffaker", "~> 2.20"
   s.add_development_dependency "generator_spec", "~> 0.9.4"
   s.add_development_dependency "memory_profiler", "~> 1.0.0"
+  s.add_development_dependency "n_plus_one_control", "~> 0.7.2"
 
   # For `spec/dummy_app`. Technically, we only need `actionpack` (as of 2020).
   # However, that might change in the future, and the advantages of specifying a

@@ -69,6 +69,7 @@ require "action_controller/railtie"
 # by the `Bundler.require` in `config/application.rb`.
 require "paper_trail"
 require "ffaker"
+require "n_plus_one_control/rspec"
 require "rspec/rails"
 require "rails-controller-testing"
 
