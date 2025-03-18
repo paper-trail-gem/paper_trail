@@ -60,7 +60,8 @@ end
 Bundler.setup
 
 # Then, the chosen components of Rails would be loaded. In our case, we only
-# test with AR and AC.
+# test with AR and AC. We require `logger` because `active_record` needs it.
+require "logger"
 require "active_record/railtie"
 require "action_controller/railtie"
 

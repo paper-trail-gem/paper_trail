@@ -56,6 +56,14 @@ has been destroyed.
   # PT supports request_store versions for 3 years.
   s.add_dependency "request_store", "~> 1.4"
 
+  # The following gems have been extracted from the Ruby stdlib to gems, and we
+  # must manually include them here in order for specs to run.
+  s.add_development_dependency "benchmark", "~> 0.4.0"
+  s.add_development_dependency "bigdecimal", "~> 3.1"
+  s.add_development_dependency "drb", "~> 2.2"
+  s.add_development_dependency "logger", "~> 1.6"
+  s.add_development_dependency "mutex_m", "~> 0.3.0"
+
   s.add_development_dependency "appraisal", "~> 2.5"
   s.add_development_dependency "byebug", "~> 11.1"
   s.add_development_dependency "ffaker", "~> 2.20"
