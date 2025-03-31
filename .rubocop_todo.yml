@@ -19,14 +19,6 @@ Performance/MapMethodChain:
   Exclude:
     - 'spec/paper_trail/version_limit_spec.rb'
 
-# Offense count: 5
-# Configuration parameters: AllowedPatterns.
-# AllowedPatterns: ^expect_, ^assert_
-RSpec/NoExpectationExample:
-  Exclude:
-    - 'spec/models/joined_version_spec.rb'
-    - 'spec/models/widget_spec.rb'
-
 # Offense count: 39
 # This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: Inferences.

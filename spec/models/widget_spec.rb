@@ -207,7 +207,7 @@ RSpec.describe Widget, type: :model, versioning: true do
         widget = described_class.create(name: "Henry")
         widget.update(name: "Harry")
         widget = Whatchamajigger.new(name: "f-zero")
-        widget.save!
+        expect { widget.save! }.not_to raise_error
       end
     end
 
