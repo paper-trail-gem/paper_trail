@@ -155,6 +155,12 @@ RSpec/Rails/InferredSpecType:
     - spec/controllers/**/*
     - spec/requests/**/*
 
+# It may be possible for us to use safe_load, but we'd have to pass the
+# safelists, like `whitelist_classes` into our serializer, and the serializer
+# interface is a public API, so that would be a breaking change.
+Security/YAMLLoad:
+  Enabled: false
+
 # Please use semantic style, e.g. `do` when there's a side-effect, else `{}`.
 # The semantic style is too nuanced to lint, so the cop is disabled.
 Style/BlockDelimiters:
