@@ -17,7 +17,7 @@ RSpec.describe(Song, type: :model, versioning: true) do
 
   context "when the default accessor, length=, is overwritten" do
     it "returns overwritten value on reified instance" do
-      song = described_class.create(length: 4)
+      song = Song.create(length: 4)
       song.update(length: 5)
       expect(song.length).to(eq(5))
       expect(song.versions.last.reify.length).to(eq(4))
@@ -26,7 +26,7 @@ RSpec.describe(Song, type: :model, versioning: true) do
 
   context "when song name is a virtual attribute (no such db column)" do
     it "returns overwritten virtual attribute on the reified instance" do
-      song = described_class.create(length: 4)
+      song = Song.create(length: 4)
       song.update(length: 5)
       song.name = "Good Vibrations"
       song.save

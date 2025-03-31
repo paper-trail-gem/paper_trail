@@ -200,7 +200,3 @@ Style/StringLiterals:
 
 Gemspec/RequireMFA:
   Enabled: false
-
-# disabling because right now this breaks controller specs
-RSpec/Rails/InferredSpecType:
-  Enabled: false

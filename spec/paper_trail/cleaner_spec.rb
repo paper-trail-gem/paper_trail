@@ -41,7 +41,7 @@ module PaperTrail
       context "when keeping 2" do
         it "keeps two records, instead of the usual one" do
           PaperTrail.clean_versions!(keeping: 2)
-          expect(PaperTrail::Version.count).to(eq(6))
+          expect(PaperTrail::Version.all.count).to(eq(6))
           animals.each { |animal| expect(animal.versions.size).to(eq(2)) }
         end
       end

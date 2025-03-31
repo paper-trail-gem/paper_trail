@@ -24,7 +24,7 @@ module PaperTrail
         end
 
         it "creates a version with custom changes" do
-          adapter = instance_spy(CustomObjectChangesAdapter)
+          adapter = instance_spy("CustomObjectChangesAdapter")
           PaperTrail.config.object_changes_adapter = adapter
           custom_changes_value = [["name", nil, "Dashboard"]]
           allow(adapter).to(
