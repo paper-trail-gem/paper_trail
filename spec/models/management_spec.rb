@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe(Management, type: :model, versioning: true) do
+RSpec.describe(Management, versioning: true) do
   it "utilises the base_class for STI classes having no type column" do
     expect(described_class.inheritance_column).to eq("type")
     expect(described_class.columns.map(&:name)).not_to include("type")

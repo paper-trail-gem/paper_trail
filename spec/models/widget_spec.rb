@@ -3,7 +3,7 @@
 require "spec_helper"
 require "support/performance_helpers"
 
-RSpec.describe Widget, type: :model, versioning: true do
+RSpec.describe Widget, versioning: true do
   describe "#changeset" do
     it "has expected values" do
       widget = described_class.create(name: "Henry")

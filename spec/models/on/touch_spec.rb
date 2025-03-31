@@ -4,7 +4,7 @@ require "spec_helper"
 require_dependency "on/create"
 
 module On
-  RSpec.describe Touch, type: :model, versioning: true do
+  RSpec.describe Touch, versioning: true do
     describe "#create" do
       it "does not create a version" do
         record = described_class.create(name: "Alice")

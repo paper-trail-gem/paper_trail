@@ -19,12 +19,6 @@ Performance/MapMethodChain:
   Exclude:
     - 'spec/paper_trail/version_limit_spec.rb'
 
-# Offense count: 39
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: Inferences.
-RSpec/Rails/InferredSpecType:
-  Enabled: false
-
 # Offense count: 6
 # This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: EnforcedStyle.

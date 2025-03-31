@@ -3,7 +3,7 @@
 require "spec_helper"
 
 # The `Post` model uses a custom version class, `PostVersion`
-RSpec.describe Post, type: :model, versioning: true do
+RSpec.describe Post, versioning: true do
   it "inserts records into the correct table, post_versions" do
     post = described_class.create
     expect(PostVersion.count).to(eq(1))
