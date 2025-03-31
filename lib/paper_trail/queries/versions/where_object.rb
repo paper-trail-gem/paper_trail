@@ -39,7 +39,7 @@ module PaperTrail
           values = []
           @attributes.each do |field, value|
             predicates.push "object->>? = ?"
-            values.concat([field, value.to_s])
+            values.push(field, value.to_s)
           end
           sql = predicates.join(" and ")
           @version_model_class.where(sql, *values)

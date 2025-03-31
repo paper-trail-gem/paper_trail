@@ -46,7 +46,7 @@ module PaperTrail
             predicates.push(
               "(object_changes->>? ILIKE ?)"
             )
-            values.concat([field, "[#{value.to_json},%"])
+            values.push(field, "[#{value.to_json},%")
           end
           sql = predicates.join(" and ")
           @version_model_class.where(sql, *values)
