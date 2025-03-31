@@ -7,9 +7,7 @@ RSpec.describe NotOnUpdate, type: :model do
     let!(:record) { described_class.create! }
 
     it "creates a version, regardless" do
-      expect { record.paper_trail.save_with_version }.to change {
-        PaperTrail::Version.count
-      }.by(+1)
+      expect { record.paper_trail.save_with_version }.to change(PaperTrail::Version, :count).by(+1)
     end
 
     it "captures changes when in_after_callback is true" do

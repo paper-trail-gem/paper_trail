@@ -25,7 +25,7 @@ RSpec.describe Widget, type: :model, versioning: true do
 
       it "calls the adapter's load_changeset method" do
         widget = described_class.create(name: "Henry")
-        adapter = instance_spy("CustomObjectChangesAdapter")
+        adapter = instance_spy(CustomObjectChangesAdapter)
         PaperTrail.config.object_changes_adapter = adapter
         allow(adapter).to(
           receive(:load_changeset).with(widget.versions.last).and_return(a: "b", c: "d")
