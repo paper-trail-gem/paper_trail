@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "support/custom_object_changes_adapter"
 RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
   let(:record) { model.new }
   let(:name) { FFaker::Name.first_name }
@@ -25,7 +26,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
       end
 
       it "calls the adapter's where_attribute_changes method" do
-        adapter = instance_spy("CustomObjectChangesAdapter")
+        adapter = instance_spy(CustomObjectChangesAdapter)
         bicycle = model.create!(name: "abc")
         bicycle.update!(name: "xyz")
 
@@ -156,7 +157,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
       end
 
       it "calls the adapter's where_object_changes method" do
-        adapter = instance_spy("CustomObjectChangesAdapter")
+        adapter = instance_spy(CustomObjectChangesAdapter)
         bicycle = model.create!(name: "abc")
         allow(adapter).to(
           receive(:where_object_changes).with(model.paper_trail.version_class, { name: "abc" })
@@ -233,7 +234,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
       end
 
       it "calls the adapter's where_object_changes_from method" do
-        adapter = instance_spy("CustomObjectChangesAdapter")
+        adapter = instance_spy(CustomObjectChangesAdapter)
         bicycle = model.create!(name: "abc")
         bicycle.update!(name: "xyz")
 
@@ -316,7 +317,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
       end
 
       it "calls the adapter's where_object_changes_to method" do
-        adapter = instance_spy("CustomObjectChangesAdapter")
+        adapter = instance_spy(CustomObjectChangesAdapter)
         bicycle = model.create!(name: "abc")
         bicycle.update!(name: "xyz")
 
