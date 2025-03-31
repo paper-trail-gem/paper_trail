@@ -67,7 +67,7 @@ RSpec.describe Widget, type: :model, versioning: true do
     end
 
     it "be live" do
-      expect(described_class.new.paper_trail.live?).to(eq(true))
+      expect(described_class.new.paper_trail.live?).to(be(true))
     end
   end
 
@@ -90,7 +90,7 @@ RSpec.describe Widget, type: :model, versioning: true do
 
     it "be live" do
       widget = described_class.create(name: "Henry")
-      expect(widget.paper_trail.live?).to(eq(true))
+      expect(widget.paper_trail.live?).to(be(true))
     end
 
     it "use the widget `updated_at` as the version's `created_at`" do
@@ -657,7 +657,7 @@ RSpec.describe Widget, type: :model, versioning: true do
     it "not have a version created on destroy" do
       widget = described_class.new
       widget.destroy
-      expect(widget.versions.empty?).to(eq(true))
+      expect(widget.versions.empty?).to(be(true))
     end
   end
 

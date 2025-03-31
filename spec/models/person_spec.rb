@@ -75,7 +75,7 @@ RSpec.describe Person, type: :model, versioning: true do
         person.assign_attributes(time_zone: "Pacific Time (US & Canada)")
         person.save!
         len = person.versions.last.object_changes.length
-        expect(len < 118).to eq(true)
+        expect(len < 118).to be(true)
       end
 
       it "version.object attribute should have stored value from serializer" do
