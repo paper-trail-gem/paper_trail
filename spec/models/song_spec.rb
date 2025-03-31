@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-::RSpec.describe(::Song, type: :model, versioning: true) do
+RSpec.describe(Song, type: :model, versioning: true) do
   describe "#joins" do
     it "works" do
       described_class.create!

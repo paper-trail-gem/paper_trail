@@ -5,7 +5,7 @@ module CustomJsonSerializer
   extend PaperTrail::Serializers::JSON
 
   def self.load(string)
-    parsed_value = super(string)
+    parsed_value = super
     parsed_value.is_a?(Hash) ? parsed_value.reject { |k, v| k.blank? || v.blank? } : parsed_value
   end
 

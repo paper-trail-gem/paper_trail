@@ -78,7 +78,7 @@ require File.expand_path("dummy_app/config/environment", __dir__)
 
 # Now that AR has a connection pool, we can migrate the database.
 require_relative "support/paper_trail_spec_migrator"
-::PaperTrailSpecMigrator.new.migrate
+PaperTrailSpecMigrator.new.migrate
 
 # This final section resembles what might be dummy_app's spec_helper, if it
 # had one.

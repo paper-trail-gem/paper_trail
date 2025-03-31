@@ -320,7 +320,7 @@ module PaperTrail
       end
 
       # First, deserialize the `object_changes` column.
-      changes = HashWithIndifferentAccess.new(object_changes_deserialized)
+      changes = ActiveSupport::HashWithIndifferentAccess.new(object_changes_deserialized)
 
       # The next step is, perhaps unfortunately, called "de-serialization",
       # and appears to be responsible for custom attribute serializers. For an

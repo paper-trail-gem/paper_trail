@@ -8,7 +8,7 @@ module PaperTrail
     source_root File.expand_path("templates", __dir__)
 
     desc(
-      "Generates (but does not run) a migration to update item_subtype for "\
+      "Generates (but does not run) a migration to update item_subtype for " \
       "STI entries in an existing versions table."
     )
 

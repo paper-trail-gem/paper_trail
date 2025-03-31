@@ -1,9 +1,11 @@
 require:
+  - rubocop-rspec
+
+plugins:
   - rubocop-packaging
   - rubocop-performance
   - rubocop-rails
   - rubocop-rake
-  - rubocop-rspec
 
 inherit_from: .rubocop_todo.yml
 
@@ -195,3 +197,6 @@ Style/StringConcatenation:
 # performance implications. Double quotes are slightly easier to read.
 Style/StringLiterals:
   EnforcedStyle: double_quotes
+
+Gemspec/RequireMFA:
+  Enabled: false

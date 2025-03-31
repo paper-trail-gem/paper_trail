@@ -22,7 +22,7 @@ module PaperTrail
     # Invoked via`after_update` callback for when a previous version is
     # reified and then saved.
     def clear_version_instance
-      @record.send("#{@record.class.version_association_name}=", nil)
+      @record.send(:"#{@record.class.version_association_name}=", nil)
     end
 
     # Returns true if this instance is the current, live one;
@@ -128,7 +128,7 @@ module PaperTrail
     def reset_timestamp_attrs_for_update_if_needed
       return if live?
       @record.send(:timestamp_attributes_for_update_in_model).each do |column|
-        @record.send("restore_#{column}!")
+        @record.send(:"restore_#{column}!")
       end
     end
 
@@ -202,7 +202,7 @@ module PaperTrail
 
     # @api private
     def assign_and_reset_version_association(version)
-      @record.send("#{@record.class.version_association_name}=", version)
+      @record.send(:"#{@record.class.version_association_name}=", version)
       @record.send(@record.class.versions_association_name).reset
     end
 

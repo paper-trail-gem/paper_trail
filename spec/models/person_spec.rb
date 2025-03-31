@@ -25,7 +25,7 @@ RSpec.describe Person, type: :model, versioning: true do
     it "version.object_changes attribute should have stored the value from serializer" do
       person = described_class.new(time_zone: "Samoa")
       person.save!
-      as_stored_in_version = HashWithIndifferentAccess[
+      as_stored_in_version = ActiveSupport::HashWithIndifferentAccess[
         YAML.load(person.versions.last.object_changes)
       ]
       expect(as_stored_in_version[:time_zone]).to(eq([nil, "Samoa"]))
@@ -84,7 +84,7 @@ RSpec.describe Person, type: :model, versioning: true do
         attribute_value_before_change = person.time_zone
         person.assign_attributes(time_zone: "Pacific Time (US & Canada)")
         person.save!
-        as_stored_in_version = HashWithIndifferentAccess[
+        as_stored_in_version = ActiveSupport::HashWithIndifferentAccess[
           YAML.load(person.versions.last.object)
         ]
         expect(as_stored_in_version[:time_zone]).to(eq("Samoa"))
@@ -97,7 +97,7 @@ RSpec.describe Person, type: :model, versioning: true do
         person.save!
         person.assign_attributes(time_zone: "Pacific Time (US & Canada)")
         person.save!
-        as_stored_in_version = HashWithIndifferentAccess[
+        as_stored_in_version = ActiveSupport::HashWithIndifferentAccess[
           YAML.load(person.versions.last.object_changes)
         ]
         expect(as_stored_in_version[:time_zone]).to(eq(["Samoa", "Pacific Time (US & Canada)"]))

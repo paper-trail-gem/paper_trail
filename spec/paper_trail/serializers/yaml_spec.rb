@@ -15,7 +15,7 @@ module PaperTrail
           float: 4.2
         }
       }
-      let(:hash_with_indifferent_access) { HashWithIndifferentAccess.new(hash) }
+      let(:hash_with_indifferent_access) { ActiveSupport::HashWithIndifferentAccess.new(hash) }
 
       describe ".load" do
         it "deserializes YAML to Ruby" do

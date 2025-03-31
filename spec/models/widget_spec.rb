@@ -50,7 +50,7 @@ RSpec.describe Widget, type: :model, versioning: true do
     context "when the serializer raises a Psych::DisallowedClass error" do
       it "prints a warning to stderr" do
         allow(PaperTrail.serializer).to(
-          receive(:load).and_raise(::Psych::Exception, "kaboom")
+          receive(:load).and_raise(Psych::Exception, "kaboom")
         )
         widget = described_class.create(name: "Henry")
         ver = widget.versions.last
@@ -73,7 +73,7 @@ RSpec.describe Widget, type: :model, versioning: true do
 
   context "with a persisted record" do
     it "have one previous version" do
-      widget = described_class.create(name: "Henry", created_at: (Time.current - 1.day))
+      widget = described_class.create(name: "Henry", created_at: 1.day.ago)
       expect(widget.versions.length).to(eq(1))
     end
 
@@ -785,7 +785,7 @@ RSpec.describe Widget, type: :model, versioning: true do
     end
 
     describe "after_create" do
-      let(:widget) { described_class.create!(name: "Foobar", created_at: Time.current - 1.week) }
+      let(:widget) { described_class.create!(name: "Foobar", created_at: 1.week.ago) }
 
       it "corresponding version uses the widget's `updated_at`" do
         expect(widget.versions.last.created_at.to_i).to eq(widget.updated_at.to_i)
@@ -794,7 +794,7 @@ RSpec.describe Widget, type: :model, versioning: true do
 
     describe "after_update" do
       before do
-        widget.update!(name: "Foobar", updated_at: Time.current + 1.week)
+        widget.update!(name: "Foobar", updated_at: 1.week.from_now)
       end
 
       it "clears the `versions_association_name` virtual attribute" do
@@ -865,7 +865,7 @@ RSpec.describe Widget, type: :model, versioning: true do
 
     it "creates a version record" do
       wordget = described_class.create
-      assert_equal 1, wordget.versions.length
+      expect(wordget.versions.length).to eq(1)
     end
   end
 
@@ -874,10 +874,10 @@ RSpec.describe Widget, type: :model, versioning: true do
 
     it "creates a version record" do
       widget = described_class.create
-      assert_equal 1, widget.versions.length
+      expect(widget.versions.length).to eq(1)
       widget.destroy
       versions_for_widget = PaperTrail::Version.with_item_keys("Widget", widget.id)
-      assert_equal 2, versions_for_widget.length
+      expect(versions_for_widget.length).to eq(2)
     end
 
     it "can have multiple destruction records" do
@@ -887,15 +887,15 @@ RSpec.describe Widget, type: :model, versioning: true do
         PaperTrail::Version.with_item_keys("Widget", widget.id)
       }
       widget = described_class.create
-      assert_equal 1, widget.versions.length
+      expect(widget.versions.length).to eq(1)
       widget.destroy
-      assert_equal 2, versions.call(widget).length
+      expect(versions.call(widget).length).to eq(2)
       widget = widget.version.reify
       widget.save
-      assert_equal 3, versions.call(widget).length
+      expect(versions.call(widget).length).to eq(3)
       widget.destroy
-      assert_equal 4, versions.call(widget).length
-      assert_equal 2, versions.call(widget).where(event: "destroy").length
+      expect(versions.call(widget).length).to eq(4)
+      expect(versions.call(widget).where(event: "destroy").length).to eq(2)
     end
   end
 
@@ -913,7 +913,7 @@ RSpec.describe Widget, type: :model, versioning: true do
       it "returns the originator for the model at a given state" do
         expect(widget.paper_trail).to be_live
         expect(widget.paper_trail.originator).to eq(orig_name)
-        ::PaperTrail.request(whodunnit: new_name) {
+        PaperTrail.request(whodunnit: new_name) {
           widget.update(name: "Elizabeth")
         }
         expect(widget.paper_trail.originator).to eq(new_name)
@@ -992,9 +992,9 @@ RSpec.describe Widget, type: :model, versioning: true do
 
     it "creates a version record" do
       widget = described_class.create
-      assert_equal 1, widget.versions.length
+      expect(widget.versions.length).to eq(1)
       widget.update(name: "Bugle")
-      assert_equal 2, widget.versions.length
+      expect(widget.versions.length).to eq(2)
     end
   end
 end

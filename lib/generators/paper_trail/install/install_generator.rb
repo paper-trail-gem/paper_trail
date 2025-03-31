@@ -27,8 +27,8 @@ module PaperTrail
       desc: "Use uuid instead of bigint for item_id type (use only if tables use UUIDs)"
     )
 
-    desc "Generates (but does not run) a migration to add a versions table." \
-         "  See section 5.c. Generators in README.md for more information."
+    desc "Generates (but does not run) a migration to add a versions table.  " \
+         "See section 5.c. Generators in README.md for more information."
 
     def create_migration_file
       add_paper_trail_migration(

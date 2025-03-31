@@ -50,7 +50,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
           expect {
             bicycle.versions.where_attribute_changes(:name)
           }.to raise_error(
-            ::PaperTrail::UnsupportedColumnType,
+            PaperTrail::UnsupportedColumnType,
             "where_attribute_changes expected json or jsonb column, got text"
           )
         else
@@ -66,7 +66,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
         expect {
           record.versions.where_attribute_changes(:name).to_a
         }.to raise_error(
-          ::PaperTrail::UnsupportedColumnType,
+          PaperTrail::UnsupportedColumnType,
           "where_attribute_changes expected json or jsonb column, got text"
         )
       end
@@ -176,7 +176,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
           expect {
             bicycle.versions.where_object_changes(name: "abc")
           }.to raise_error(
-            ::PaperTrail::UnsupportedColumnType,
+            PaperTrail::UnsupportedColumnType,
             "where_object_changes expected json or jsonb column, got text"
           )
         else
@@ -192,7 +192,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
         expect {
           record.versions.where_object_changes(name: "foo").to_a
         }.to raise_error(
-          ::PaperTrail::UnsupportedColumnType,
+          PaperTrail::UnsupportedColumnType,
           "where_object_changes expected json or jsonb column, got text"
         )
       end
@@ -258,7 +258,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
           expect {
             bicycle.versions.where_object_changes_from(name: "abc")
           }.to raise_error(
-            ::PaperTrail::UnsupportedColumnType,
+            PaperTrail::UnsupportedColumnType,
             "where_object_changes_from expected json or jsonb column, got text"
           )
         else
@@ -274,7 +274,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
         expect {
           record.versions.where_object_changes_from(name: "foo").to_a
         }.to raise_error(
-          ::PaperTrail::UnsupportedColumnType,
+          PaperTrail::UnsupportedColumnType,
           "where_object_changes_from expected json or jsonb column, got text"
         )
       end
@@ -341,7 +341,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
           expect {
             bicycle.versions.where_object_changes_to(name: "xyz")
           }.to raise_error(
-            ::PaperTrail::UnsupportedColumnType,
+            PaperTrail::UnsupportedColumnType,
             "where_object_changes_to expected json or jsonb column, got text"
           )
         else
@@ -357,7 +357,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
         expect {
           record.versions.where_object_changes_to(name: "foo").to_a
         }.to raise_error(
-          ::PaperTrail::UnsupportedColumnType,
+          PaperTrail::UnsupportedColumnType,
           "where_object_changes_to expected json or jsonb column, got text"
         )
       end

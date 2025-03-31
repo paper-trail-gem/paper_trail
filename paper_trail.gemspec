@@ -51,7 +51,7 @@ has been destroyed.
 
   # We no longer specify a maximum activerecord version.
   # See discussion in paper_trail/compatibility.rb
-  s.add_dependency "activerecord", ::PaperTrail::Compatibility::ACTIVERECORD_GTE
+  s.add_dependency "activerecord", PaperTrail::Compatibility::ACTIVERECORD_GTE
 
   # PT supports request_store versions for 3 years.
   s.add_dependency "request_store", "~> 1.4"
@@ -73,16 +73,16 @@ has been destroyed.
   # For `spec/dummy_app`. Technically, we only need `actionpack` (as of 2020).
   # However, that might change in the future, and the advantages of specifying a
   # subset (e.g. actionpack only) are unclear.
-  s.add_development_dependency "rails", ::PaperTrail::Compatibility::ACTIVERECORD_GTE
+  s.add_development_dependency "rails", PaperTrail::Compatibility::ACTIVERECORD_GTE
 
   s.add_development_dependency "rake", "~> 13.0"
   s.add_development_dependency "rspec-rails", "~> 6.0.3"
-  s.add_development_dependency "rubocop", "~> 1.22.2"
-  s.add_development_dependency "rubocop-packaging", "~> 0.5.1"
-  s.add_development_dependency "rubocop-performance", "~> 1.11.5"
-  s.add_development_dependency "rubocop-rails", "~> 2.12.4"
-  s.add_development_dependency "rubocop-rake", "~> 0.6.0"
-  s.add_development_dependency "rubocop-rspec", "~> 2.5.0"
+  s.add_development_dependency "rubocop", "~> 1.75"
+  s.add_development_dependency "rubocop-packaging", "~> 0.6.0"
+  s.add_development_dependency "rubocop-performance", "~> 1.24.0"
+  s.add_development_dependency "rubocop-rails", "~> 2.30.3"
+  s.add_development_dependency "rubocop-rake", "~> 0.7.1"
+  s.add_development_dependency "rubocop-rspec", "~> 2.17.0"
   s.add_development_dependency "simplecov", "~> 0.21.2"
 
   # ## Database Adapters

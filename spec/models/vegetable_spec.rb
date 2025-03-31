@@ -4,7 +4,7 @@ require "spec_helper"
 require "support/performance_helpers"
 
 if ENV["DB"] == "postgres" && JsonbVersion.table_exists?
-  ::RSpec.describe Vegetable do
+  RSpec.describe Vegetable do
     describe "queries of versions", versioning: true do
       let!(:vegetable) { described_class.create(name: "Veggie", mass: 1, color: "green") }
 

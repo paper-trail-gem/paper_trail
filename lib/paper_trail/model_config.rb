@@ -4,7 +4,7 @@ module PaperTrail
   # Configures an ActiveRecord model, mostly at application boot time, but also
   # sometimes mid-request, with methods like enable/disable.
   class ModelConfig
-    E_CANNOT_RECORD_AFTER_DESTROY = <<-STR.strip_heredoc.freeze
+    E_CANNOT_RECORD_AFTER_DESTROY = <<~STR
       paper_trail.on_destroy(:after) is incompatible with ActiveRecord's
       belongs_to_required_by_default. Use on_destroy(:before)
       or disable belongs_to_required_by_default.
@@ -49,7 +49,7 @@ module PaperTrail
     def on_destroy(recording_order = "before")
       assert_valid_recording_order_for_on_destroy(recording_order)
       @model_class.send(
-        "#{recording_order}_destroy",
+        :"#{recording_order}_destroy",
         lambda do |r|
           return unless r.paper_trail.save_version?
           r.paper_trail.record_destroy(recording_order)
@@ -236,7 +236,7 @@ module PaperTrail
 
     def setup_callbacks_from_options(options_on = [])
       options_on.each do |event|
-        public_send("on_#{event}")
+        public_send(:"on_#{event}")
       end
     end
 

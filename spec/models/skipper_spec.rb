@@ -70,7 +70,7 @@ RSpec.describe Skipper, type: :model, versioning: true do
         skipper = described_class.create!(another_timestamp: t1)
         skipper.update!(another_timestamp: t2, name: "Foobar")
         skipper = skipper.versions.last.reify
-        expect(skipper.another_timestamp).to be(nil)
+        expect(skipper.another_timestamp).to be_nil
       end
     end
 

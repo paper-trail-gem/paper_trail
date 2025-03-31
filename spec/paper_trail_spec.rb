@@ -34,8 +34,8 @@ RSpec.describe PaperTrail do
   describe ".gem_version" do
     it "returns a Gem::Version" do
       v = described_class.gem_version
-      expect(v).to be_a(::Gem::Version)
-      expect(v.to_s).to eq(::PaperTrail::VERSION::STRING)
+      expect(v).to be_a(Gem::Version)
+      expect(v.to_s).to eq(PaperTrail::VERSION::STRING)
     end
   end
 
@@ -46,7 +46,7 @@ RSpec.describe PaperTrail do
 
     it "affects all threads" do
       Thread.new { described_class.enabled = false }.join
-      assert_equal false, described_class.enabled?
+      expect(described_class.enabled?).to eq(false)
     end
   end
 
