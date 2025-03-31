@@ -74,7 +74,7 @@ module PaperTrail
       expect(widget.reload.versions.count).to eq(4) # 1 create + 4 updates
 
       # Exclude the create, because the create will return nil for `#reify`.
-      last_names = widget.versions.not_creates.map(&:reify).map(&:name)
+      last_names = widget.versions.not_creates.map { |x| x.reify.name }
       expect(last_names).to eq(["Name 3", "Name 4", "Name 5"])
       # No matter what order the version records are returned it, we should
       # always keep the most-recent changes.
