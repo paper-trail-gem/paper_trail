@@ -27,15 +27,6 @@ RSpec/ExampleWording:
   Exclude:
     - 'spec/models/song_spec.rb'
 
-# Offense count: 2
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: method_call, block
-RSpec/ExpectChange:
-  Exclude:
-    - 'spec/models/article_spec.rb'
-    - 'spec/models/not_on_update_spec.rb'
-
 # Offense count: 5
 # Configuration parameters: AllowedPatterns.
 # AllowedPatterns: ^expect_, ^assert_
