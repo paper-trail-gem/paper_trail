@@ -3,7 +3,7 @@
 require "spec_helper"
 
 if ENV["DB"] == "postgres" && JsonVersion.table_exists?
-  RSpec.describe Fruit, type: :model, versioning: true do
+  RSpec.describe Fruit, versioning: true do
     describe "have_a_version_with_changes matcher" do
       it "works with Fruit because Fruit uses JsonVersion" do
         # As of PT 9.0.0, with_version_changes only supports json(b) columns,

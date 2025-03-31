@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Skipper, type: :model, versioning: true do
+RSpec.describe Skipper, versioning: true do
   it { is_expected.to be_versioned }
 
   describe "#update!", versioning: true do

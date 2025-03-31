@@ -2,6 +2,6 @@
 
 require "spec_helper"
 
-RSpec.describe Vehicle, type: :model do
+RSpec.describe Vehicle do
   it { is_expected.not_to be_versioned }
 end

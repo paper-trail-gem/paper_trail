@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Translation, type: :model, versioning: true do
+RSpec.describe Translation, versioning: true do
   context "with non-US translations" do
     it "not change the number of versions" do
       described_class.create!(headline: "Headline")

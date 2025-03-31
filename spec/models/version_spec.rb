@@ -5,7 +5,7 @@ require "support/shared_examples/queries"
 require "support/shared_examples/active_record_encryption"
 
 module PaperTrail
-  ::RSpec.describe Version, type: :model do
+  ::RSpec.describe Version do
     describe "#object_changes", versioning: true do
       let(:widget) { Widget.create!(name: "Dashboard") }
       let(:value) { widget.versions.last.object_changes }
@@ -24,7 +24,7 @@ module PaperTrail
         end
 
         it "creates a version with custom changes" do
-          adapter = instance_spy("CustomObjectChangesAdapter")
+          adapter = instance_spy(CustomObjectChangesAdapter)
           PaperTrail.config.object_changes_adapter = adapter
           custom_changes_value = [["name", nil, "Dashboard"]]
           allow(adapter).to(

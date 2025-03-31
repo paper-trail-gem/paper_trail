@@ -62,7 +62,7 @@ module PaperTrail
           expect(animal.versions.first.created_at.to_date).to(eq(date))
           # Why use `equal?` here instead of something less strict?
           # Doesn't `to_date` always produce a new date object?
-          expect(date.equal?(animal.versions.last.created_at.to_date)).to eq(false)
+          expect(date.equal?(animal.versions.last.created_at.to_date)).to be(false)
         end
       end
 

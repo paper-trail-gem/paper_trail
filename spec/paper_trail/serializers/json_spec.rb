@@ -29,7 +29,7 @@ module PaperTrail
           it "construct correct WHERE query" do
             matches = described_class.
               where_object_condition(PaperTrail::Version.arel_table[:object], :arg1, "Val 1")
-            expect(matches.instance_of?(Arel::Nodes::Matches)).to(eq(true))
+            expect(matches.instance_of?(Arel::Nodes::Matches)).to(be(true))
             expect(arel_value(matches.right)).to eq("%\"arg1\":\"Val 1\"%")
           end
         end
@@ -38,7 +38,7 @@ module PaperTrail
           it "construct correct WHERE query" do
             matches = described_class.
               where_object_condition(PaperTrail::Version.arel_table[:object], :arg1, nil)
-            expect(matches.instance_of?(Arel::Nodes::Matches)).to(eq(true))
+            expect(matches.instance_of?(Arel::Nodes::Matches)).to(be(true))
             expect(arel_value(matches.right)).to(eq("%\"arg1\":null%"))
           end
         end
@@ -47,7 +47,7 @@ module PaperTrail
           it "construct correct WHERE query" do
             grouping = described_class.
               where_object_condition(PaperTrail::Version.arel_table[:object], :arg1, -3.5)
-            expect(grouping.instance_of?(Arel::Nodes::Grouping)).to(eq(true))
+            expect(grouping.instance_of?(Arel::Nodes::Grouping)).to(be(true))
             disjunction = grouping.expr
             expect(disjunction).to be_an(Arel::Nodes::Or)
             dj_left = disjunction.left
