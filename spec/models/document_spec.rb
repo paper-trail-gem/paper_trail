@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Document, type: :model, versioning: true do
+RSpec.describe Document, versioning: true do
   describe "have_a_version_with matcher" do
     it "works with custom versions association" do
       document = described_class.create!(name: "Foo")

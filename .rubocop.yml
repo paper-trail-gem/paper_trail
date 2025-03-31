@@ -142,6 +142,11 @@ RSpec/ExampleLength:
 RSpec/MultipleExpectations:
   Enabled: false
 
+RSpec/Rails/InferredSpecType:
+  Exclude:
+    - spec/controllers/**/*
+    - spec/requests/**/*
+    
 # Please use semantic style, e.g. `do` when there's a side-effect, else `{}`.
 # The semantic style is too nuanced to lint, so the cop is disabled.
 Style/BlockDelimiters:

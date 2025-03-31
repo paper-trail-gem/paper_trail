@@ -4,7 +4,7 @@ require "spec_helper"
 require_dependency "on/empty_array"
 
 module On
-  RSpec.describe EmptyArray, type: :model, versioning: true do
+  RSpec.describe EmptyArray, versioning: true do
     describe "#create" do
       it "does not create any version records" do
         record = described_class.create(name: "Alice")
