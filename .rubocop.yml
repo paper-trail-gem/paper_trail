@@ -25,7 +25,7 @@ AllCops:
   NewCops: enable
 
   # See "Lowest supported ruby version" in CONTRIBUTING.md
-  TargetRubyVersion: 3.0
+  TargetRubyVersion: 3.2
 
 Gemspec/DevelopmentDependencies:
   Enabled: false
@@ -218,3 +218,6 @@ Style/StringConcatenation:
 # performance implications. Double quotes are slightly easier to read.
 Style/StringLiterals:
   EnforcedStyle: double_quotes
+
+Gemspec/RequireMFA:
+  Enabled: false

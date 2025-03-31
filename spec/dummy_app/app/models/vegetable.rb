@@ -6,7 +6,5 @@ class Vegetable < ApplicationRecord
     class_name: ENV["DB"] == "postgres" ? "JsonbVersion" : "PaperTrail::Version"
   }, on: %i[create update]
 
-  if PaperTrail.active_record_gte_7_0?
-    encrypts :supplier
-  end
+  encrypts :supplier
 end

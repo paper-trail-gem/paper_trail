@@ -40,13 +40,9 @@ class Person < ApplicationRecord
       end
     end
 
-    def dump(zone)
-      self.class.dump(zone)
-    end
+    delegate :dump, to: :class
 
-    def load(value)
-      self.class.load(value)
-    end
+    delegate :load, to: :class
   end
 
   # Rails 7.1 deprecates positional argument for coder
