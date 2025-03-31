@@ -27,10 +27,6 @@ AllCops:
   # See "Lowest supported ruby version" in CONTRIBUTING.md
   TargetRubyVersion: 3.0
 
-Gemspec/DevelopmentDependencies:
-  AllowedGems:
-    - rails
-
 # skipped for now until we've audited all the gem maintainers but we should
 # enable this asap
 Gemspec/RequireMFA:
