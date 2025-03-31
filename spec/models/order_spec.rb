@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Order, versioning: true do
+RSpec.describe Order, type: :model, versioning: true do
   context "when the record destroyed" do
     it "creates a version record for association" do
       customer = Customer.create!

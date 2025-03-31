@@ -4,7 +4,7 @@ require "spec_helper"
 require_dependency "on/create"
 
 module On
-  RSpec.describe Create, versioning: true do
+  RSpec.describe Create, type: :model, versioning: true do
     describe "#versions" do
       it "only have a version for the create event" do
         record = described_class.create(name: "Alice")

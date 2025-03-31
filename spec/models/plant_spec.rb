@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Plant, versioning: true do
+RSpec.describe Plant, type: :model, versioning: true do
   it "baseline test setup" do
     expect(described_class.new).to be_versioned
     expect(described_class.inheritance_column).to eq("species")

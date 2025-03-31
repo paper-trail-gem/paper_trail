@@ -6,7 +6,7 @@ require "spec_helper"
 #
 # - has a dozen associations of various types
 # - has a custom serializer, TimeZoneSerializer, for its `time_zone` attribute
-RSpec.describe Person, versioning: true do
+RSpec.describe Person, type: :model, versioning: true do
   describe "#time_zone" do
     it "returns an ActiveSupport::TimeZone" do
       person = described_class.new(time_zone: "Samoa")

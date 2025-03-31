@@ -3,7 +3,7 @@
 require "spec_helper"
 require "support/custom_json_serializer"
 
-RSpec.describe Boolit, versioning: true do
+RSpec.describe Boolit, type: :model, versioning: true do
   let(:boolit) { described_class.create! }
 
   before { boolit.update!(name: FFaker::Name.name) }

@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe NotOnUpdate do
+RSpec.describe NotOnUpdate, type: :model do
   describe "#save_with_version", versioning: true do
     let!(:record) { described_class.create! }
 
