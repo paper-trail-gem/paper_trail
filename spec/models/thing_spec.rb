@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Thing do
+RSpec.describe Thing, type: :model do
   describe "#versions", versioning: true do
     let(:thing) { described_class.create! }
 

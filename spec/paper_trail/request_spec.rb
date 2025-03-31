@@ -6,7 +6,7 @@ module PaperTrail
   ::RSpec.describe(Request, versioning: true) do
     describe ".enabled_for_model?" do
       it "returns true" do
-        expect(PaperTrail.request.enabled_for_model?(Widget)).to be(true)
+        expect(PaperTrail.request.enabled_for_model?(Widget)).to eq(true)
       end
     end
 
@@ -16,9 +16,9 @@ module PaperTrail
       end
 
       it "sets enabled_for_model? to false" do
-        expect(PaperTrail.request.enabled_for_model?(Widget)).to be(true)
+        expect(PaperTrail.request.enabled_for_model?(Widget)).to eq(true)
         PaperTrail.request.disable_model(Widget)
-        expect(PaperTrail.request.enabled_for_model?(Widget)).to be(false)
+        expect(PaperTrail.request.enabled_for_model?(Widget)).to eq(false)
       end
     end
 
@@ -29,15 +29,15 @@ module PaperTrail
 
       it "sets enabled_for_model? to true" do
         PaperTrail.request.enabled_for_model(Widget, false)
-        expect(PaperTrail.request.enabled_for_model?(Widget)).to be(false)
+        expect(PaperTrail.request.enabled_for_model?(Widget)).to eq(false)
         PaperTrail.request.enabled_for_model(Widget, true)
-        expect(PaperTrail.request.enabled_for_model?(Widget)).to be(true)
+        expect(PaperTrail.request.enabled_for_model?(Widget)).to eq(true)
       end
     end
 
     describe ".enabled?" do
       it "returns true" do
-        expect(PaperTrail.request.enabled?).to be(true)
+        expect(PaperTrail.request.enabled?).to eq(true)
       end
     end
 
@@ -48,9 +48,9 @@ module PaperTrail
 
       it "sets enabled? to true" do
         PaperTrail.request.enabled = true
-        expect(PaperTrail.request.enabled?).to be(true)
+        expect(PaperTrail.request.enabled?).to eq(true)
         PaperTrail.request.enabled = false
-        expect(PaperTrail.request.enabled?).to be(false)
+        expect(PaperTrail.request.enabled?).to eq(false)
       end
     end
 
@@ -78,9 +78,9 @@ module PaperTrail
 
       it "sets enabled_for_model? to true" do
         PaperTrail.request.disable_model(Widget)
-        expect(PaperTrail.request.enabled_for_model?(Widget)).to be(false)
+        expect(PaperTrail.request.enabled_for_model?(Widget)).to eq(false)
         PaperTrail.request.enable_model(Widget)
-        expect(PaperTrail.request.enabled_for_model?(Widget)).to be(true)
+        expect(PaperTrail.request.enabled_for_model?(Widget)).to eq(true)
       end
     end
 
@@ -111,10 +111,10 @@ module PaperTrail
 
             described_class.with(whodunnit: "foo", enabled_for_Widget: false) do
               expect(described_class.whodunnit).to eq("foo")
-              expect(described_class.enabled_for_model?(Widget)).to be false
+              expect(described_class.enabled_for_model?(Widget)).to eq false
             end
             expect(described_class.whodunnit).to eq "some_whodunnit"
-            expect(described_class.enabled_for_model?(Widget)).to be true
+            expect(described_class.enabled_for_model?(Widget)).to eq true
           end
 
           it "sets options only for the current thread" do
@@ -123,12 +123,12 @@ module PaperTrail
 
             described_class.with(whodunnit: "foo", enabled_for_Widget: false) do
               expect(described_class.whodunnit).to eq("foo")
-              expect(described_class.enabled_for_model?(Widget)).to be false
+              expect(described_class.enabled_for_model?(Widget)).to eq false
               Thread.new { expect(described_class.whodunnit).to be_nil }.join
-              Thread.new { expect(described_class.enabled_for_model?(Widget)).to be true }.join
+              Thread.new { expect(described_class.enabled_for_model?(Widget)).to eq true }.join
             end
             expect(described_class.whodunnit).to eq "some_whodunnit"
-            expect(described_class.enabled_for_model?(Widget)).to be true
+            expect(described_class.enabled_for_model?(Widget)).to eq true
           end
         end
 

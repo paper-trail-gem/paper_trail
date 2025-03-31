@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe WidgetsController, versioning: true do
+RSpec.describe WidgetsController, type: :controller, versioning: true do
   before { request.env["REMOTE_ADDR"] = "127.0.0.1" }
 
   after { RequestStore.store[:paper_trail] = nil }
@@ -21,11 +21,11 @@ RSpec.describe WidgetsController, versioning: true do
       it "controller metadata methods should get evaluated" do
         request.env["HTTP_USER_AGENT"] = "User-Agent"
         post :create, params: { widget: { name: "Flugel" } }
-        expect(PaperTrail.request.enabled?).to be(true)
+        expect(PaperTrail.request.enabled?).to eq(true)
         expect(PaperTrail.request.whodunnit).to(eq(153))
-        expect(PaperTrail.request.controller_info.present?).to(be(true))
-        expect(PaperTrail.request.controller_info.key?(:ip)).to(be(true))
-        expect(PaperTrail.request.controller_info.key?(:user_agent)).to(be(true))
+        expect(PaperTrail.request.controller_info.present?).to(eq(true))
+        expect(PaperTrail.request.controller_info.key?(:ip)).to(eq(true))
+        expect(PaperTrail.request.controller_info.key?(:user_agent)).to(eq(true))
       end
     end
 
@@ -34,7 +34,7 @@ RSpec.describe WidgetsController, versioning: true do
         request.env["HTTP_USER_AGENT"] = "Disable User-Agent"
         post :create, params: { widget: { name: "Flugel" } }
         expect(assigns(:widget).versions.length).to(eq(0))
-        expect(PaperTrail.request.enabled?).to be(false)
+        expect(PaperTrail.request.enabled?).to eq(false)
         expect(PaperTrail.request.whodunnit).to be_nil
         expect(PaperTrail.request.controller_info).to eq({})
       end

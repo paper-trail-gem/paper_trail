@@ -52,8 +52,8 @@ module PaperTrail
           klass = Class.new(ApplicationRecord) do
             has_paper_trail versions: { autosave: true, validate: true }
           end
-          expect(klass.reflect_on_association(:versions).options[:autosave]).to be true
-          expect(klass.reflect_on_association(:versions).options[:validate]).to be true
+          expect(klass.reflect_on_association(:versions).options[:autosave]).to eq true
+          expect(klass.reflect_on_association(:versions).options[:validate]).to eq true
         end
 
         it "can even override options that PaperTrail adds to has_many" do

@@ -3,7 +3,7 @@
 require "spec_helper"
 require "support/performance_helpers"
 
-RSpec.describe Widget, versioning: true do
+RSpec.describe Widget, type: :model, versioning: true do
   describe "#changeset" do
     it "has expected values" do
       widget = described_class.create(name: "Henry")
@@ -25,7 +25,7 @@ RSpec.describe Widget, versioning: true do
 
       it "calls the adapter's load_changeset method" do
         widget = described_class.create(name: "Henry")
-        adapter = instance_spy(CustomObjectChangesAdapter)
+        adapter = instance_spy("CustomObjectChangesAdapter")
         PaperTrail.config.object_changes_adapter = adapter
         allow(adapter).to(
           receive(:load_changeset).with(widget.versions.last).and_return(a: "b", c: "d")
@@ -67,7 +67,7 @@ RSpec.describe Widget, versioning: true do
     end
 
     it "be live" do
-      expect(described_class.new.paper_trail.live?).to(be(true))
+      expect(described_class.new.paper_trail.live?).to(eq(true))
     end
   end
 
@@ -90,7 +90,7 @@ RSpec.describe Widget, versioning: true do
 
     it "be live" do
       widget = described_class.create(name: "Henry")
-      expect(widget.paper_trail.live?).to(be(true))
+      expect(widget.paper_trail.live?).to(eq(true))
     end
 
     it "use the widget `updated_at` as the version's `created_at`" do
@@ -657,7 +657,7 @@ RSpec.describe Widget, versioning: true do
     it "not have a version created on destroy" do
       widget = described_class.new
       widget.destroy
-      expect(widget.versions.empty?).to(be(true))
+      expect(widget.versions.empty?).to(eq(true))
     end
   end
 

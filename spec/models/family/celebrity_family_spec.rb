@@ -3,7 +3,7 @@
 require "spec_helper"
 
 module Family
-  RSpec.describe CelebrityFamily, versioning: true do
+  RSpec.describe CelebrityFamily, type: :model, versioning: true do
     describe "#joins" do
       it "works on an STI model" do
         described_class.create!

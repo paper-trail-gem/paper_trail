@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Animal, versioning: true do
+RSpec.describe Animal, type: :model, versioning: true do
   it "baseline test setup" do
     expect(described_class.new).to be_versioned
     expect(described_class.inheritance_column).to eq("species")
@@ -10,7 +10,7 @@ RSpec.describe Animal, versioning: true do
 
   describe "#descends_from_active_record?" do
     it "returns true, meaning that Animal is not an STI subclass" do
-      expect(described_class.descends_from_active_record?).to be(true)
+      expect(described_class.descends_from_active_record?).to eq(true)
     end
   end
 

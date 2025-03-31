@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe JoinedVersion, versioning: true do
+RSpec.describe JoinedVersion, type: :model, versioning: true do
   let(:widget) { Widget.create!(name: FFaker::Name.name) }
   let(:version) { described_class.first }
 

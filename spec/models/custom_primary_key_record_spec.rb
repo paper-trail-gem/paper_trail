@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe CustomPrimaryKeyRecord do
+RSpec.describe CustomPrimaryKeyRecord, type: :model do
   it { is_expected.to be_versioned }
 
   describe "#versions" do

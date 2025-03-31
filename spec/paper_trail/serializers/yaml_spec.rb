@@ -56,7 +56,7 @@ module PaperTrail
           matches = described_class.where_object_condition(
             ::PaperTrail::Version.arel_table[:object], :arg1, "Val 1"
           )
-          expect(matches.instance_of?(Arel::Nodes::Matches)).to(be(true))
+          expect(matches.instance_of?(Arel::Nodes::Matches)).to(eq(true))
           expect(arel_value(matches.right)).to eq("%\narg1: Val 1\n%")
         end
       end

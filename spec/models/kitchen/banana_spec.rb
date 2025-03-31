@@ -3,7 +3,7 @@
 require "spec_helper"
 
 module Kitchen
-  RSpec.describe Banana do
+  RSpec.describe Banana, type: :model do
     it { is_expected.to be_versioned }
 
     describe "#versions" do
