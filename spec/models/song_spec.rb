@@ -4,7 +4,7 @@ require "spec_helper"
 
 RSpec.describe(Song, type: :model, versioning: true) do
   describe "#joins" do
-    it "works" do
+    it "sets event to 'create' when a new record is created" do
       described_class.create!
       result = described_class.
         joins(:versions).

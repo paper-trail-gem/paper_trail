@@ -19,14 +19,6 @@ Performance/MapMethodChain:
   Exclude:
     - 'spec/paper_trail/version_limit_spec.rb'
 
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: CustomTransform, IgnoredWords, DisallowedExamples.
-# DisallowedExamples: works
-RSpec/ExampleWording:
-  Exclude:
-    - 'spec/models/song_spec.rb'
-
 # Offense count: 5
 # Configuration parameters: AllowedPatterns.
 # AllowedPatterns: ^expect_, ^assert_
