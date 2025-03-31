@@ -27,6 +27,11 @@ AllCops:
   # See "Lowest supported ruby version" in CONTRIBUTING.md
   TargetRubyVersion: 3.0
 
+# skipped for now until we've audited all the gem maintainers but we should
+# enable this asap
+Gemspec/RequireMFA:
+  Enabled: false
+
 Layout/ArgumentAlignment:
   EnforcedStyle: with_fixed_indentation
 
@@ -67,7 +72,7 @@ Layout/SpaceAroundOperators:
 # from these is of questionable value.
 Metrics/AbcSize:
   Exclude:
-    - 'spec/dummy_app/db/migrate/*'
+    - "spec/dummy_app/db/migrate/*"
 
 # Not a useful metric compared to, e.g. `AbcSize`.
 Metrics/BlockLength:
@@ -146,7 +151,7 @@ RSpec/Rails/InferredSpecType:
   Exclude:
     - spec/controllers/**/*
     - spec/requests/**/*
-    
+
 # Please use semantic style, e.g. `do` when there's a side-effect, else `{}`.
 # The semantic style is too nuanced to lint, so the cop is disabled.
 Style/BlockDelimiters:
@@ -189,8 +194,8 @@ Style/IfUnlessModifier:
 # - https://github.com/bbatsov/ruby-style-guide/issues/556
 Style/ModuleFunction:
   Exclude:
-    - 'lib/paper_trail/serializers/json.rb'
-    - 'lib/paper_trail/serializers/yaml.rb'
+    - "lib/paper_trail/serializers/json.rb"
+    - "lib/paper_trail/serializers/yaml.rb"
 
 # Too subtle to lint. Use `format` for multiple variables. For single variables,
 # use either interpolation or concatenation, whichever is easier to read.
@@ -202,6 +207,3 @@ Style/StringConcatenation:
 # performance implications. Double quotes are slightly easier to read.
 Style/StringLiterals:
   EnforcedStyle: double_quotes
-
-Gemspec/RequireMFA:
-  Enabled: false
