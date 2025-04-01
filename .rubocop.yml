@@ -164,6 +164,9 @@ Style/BlockDelimiters:
 Style/DoubleNegation:
   Enabled: false
 
+Style/FetchEnvVar:
+  Enabled: false
+
 # Avoid annotated tokens except in desperately complicated format strings.
 # In 99% of format strings they actually make it less readable.
 Style/FormatStringToken:
