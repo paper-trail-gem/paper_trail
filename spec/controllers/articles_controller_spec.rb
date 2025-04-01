@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe ArticlesController, type: :controller do
+RSpec.describe ArticlesController do
   describe "PaperTrail.request.enabled?" do
     context "when PaperTrail.enabled? == true" do
       before { PaperTrail.enabled = true }

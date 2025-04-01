@@ -86,4 +86,5 @@ require "paper_trail/frameworks/rspec"
 RSpec.configure do |config|
   config.fixture_path = nil # we use factories, not fixtures
   config.use_transactional_fixtures = true
+  config.infer_spec_type_from_file_location!
 end

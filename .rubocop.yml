@@ -148,11 +148,6 @@ RSpec/ExampleLength:
 RSpec/MultipleExpectations:
   Enabled: false
 
-RSpec/Rails/InferredSpecType:
-  Exclude:
-    - spec/controllers/**/*
-    - spec/requests/**/*
-
 # It may be possible for us to use safe_load, but we'd have to pass the
 # safelists, like `whitelist_classes` into our serializer, and the serializer
 # interface is a public API, so that would be a breaking change.
