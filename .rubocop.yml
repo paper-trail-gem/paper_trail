@@ -123,6 +123,9 @@ Performance/CollectionLiteralInLoop:
 Rails/ApplicationRecord:
   Enabled: false
 
+Rails/Delegate:
+  Enabled: false
+
 # This cop only applies to app dev, not gem dev.
 Rails/RakeEnvironment:
   Enabled: false
