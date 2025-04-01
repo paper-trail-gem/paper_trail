@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "support/custom_object_changes_adapter"
+
 RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
   let(:record) { model.new }
   let(:name) { FFaker::Name.first_name }

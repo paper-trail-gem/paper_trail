@@ -4,6 +4,7 @@ require "spec_helper"
 require "support/shared_examples/queries"
 require "support/shared_examples/active_record_encryption"
 require "support/custom_object_changes_adapter"
+
 module PaperTrail
   ::RSpec.describe Version do
     describe "#object_changes", versioning: true do
