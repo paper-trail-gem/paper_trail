@@ -10,7 +10,7 @@ RSpec.describe Plant, versioning: true do
 
   describe "#descends_from_active_record?" do
     it "returns true, meaning that Animal is not an STI subclass" do
-      expect(described_class.descends_from_active_record?).to be(true)
+      expect(described_class.descends_from_active_record?).to eq(true)
     end
   end
 

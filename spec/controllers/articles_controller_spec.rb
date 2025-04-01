@@ -10,19 +10,19 @@ RSpec.describe ArticlesController do
       after { PaperTrail.enabled = false }
 
       it "returns true" do
-        expect(PaperTrail.enabled?).to be(true)
+        expect(PaperTrail.enabled?).to eq(true)
         post :create, params: { article: { title: "Doh", content: FFaker::Lorem.sentence } }
         expect(assigns(:article)).not_to be_nil
-        expect(PaperTrail.request.enabled?).to be(true)
+        expect(PaperTrail.request.enabled?).to eq(true)
         expect(assigns(:article).versions.length).to eq(1)
       end
     end
 
     context "when PaperTrail.enabled? == false" do
       it "returns false" do
-        expect(PaperTrail.enabled?).to be(false)
+        expect(PaperTrail.enabled?).to eq(false)
         post :create, params: { article: { title: "Doh", content: FFaker::Lorem.sentence } }
-        expect(PaperTrail.request.enabled?).to be(false)
+        expect(PaperTrail.request.enabled?).to eq(false)
         expect(assigns(:article).versions.length).to eq(0)
       end
     end

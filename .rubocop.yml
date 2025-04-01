@@ -131,6 +131,9 @@ Rails/RakeEnvironment:
 Rails/SkipsModelValidations:
   Enabled: false
 
+RSpec/BeEq:
+  Enabled: false
+
 # This cop does not seem to work in rubocop-rspec 1.28.0
 RSpec/DescribeClass:
   Enabled: false

@@ -11,15 +11,15 @@ RSpec.describe PaperTrail do
 
   describe "#config", versioning: true do
     it "allows for config values to be set" do
-      expect(described_class.config.enabled).to be(true)
+      expect(described_class.config.enabled).to eq(true)
       described_class.config.enabled = false
-      expect(described_class.config.enabled).to be(false)
+      expect(described_class.config.enabled).to eq(false)
     end
 
     it "accepts blocks and yield the config instance" do
-      expect(described_class.config.enabled).to be(true)
+      expect(described_class.config.enabled).to eq(true)
       described_class.config { |c| c.enabled = false }
-      expect(described_class.config.enabled).to be(false)
+      expect(described_class.config.enabled).to eq(false)
     end
   end
 
@@ -46,7 +46,7 @@ RSpec.describe PaperTrail do
 
     it "affects all threads" do
       Thread.new { described_class.enabled = false }.join
-      expect(described_class.enabled?).to be(false)
+      expect(described_class.enabled?).to eq(false)
     end
   end
 

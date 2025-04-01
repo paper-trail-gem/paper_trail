@@ -10,7 +10,7 @@ module PaperTrail
           it "returns true" do
             g = Gadget.new(created_at: Time.current)
             event = described_class.new(g, false)
-            expect(event.changed_notably?).to be(true)
+            expect(event.changed_notably?).to eq(true)
           end
         end
 
@@ -19,14 +19,14 @@ module PaperTrail
             gadget = Gadget.create!(created_at: Time.current)
             gadget.name = "Wrench"
             event = described_class.new(gadget, false)
-            expect(event.changed_notably?).to be(true)
+            expect(event.changed_notably?).to eq(true)
           end
 
           it "does not acknowledge ignored attr (brand)" do
             gadget = Gadget.create!(created_at: Time.current)
             gadget.brand = "Acme"
             event = described_class.new(gadget, false)
-            expect(event.changed_notably?).to be(false)
+            expect(event.changed_notably?).to eq(false)
           end
         end
 
@@ -36,7 +36,7 @@ module PaperTrail
             gadget.name = "Wrench"
             gadget.updated_at = Time.current
             event = described_class.new(gadget, false)
-            expect(event.changed_notably?).to be(true)
+            expect(event.changed_notably?).to eq(true)
           end
 
           it "does not acknowledge ignored attrs and timestamps only" do
@@ -44,7 +44,7 @@ module PaperTrail
             gadget.brand = "Acme"
             gadget.updated_at = Time.current
             event = described_class.new(gadget, false)
-            expect(event.changed_notably?).to be(false)
+            expect(event.changed_notably?).to eq(false)
           end
         end
       end
