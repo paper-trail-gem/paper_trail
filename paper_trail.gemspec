@@ -20,7 +20,8 @@ has been destroyed.
   s.license = "MIT"
 
   s.metadata = {
-    "changelog_uri" => "https://github.com/paper-trail-gem/paper_trail/blob/master/CHANGELOG.md"
+    "changelog_uri" => "https://github.com/paper-trail-gem/paper_trail/blob/master/CHANGELOG.md",
+    "rubygems_mfa_required" => "true"
   }
 
   # > Files included in this gem. .. Only add files you can require to this

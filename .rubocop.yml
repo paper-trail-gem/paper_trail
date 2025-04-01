@@ -30,11 +30,6 @@ AllCops:
 Gemspec/DevelopmentDependencies:
   Enabled: false
 
-# skipped for now until we've audited all the gem maintainers but we should
-# enable this asap
-Gemspec/RequireMFA:
-  Enabled: false
-
 Layout/ArgumentAlignment:
   EnforcedStyle: with_fixed_indentation
 
