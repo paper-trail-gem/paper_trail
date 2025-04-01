@@ -120,6 +120,9 @@ Performance/CollectionLiteralInLoop:
   Exclude:
     - spec/**/*
 
+Rails/ApplicationRecord:
+  Enabled: false
+
 # This cop only applies to app dev, not gem dev.
 Rails/RakeEnvironment:
   Enabled: false

@@ -10,10 +10,4 @@
 # This cop supports unsafe autocorrection (--autocorrect-all).
 Rails/ActiveSupportOnLoad:
   Exclude:
-    - 'lib/paper_trail/frameworks/active_record.rb'
-
-# Offense count: 1
-# This cop supports unsafe autocorrection (--autocorrect-all).
-Rails/ApplicationRecord:
-  Exclude:
-    - 'lib/paper_trail/frameworks/active_record/models/paper_trail/version.rb'
+    - "lib/paper_trail/frameworks/active_record.rb"
