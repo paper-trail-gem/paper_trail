@@ -185,6 +185,7 @@ module PaperTrail
         scope,
         class_name: @model_class.version_class_name,
         as: :item,
+        strict_loading: false,
         **options[:versions].except(:name, :scope)
       )
     end
