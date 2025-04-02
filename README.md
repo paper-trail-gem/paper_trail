@@ -69,6 +69,7 @@ Choose version:
   - [6.b. Custom Serializer](#6b-custom-serializer)
   - [6.c. Custom Object Changes](#6c-custom-object-changes)
   - [6.d. Excluding the Object Column](#6d-excluding-the-object-column)
+  - [6.e. Error handling](#6e-error-handling)
 - [7. Testing](#7-testing)
   - [7.a. Minitest](#7a-minitest)
   - [7.b. RSpec](#7b-rspec)
@@ -1449,6 +1450,18 @@ methods.
 The `object` column ends up storing a lot of duplicate data if you have models that have many columns,
 and that are updated many times. You can save ~50% of storage space by removing the column from the
 versions table. It's important to note that this will disable `reify` and `where_object`.
+
+### 6.e. Error handling
+
+You can change the behavior of error handling when an exception is raised while creating a version, by setting the `version_error_behavior` option:
+
+```ruby
+# config/initializers/paper_trail.rb
+PaperTrail.config.version_error_behavior = :legacy # (Default) Raise on create, log on update/delete.
+PaperTrail.config.version_error_behavior = :log # Only log error.
+PaperTrail.config.version_error_behavior = :exception # Raise exception.
+PaperTrail.config.version_error_behavior = :silent # No-op.
+```
 
 ## 7. Testing
 
