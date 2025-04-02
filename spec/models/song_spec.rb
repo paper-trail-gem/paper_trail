@@ -2,9 +2,9 @@
 
 require "spec_helper"
 
-::RSpec.describe(::Song, type: :model, versioning: true) do
+RSpec.describe(Song, versioning: true) do
   describe "#joins" do
-    it "works" do
+    it "sets event to 'create' when a new record is created" do
       described_class.create!
       result = described_class.
         joins(:versions).
@@ -17,7 +17,7 @@ require "spec_helper"
 
   context "when the default accessor, length=, is overwritten" do
     it "returns overwritten value on reified instance" do
-      song = Song.create(length: 4)
+      song = described_class.create(length: 4)
       song.update(length: 5)
       expect(song.length).to(eq(5))
       expect(song.versions.last.reify.length).to(eq(4))
@@ -26,7 +26,7 @@ require "spec_helper"
 
   context "when song name is a virtual attribute (no such db column)" do
     it "returns overwritten virtual attribute on the reified instance" do
-      song = Song.create(length: 4)
+      song = described_class.create(length: 4)
       song.update(length: 5)
       song.name = "Good Vibrations"
       song.save

@@ -3,7 +3,7 @@
 require "spec_helper"
 require "rails/generators"
 
-RSpec.describe Pet, type: :model, versioning: true do
+RSpec.describe Pet, versioning: true do
   it "baseline test setup" do
     expect(described_class.new).to be_versioned
   end
@@ -65,7 +65,7 @@ RSpec.describe Pet, type: :model, versioning: true do
       # that examines all existing models to identify use of STI, then updates all older
       # version entries that may refer to the base_class so they refer to the subclass.
       # (This is the same as running:  rails g paper_trail:update_sti; rails db:migrate)
-      migrator = ::PaperTrailSpecMigrator.new
+      migrator = PaperTrailSpecMigrator.new
       expect {
         migrator.generate_and_migrate("paper_trail:update_item_subtype", [])
       }.to output(/Associated 1 record to Cat/).to_stdout
@@ -98,7 +98,7 @@ RSpec.describe Pet, type: :model, versioning: true do
         # paper_trail:update_sti` would be unable to determine the previous
         # inheritance_column, so a generated migration *with no hints* would
         # accomplish nothing.
-        migrator = ::PaperTrailSpecMigrator.new
+        migrator = PaperTrailSpecMigrator.new
         hints = []
         expect {
           migrator.generate_and_migrate("paper_trail:update_item_subtype", hints)
@@ -122,7 +122,7 @@ RSpec.describe Pet, type: :model, versioning: true do
 
         # This is the same as running:
         #   rails g paper_trail:update_sti Animal(species):1..4; rails db:migrate
-        migrator = ::PaperTrailSpecMigrator.new
+        migrator = PaperTrailSpecMigrator.new
         hints = ["Animal(species):#{cat_ids.first}..#{cat_ids.last}"]
         expect {
           migrator.generate_and_migrate("paper_trail:update_item_subtype", hints)

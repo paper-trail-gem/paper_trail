@@ -111,10 +111,10 @@ module PaperTrail
 
             described_class.with(whodunnit: "foo", enabled_for_Widget: false) do
               expect(described_class.whodunnit).to eq("foo")
-              expect(described_class.enabled_for_model?(Widget)).to eq false
+              expect(described_class.enabled_for_model?(Widget)).to be false
             end
             expect(described_class.whodunnit).to eq "some_whodunnit"
-            expect(described_class.enabled_for_model?(Widget)).to eq true
+            expect(described_class.enabled_for_model?(Widget)).to be true
           end
 
           it "sets options only for the current thread" do
@@ -123,12 +123,12 @@ module PaperTrail
 
             described_class.with(whodunnit: "foo", enabled_for_Widget: false) do
               expect(described_class.whodunnit).to eq("foo")
-              expect(described_class.enabled_for_model?(Widget)).to eq false
+              expect(described_class.enabled_for_model?(Widget)).to be false
               Thread.new { expect(described_class.whodunnit).to be_nil }.join
-              Thread.new { expect(described_class.enabled_for_model?(Widget)).to eq true }.join
+              Thread.new { expect(described_class.enabled_for_model?(Widget)).to be true }.join
             end
             expect(described_class.whodunnit).to eq "some_whodunnit"
-            expect(described_class.enabled_for_model?(Widget)).to eq true
+            expect(described_class.enabled_for_model?(Widget)).to be true
           end
         end
 

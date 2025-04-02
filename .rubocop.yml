@@ -1,9 +1,11 @@
 require:
+  - rubocop-rspec
+
+plugins:
   - rubocop-packaging
   - rubocop-performance
   - rubocop-rails
   - rubocop-rake
-  - rubocop-rspec
 
 inherit_from: .rubocop_todo.yml
 
@@ -24,6 +26,9 @@ AllCops:
 
   # See "Lowest supported ruby version" in CONTRIBUTING.md
   TargetRubyVersion: 3.0
+
+Gemspec/DevelopmentDependencies:
+  Enabled: false
 
 Layout/ArgumentAlignment:
   EnforcedStyle: with_fixed_indentation
@@ -65,7 +70,7 @@ Layout/SpaceAroundOperators:
 # from these is of questionable value.
 Metrics/AbcSize:
   Exclude:
-    - 'spec/dummy_app/db/migrate/*'
+    - "spec/dummy_app/db/migrate/*"
 
 # Not a useful metric compared to, e.g. `AbcSize`.
 Metrics/BlockLength:
@@ -115,12 +120,21 @@ Performance/CollectionLiteralInLoop:
   Exclude:
     - spec/**/*
 
+Rails/ApplicationRecord:
+  Enabled: false
+
+Rails/Delegate:
+  Enabled: false
+
 # This cop only applies to app dev, not gem dev.
 Rails/RakeEnvironment:
   Enabled: false
 
 # Good advice for rails applications, but not applicable to libraries like PT.
 Rails/SkipsModelValidations:
+  Enabled: false
+
+RSpec/BeEq:
   Enabled: false
 
 # This cop does not seem to work in rubocop-rspec 1.28.0
@@ -140,6 +154,12 @@ RSpec/ExampleLength:
 RSpec/MultipleExpectations:
   Enabled: false
 
+# It may be possible for us to use safe_load, but we'd have to pass the
+# safelists, like `whitelist_classes` into our serializer, and the serializer
+# interface is a public API, so that would be a breaking change.
+Security/YAMLLoad:
+  Enabled: false
+
 # Please use semantic style, e.g. `do` when there's a side-effect, else `{}`.
 # The semantic style is too nuanced to lint, so the cop is disabled.
 Style/BlockDelimiters:
@@ -148,6 +168,9 @@ Style/BlockDelimiters:
 # Use double negation wherever it would otherwise be impractical to convert
 # a value to an actual boolean.
 Style/DoubleNegation:
+  Enabled: false
+
+Style/FetchEnvVar:
   Enabled: false
 
 # Avoid annotated tokens except in desperately complicated format strings.
@@ -182,8 +205,8 @@ Style/IfUnlessModifier:
 # - https://github.com/bbatsov/ruby-style-guide/issues/556
 Style/ModuleFunction:
   Exclude:
-    - 'lib/paper_trail/serializers/json.rb'
-    - 'lib/paper_trail/serializers/yaml.rb'
+    - "lib/paper_trail/serializers/json.rb"
+    - "lib/paper_trail/serializers/yaml.rb"
 
 # Too subtle to lint. Use `format` for multiple variables. For single variables,
 # use either interpolation or concatenation, whichever is easier to read.

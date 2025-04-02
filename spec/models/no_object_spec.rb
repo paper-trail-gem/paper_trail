@@ -27,7 +27,7 @@ RSpec.describe NoObject, versioning: true do
 
     # New feature: destroy populates object_changes
     # https://github.com/paper-trail-gem/paper_trail/pull/1123
-    h = if ::YAML.respond_to?(:unsafe_load)
+    h = if YAML.respond_to?(:unsafe_load)
           YAML.unsafe_load a["object_changes"]
         else
           YAML.load a["object_changes"]
@@ -46,7 +46,7 @@ RSpec.describe NoObject, versioning: true do
       v = n.versions.last
       expect { v.reify }.to(
         raise_error(
-          ::PaperTrail::Error,
+          PaperTrail::Error,
           "reify requires an object column"
         )
       )
@@ -60,7 +60,7 @@ RSpec.describe NoObject, versioning: true do
         n.versions.where_object(foo: "bar")
       }.to(
         raise_error(
-          ::PaperTrail::Error,
+          PaperTrail::Error,
           "where_object requires an object column"
         )
       )

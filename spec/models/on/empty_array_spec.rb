@@ -4,7 +4,7 @@ require "spec_helper"
 require_dependency "on/empty_array"
 
 module On
-  RSpec.describe EmptyArray, type: :model, versioning: true do
+  RSpec.describe EmptyArray, versioning: true do
     describe "#create" do
       it "does not create any version records" do
         record = described_class.create(name: "Alice")
@@ -15,9 +15,9 @@ module On
     describe ".paper_trail.update_columns" do
       it "creates a version record" do
         widget = Widget.create
-        assert_equal 1, widget.versions.length
+        expect(widget.versions.length).to eq(1)
         widget.paper_trail.update_columns(name: "Bugle")
-        assert_equal 2, widget.versions.length
+        expect(widget.versions.length).to eq(2)
       end
     end
 

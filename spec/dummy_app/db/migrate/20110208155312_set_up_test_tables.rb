@@ -6,7 +6,7 @@
 # Starting with AR 5.1, we must specify which version of AR we are using.
 # I tried using `const_get` but I got a `NameError`, then I learned about
 # `::ActiveRecord::Migration::Current`.
-class SetUpTestTables < ::ActiveRecord::Migration::Current
+class SetUpTestTables < ActiveRecord::Migration::Current
   MYSQL_ADAPTERS = [
     "ActiveRecord::ConnectionAdapters::MysqlAdapter",
     "ActiveRecord::ConnectionAdapters::Mysql2Adapter"

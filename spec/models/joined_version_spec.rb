@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe JoinedVersion, type: :model, versioning: true do
+RSpec.describe JoinedVersion, versioning: true do
   let(:widget) { Widget.create!(name: FFaker::Name.name) }
   let(:version) { described_class.first }
 
@@ -15,19 +15,19 @@ RSpec.describe JoinedVersion, type: :model, versioning: true do
 
     describe "#subsequent" do
       it "does not raise error when there is a default_scope that joins" do
-        described_class.subsequent(version).first
+        expect { described_class.subsequent(version).first }.not_to raise_error
       end
     end
 
     describe "#preceding" do
       it "does not raise error when there is a default scope that joins" do
-        described_class.preceding(version).first
+        expect { described_class.preceding(version).first }.not_to raise_error
       end
     end
 
     describe "#between" do
       it "does not raise error when there is a default scope that joins" do
-        described_class.between(Time.current, 1.minute.from_now).first
+        expect { described_class.between(Time.current, 1.minute.from_now).first }.not_to raise_error
       end
     end
   end
@@ -37,7 +37,7 @@ RSpec.describe JoinedVersion, type: :model, versioning: true do
 
     it "does not raise error when there is a default scope that joins" do
       widget # persist a widget
-      version.index
+      expect { version.index }.not_to raise_error
     end
   end
 end

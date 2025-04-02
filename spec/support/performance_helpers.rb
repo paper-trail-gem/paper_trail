@@ -32,7 +32,7 @@ RSpec::Matchers.define :allocate_less_than do |expected|
   end
 
   failure_message do
-    "expected that example will allocate less than #{expected}#{@scale},"\
-      " but allocated #{@allocated}#{@scale}"
+    "expected that example will allocate less than #{expected}#{@scale}, " \
+      "but allocated #{@allocated}#{@scale}"
   end
 end

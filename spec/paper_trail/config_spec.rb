@@ -271,7 +271,7 @@ module PaperTrail
         limited_bike = LimitedBicycle.create!(name: "Limited")
         limited_bike.name = "A new name"
         limited_bike.save
-        assert_equal 2, limited_bike.versions.length
+        expect(limited_bike.versions.length).to eq(2)
       end
     end
   end

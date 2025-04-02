@@ -14,7 +14,7 @@ module PaperTrail
         attrs = version.object_deserialized
         model = init_model(attrs, options, version)
         reify_attributes(model, version, attrs)
-        model.send "#{model.class.version_association_name}=", version
+        model.send :"#{model.class.version_association_name}=", version
         model
       end
 
@@ -93,8 +93,8 @@ module PaperTrail
       def reify_attribute(k, v, model, version)
         if model.has_attribute?(k)
           model[k.to_sym] = v
-        elsif model.respond_to?("#{k}=")
-          model.send("#{k}=", v)
+        elsif model.respond_to?(:"#{k}=")
+          model.send(:"#{k}=", v)
         elsif version.logger
           version.logger.warn(
             "Attribute #{k} does not exist on #{version.item_type} (Version id: #{version.id})."

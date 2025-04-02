@@ -5,7 +5,7 @@ require "spec_helper"
 # The `json_versions` table tests postgres' `json` data type. So, that
 # table is only created when testing against postgres.
 if JsonVersion.table_exists?
-  RSpec.describe JsonVersion, type: :model, versioning: true do
+  RSpec.describe JsonVersion, versioning: true do
     it "includes the VersionConcern module" do
       expect(described_class).to include(PaperTrail::VersionConcern)
     end

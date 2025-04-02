@@ -27,7 +27,7 @@ module PaperTrail
       # recent [memory optimizations](https://github.com/paper-trail-gem/paper_trail/pull/1189),
       # when coming from `recordable_object_changes`, it will be a `HashWithIndifferentAccess`.
       def dump(object)
-        object = object.to_hash if object.is_a?(HashWithIndifferentAccess)
+        object = object.to_hash if object.is_a?(ActiveSupport::HashWithIndifferentAccess)
         ::YAML.dump object
       end
 

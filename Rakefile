@@ -13,7 +13,7 @@ task :install_database_yml do
   # It's tempting to use `git clean` here, but this rake task will be run by
   # people working on changes that haven't been committed yet, so we have to
   # be more selective with what we delete.
-  ::FileUtils.rm("spec/dummy_app/db/database.yml", force: true)
+  FileUtils.rm("spec/dummy_app/db/database.yml", force: true)
 
   FileUtils.cp(
     "spec/dummy_app/config/database.#{ENV['DB']}.yml",
@@ -32,7 +32,7 @@ task :clean do
     # TODO: only works locally. doesn't respect database.yml
     system "dropdb --if-exists paper_trail_test > /dev/null 2>&1"
   when nil, "sqlite"
-    ::FileUtils.rm(::Dir.glob("spec/dummy_app/db/*.sqlite3"))
+    FileUtils.rm(Dir.glob("spec/dummy_app/db/*.sqlite3"))
   else
     raise "Don't know how to clean specified RDBMS: #{ENV['DB']}"
   end

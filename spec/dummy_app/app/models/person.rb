@@ -24,7 +24,7 @@ class Person < ApplicationRecord
       super
     else
       zone = ::Time.find_zone(value) # nil if can't find time zone
-      super zone
+      super(zone)
     end
   end
 

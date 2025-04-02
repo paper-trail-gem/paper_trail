@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "support/custom_object_changes_adapter"
+
 RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
   let(:record) { model.new }
   let(:name) { FFaker::Name.first_name }
@@ -25,7 +27,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
       end
 
       it "calls the adapter's where_attribute_changes method" do
-        adapter = instance_spy("CustomObjectChangesAdapter")
+        adapter = instance_spy(CustomObjectChangesAdapter)
         bicycle = model.create!(name: "abc")
         bicycle.update!(name: "xyz")
 
@@ -50,7 +52,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
           expect {
             bicycle.versions.where_attribute_changes(:name)
           }.to raise_error(
-            ::PaperTrail::UnsupportedColumnType,
+            PaperTrail::UnsupportedColumnType,
             "where_attribute_changes expected json or jsonb column, got text"
           )
         else
@@ -66,7 +68,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
         expect {
           record.versions.where_attribute_changes(:name).to_a
         }.to raise_error(
-          ::PaperTrail::UnsupportedColumnType,
+          PaperTrail::UnsupportedColumnType,
           "where_attribute_changes expected json or jsonb column, got text"
         )
       end
@@ -156,7 +158,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
       end
 
       it "calls the adapter's where_object_changes method" do
-        adapter = instance_spy("CustomObjectChangesAdapter")
+        adapter = instance_spy(CustomObjectChangesAdapter)
         bicycle = model.create!(name: "abc")
         allow(adapter).to(
           receive(:where_object_changes).with(model.paper_trail.version_class, { name: "abc" })
@@ -176,7 +178,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
           expect {
             bicycle.versions.where_object_changes(name: "abc")
           }.to raise_error(
-            ::PaperTrail::UnsupportedColumnType,
+            PaperTrail::UnsupportedColumnType,
             "where_object_changes expected json or jsonb column, got text"
           )
         else
@@ -192,7 +194,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
         expect {
           record.versions.where_object_changes(name: "foo").to_a
         }.to raise_error(
-          ::PaperTrail::UnsupportedColumnType,
+          PaperTrail::UnsupportedColumnType,
           "where_object_changes expected json or jsonb column, got text"
         )
       end
@@ -233,7 +235,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
       end
 
       it "calls the adapter's where_object_changes_from method" do
-        adapter = instance_spy("CustomObjectChangesAdapter")
+        adapter = instance_spy(CustomObjectChangesAdapter)
         bicycle = model.create!(name: "abc")
         bicycle.update!(name: "xyz")
 
@@ -258,7 +260,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
           expect {
             bicycle.versions.where_object_changes_from(name: "abc")
           }.to raise_error(
-            ::PaperTrail::UnsupportedColumnType,
+            PaperTrail::UnsupportedColumnType,
             "where_object_changes_from expected json or jsonb column, got text"
           )
         else
@@ -274,7 +276,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
         expect {
           record.versions.where_object_changes_from(name: "foo").to_a
         }.to raise_error(
-          ::PaperTrail::UnsupportedColumnType,
+          PaperTrail::UnsupportedColumnType,
           "where_object_changes_from expected json or jsonb column, got text"
         )
       end
@@ -316,7 +318,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
       end
 
       it "calls the adapter's where_object_changes_to method" do
-        adapter = instance_spy("CustomObjectChangesAdapter")
+        adapter = instance_spy(CustomObjectChangesAdapter)
         bicycle = model.create!(name: "abc")
         bicycle.update!(name: "xyz")
 
@@ -341,7 +343,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
           expect {
             bicycle.versions.where_object_changes_to(name: "xyz")
           }.to raise_error(
-            ::PaperTrail::UnsupportedColumnType,
+            PaperTrail::UnsupportedColumnType,
             "where_object_changes_to expected json or jsonb column, got text"
           )
         else
@@ -357,7 +359,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
         expect {
           record.versions.where_object_changes_to(name: "foo").to_a
         }.to raise_error(
-          ::PaperTrail::UnsupportedColumnType,
+          PaperTrail::UnsupportedColumnType,
           "where_object_changes_to expected json or jsonb column, got text"
         )
       end

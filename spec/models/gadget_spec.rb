@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Gadget, type: :model do
+RSpec.describe Gadget do
   let(:gadget) { described_class.create!(name: "Wrench", brand: "Acme") }
 
   it { is_expected.to be_versioned }
@@ -35,7 +35,7 @@ RSpec.describe Gadget, type: :model do
         gadget.update_attribute(:updated_at, Time.current + 1)
       }.to(change { gadget.versions.size }.by(1))
       expect(
-        if ::YAML.respond_to?(:unsafe_load)
+        if YAML.respond_to?(:unsafe_load)
           YAML.unsafe_load(gadget.versions.last.object_changes).keys
         else
           YAML.load(gadget.versions.last.object_changes).keys

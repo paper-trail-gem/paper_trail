@@ -6,9 +6,9 @@ module CustomYamlSerializer
   extend PaperTrail::Serializers::YAML
 
   def self.load(string)
-    parsed_value = super(string)
+    parsed_value = super
     if parsed_value.is_a?(Hash)
-      parsed_value.reject { |k, v| (k.blank? || v.blank?) }
+      parsed_value.reject { |k, v| k.blank? || v.blank? }
     else
       parsed_value
     end
@@ -22,7 +22,7 @@ end
 RSpec.describe CustomYamlSerializer do
   let(:word_hash) {
     {
-      "key1" => ::FFaker::Lorem.word,
+      "key1" => FFaker::Lorem.word,
       "key2" => nil,
       "tkey" => nil,
       "" => "foo"
@@ -32,7 +32,7 @@ RSpec.describe CustomYamlSerializer do
   describe ".load" do
     it("deserializes YAML to Ruby, removing pairs with blank keys or values") do
       expect(described_class.load(word_hash.to_yaml)).to eq(
-        word_hash.reject { |k, v| (k.blank? || v.blank?) }
+        word_hash.reject { |k, v| k.blank? || v.blank? }
       )
     end
   end
