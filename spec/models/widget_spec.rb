@@ -678,8 +678,10 @@ RSpec.describe Widget, versioning: true do
       # Json fields for `object` & `object_changes` attributes is most efficient way
       # to do the things - this way we will save even more RAM, as well as will skip
       # the whole YAML serialization
-      allow(PaperTrail::Version).to receive(:object_changes_col_is_json?).and_return(true)
-      allow(PaperTrail::Version).to receive(:object_col_is_json?).and_return(true)
+      allow(PaperTrail::Version).to receive_messages(
+        object_changes_col_is_json?: true,
+        object_col_is_json?: true
+      )
 
       # Force the loading of all lazy things like class definitions,
       # in order to get the pure benchmark
