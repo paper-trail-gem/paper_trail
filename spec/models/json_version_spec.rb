@@ -116,7 +116,7 @@ if JsonVersion.table_exists?
                 "json_versions"."id" ASC
             SQL
           )
-          expect(where_red_apple).to match_array([fruit.versions[1]])
+          expect(where_red_apple).to contain_exactly(fruit.versions[1])
         end
       end
     end

@@ -38,7 +38,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
         PaperTrail.config.object_changes_adapter = adapter
         expect(
           bicycle.versions.where_attribute_changes(:name)
-        ).to match_array([bicycle.versions[0], bicycle.versions[1]])
+        ).to contain_exactly(bicycle.versions[0], bicycle.versions[1])
         expect(adapter).to have_received(:where_attribute_changes)
       end
 
@@ -58,7 +58,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
         else
           expect(
             bicycle.versions.where_attribute_changes(:name)
-          ).to match_array([bicycle.versions[0], bicycle.versions[1]])
+          ).to contain_exactly(bicycle.versions[0], bicycle.versions[1])
         end
       end
     end
@@ -246,7 +246,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
         PaperTrail.config.object_changes_adapter = adapter
         expect(
           bicycle.versions.where_object_changes_from(name: "abc")
-        ).to match_array([bicycle.versions[1]])
+        ).to contain_exactly(bicycle.versions[1])
         expect(adapter).to have_received(:where_object_changes_from)
       end
 
@@ -266,7 +266,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
         else
           expect(
             bicycle.versions.where_object_changes_from(name: "abc")
-          ).to match_array([bicycle.versions[1]])
+          ).to contain_exactly(bicycle.versions[1])
         end
       end
     end
@@ -329,7 +329,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
         PaperTrail.config.object_changes_adapter = adapter
         expect(
           bicycle.versions.where_object_changes_to(name: "xyz")
-        ).to match_array([bicycle.versions[1]])
+        ).to contain_exactly(bicycle.versions[1])
         expect(adapter).to have_received(:where_object_changes_to)
       end
 
@@ -349,7 +349,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
         else
           expect(
             bicycle.versions.where_object_changes_to(name: "xyz")
-          ).to match_array([bicycle.versions[1]])
+          ).to contain_exactly(bicycle.versions[1])
         end
       end
     end

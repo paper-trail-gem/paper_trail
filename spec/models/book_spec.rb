@@ -23,7 +23,7 @@ RSpec.describe Book, versioning: true do
       expect((PaperTrail::Version.count - count)).to(eq(2))
       expect(
         [PaperTrail::Version.order(:id).to_a[-2].item, PaperTrail::Version.last.item]
-      ).to match_array([Person.last, Authorship.last])
+      ).to contain_exactly(Person.last, Authorship.last)
     end
 
     it "store version on join destroy" do
