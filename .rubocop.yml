@@ -145,6 +145,9 @@ RSpec/DescribeClass:
 RSpec/ExampleLength:
   Enabled: false
 
+RSpec/IndexedLet:
+  Enabled: false
+
 # In an ideal world, each example has a single expectation. In the real world,
 # sometimes setup is a pain and you don't want to duplicate setup in multiple
 # examples, or make the specs more confusing with many nested `context`s, and
