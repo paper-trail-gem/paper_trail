@@ -77,13 +77,13 @@ has been destroyed.
   s.add_development_dependency "rails", PaperTrail::Compatibility::ACTIVERECORD_GTE
 
   s.add_development_dependency "rake", "~> 13.0"
-  s.add_development_dependency "rspec-rails", "~> 6.0.3"
+  s.add_development_dependency "rspec-rails", "~> 7.1.1"
   s.add_development_dependency "rubocop", "~> 1.75"
   s.add_development_dependency "rubocop-packaging", "~> 0.6.0"
   s.add_development_dependency "rubocop-performance", "~> 1.24.0"
   s.add_development_dependency "rubocop-rails", "~> 2.30.3"
   s.add_development_dependency "rubocop-rake", "~> 0.7.1"
-  s.add_development_dependency "rubocop-rspec", "~> 2.17.0"
+  s.add_development_dependency "rubocop-rspec", "~> 3.5.0"
   s.add_development_dependency "simplecov", "~> 0.21.2"
 
   # ## Database Adapters
