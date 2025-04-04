@@ -7,7 +7,7 @@ RSpec.describe Gadget do
 
   it { is_expected.to be_versioned }
 
-  describe "updates", versioning: true do
+  describe "updates", :versioning do
     it "generates a version for updates" do
       expect { gadget.update_attribute(:name, "Hammer") }.to(change { gadget.versions.size }.by(1))
     end

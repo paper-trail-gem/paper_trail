@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Book, versioning: true do
+RSpec.describe Book, :versioning do
   context "with :has_many :through" do
     it "store version on source <<" do
       book = described_class.create(title: "War and Peace")

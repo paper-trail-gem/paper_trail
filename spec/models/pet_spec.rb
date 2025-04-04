@@ -3,7 +3,7 @@
 require "spec_helper"
 require "rails/generators"
 
-RSpec.describe Pet, versioning: true do
+RSpec.describe Pet, :versioning do
   it "baseline test setup" do
     expect(described_class.new).to be_versioned
   end

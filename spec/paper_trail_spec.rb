@@ -9,7 +9,7 @@ RSpec.describe PaperTrail do
     end
   end
 
-  describe "#config", versioning: true do
+  describe "#config", :versioning do
     it "allows for config values to be set" do
       expect(described_class.config.enabled).to eq(true)
       described_class.config.enabled = false
@@ -72,7 +72,7 @@ RSpec.describe PaperTrail do
     end
   end
 
-  context "with `versioning: true`", versioning: true do
+  context "with `versioning: true`", :versioning do
     it "has versioning on by default" do
       expect(described_class).to be_enabled
     end

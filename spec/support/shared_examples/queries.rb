@@ -11,7 +11,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
     PaperTrail.serializer = PaperTrail::Serializers::YAML
   end
 
-  describe "#where_attribute_changes", versioning: true do
+  describe "#where_attribute_changes", :versioning do
     it "requires its argument to be a string or a symbol" do
       expect {
         model.paper_trail.version_class.where_attribute_changes({})
@@ -91,7 +91,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
     end
   end
 
-  describe "#where_object", versioning: true do
+  describe "#where_object", :versioning do
     it "requires its argument to be a Hash" do
       record.update!(name: name, name_of_integer_column => int)
       record.update!(name: "foobar", name_of_integer_column => 100)
@@ -142,7 +142,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
     end
   end
 
-  describe "#where_object_changes", versioning: true do
+  describe "#where_object_changes", :versioning do
     it "requires its argument to be a Hash" do
       expect {
         model.paper_trail.version_class.where_object_changes(:foo)
@@ -219,7 +219,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
     end
   end
 
-  describe "#where_object_changes_from", versioning: true do
+  describe "#where_object_changes_from", :versioning do
     it "requires its argument to be a Hash" do
       expect {
         model.paper_trail.version_class.where_object_changes_from(:foo)
@@ -302,7 +302,7 @@ RSpec.shared_examples "queries" do |column_type, model, name_of_integer_column|
     end
   end
 
-  describe "#where_object_changes_to", versioning: true do
+  describe "#where_object_changes_to", :versioning do
     it "requires its argument to be a Hash" do
       expect {
         model.paper_trail.version_class.where_object_changes_to(:foo)

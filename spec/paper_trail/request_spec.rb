@@ -3,7 +3,7 @@
 require "spec_helper"
 
 module PaperTrail
-  ::RSpec.describe(Request, versioning: true) do
+  ::RSpec.describe(Request, :versioning) do
     describe ".enabled_for_model?" do
       it "returns true" do
         expect(PaperTrail.request.enabled_for_model?(Widget)).to eq(true)

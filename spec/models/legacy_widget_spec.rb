@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe LegacyWidget, versioning: true do
+RSpec.describe LegacyWidget, :versioning do
   describe "#custom_version" do
     it "knows which version it came from" do
       widget = described_class.create(name: "foo", version: 2)

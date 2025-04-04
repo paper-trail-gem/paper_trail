@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.shared_examples "active_record_encryption" do |model|
-  context "when ActiveRecord Encryption is enabled", versioning: true do
+  context "when ActiveRecord Encryption is enabled", :versioning do
     let(:record) { model.create(supplier: "ABC", name: "Tomato") }
 
     before do

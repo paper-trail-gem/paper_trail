@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Wotsit, versioning: true do
+RSpec.describe Wotsit, :versioning do
   it "update! records timestamps" do
     wotsit = described_class.create!(name: "wotsit")
     wotsit.update!(name: "changed")
