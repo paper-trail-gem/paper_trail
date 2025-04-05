@@ -2,10 +2,10 @@
 
 require "spec_helper"
 
-RSpec.describe Skipper, versioning: true do
+RSpec.describe Skipper, :versioning do
   it { is_expected.to be_versioned }
 
-  describe "#update!", versioning: true do
+  describe "#update!", :versioning do
     context "when updating a skipped attribute" do
       let(:t1) { Time.zone.local(2015, 7, 15, 20, 34, 0) }
       let(:t2) { Time.zone.local(2015, 7, 15, 20, 34, 30) }

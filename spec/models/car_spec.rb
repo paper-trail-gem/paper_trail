@@ -5,7 +5,7 @@ require "spec_helper"
 RSpec.describe Car do
   it { is_expected.to be_versioned }
 
-  describe "changeset", versioning: true do
+  describe "changeset", :versioning do
     it "has the expected keys (see issue 738)" do
       car = described_class.create!(name: "Alice")
       car.update(name: "Bob")
@@ -13,7 +13,7 @@ RSpec.describe Car do
     end
   end
 
-  describe "attributes and accessors", versioning: true do
+  describe "attributes and accessors", :versioning do
     it "reifies attributes that are not AR attributes" do
       car = described_class.create name: "Pinto", color: "green"
       car.update color: "yellow"

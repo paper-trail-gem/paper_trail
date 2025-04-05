@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Book, versioning: true do
+RSpec.describe Book, :versioning do
   context "with :has_many :through" do
     it "store version on source <<" do
       book = described_class.create(title: "War and Peace")
@@ -23,7 +23,7 @@ RSpec.describe Book, versioning: true do
       expect((PaperTrail::Version.count - count)).to(eq(2))
       expect(
         [PaperTrail::Version.order(:id).to_a[-2].item, PaperTrail::Version.last.item]
-      ).to match_array([Person.last, Authorship.last])
+      ).to contain_exactly(Person.last, Authorship.last)
     end
 
     it "store version on join destroy" do

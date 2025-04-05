@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe WidgetsController, versioning: true do
+RSpec.describe WidgetsController, :versioning do
   before { request.env["REMOTE_ADDR"] = "127.0.0.1" }
 
   after { RequestStore.store[:paper_trail] = nil }

@@ -17,7 +17,7 @@ module PaperTrail
       end
     end
 
-    describe ".version_error_behavior", versioning: true do
+    describe ".version_error_behavior", :versioning do
       let(:logger) { instance_double(Logger) }
 
       before do
@@ -238,7 +238,7 @@ module PaperTrail
       end
     end
 
-    describe ".version_limit", versioning: true do
+    describe ".version_limit", :versioning do
       after { PaperTrail.config.version_limit = nil }
 
       it "limits the number of versions to 3 (2 plus the created at event)" do

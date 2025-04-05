@@ -7,7 +7,7 @@ require "support/custom_object_changes_adapter"
 
 module PaperTrail
   ::RSpec.describe Version do
-    describe "#object_changes", versioning: true do
+    describe "#object_changes", :versioning do
       let(:widget) { Widget.create!(name: "Dashboard") }
       let(:value) { widget.versions.last.object_changes }
 
@@ -67,7 +67,7 @@ module PaperTrail
         end
       end
 
-      context "with previous version", versioning: true do
+      context "with previous version", :versioning do
         it "returns name of whodunnit" do
           name = FFaker::Name.name
           widget = Widget.create!(name: FFaker::Name.name)
@@ -85,7 +85,7 @@ module PaperTrail
         end
       end
 
-      context "with previous version", versioning: true do
+      context "with previous version", :versioning do
         it "returns a PaperTrail::Version" do
           name = FFaker::Name.name
           widget = Widget.create!(name: FFaker::Name.name)
@@ -111,12 +111,12 @@ module PaperTrail
       end
     end
 
-    context "with text columns", versioning: true do
+    context "with text columns", :versioning do
       include_examples "queries", :text, ::Widget, :an_integer
     end
 
     if ENV["DB"] == "postgres"
-      context "with json columns", versioning: true do
+      context "with json columns", :versioning do
         include_examples(
           "queries",
           :json,
@@ -127,7 +127,7 @@ module PaperTrail
         include_examples("active_record_encryption", ::Fruit)
       end
 
-      context "with jsonb columns", versioning: true do
+      context "with jsonb columns", :versioning do
         include_examples(
           "queries",
           :jsonb,

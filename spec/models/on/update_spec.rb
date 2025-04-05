@@ -4,7 +4,7 @@ require "spec_helper"
 require_dependency "on/update"
 
 module On
-  RSpec.describe Update, versioning: true do
+  RSpec.describe Update, :versioning do
     describe "#versions" do
       it "only creates one version record, for the update event" do
         record = described_class.create(name: "Alice")

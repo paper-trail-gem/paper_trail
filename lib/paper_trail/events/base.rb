@@ -157,7 +157,7 @@ module PaperTrail
       # @api private
       def ignored_attr_has_changed?
         ignored = calculated_ignored_array + @record.paper_trail_options[:skip]
-        ignored.any? && (changed_in_latest_version & ignored).any?
+        ignored.any? && changed_in_latest_version.intersect?(ignored)
       end
 
       # Rails 5.1 changed the API of `ActiveRecord::Dirty`. See

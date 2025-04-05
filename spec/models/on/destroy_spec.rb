@@ -4,7 +4,7 @@ require "spec_helper"
 require_dependency "on/destroy"
 
 module On
-  RSpec.describe Destroy, versioning: true do
+  RSpec.describe Destroy, :versioning do
     describe "#versions" do
       it "only creates one version record, for the destroy event" do
         record = described_class.create(name: "Alice")

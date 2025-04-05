@@ -3,7 +3,7 @@
 require "spec_helper"
 
 RSpec.describe Thing do
-  describe "#versions", versioning: true do
+  describe "#versions", :versioning do
     let(:thing) { described_class.create! }
 
     it "applies the scope option" do

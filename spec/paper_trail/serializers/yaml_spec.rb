@@ -4,7 +4,7 @@ require "spec_helper"
 
 module PaperTrail
   module Serializers
-    ::RSpec.describe(YAML, versioning: true) do
+    ::RSpec.describe(YAML, :versioning) do
       let(:array) { ::Array.new(10) { ::FFaker::Lorem.word } }
       let(:hash) {
         {

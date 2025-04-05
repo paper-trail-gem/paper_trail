@@ -4,7 +4,7 @@ require "spec_helper"
 require "support/performance_helpers"
 require "support/custom_object_changes_adapter"
 
-RSpec.describe Widget, versioning: true do
+RSpec.describe Widget, :versioning do
   describe "#changeset" do
     it "has expected values" do
       widget = described_class.create(name: "Henry")
@@ -678,8 +678,10 @@ RSpec.describe Widget, versioning: true do
       # Json fields for `object` & `object_changes` attributes is most efficient way
       # to do the things - this way we will save even more RAM, as well as will skip
       # the whole YAML serialization
-      allow(PaperTrail::Version).to receive(:object_changes_col_is_json?).and_return(true)
-      allow(PaperTrail::Version).to receive(:object_col_is_json?).and_return(true)
+      allow(PaperTrail::Version).to receive_messages(
+        object_changes_col_is_json?: true,
+        object_col_is_json?: true
+      )
 
       # Force the loading of all lazy things like class definitions,
       # in order to get the pure benchmark
@@ -742,7 +744,7 @@ RSpec.describe Widget, versioning: true do
     it { is_expected.to be_versioned }
   end
 
-  describe "`have_a_version_with` matcher", versioning: true do
+  describe "`have_a_version_with` matcher", :versioning do
     let(:widget) { described_class.create! name: "Bob", an_integer: 1 }
 
     before do
@@ -759,7 +761,7 @@ RSpec.describe Widget, versioning: true do
   end
 
   describe "versioning option" do
-    context "when enabled", versioning: true do
+    context "when enabled", :versioning do
       it "enables versioning" do
         widget = described_class.create! name: "Bob", an_integer: 1
         expect(widget.versions.size).to eq(1)
@@ -774,7 +776,7 @@ RSpec.describe Widget, versioning: true do
     end
   end
 
-  describe "Callbacks", versioning: true do
+  describe "Callbacks", :versioning do
     let(:widget) { described_class.create! name: "Bob", an_integer: 1 }
 
     describe "before_save" do
@@ -849,7 +851,7 @@ RSpec.describe Widget, versioning: true do
     end
   end
 
-  describe "Association", versioning: true do
+  describe "Association", :versioning do
     let(:widget) { described_class.create! name: "Bob", an_integer: 1 }
 
     describe "sort order" do
@@ -861,7 +863,7 @@ RSpec.describe Widget, versioning: true do
     end
   end
 
-  describe "#create", versioning: true do
+  describe "#create", :versioning do
     let(:widget) { described_class.create! name: "Bob", an_integer: 1 }
 
     it "creates a version record" do
@@ -870,7 +872,7 @@ RSpec.describe Widget, versioning: true do
     end
   end
 
-  describe "#destroy", versioning: true do
+  describe "#destroy", :versioning do
     let(:widget) { described_class.create! name: "Bob", an_integer: 1 }
 
     it "creates a version record" do
@@ -900,7 +902,7 @@ RSpec.describe Widget, versioning: true do
     end
   end
 
-  describe "#paper_trail.originator", versioning: true do
+  describe "#paper_trail.originator", :versioning do
     let(:widget) { described_class.create! name: "Bob", an_integer: 1 }
 
     describe "return value" do
@@ -940,7 +942,7 @@ RSpec.describe Widget, versioning: true do
     end
   end
 
-  describe "#version_at", versioning: true do
+  describe "#version_at", :versioning do
     let(:widget) { described_class.create! name: "Bob", an_integer: 1 }
 
     context "when Timestamp argument is AFTER object has been destroyed" do
@@ -952,7 +954,7 @@ RSpec.describe Widget, versioning: true do
     end
   end
 
-  describe "touch", versioning: true do
+  describe "touch", :versioning do
     let(:widget) { described_class.create! name: "Bob", an_integer: 1 }
 
     it "creates a version" do
@@ -970,7 +972,7 @@ RSpec.describe Widget, versioning: true do
     end
   end
 
-  describe ".paper_trail.update_columns", versioning: true do
+  describe ".paper_trail.update_columns", :versioning do
     it "creates a version record" do
       widget = described_class.create
       expect(widget.versions.count).to eq(1)
@@ -988,7 +990,7 @@ RSpec.describe Widget, versioning: true do
     end
   end
 
-  describe "#update", versioning: true do
+  describe "#update", :versioning do
     let(:widget) { described_class.create! name: "Bob", an_integer: 1 }
 
     it "creates a version record" do

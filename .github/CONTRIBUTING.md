@@ -54,11 +54,11 @@ For most development, testing with sqlite only is easiest and sufficient. CI
 will run the rest.
 
 ```
-DB=sqlite bundle exec appraisal rails-6.1 rake
-DB=sqlite bundle exec appraisal rails-7.0 rake
-DB=mysql bundle exec appraisal rails-7.0 rake
+DB=sqlite bundle exec appraisal rails-7.1 rake
+DB=sqlite bundle exec appraisal rails-8.0 rake
+DB=mysql bundle exec appraisal rails-7.1 rake
 createuser --superuser postgres
-DB=postgres bundle exec appraisal rails-7.0 rake
+DB=postgres bundle exec appraisal rails-7.1 rake
 ```
 
 ## The dummy_app

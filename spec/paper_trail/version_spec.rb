@@ -3,7 +3,7 @@
 require "spec_helper"
 
 module PaperTrail
-  ::RSpec.describe(Version, versioning: true) do
+  ::RSpec.describe(Version, :versioning) do
     describe ".creates" do
       it "returns only create events" do
         animal = Animal.create(name: "Foo")

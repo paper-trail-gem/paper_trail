@@ -3,7 +3,7 @@
 require "spec_helper"
 require "support/performance_helpers"
 
-RSpec.describe(FooWidget, versioning: true) do
+RSpec.describe(FooWidget, :versioning) do
   context "with a subclass" do
     let(:foo) { described_class.create }
 

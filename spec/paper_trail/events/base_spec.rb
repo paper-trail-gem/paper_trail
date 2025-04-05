@@ -5,7 +5,7 @@ require "spec_helper"
 module PaperTrail
   module Events
     ::RSpec.describe Base do
-      describe "#changed_notably?", versioning: true do
+      describe "#changed_notably?", :versioning do
         context "with a new record" do
           it "returns true" do
             g = Gadget.new(created_at: Time.current)
@@ -49,7 +49,7 @@ module PaperTrail
         end
       end
 
-      describe "#nonskipped_attributes_before_change", versioning: true do
+      describe "#nonskipped_attributes_before_change", :versioning do
         it "returns a hash lacking the skipped attribute" do
           # Skipper has_paper_trail(..., skip: [:another_timestamp])
           skipper = Skipper.create!(another_timestamp: Time.current)

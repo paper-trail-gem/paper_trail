@@ -10,10 +10,7 @@ module PaperTrail
         @item_class = item_class
 
         # ActiveRecord since 7.0 has a built-in encryption mechanism
-        @encrypted_attributes =
-          if PaperTrail.active_record_gte_7_0?
-            @item_class.encrypted_attributes&.map(&:to_s)
-          end
+        @encrypted_attributes = @item_class.encrypted_attributes&.map(&:to_s)
       end
 
       def serialize(changes)

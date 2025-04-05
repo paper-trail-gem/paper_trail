@@ -5,7 +5,7 @@ require "spec_helper"
 module PaperTrail
   module Events
     ::RSpec.describe Update do
-      describe "#data", versioning: true do
+      describe "#data", :versioning do
         context "when is_touch false" do
           it "object_changes is present" do
             carter = Family::CelebrityFamily.create(
