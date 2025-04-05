@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe NoObject, versioning: true do
+RSpec.describe NoObject, :versioning do
   it "still creates version records" do
     n = described_class.create!(letter: "A")
     a = n.versions.last.attributes

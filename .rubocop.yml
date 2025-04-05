@@ -1,11 +1,9 @@
-require:
-  - rubocop-rspec
-
 plugins:
   - rubocop-packaging
   - rubocop-performance
   - rubocop-rails
   - rubocop-rake
+  - rubocop-rspec
 
 inherit_from: .rubocop_todo.yml
 
@@ -25,7 +23,7 @@ AllCops:
   NewCops: enable
 
   # See "Lowest supported ruby version" in CONTRIBUTING.md
-  TargetRubyVersion: 3.0
+  TargetRubyVersion: 3.2
 
 Gemspec/DevelopmentDependencies:
   Enabled: false
@@ -145,6 +143,9 @@ RSpec/DescribeClass:
 # "no example will ever be longer than this"? Hard to say. Sometimes they're
 # quite long.
 RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/IndexedLet:
   Enabled: false
 
 # In an ideal world, each example has a single expectation. In the real world,

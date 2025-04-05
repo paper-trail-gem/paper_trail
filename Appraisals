@@ -9,16 +9,6 @@
 # > the version from the appraisal takes precedence.
 # > https://github.com/thoughtbot/appraisal
 
-appraise "rails-6.1" do
-  gem "rails", "~> 6.1.0"
-  gem "rails-controller-testing", "~> 1.0.5"
-end
-
-appraise "rails-7.0" do
-  gem "rails", "~> 7.0.3.1"
-  gem "rails-controller-testing", "~> 1.0.5"
-end
-
 appraise "rails-7.1" do
   gem "rails", "~> 7.1.0"
   gem "rails-controller-testing", "~> 1.0.5"

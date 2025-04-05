@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Article, versioning: true do
+RSpec.describe Article, :versioning do
   describe ".create" do
     it "also creates a version record" do
       expect { described_class.create }.to(

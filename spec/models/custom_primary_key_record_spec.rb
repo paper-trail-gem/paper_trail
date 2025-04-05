@@ -6,7 +6,7 @@ RSpec.describe CustomPrimaryKeyRecord do
   it { is_expected.to be_versioned }
 
   describe "#versions" do
-    it "returns instances of CustomPrimaryKeyRecordVersion", versioning: true do
+    it "returns instances of CustomPrimaryKeyRecordVersion", :versioning do
       custom_primary_key_record = described_class.create!
       custom_primary_key_record.update!(name: "bob")
       version = custom_primary_key_record.versions.last

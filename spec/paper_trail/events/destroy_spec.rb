@@ -5,7 +5,7 @@ require "spec_helper"
 module PaperTrail
   module Events
     ::RSpec.describe Destroy do
-      describe "#data", versioning: true do
+      describe "#data", :versioning do
         it "includes correct item_subtype" do
           carter = Family::CelebrityFamily.new(
             name: "Carter",

@@ -17,7 +17,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           # See "Lowest supported ruby version" in CONTRIBUTING.md
-          ruby-version: '3.0'
+          ruby-version: '3.2'
       - name: Bundle
         run: |
           gem install bundler
@@ -59,18 +59,11 @@ jobs:
       # have set this up with each database as a separate job, but then we'd be
       # duplicating the matrix configuration three times.
       matrix:
-        gemfile: [ 'rails_6.1', 'rails_7.0', 'rails_7.1', 'rails_7.2', 'rails_8.0' ]
+        gemfile: [ 'rails_7.1', 'rails_7.2', 'rails_8.0' ]
 
         # To keep matrix size down, only test highest and lowest rubies.
         # See "Lowest supported ruby version" in CONTRIBUTING.md
-        ruby: [ '3.0', '3.3' ]
-        exclude:
-          # Rails 8 requires ruby 3.2+.
-          - gemfile: 'rails_8.0'
-            ruby: '3.0'
-          # Rails 7.2 requires ruby 3.1+.
-          - gemfile: 'rails_7.2'
-            ruby: '3.0'
+        ruby: [ '3.2', '3.4' ]
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
