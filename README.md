@@ -1770,8 +1770,8 @@ Released under the MIT licence.
 [1]: http://api.rubyonrails.org/classes/ActiveRecord/Locking/Optimistic.html
 [2]: https://github.com/paper-trail-gem/paper_trail/issues/163
 [3]: http://railscasts.com/episodes/255-undo-with-paper-trail
-[4]: https://api.travis-ci.org/paper-trail-gem/paper_trail.svg?branch=master
-[5]: https://travis-ci.org/paper-trail-gem/paper_trail
+[4]: https://github.com/paper-trail-gem/paper_trail/actions/workflows/test.yml/badge.svg
+[5]: https://github.com/paper-trail-gem/paper_trail/actions/workflows/test.yml
 [6]: https://github.com/westonganger/paper_trail-association_tracking
 [9]: https://github.com/paper-trail-gem/paper_trail/tree/3.0-stable
 [10]: https://github.com/paper-trail-gem/paper_trail/tree/2.7-stable
@@ -1814,6 +1814,6 @@ Released under the MIT licence.
 [52]: http://guides.rubyonrails.org/active_record_callbacks.html
 [53]: https://badge.fury.io/rb/paper_trail.svg
 [54]: https://rubygems.org/gems/paper_trail
-[55]: https://api.dependabot.com/badges/compatibility_score?dependency-name=paper_trail&package-manager=bundler&version-scheme=semver
+[55]:  https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=paper_trail&package-manager=bundler&previous-version=15.2.0&new-version=16.0.0
 [56]: https://dependabot.com/compatibility-score.html?dependency-name=paper_trail&package-manager=bundler&version-scheme=semver
 [57]: https://bundler.io/v2.3/man/bundle-install.1.html
