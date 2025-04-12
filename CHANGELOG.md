@@ -15,7 +15,9 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- None
+- [#1511](https://github.com/paper-trail-gem/paper_trail/pull/1511) - Avoid N+1
+  queries when destroying a record with a `has_many` `dependent: :destroy`
+  association where the `has_many` target model is tracked by PaperTrail.
 
 ### Dependencies
 
