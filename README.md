@@ -150,6 +150,9 @@ by adding a controller callback.
     end
     ```
 
+1. Review the default initializer that was created by ```rails generate paper_trail:install```
+at `config/initializers/paper_trail.rb`.
+
 ### 1.c. Basic Usage
 
 Your models now have a `versions` method which returns the "paper trail" of
@@ -1152,7 +1155,8 @@ Be advised that redefining an association is an undocumented feature of Rails.
 ### 5.c. Generators
 
 PaperTrail has one generator, `paper_trail:install`. It writes, but does not
-run, a migration file. The migration creates the `versions` table.
+run, a migration file. The migration creates the `versions` table. The generator
+also creates an initializer file `config/initializers/paper_trail.rb`.
 
 #### Reference
 

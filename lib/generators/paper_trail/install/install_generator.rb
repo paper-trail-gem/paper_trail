@@ -30,6 +30,10 @@ module PaperTrail
     desc "Generates (but does not run) a migration to add a versions table.  " \
          "See section 5.c. Generators in README.md for more information."
 
+    def create_initializer_file
+      copy_file "paper_trail.rb", "config/initializers/paper_trail.rb"
+    end
+
     def create_migration_file
       add_paper_trail_migration(
         "create_versions",
@@ -41,6 +45,7 @@ module PaperTrail
       if options.with_changes?
         add_paper_trail_migration("add_object_changes_to_versions")
       end
+      create_initializer_file
     end
 
     private
