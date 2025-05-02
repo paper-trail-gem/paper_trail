@@ -27,19 +27,21 @@ module PaperTrail
       desc: "Use uuid instead of bigint for item_id type (use only if tables use UUIDs)"
     )
 
-    desc "Generates (but does not run) a migration to add a versions table.  " \
+    desc "Generates (but does not run) a migration to add a versions table. " \
+         "Can be customized by providing a Version class name. " \
          "See section 5.c. Generators in README.md for more information."
 
     def create_migration_file
+      # Use the table_name to create the proper migration filename
       add_paper_trail_migration(
-        "create_versions",
+        "create_#{table_name}",
         item_type_options: item_type_options,
         versions_table_options: versions_table_options,
         item_id_type_options: item_id_type_options,
         version_table_primary_key_type: version_table_primary_key_type
       )
       if options.with_changes?
-        add_paper_trail_migration("add_object_changes_to_versions")
+        add_paper_trail_migration("add_object_changes_to_#{table_name}")
       end
     end
 
