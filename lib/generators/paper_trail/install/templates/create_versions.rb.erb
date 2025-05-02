@@ -1,6 +1,6 @@
-# This migration creates the `versions` table, the only schema PT requires.
+# This migration creates the `<%= table_name %>` table for the <%= version_class_name %> class.
 # All other migrations PT provides are optional.
-class CreateVersions < ActiveRecord::Migration<%= migration_version %>
+class Create<%= version_class_name.pluralize %> < ActiveRecord::Migration<%= migration_version %>
 
   # The largest text column available in all supported RDBMS is
   # 1024^3 - 1 bytes, roughly one gibibyte.  We specify a size
@@ -9,7 +9,7 @@ class CreateVersions < ActiveRecord::Migration<%= migration_version %>
   TEXT_BYTES = 1_073_741_823
 
   def change
-    create_table :versions<%= versions_table_options %><%= version_table_primary_key_type %> do |t|
+    create_table :<%= table_name %><%= versions_table_options %><%= version_table_primary_key_type %> do |t|
       # Consider using bigint type for performance if you are going to store only numeric ids.
       # t.bigint   :whodunnit
       t.string   :whodunnit
@@ -36,6 +36,6 @@ class CreateVersions < ActiveRecord::Migration<%= migration_version %>
       t.string   :event,     null: false
       t.text     :object, limit: TEXT_BYTES
     end
-    add_index :versions, %i[item_type item_id]
+    add_index :<%= table_name %>, %i[item_type item_id]
   end
 end
