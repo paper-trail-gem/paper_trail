@@ -408,7 +408,7 @@ RSpec.describe Widget, :versioning do
         widget.update(name: "Beeblebrox")
         PaperTrail.request.enable_model(described_class)
         widget.update(name: "Ford")
-        expect(widget.versions.length).to(eq((count + 1)))
+        expect(widget.versions.length).to(eq(count + 1))
       end
     end
   end
@@ -477,7 +477,7 @@ RSpec.describe Widget, :versioning do
       end
 
       it "return nil for version_at before it was created" do
-        expect(widget.paper_trail.version_at((t0 - 1))).to(be_nil)
+        expect(widget.paper_trail.version_at(t0 - 1)).to(be_nil)
       end
 
       it "return how it looked when created for version_at its creation" do
@@ -485,7 +485,7 @@ RSpec.describe Widget, :versioning do
       end
 
       it "return how it looked before its first update" do
-        expect(widget.paper_trail.version_at((t1 - 1)).name).to(eq("Widget"))
+        expect(widget.paper_trail.version_at(t1 - 1).name).to(eq("Widget"))
       end
 
       it "return how it looked after its first update" do
@@ -493,7 +493,7 @@ RSpec.describe Widget, :versioning do
       end
 
       it "return how it looked before its second update" do
-        expect(widget.paper_trail.version_at((t2 - 1)).name).to(eq("Fidget"))
+        expect(widget.paper_trail.version_at(t2 - 1).name).to(eq("Fidget"))
       end
 
       it "return how it looked after its second update" do
@@ -582,7 +582,7 @@ RSpec.describe Widget, :versioning do
       end
 
       it "return the correct index" do
-        expect(version.index).to(eq((widget.versions.length - 1)))
+        expect(version.index).to(eq(widget.versions.length - 1))
       end
     end
   end

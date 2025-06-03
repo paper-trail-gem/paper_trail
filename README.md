@@ -582,12 +582,12 @@ For this rare use case, there is no convenient way to pass a block.
 ##### In a Rails Controller Callback (Not Recommended)
 
 PaperTrail installs a callback in your rails controllers. The installed
-callback will call `paper_trail_enabled_for_controller`, which you can
+callback will call `paper_trail_enabled_for_controller?`, which you can
 override.
 
 ```ruby
 class ApplicationController < ActionController::Base
-  def paper_trail_enabled_for_controller
+  def paper_trail_enabled_for_controller?
     # Don't omit `super` without a good reason.
     super && request.user_agent != 'Disable User-Agent'
   end

@@ -19,7 +19,7 @@ RSpec.describe Person, :versioning do
       person = described_class.new(time_zone: "Samoa")
       person.save!
       len = person.versions.last.object_changes.length
-      expect((len < 105)).to(be_truthy)
+      expect(len < 105).to(be_truthy)
     end
 
     it "version.object_changes attribute should have stored the value from serializer" do
@@ -66,7 +66,7 @@ RSpec.describe Person, :versioning do
         person.assign_attributes(time_zone: "Pacific Time (US & Canada)")
         person.save!
         len = person.versions.last.object.length
-        expect((len < 105)).to(be_truthy)
+        expect(len < 105).to(be_truthy)
       end
 
       it "object_changes should not store long serialization of TimeZone object" do

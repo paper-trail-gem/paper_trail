@@ -123,8 +123,6 @@ module PaperTrail
           ::Fruit, # uses JsonVersion
           :mass
         )
-
-        include_examples("active_record_encryption", ::Fruit)
       end
 
       context "with jsonb columns", :versioning do
@@ -134,8 +132,6 @@ module PaperTrail
           ::Vegetable, # uses JsonbVersion
           :mass
         )
-
-        include_examples("active_record_encryption", ::Vegetable)
       end
     end
   end

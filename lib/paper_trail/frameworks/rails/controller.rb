@@ -5,7 +5,7 @@ module PaperTrail
     # Extensions to rails controllers. Provides convenient ways to pass certain
     # information to the model layer, with `controller_info` and `whodunnit`.
     # Also includes a convenient on/off switch,
-    # `paper_trail_enabled_for_controller`.
+    # `paper_trail_enabled_for_controller?`.
     module Controller
       def self.included(controller)
         controller.before_action(
@@ -59,14 +59,14 @@ module PaperTrail
       # should be off.
       #
       # ```
-      # def paper_trail_enabled_for_controller
+      # def paper_trail_enabled_for_controller?
       #   # Don't omit `super` without a good reason.
       #   super && request.user_agent != 'Disable User-Agent'
       # end
       # ```
       #
       # @api public
-      def paper_trail_enabled_for_controller
+      def paper_trail_enabled_for_controller?
         ::PaperTrail.enabled?
       end
 
@@ -77,7 +77,7 @@ module PaperTrail
       #
       # @api public
       def set_paper_trail_enabled_for_controller
-        ::PaperTrail.request.enabled = paper_trail_enabled_for_controller
+        ::PaperTrail.request.enabled = paper_trail_enabled_for_controller?
       end
 
       # Tells PaperTrail who is responsible for any changes that occur.

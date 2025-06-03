@@ -54,7 +54,7 @@ module PaperTrail
       end
 
       # Returns `true` if PaperTrail is enabled for the request, `false` otherwise.
-      # See `PaperTrail::Rails::Controller#paper_trail_enabled_for_controller`.
+      # See `PaperTrail::Rails::Controller#paper_trail_enabled_for_controller?`.
       # @api public
       def enabled?
         !!store[:enabled]

@@ -99,7 +99,7 @@ Naming/FileName:
 Naming/HeredocDelimiterNaming:
   Enabled: false
 
-Naming/PredicateName:
+Naming/PredicatePrefix:
   AllowedMethods: has_paper_trail
 
 # Too subtle to lint.
