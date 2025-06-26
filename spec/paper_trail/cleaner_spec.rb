@@ -49,13 +49,13 @@ module PaperTrail
       context "with the :date option" do
         it "only deletes versions created on the given date" do
           animal.versions.each do |ver|
-            ver.update_attribute(:created_at, (ver.created_at - 1.day))
+            ver.update_attribute(:created_at, ver.created_at - 1.day)
           end
           date = animal.versions.first.created_at.to_date
           animal.update_attribute(:name, FFaker::Name.name)
           expect(PaperTrail::Version.count).to(eq(10))
           expect(animal.versions.size).to(eq(4))
-          expect(animal.paper_trail.versions_between(date, (date + 1.day)).size).to(eq(3))
+          expect(animal.paper_trail.versions_between(date, date + 1.day).size).to(eq(3))
           PaperTrail.clean_versions!(date: date)
           expect(PaperTrail::Version.count).to(eq(8))
           expect(animal.versions.reload.size).to(eq(2))
@@ -90,7 +90,7 @@ module PaperTrail
           before do
             [animal, dog].each do |animal|
               animal.versions.each do |ver|
-                ver.update_attribute(:created_at, (ver.created_at - 1.day))
+                ver.update_attribute(:created_at, ver.created_at - 1.day)
               end
               animal.update_attribute(:name, FFaker::Name.name)
             end
@@ -101,7 +101,7 @@ module PaperTrail
             expect(PaperTrail::Version.count).to(eq(11))
             [animal, dog].each do |animal|
               expect(animal.versions.size).to(eq(4))
-              expect(animal.versions.between(date, (date + 1.day)).size).to(eq(3))
+              expect(animal.versions.between(date, date + 1.day).size).to(eq(3))
             end
           end
 
@@ -112,7 +112,7 @@ module PaperTrail
               [animal, dog].each do |animal|
                 animal.versions.reload
                 expect(animal.versions.size).to(eq(3))
-                expect(animal.versions.between(date, (date + 1.day)).size).to(eq(2))
+                expect(animal.versions.between(date, date + 1.day).size).to(eq(2))
               end
               expect(PaperTrail::Version.count).to(eq(9))
             end
@@ -124,7 +124,7 @@ module PaperTrail
               PaperTrail.clean_versions!(date: date, item_id: dog.id)
               dog.versions.reload
               expect(dog.versions.size).to(eq(2))
-              expect(dog.versions.between(date, (date + 1.day)).size).to(eq(1))
+              expect(dog.versions.between(date, date + 1.day).size).to(eq(1))
               expect(PaperTrail::Version.count).to(eq(9))
             end
           end
@@ -135,7 +135,7 @@ module PaperTrail
               PaperTrail.clean_versions!(date: date, item_id: dog.id, keeping: 2)
               dog.versions.reload
               expect(dog.versions.size).to(eq(3))
-              expect(dog.versions.between(date, (date + 1.day)).size).to(eq(2))
+              expect(dog.versions.between(date, date + 1.day).size).to(eq(2))
               expect(PaperTrail::Version.count).to(eq(10))
             end
           end
