@@ -59,7 +59,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- None
+- Fixed errors when deserializing Range types from Ruby style strings to Postgres
 
 ## 15.1.0 (2023-10-22)
 
