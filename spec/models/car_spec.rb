@@ -31,4 +31,13 @@ RSpec.describe Car do
       expect(car.versions.first.reify.top_speed).to eq(80)
     end
   end
+
+  describe "reify options", :versioning do
+    it "does not raise error if lock_version is not present" do
+      car = described_class.create!(name: "Pinto", color: "green")
+      car.update!(color: "yellow")
+      reified = car.versions.last.reify
+      expect(reified).to be_a(described_class)
+    end
+  end
 end

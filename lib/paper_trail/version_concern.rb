@@ -251,6 +251,11 @@ module PaperTrail
 
     # Restore the item from this version.
     #
+    # If the reified object responds to `:lock_version`,
+    # its `lock_version` value is incremented by 1
+    # This is useful for models using optimistic locking,
+    # ensuring that the restored object is not in a stale state.
+    #
     # Options:
     #
     # - :mark_for_destruction
@@ -272,6 +277,9 @@ module PaperTrail
       end
       return nil if object.nil?
       ::PaperTrail::Reifier.reify(self, options)
+      result = ::PaperTrail::Reifier.reify(self, options)
+      result.lock_version += 1 if result.respond_to?(:lock_version) && !result.lock_version.nil?
+      result
     end
 
     # Returns what changed in this version of the item.
