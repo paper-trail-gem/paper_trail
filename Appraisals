@@ -20,7 +20,13 @@ appraise "rails-7.2" do
 end
 
 appraise "rails-8.0" do
-  gem "rails", "~> 8.0.0.rc1"
+  gem "rails", "~> 8.0.0"
+  gem "rails-controller-testing", "~> 1.0.5"
+  gem "sqlite3", ">= 2.1"
+end
+
+appraise "rails-8.1" do
+  gem "rails", "~> 8.1.0.beta1"
   gem "rails-controller-testing", "~> 1.0.5"
   gem "sqlite3", ">= 2.1"
 end
