@@ -7,10 +7,10 @@
 ## Enable/disable PaperTrail globally
 PaperTrail.config.enabled = true
 
-## Track versions on create, update, & destroy, but not touch events to reduce version table size.
-## Add `touch` below to track touch events, or comment out (default behaviour tracks all events).
+## Default behaviour tracks versions on all events (create, update, destroy, and touch).
+## You may wish to remove touch events to reduce version table size.
 PaperTrail.config.has_paper_trail_defaults = {
-  on: %i[create update destroy]
+  on: %i[create update destroy touch]
 }
 
 ## Limit the number of versions saved per record.
