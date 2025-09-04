@@ -6,6 +6,7 @@ require "generators/paper_trail/install/install_generator"
 
 RSpec.describe PaperTrail::InstallGenerator, type: :generator do
   include GeneratorSpec::TestCase
+
   destination File.expand_path("tmp", __dir__)
 
   after do
