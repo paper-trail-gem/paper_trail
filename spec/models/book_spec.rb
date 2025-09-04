@@ -10,7 +10,7 @@ RSpec.describe Book, :versioning do
       Person.create(name: "Solzhenitsyn")
       count = PaperTrail::Version.count
       (book.authors << dostoyevsky)
-      expect((PaperTrail::Version.count - count)).to(eq(1))
+      expect(PaperTrail::Version.count - count).to(eq(1))
       expect(book.authorships.first.versions.first).to(eq(PaperTrail::Version.last))
     end
 
@@ -20,7 +20,7 @@ RSpec.describe Book, :versioning do
       Person.create(name: "Solzhenitsyn")
       count = PaperTrail::Version.count
       book.authors.create(name: "Tolstoy")
-      expect((PaperTrail::Version.count - count)).to(eq(2))
+      expect(PaperTrail::Version.count - count).to(eq(2))
       expect(
         [PaperTrail::Version.order(:id).to_a[-2].item, PaperTrail::Version.last.item]
       ).to contain_exactly(Person.last, Authorship.last)
@@ -33,7 +33,7 @@ RSpec.describe Book, :versioning do
       (book.authors << dostoyevsky)
       count = PaperTrail::Version.count
       book.authorships.reload.last.destroy
-      expect((PaperTrail::Version.count - count)).to(eq(1))
+      expect(PaperTrail::Version.count - count).to(eq(1))
       expect(PaperTrail::Version.last.reify.book).to(eq(book))
       expect(PaperTrail::Version.last.reify.author).to(eq(dostoyevsky))
     end
@@ -45,7 +45,7 @@ RSpec.describe Book, :versioning do
       book.authors << dostoyevsky
       count = PaperTrail::Version.count
       book.authorships.reload.destroy_all
-      expect((PaperTrail::Version.count - count)).to(eq(1))
+      expect(PaperTrail::Version.count - count).to(eq(1))
       expect(PaperTrail::Version.last.reify.book).to(eq(book))
       expect(PaperTrail::Version.last.reify.author).to(eq(dostoyevsky))
     end

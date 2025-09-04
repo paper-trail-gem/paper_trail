@@ -6,6 +6,7 @@ require "generators/paper_trail/install/install_generator"
 
 RSpec.describe PaperTrail::InstallGenerator, type: :generator do
   include GeneratorSpec::TestCase
+
   destination File.expand_path("tmp", __dir__)
 
   after do
@@ -147,6 +148,84 @@ RSpec.describe PaperTrail::InstallGenerator, type: :generator do
             directory("migrate") {
               migration("create_versions") {
                 contains ", id: :#{expected_primary_key_type}"
+              }
+            }
+          }
+        }
+      )
+    end
+  end
+
+  describe "with custom version class name" do
+    before do
+      prepare_destination
+      run_generator %w[CommentVersion]
+    end
+
+    it "generates a migration with the correct filename and content for the custom table" do
+      expected_parent_class = lambda {
+        old_school = "ActiveRecord::Migration"
+        ar_version = ActiveRecord::VERSION
+        format("%s[%d.%d]", old_school, ar_version::MAJOR, ar_version::MINOR)
+      }.call
+
+      expect(destination_root).to(
+        have_structure {
+          directory("db") {
+            directory("migrate") {
+              migration("create_comment_versions") {
+                contains("class CreateCommentVersions < " + expected_parent_class)
+                contains "def change"
+                contains "create_table :comment_versions"
+                contains "add_index :comment_versions, %i[item_type item_id]"
+              }
+            }
+          }
+        }
+      )
+    end
+  end
+
+  describe "with custom version class name and `--with-changes`" do
+    before do
+      prepare_destination
+      run_generator %w[ProductVersion --with-changes]
+    end
+
+    it "generates migrations with correct filenames and content for the custom table" do
+      expect(destination_root).to(
+        have_structure {
+          directory("db") {
+            directory("migrate") {
+              migration("create_product_versions") {
+                contains "class CreateProductVersions"
+                contains "create_table :product_versions"
+              }
+              migration("add_object_changes_to_product_versions") {
+                contains "class AddObjectChangesToProductVersions"
+                contains "add_column :product_versions, :object_changes, :text"
+              }
+            }
+          }
+        }
+      )
+    end
+  end
+
+  describe "with namespaced custom version class" do
+    before do
+      prepare_destination
+      run_generator %w[CommentVersion]
+    end
+
+    it "handles namespaced class names correctly with proper filenames" do
+      expect(destination_root).to(
+        have_structure {
+          directory("db") {
+            directory("migrate") {
+              migration("create_comment_versions") {
+                contains "class CreateCommentVersions"
+                contains "create_table :comment_versions"
               }
             }
           }

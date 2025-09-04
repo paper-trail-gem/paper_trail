@@ -94,7 +94,7 @@ Choose version:
 
 | paper_trail | ruby     | activerecord  |
 |-------------|----------|---------------|
-| unreleased  | >= 3.2.0 | >= 7.1, <= 8.0 |
+| unreleased  | >= 3.2.0 | >= 7.1, <= 8.1 |
 | 16          | >= 3.0.0 | >= 6.1, <= 8.0 |
 | 15.2        | >= 3.0.0 | >= 6.1, <= 7.2 |
 | 15.1        | >= 3.0.0 | >= 6.1, <= 7.1 |
@@ -1158,6 +1158,8 @@ PaperTrail has one generator, `paper_trail:install`. It writes, but does not
 run, a migration file. The migration creates the `versions` table. The generator
 also creates an initializer file `config/initializers/paper_trail.rb`.
 
+You can provide a custom version table name e.g., for having multiple version tables. You will still need setup a custom Version class and configure it to use the custom table. See [6.a. Custom Version Classes](#6a-custom-version-classes).
+
 #### Reference
 
 The most up-to-date documentation for this generator can be found by running
@@ -1166,19 +1168,25 @@ convenience.
 
 ```
 Usage:
-  rails generate paper_trail:install [options]
+  bin/rails generate paper_trail:install [VERSION_CLASS_NAME] [options]
 
 Options:
-  [--with-changes], [--no-with-changes]            # Store changeset (diff) with each version
-  [--uuid]                                         # To use paper_trail with projects using uuid for id
+  [--skip-namespace]                                            # Skip namespace (affects only isolated engines)
+                                                                # Default: false
+  [--skip-collision-check]                                      # Skip collision check
+                                                                # Default: false
+  [--with-changes], [--no-with-changes], [--skip-with-changes]  # Store changeset (diff) with each version
+                                                                # Default: false
+  [--uuid], [--no-uuid], [--skip-uuid]                          # Use uuid instead of bigint for item_id type (use only if tables use UUIDs)
+                                                                # Default: false
 
 Runtime options:
-  -f, [--force]                    # Overwrite files that already exist
-  -p, [--pretend], [--no-pretend]  # Run but do not make any changes
-  -q, [--quiet], [--no-quiet]      # Suppress status output
-  -s, [--skip], [--no-skip]        # Skip files that already exist
+  -f, [--force]                                      # Overwrite files that already exist
+  -p, [--pretend], [--no-pretend], [--skip-pretend]  # Run but do not make any changes
+  -q, [--quiet], [--no-quiet], [--skip-quiet]        # Suppress status output
+  -s, [--skip], [--no-skip], [--skip-skip]           # Skip files that already exist
 
-Generates (but does not run) a migration to add a versions table.
+Generates (but does not run) a migration to add a versions table. Can be customized by providing a Version class name. See section 5.c. Generators in README.md for more information.
 ```
 
 ### 5.d. Protected Attributes

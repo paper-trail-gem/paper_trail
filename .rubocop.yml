@@ -99,8 +99,12 @@ Naming/FileName:
 Naming/HeredocDelimiterNaming:
   Enabled: false
 
-Naming/PredicateName:
+Naming/PredicatePrefix:
   AllowedMethods: has_paper_trail
+
+# It is currently broken as of rubocop 1.77.0.
+Naming/PredicateMethod:
+  Enabled: false
 
 # Too subtle to lint.
 # Two-letter param names are OK. Consider `send_email(to:, cc:)`.
