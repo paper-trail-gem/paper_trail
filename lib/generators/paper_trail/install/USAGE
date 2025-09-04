@@ -1,3 +1,31 @@
 Description:
   Generates (but does not run) a migration to add a versions table. Also generates an initializer
-  file for configuring PaperTrail. See section 5.c. Generators in README.md for more information.
+  file for configuring PaperTrail. Can be customized by providing a Version class name.
+  See section 5.c. Generators in README.md for more information.
+
+Examples:
+  rails generate paper_trail:install
+
+  This will create:
+    db/migrate/[TIMESTAMP]_create_versions.rb
+    config/initializers/paper_trail.rb
+
+  rails generate paper_trail:install --with-changes
+
+  This will create:
+    db/migrate/[TIMESTAMP]_create_versions.rb
+    db/migrate/[TIMESTAMP]_add_object_changes_to_versions.rb
+    config/initializers/paper_trail.rb
+
+  rails generate paper_trail:install CommentVersion
+
+  This will create:
+    db/migrate/[TIMESTAMP]_create_comment_versions.rb
+    config/initializers/paper_trail.rb
+
+  rails generate paper_trail:install ProductVersion --with-changes --uuid
+
+  This will create:
+    db/migrate/[TIMESTAMP]_create_product_versions.rb
+    db/migrate/[TIMESTAMP]_add_object_changes_to_product_versions.rb
+    config/initializers/paper_trail.rb
