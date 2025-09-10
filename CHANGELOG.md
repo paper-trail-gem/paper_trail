@@ -11,7 +11,10 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
-- [#1524](https://github.com/paper-trail-gem/paper_trail/pull/1524) - Add rails optimistic locking support
+- `rails generate paper_trail:install` now accepts an argument for custom versions table, e.g.
+  `rails generate paper_trail:install CommentVersion` created `comment_versions` table
+- `rails generate paper_trail:update_item_subtype` now supports custom version classes via 
+  `--version-class-name` option, e.g. `--version-class-name=CommentVersion`
 
 ### Fixed
 
@@ -35,6 +38,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
+- [#1524](https://github.com/paper-trail-gem/paper_trail/pull/1524) - Add rails optimistic locking support
 - [#1498](https://github.com/paper-trail-gem/paper_trail/pull/1498) -
   Rails 8.0
 - [#1422](https://github.com/paper-trail-gem/paper_trail/pull/1450) - Add `version_error_behavior` config
