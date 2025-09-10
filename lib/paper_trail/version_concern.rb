@@ -272,13 +272,10 @@ module PaperTrail
     #   - `:preserve` - Attributes undefined in version record are not modified.
     #
     def reify(options = {})
-      unless self.class.column_names.include? "object"
-        raise Error, "reify requires an object column"
-      end
+      ensure_object_column!
       return nil if object.nil?
-      ::PaperTrail::Reifier.reify(self, options)
       result = ::PaperTrail::Reifier.reify(self, options)
-      result.lock_version += 1 if result.respond_to?(:lock_version) && !result.lock_version.nil?
+      update_lock_version(result)
       result
     end
 
@@ -320,6 +317,31 @@ module PaperTrail
     end
 
     private
+
+    def ensure_object_column!
+      unless self.class.column_names.include? "object"
+        raise Error, "reify requires an object column"
+      end
+    end
+
+    def update_lock_version(result)
+      return unless result.respond_to?(:lock_version) && result.lock_version.present?
+
+      if can_fetch_from_db?(result)
+        fetch_and_update_lock_version(result)
+      else
+        result.lock_version += 1
+      end
+    end
+
+    def can_fetch_from_db?(result)
+      result.id.present? && result.class.column_names.include?("lock_version")
+    end
+
+    def fetch_and_update_lock_version(result)
+      current = result.class.where(id: result.id).pick(:lock_version)
+      result.lock_version = current.to_i + 1 if current
+    end
 
     # @api private
     def load_changeset

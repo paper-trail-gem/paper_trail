@@ -99,5 +99,5 @@ has been destroyed.
   # `Appraisals`.
   s.add_development_dependency "mysql2", "~> 0.5.3"
   s.add_development_dependency "pg", "~> 1.2"
-  s.add_development_dependency "sqlite3", "~> 1.4"
+  s.add_development_dependency "sqlite3", ">= 2.1"
 end

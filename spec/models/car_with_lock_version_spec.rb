@@ -7,10 +7,12 @@ RSpec.describe CarWithLockVersion do
 
   describe "reify options", :versioning do
     it "increments lock_version if present" do
-      car = described_class.create!(name: "Pinto", color: "green", lock_version: 1)
+      car = described_class.create!(name: "Pinto", color: "green")
       car.update!(color: "yellow")
-      reified = car.versions.last.reify
-      expect(reified.lock_version).to eq(2)
+      version = car.versions.last
+      reified = version.reify
+      current_lock_version = car.lock_version
+      expect(reified.lock_version).to eq(current_lock_version + 1)
     end
   end
 end
