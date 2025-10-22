@@ -85,6 +85,7 @@ has been destroyed.
   s.add_development_dependency "rubocop-rails", "~> 2.30.3"
   s.add_development_dependency "rubocop-rake", "~> 0.7.1"
   s.add_development_dependency "rubocop-rspec", "~> 3.5.0"
+  s.add_development_dependency "rubocop-rspec_rails", "~> 2.31.0"
   s.add_development_dependency "simplecov", "~> 0.21.2"
 
   # ## Database Adapters

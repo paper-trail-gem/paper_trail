@@ -328,11 +328,11 @@ RSpec.describe Widget, :versioning do
     end
 
     it "handle floats" do
-      assert_in_delta(153.01, previous_widget.a_float, 0.001)
+      expect(previous_widget.a_float).to be_within(0.001).of(153.01)
     end
 
     it "handle decimals" do
-      assert_in_delta(2.7183, previous_widget.a_decimal, 0.0001)
+      expect(previous_widget.a_decimal).to be_within(0.0001).of(2.7183)
     end
 
     it "handle datetimes" do
@@ -356,7 +356,7 @@ RSpec.describe Widget, :versioning do
       let(:last_version) { widget.versions.last }
 
       it "reify previous version" do
-        assert_kind_of(described_class, last_version.reify)
+        expect(last_version.reify).to be_a(described_class)
       end
 
       it "restore all forward-compatible attributes" do
@@ -364,8 +364,8 @@ RSpec.describe Widget, :versioning do
         expect(reified.name).to(eq("Warble"))
         expect(reified.a_text).to(eq("The quick brown fox"))
         expect(reified.an_integer).to(eq(42))
-        assert_in_delta(153.01, reified.a_float, 0.001)
-        assert_in_delta(2.7183, reified.a_decimal, 0.0001)
+        expect(reified.a_float).to be_within(0.001).of(153.01)
+        expect(reified.a_decimal).to be_within(0.0001).of(2.7183)
         expect(reified.a_datetime.to_time.utc.to_i).to(eq(t0.to_time.utc.to_i))
         format = ->(t) { t.utc.strftime "%H:%M:%S" }
         expect(format[reified.a_time]).to eq(format[t0])

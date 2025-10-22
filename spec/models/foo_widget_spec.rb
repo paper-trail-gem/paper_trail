@@ -26,7 +26,7 @@ RSpec.describe(FooWidget, :versioning) do
       before { foo.destroy }
 
       it "reify with the correct type" do
-        assert_kind_of(described_class, foo.versions.last.reify)
+        expect(foo.versions.last.reify).to be_a(described_class)
         expect(PaperTrail::Version.last.previous).to(eq(foo.versions[1]))
         expect(PaperTrail::Version.last.next).to(be_nil)
       end

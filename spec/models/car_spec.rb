@@ -9,7 +9,7 @@ RSpec.describe Car do
     it "has the expected keys (see issue 738)" do
       car = described_class.create!(name: "Alice")
       car.update(name: "Bob")
-      assert_includes car.versions.last.changeset.keys, "name"
+      expect(car.versions.last.changeset.keys).to include("name")
     end
   end
 
