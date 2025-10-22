@@ -24,6 +24,7 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 - Drop support for Rails 6.1, which [reached EoL on 2024-10-01][2]
 - Drop support for Rails 7.0, which [reached EoL on 2025-04-01][2]
+- Add support for Rails 8.1
 - Drop support for Ruby 3.0, which [reached EoL on 2024-04-23][3]
 - Drop support for Ruby 3.1, which [reached EoL on 2024-03-31][3]
 
