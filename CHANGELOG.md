@@ -11,6 +11,20 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Added
 
+- None
+
+### Fixed
+
+- None
+
+## 17.0.0 (2025-10-24)
+
+### Breaking Changes
+
+- None
+
+### Added
+
 - `rails generate paper_trail:install` now accepts an argument for custom versions table, e.g.
   `rails generate paper_trail:install CommentVersion` created `comment_versions` table
 - `rails generate paper_trail:update_item_subtype` now supports custom version classes via 
