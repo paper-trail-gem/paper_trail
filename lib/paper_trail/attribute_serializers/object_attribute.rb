@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "paper_trail/attribute_serializers/cast_attribute_serializer"
+require "paper_trail/type_serializers/postgres_range_serializer"
 
 module PaperTrail
   module AttributeSerializers
@@ -26,10 +27,7 @@ module PaperTrail
       # Modifies `attributes` in place.
       # TODO: Return a new hash instead.
       def alter(attributes, serialization_method)
-        # Don't serialize non-encrypted before values before inserting into columns of type
-        # `JSON` on `PostgreSQL` databases.
-        attributes_to_serialize =
-          object_col_is_json? ? attributes.slice(*@encrypted_attributes) : attributes
+        attributes_to_serialize = attributes_to_serialize(attributes)
         return attributes if attributes_to_serialize.blank?
 
         serializer = CastAttributeSerializer.new(@model_class)
@@ -38,6 +36,24 @@ module PaperTrail
         end
 
         attributes
+      end
+
+      # Don't de/serialize non-encrypted before values before inserting into columns of type
+      # `JSON` on `PostgreSQL` databases; Unless it's a special type like a range.
+      def attributes_to_serialize(attributes)
+        encrypted_to_serialize = if object_col_is_json?
+                                   attributes.slice(*@encrypted_attributes)
+                                 else
+                                   attributes
+                                 end
+
+        columns_to_serialize = attributes.select { |column, _|
+          TypeSerializers::PostgresRangeSerializer.range_type?(
+            @model_class.columns_hash[column]&.type
+          )
+        }
+
+        encrypted_to_serialize.merge(columns_to_serialize)
       end
 
       def object_col_is_json?
