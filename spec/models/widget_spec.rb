@@ -654,6 +654,29 @@ RSpec.describe Widget, :versioning do
     end
   end
 
+  describe "#reify_original" do
+    context "with a reified item" do
+      it "returns the object (not a Version) as it was originally" do
+        widget = described_class.create(name: "Bob")
+        %w[Tom Dick Jane].each do |name|
+          widget.update(name: name)
+        end
+        last_widget = widget.versions.last.reify
+        expect(last_widget.paper_trail.reify_original.name).to(eq(widget.versions[1].reify.name))
+      end
+    end
+
+    context "with a non-reified item" do
+      it "returns the object (not a Version) as it was originally" do
+        widget = described_class.create
+        %w[Tom Dick Jane].each do |name|
+          widget.update(name: name)
+        end
+        expect(widget.paper_trail.reify_original.name).to(eq(widget.versions[1].reify.name))
+      end
+    end
+  end
+
   context "with an unsaved record" do
     it "not have a version created on destroy" do
       widget = described_class.new
