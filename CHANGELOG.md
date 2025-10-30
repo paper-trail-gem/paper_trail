@@ -29,6 +29,8 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
   `rails generate paper_trail:install CommentVersion` created `comment_versions` table
 - `rails generate paper_trail:update_item_subtype` now supports custom version classes via 
   `--version-class-name` option, e.g. `--version-class-name=CommentVersion`
+- [#1459](https://github.com/paper-trail-gem/paper_trail/issues/1459) 
+  `rails generate paper_trail:install` now creates a `paper_trail.rb` initializer
 
 ### Fixed
 
