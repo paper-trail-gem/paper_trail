@@ -945,7 +945,7 @@ last_version.terminator                     # 'Bob'
 #### Storing an ActiveRecord globalid in whodunnit
 
 If you would like `whodunnit` to return an `ActiveRecord` object instead of a
-string, please try the [paper_trail-globalid][37] gem.
+string, please try the [paper_trail-actor][37] gem.
 
 ### 4.b. Associations
 
@@ -1705,7 +1705,7 @@ require 'paper_trail/frameworks/rspec'
 - [paper_trail-association_tracking][6] - track and reify associations
 - paper_trail-audit
 - paper_trail-background
-- [paper_trail-globalid][49] - enhances whodunnit by adding an `actor`
+- [paper_trail-actor][49] - enhances whodunnit by adding an `actor`
 - paper_trail-hashdiff
 - paper_trail-rails
 - paper_trail-related_changes
@@ -1805,7 +1805,7 @@ Released under the MIT licence.
 [34]: https://github.com/rails/rails/blob/591a0bb87fff7583e01156696fbbf929d48d3e54/activerecord/lib/active_record/fixtures.rb#L142
 [35]: https://dev.mysql.com/doc/refman/5.6/en/fractional-seconds.html
 [36]: http://www.postgresql.org/docs/9.4/interactive/ddl.html
-[37]: https://github.com/ankit1910/paper_trail-globalid
+[37]: https://github.com/tttffff/paper_trail-actor
 [38]: https://github.com/sferik/rails_admin
 [39]: http://api.rubyonrails.org/classes/ActiveRecord/Base.html#class-ActiveRecord::Base-label-Single+table+inheritance
 [40]: http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html#module-ActiveRecord::Associations::ClassMethods-label-Polymorphic+Associations
@@ -1817,7 +1817,7 @@ Released under the MIT licence.
 [46]: https://github.com/fusion94/paper_trail_manager
 [47]: https://github.com/solidusio-contrib/solidus_papertrail
 [48]: https://github.com/nielsgl/sequelize-paper-trail
-[49]: https://github.com/ankit1910/paper_trail-globalid
+[49]: https://github.com/tttffff/paper_trail-actor
 [50]: https://github.com/izelnakri/paper_trail
 [51]: https://github.com/rikkipitt/rails_admin_history_rollback
 [52]: http://guides.rubyonrails.org/active_record_callbacks.html
