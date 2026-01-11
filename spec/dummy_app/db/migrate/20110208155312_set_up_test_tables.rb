@@ -394,6 +394,10 @@ class SetUpTestTables < ActiveRecord::Migration::Current
     end
 
     create_table :users, force: true
+
+    create_table :chairs, force: true do |t|
+      t.string :color
+    end
   end
 
   def down
