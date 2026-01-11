@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "paper_trail/attribute_serializers/object_attribute"
+require "paper_trail/attribute_readonly_bypass"
 
 module PaperTrail
   # Given a version record and some options, builds a new model object.
@@ -92,7 +93,9 @@ module PaperTrail
       # @api private
       def reify_attribute(k, v, model, version)
         if model.has_attribute?(k)
-          model[k.to_sym] = v
+          AttributeReadonlyBypass.with_bypass!(model) do
+            model[k.to_sym] = v
+          end
         elsif model.respond_to?(:"#{k}=")
           model.send(:"#{k}=", v)
         elsif version.logger
