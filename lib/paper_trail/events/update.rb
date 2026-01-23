@@ -37,19 +37,16 @@ module PaperTrail
         merge_metadata_into(data)
       end
 
-      # If it is a touch event, and changed are empty, it is assumed to be
-      # implicit `touch` mutation, and will a version is created.
+      # NOTE: We previously overrode `changed_notably?` here to return `true`
+      # for touch events even when `changes_in_latest_version` was empty.
+      # This caused spurious versions when used with ActiveStorage, which
+      # calls `touch` after attaching blobs without making meaningful changes.
       #
+      # By removing the override, we now delegate to the base class, which
+      # only creates versions when there are actual notable changes.
+      #
+      # See https://github.com/paper-trail-gem/paper_trail/issues/1465
       # See https://github.com/rails/rails/commit/dcb825902d79d0f6baba956f7c6ec5767611353e
-      #
-      # @api private
-      def changed_notably?
-        if @is_touch && changes_in_latest_version.empty?
-          true
-        else
-          super
-        end
-      end
 
       private
 
