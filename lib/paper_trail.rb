@@ -26,7 +26,7 @@ require "paper_trail/serializers/json"
 # An ActiveRecord extension that tracks changes to your models, for auditing or
 # versioning.
 module PaperTrail
-  E_TIMESTAMP_FIELD_CONFIG = <<-EOS.squish.freeze
+  E_TIMESTAMP_FIELD_CONFIG = <<~EOS.squish.freeze
     PaperTrail.timestamp_field= has been removed, without replacement. It is no
     longer configurable. The timestamp column in the versions table must now be
     named created_at.

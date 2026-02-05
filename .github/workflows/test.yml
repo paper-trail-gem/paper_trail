@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Setup ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -63,10 +63,10 @@ jobs:
 
         # To keep matrix size down, only test highest and lowest rubies.
         # See "Lowest supported ruby version" in CONTRIBUTING.md
-        ruby: [ '3.2', '3.4' ]
+        ruby: [ '3.2', '4.0' ]
     steps:
       - name: Checkout source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Setup ruby
         uses: ruby/setup-ruby@v1
         with:
