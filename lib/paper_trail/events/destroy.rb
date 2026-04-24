@@ -13,8 +13,9 @@ module PaperTrail
       # @api private
       def data
         data = {
-          item_id: @record.id,
-          item_type: @record.class.base_class.name,
+          # Keep destroy aligned with create/update so Rails resolves
+          # `item_type` via the polymorphic association.
+          item: @record,
           event: @record.paper_trail_event || "destroy",
           whodunnit: PaperTrail.request.whodunnit
         }

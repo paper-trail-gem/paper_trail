@@ -2,6 +2,18 @@
 
 require "spec_helper"
 
+# Regression fixture for overridden polymorphic type names.
+module PolymorphicNameOverride
+  class Widget < ApplicationRecord
+    self.table_name = "widgets"
+    has_paper_trail
+
+    def self.polymorphic_name
+      "Widget"
+    end
+  end
+end
+
 module PaperTrail
   module Events
     ::RSpec.describe Destroy do
@@ -12,8 +24,20 @@ module PaperTrail
             path_to_stardom: "Mexican radio"
           )
           data = described_class.new(carter, true).data
-          expect(data[:item_type]).to eq("Family::Family")
+          version = PaperTrail::Version.new(data)
+          expect(data[:item]).to eq(carter)
+          expect(version.item_type).to eq("Family::Family")
           expect(data[:item_subtype]).to eq("Family::CelebrityFamily")
+        end
+
+        # Destroy versions should respect `polymorphic_name` just like create/update.
+        it "uses polymorphic_name for destroy versions" do
+          widget = PolymorphicNameOverride::Widget.create!(name: "Henry")
+          widget.update!(name: "Harry")
+          widget.destroy
+
+          expect(widget.versions.pluck(:event)).to eq(%w[create update destroy])
+          expect(widget.versions.pluck(:item_type).uniq).to eq(["Widget"])
         end
 
         context "with skipper" do
