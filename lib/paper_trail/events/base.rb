@@ -22,7 +22,7 @@ module PaperTrail
     #
     # @api private
     class Base
-      E_FORBIDDEN_METADATA_KEY = <<-EOS.squish
+      E_FORBIDDEN_METADATA_KEY = <<~EOS.squish
         Forbidden metadata key: %s. As of PT 14, the following metadata keys are
         forbidden: %s
       EOS

@@ -15,7 +15,7 @@ module PaperTrail
   module VersionConcern
     extend ::ActiveSupport::Concern
 
-    E_YAML_PERMITTED_CLASSES = <<-EOS.squish.freeze
+    E_YAML_PERMITTED_CLASSES = <<~EOS.squish.freeze
       PaperTrail encountered a Psych::DisallowedClass error during
       deserialization of YAML column, indicating that
       yaml_column_permitted_classes has not been configured correctly. %s

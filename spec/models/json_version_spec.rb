@@ -40,7 +40,7 @@ if JsonVersion.table_exists?
           expect(fruit.versions.length).to eq(3)
           where_apple = described_class.where_object(name: "apple")
           expect(where_apple.to_sql).to eq(
-            <<-SQL.squish
+            <<~SQL.squish
               SELECT "json_versions".*
               FROM "json_versions"
               WHERE (object->>'name' = 'apple')
@@ -79,7 +79,7 @@ if JsonVersion.table_exists?
           fruit.update!(name: "coconut", color: "green")
           where_apple = fruit.versions.where_object_changes(name: "apple")
           expect(where_apple.to_sql.squish).to eq(
-            <<-SQL.squish
+            <<~SQL.squish
               SELECT "json_versions".*
               FROM "json_versions"
               WHERE "json_versions"."item_id" = #{fruit.id}
@@ -103,7 +103,7 @@ if JsonVersion.table_exists?
           fruit.update!(name: "coconut", color: "green")
           where_red_apple = fruit.versions.where_object_changes(color: "red", name: "apple")
           expect(where_red_apple.to_sql.squish).to eq(
-            <<-SQL.squish
+            <<~SQL.squish
               SELECT "json_versions".*
               FROM "json_versions"
               WHERE "json_versions"."item_id" = #{fruit.id}
