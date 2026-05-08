@@ -53,7 +53,7 @@ RSpec.describe Person, :versioning do
       person = described_class.new(time_zone: "Samoa")
       changes_before_save = person.changes.dup
       person.save!
-      actual = person.versions.last.changeset.delete_if { |k, _v| (k.to_sym == :id) }
+      actual = person.versions.last.changeset.delete_if { |k, _v| k.to_sym == :id }
       expect(actual).to(eq(changes_before_save))
       actual = person.versions.last.changeset[:time_zone].map(&:class)
       expect(actual).to(eq([NilClass, ActiveSupport::TimeZone]))
