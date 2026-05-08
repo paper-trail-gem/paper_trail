@@ -6,7 +6,7 @@ module PaperTrail
   module Serializers
     ::RSpec.describe JSON do
       let(:word_hash) {
-        (1..4).each_with_object({}) { |i, a| a["key#{i}"] = ::FFaker::Lorem.word }
+        (1..4).to_h { |i| ["key#{i}", ::FFaker::Lorem.word] }
       }
       let(:word_array) { [].fill(0, rand(4..8)) { ::FFaker::Lorem.word } }
 

@@ -149,10 +149,10 @@ RSpec.describe Widget, :versioning do
         widget.update(name: "Harry")
         last_obj_changes = widget.versions.last.object_changes
         actual = PaperTrail.serializer.load(last_obj_changes).reject do |k, _v|
-          (k.to_sym == :updated_at)
+          k.to_sym == :updated_at
         end
         expect(actual).to(eq("name" => %w[Henry Harry]))
-        actual = widget.versions.last.changeset.reject { |k, _v| (k.to_sym == :updated_at) }
+        actual = widget.versions.last.changeset.reject { |k, _v| k.to_sym == :updated_at }
         expect(actual).to(eq("name" => %w[Henry Harry]))
       end
 
