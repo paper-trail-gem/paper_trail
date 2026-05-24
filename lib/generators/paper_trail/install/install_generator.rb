@@ -31,6 +31,10 @@ module PaperTrail
          "Can be customized by providing a Version class name. " \
          "See section 5.c. Generators in README.md for more information."
 
+    def create_initializer_file
+      copy_file "paper_trail.rb", "config/initializers/paper_trail.rb"
+    end
+
     def create_migration_file
       # Use the table_name to create the proper migration filename
       add_paper_trail_migration(
@@ -43,6 +47,7 @@ module PaperTrail
       if options.with_changes?
         add_paper_trail_migration("add_object_changes_to_#{table_name}")
       end
+      create_initializer_file
     end
 
     private
