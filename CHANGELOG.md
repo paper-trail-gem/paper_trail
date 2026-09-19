@@ -15,7 +15,9 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- None
+- [#1555](https://github.com/paper-trail-gem/paper_trail/issues/1555) - `reify` returned the downcased value for an attribute declared with
+  `encrypts [...] ignore_case: true`, rather than the original case that a record
+  loaded from the database returns.
 
 ## 17.0.0 (2025-10-24)
 

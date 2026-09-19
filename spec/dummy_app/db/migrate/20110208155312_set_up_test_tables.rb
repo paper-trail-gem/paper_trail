@@ -393,6 +393,13 @@ class SetUpTestTables < ActiveRecord::Migration::Current
       t.text :supplier
     end
 
+    create_table :palimpsests, force: true do |t|
+      t.text :title
+      t.text :original_title  # companion column for ignore_case: true
+      t.text :scribe
+      t.text :original_scribe # not a companion column
+    end
+
     create_table :users, force: true
   end
 
