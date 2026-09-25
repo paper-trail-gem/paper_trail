@@ -268,21 +268,21 @@ class SetUpTestTables < ActiveRecord::Migration::Current
     end
 
     create_table :things, force: true do |t|
-      t.string    :name
+      t.string :name
       t.references :person
     end
 
     create_table :translations, force: true do |t|
-      t.string    :content
-      t.string    :draft_status
-      t.string    :headline
-      t.string    :language_code
+      t.string :content
+      t.string :draft_status
+      t.string :headline
+      t.string :language_code
     end
 
     create_table :gadgets, force: true do |t|
-      t.string    :name
-      t.string    :brand
-      t.string    :color
+      t.string :name
+      t.string :brand
+      t.string :color
       t.timestamps null: true, limit: 6
     end
 

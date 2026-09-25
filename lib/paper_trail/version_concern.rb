@@ -187,7 +187,7 @@ module PaperTrail
       #   Default: false.
       # @return `ActiveRecord::Relation`
       # @api public
-      # rubocop:disable Style/OptionalBooleanParameter
+      # rubocop:disable-next Style/OptionalBooleanParameter
       def preceding(obj, timestamp_arg = false)
         if timestamp_arg != true && primary_key_is_int?
           preceding_by_id(obj)
@@ -195,7 +195,6 @@ module PaperTrail
           preceding_by_timestamp(obj)
         end
       end
-      # rubocop:enable Style/OptionalBooleanParameter
 
       # Returns versions after `obj`.
       #
@@ -204,7 +203,7 @@ module PaperTrail
       #   Default: false.
       # @return `ActiveRecord::Relation`
       # @api public
-      # rubocop:disable Style/OptionalBooleanParameter
+      # rubocop:disable-next Style/OptionalBooleanParameter
       def subsequent(obj, timestamp_arg = false)
         if timestamp_arg != true && primary_key_is_int?
           subsequent_by_id(obj)
@@ -212,7 +211,6 @@ module PaperTrail
           subsequent_by_timestamp(obj)
         end
       end
-      # rubocop:enable Style/OptionalBooleanParameter
 
       private
 
