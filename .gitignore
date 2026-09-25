@@ -27,3 +27,4 @@ spec/dummy_app/tmp/*
 test/debug.log
 test/paper_trail_plugin.sqlite3.db
 vendor/*
+**/.DS_Store

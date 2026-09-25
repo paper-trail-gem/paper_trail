@@ -25,6 +25,9 @@ AllCops:
   # See "Lowest supported ruby version" in CONTRIBUTING.md
   TargetRubyVersion: 3.2
 
+  # Silence suggestions
+  SuggestExtensions: false
+
 Gemspec/DevelopmentDependencies:
   Enabled: false
 
