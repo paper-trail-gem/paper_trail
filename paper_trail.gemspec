@@ -79,7 +79,7 @@ has been destroyed.
   s.add_development_dependency "rails-controller-testing", "~> 1.0.5"
   s.add_development_dependency "rake", "~> 13.0"
   s.add_development_dependency "rspec-rails", "~> 7.1.1"
-  s.add_development_dependency "rubocop", "~> 1.75"
+  s.add_development_dependency "rubocop", "~> 1.91.0"
   s.add_development_dependency "rubocop-packaging", "~> 0.6.0"
   s.add_development_dependency "rubocop-performance", "~> 1.24.0"
   s.add_development_dependency "rubocop-rails", "~> 2.30.3"
