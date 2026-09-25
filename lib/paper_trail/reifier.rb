@@ -106,9 +106,48 @@ module PaperTrail
       # @api private
       def reify_attributes(model, version, attrs)
         AttributeSerializers::ObjectAttribute.new(model.class).deserialize(attrs)
+        restore_preserved_originals(model.class, attrs)
         attrs.each do |k, v|
           reify_attribute(k, v, model, version)
         end
+      end
+
+      # `encrypts ignore_case: true` keeps the original case in a companion
+      # `original_<name>` column. With `support_unencrypted_data` on, AR reads it
+      # only for ciphertext, and we assign plaintext, so `reify` would return the
+      # downcased value. Modifies `attrs`.
+      # @api private
+      def restore_preserved_originals(klass, attrs)
+        return if klass.encrypted_attributes.blank?
+
+        attrs.keys.each do |key|
+          source = preserved_original_source(klass, attrs, key)
+          attrs[source] = attrs[key] if source
+        end
+      end
+
+      # Given the name of a companion column, returns the attribute whose
+      # original case it preserves, or nil if `key` is not such a column.
+      # @api private
+      def preserved_original_source(klass, attrs, key)
+        # `init_unversioned_attrs` supplies nil for a version written before the
+        # companion column existed. Copying it would wipe the source attribute.
+        return if attrs[key].nil?
+
+        source = klass.source_attribute_from_preserved_attribute(key)
+        return unless source && attrs.key?(source) && ignore_case?(klass, source)
+
+        source
+      end
+
+      # True when `source` is declared `encrypts ignore_case: true`, and so has a
+      # companion `original_*` column. An ordinary column may be named
+      # `original_*` without being a companion.
+      # @api private
+      def ignore_case?(klass, source)
+        return false unless klass.encrypted_attributes.include?(source.to_sym)
+
+        klass.type_for_attribute(source).scheme.ignore_case?
       end
 
       # Given a `version`, return the class to reify. This method supports
