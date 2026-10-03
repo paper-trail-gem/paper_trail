@@ -91,6 +91,9 @@ module PaperTrail
       #
       # @api private
       def reify_attribute(k, v, model, version)
+        # An STI subclass can ignore a column but still inherit its setter.
+        return if model.class.ignored_columns.include?(k.to_s)
+
         if model.has_attribute?(k)
           model[k.to_sym] = v
         elsif model.respond_to?(:"#{k}=")

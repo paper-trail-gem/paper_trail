@@ -667,6 +667,12 @@ widget.save                                        # reverted
 Note `version_at` gives you the object, not a version, so you don't need to call
 `reify`.
 
+When reifying a version, PaperTrail skips attributes listed in the model's
+Active Record `ignored_columns`, even if the historical version contains them.
+For STI models, the reified instance's class determines which columns are
+ignored. The stored version is not changed. This is separate from the
+`has_paper_trail ignore:` option, which controls when changes create versions.
+
 Undeleting is just as simple:
 
 ```ruby

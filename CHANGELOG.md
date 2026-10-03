@@ -15,7 +15,9 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- None
+- Reification now skips the model's `ignored_columns`, preventing
+  `ActiveModel::MissingAttributeError` when an STI subclass inherits a setter
+  for an ignored column.
 
 ## 17.0.0 (2025-10-24)
 

@@ -50,6 +50,52 @@ RSpec.describe Animal, :versioning do
     expect(dog).to be_instance_of(Dog)
   end
 
+  describe "reifying ignored columns" do
+    let(:attributes) { { "species" => "NamelessAnimal", "name" => "Historical name" } }
+    let(:version) do
+      PaperTrail::Version.new(
+        item_type: "Animal",
+        event: "update",
+        object: PaperTrail.serializer.dump(attributes)
+      )
+    end
+
+    [false, true].each do |dup|
+      it "skips ignored columns with an inherited setter when dup is #{dup}" do
+        expect(NamelessAnimal.new).to respond_to(:name=)
+
+        reified = version.reify(dup: dup)
+
+        expect(reified).to be_an_instance_of(NamelessAnimal)
+        expect(reified.species).to eq("NamelessAnimal")
+        expect(reified).not_to have_attribute("name")
+        expect(version.object_deserialized).to eq(attributes)
+      end
+    end
+
+    it "skips ignored columns when reifying a destroyed record" do
+      version.event = "destroy"
+
+      expect(version.reify).not_to have_attribute("name")
+    end
+
+    it "skips ignored columns stored with symbol keys" do
+      attributes[:name] = attributes.delete("name")
+
+      expect(version.reify(dup: true)).not_to have_attribute("name")
+      expect(version.object_deserialized).to eq(attributes)
+    end
+
+    it "restores the column for a sibling subclass that does not ignore it" do
+      attributes["species"] = "Dog"
+
+      reified = version.reify(dup: true)
+
+      expect(reified).to be_an_instance_of(Dog)
+      expect(reified.name).to eq("Historical name")
+    end
+  end
+
   context "with callback-methods" do
     context "when only has_paper_trail set in super class" do
       let(:callback_cat) { Cat.create(name: "Markus") }
