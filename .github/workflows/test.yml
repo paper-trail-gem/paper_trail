@@ -64,6 +64,9 @@ jobs:
         # To keep matrix size down, only test highest and lowest rubies.
         # See "Lowest supported ruby version" in CONTRIBUTING.md
         ruby: [ '3.2', '4.0' ]
+        exclude:
+          - gemfile: 'rails_8.2'
+            ruby: '3.2'
     steps:
       - name: Checkout source
         uses: actions/checkout@v6
