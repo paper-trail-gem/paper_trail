@@ -32,11 +32,14 @@ module PaperTrail
         if defined_enums[attr] && val.is_a?(::String)
           # Because PT 4 used to save the string version of enums to `object_changes`
           val
-        elsif val.is_a?(ActiveRecord::Type::Time::Value)
-          # Because Rails 7 time attribute throws a delegation error when you deserialize
-          # it with the factory.
-          # See ActiveRecord::Type::Time::Value crashes when loaded from YAML on rails 7.0
+        elsif val.is_a?(ActiveRecord::Type::Time::Value) && val.instance_variable_defined?(:@time)
+          # A Value that wrapped a UTC `TimeWithZone` loads from YAML with
+          # `@utc`, `@zone` and `@time` but no delegate, so the factory would
+          # throw a delegation error. See
           # https://github.com/rails/rails/issues/43966
+          # Other Values (e.g. written when `Time.zone` is not UTC) wrap a plain
+          # `Time`, so they load with a delegate and no `@time`, and go to the
+          # factory.
           val.instance_variable_get(:@time)
         else
           AttributeSerializerFactory.for(@klass, attr).deserialize(val)

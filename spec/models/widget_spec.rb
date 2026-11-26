@@ -375,6 +375,36 @@ RSpec.describe Widget, :versioning do
     end
   end
 
+  # A time column is stored as a YAML `ActiveRecord::Type::Time::Value`. With a
+  # UTC zone it wraps a `TimeWithZone` and has a `time` key. With any other zone
+  # it wraps a plain `Time` and has only a `delegate_dc_obj` key.
+  ["UTC", "Eastern Time (US & Canada)"].each do |zone|
+    context "with a time column, when Time.zone is #{zone}" do
+      around { |ex| Time.use_zone(zone) { ex.run } }
+
+      let(:widget) {
+        described_class.create!(name: "Warble", a_time: Time.zone.parse("2000-01-01 14:30:15"))
+      }
+
+      before { widget.update!(a_time: nil) }
+
+      def time_of_day(time)
+        time&.strftime("%H:%M:%S")
+      end
+
+      it "reifies the time of day" do
+        expect(time_of_day(widget.versions.last.reify.a_time)).to eq("14:30:15")
+      end
+
+      it "includes the time of day in the changeset" do
+        create_changes = widget.versions.first.changeset["a_time"]
+        update_changes = widget.versions.last.changeset["a_time"]
+        expect(create_changes.map { |t| time_of_day(t) }).to eq([nil, "14:30:15"])
+        expect(update_changes.map { |t| time_of_day(t) }).to eq(["14:30:15", nil])
+      end
+    end
+  end
+
   context "with a record" do
     context "with PaperTrail globally disabled, when updated" do
       after { PaperTrail.enabled = true }
