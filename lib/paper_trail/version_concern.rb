@@ -275,9 +275,15 @@ module PaperTrail
     # Returns what changed in this version of the item.
     # `ActiveModel::Dirty#changes`. returns `nil` if your `versions` table does
     # not have an `object_changes` text column.
+    #
+    # The changeset is loaded once and memoized, but each call returns a new
+    # copy of it (see `copy_changeset_value`), so that editing the returned
+    # hash, or the arrays and strings in it, does not affect later calls. Code
+    # that reads the changeset more than once should keep it in a variable.
     def changeset
       return nil unless self.class.column_names.include? "object_changes"
       @changeset ||= load_changeset
+      copy_changeset_value(@changeset)
     end
 
     # Returns who put the item into the state stored in this version.
@@ -340,6 +346,25 @@ module PaperTrail
       # Finally, return a Hash mapping each attribute name to
       # a two-element array representing before and after.
       changes
+    end
+
+    # Copies the hashes and arrays in a memoized changeset, and the strings in
+    # them, which callers can edit in place (e.g. `String#squeeze!`). Other
+    # values are returned as they are, because some depend on their identity,
+    # such as an `ActiveSupport::TimeZone` or a record returned by a custom
+    # attribute serializer. See #1508.
+    # @api private
+    def copy_changeset_value(value)
+      case value
+      when ::Hash
+        value.dup.tap { |copy| copy.transform_values! { |v| copy_changeset_value(v) } }
+      when ::Array
+        value.map { |v| copy_changeset_value(v) }
+      when ::String
+        value.dup
+      else
+        value
+      end
     end
 
     # If the `object_changes` column is a Postgres JSON column, then
