@@ -15,7 +15,10 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- None
+- [#1562](https://github.com/paper-trail-gem/paper_trail/issues/1562) -
+  `changeset` and `reify` no longer return `nil` for a `time` column stored by
+  the YAML serializer when `Time.zone` is not UTC, time zone conversion is off
+  for that column, or `default_timezone` is `:local`.
 
 ## 17.0.0 (2025-10-24)
 
