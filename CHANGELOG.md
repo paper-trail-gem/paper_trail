@@ -15,7 +15,10 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- None
+- [#1508](https://github.com/paper-trail-gem/paper_trail/issues/1508) -
+  `Version#changeset` now returns a copy of its memoized changeset, so editing
+  the returned hash, or the arrays and strings in it, no longer changes what
+  later calls on the same version return.
 
 ## 17.0.0 (2025-10-24)
 

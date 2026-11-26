@@ -60,6 +60,80 @@ module PaperTrail
       end
     end
 
+    describe "#changeset", :versioning do
+      let(:widget) do
+        Widget.create!(name: "Henry   Jones").tap { |w| w.update!(name: "Henry Jones") }
+      end
+      let(:version) { widget.versions.last }
+
+      it "returns a HashWithIndifferentAccess" do
+        expect(version.changeset).to be_a(ActiveSupport::HashWithIndifferentAccess)
+        expect(version.changeset[:name]).to eq(["Henry   Jones", "Henry Jones"])
+      end
+
+      it "loads the changeset only once" do
+        allow(version).to receive(:load_changeset).and_call_original
+        2.times { version.changeset }
+        expect(version).to have_received(:load_changeset).once
+      end
+
+      # https://github.com/paper-trail-gem/paper_trail/issues/1508
+      it "is not affected by in-place changes to a string it returned" do
+        version.changeset["name"].first.squeeze!(" ")
+        expect(version.changeset["name"]).to eq(["Henry   Jones", "Henry Jones"])
+        expect(version.changeset).to eq(version.item.versions.last.changeset)
+      end
+
+      it "is not affected by replacing an element of an array it returned" do
+        version.changeset["name"][0] = "Indiana Jones"
+        expect(version.changeset["name"]).to eq(["Henry   Jones", "Henry Jones"])
+      end
+
+      it "is not affected by removing a key from the hash it returned" do
+        version.changeset.delete("name")
+        expect(version.changeset).to have_key("name")
+      end
+
+      it "returns other values, such as a cached TimeZone, as they are" do
+        person = Person.create!(time_zone: "Samoa")
+        time_zone = person.versions.last.changeset[:time_zone].last
+        expect(time_zone).to equal(ActiveSupport::TimeZone["Samoa"])
+      end
+
+      context "with an object_changes_adapter that implements load_changeset" do
+        before do
+          adapter = Class.new do
+            def load_changeset(_version)
+              { "name" => ["Henry   Jones", "Henry Jones"] }
+            end
+          end
+          PaperTrail.config.object_changes_adapter = adapter.new
+        end
+
+        after do
+          PaperTrail.config.object_changes_adapter = nil
+        end
+
+        it "is not affected by changes to the hash it returned" do
+          version.changeset.delete("name")
+          expect(version.changeset).to eq("name" => ["Henry   Jones", "Henry Jones"])
+        end
+      end
+
+      if ENV["DB"] == "postgres"
+        context "with a json object_changes column" do
+          it "does not let changes to the changeset alter object_changes" do
+            fruit = Fruit.create!(name: "Pink   Lady")
+            fruit.update!(name: "Pink Lady")
+            fruit_version = fruit.versions.last
+            fruit_version.changeset["name"].first.squeeze!(" ")
+            expect(fruit_version.object_changes["name"]).to eq(["Pink   Lady", "Pink Lady"])
+            expect(fruit_version).not_to be_changed
+          end
+        end
+      end
+    end
+
     describe "#paper_trail_originator" do
       context "with no previous versions" do
         it "returns nil" do
