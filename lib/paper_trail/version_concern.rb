@@ -288,7 +288,7 @@ module PaperTrail
     # Returns who changed the item from the state it had in this version. This
     # is an alias for `whodunnit`.
     def terminator
-      @terminator ||= whodunnit
+      whodunnit
     end
     alias version_author terminator
 
@@ -307,6 +307,20 @@ module PaperTrail
     # @api public
     def index
       @index ||= RecordHistory.new(sibling_versions, self.class).index(self)
+    end
+
+    # Clears the values memoized from this row and its siblings, so that they
+    # are computed again from the reloaded data rather than going stale.
+    #
+    # @api public
+    def reload(*)
+      @changeset = nil
+      @next = nil
+      @previous = nil
+      @index = nil
+      @paper_trail_originator = nil
+      @sibling_versions = nil
+      super
     end
 
     private
