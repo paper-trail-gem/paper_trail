@@ -15,7 +15,10 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
 ### Fixed
 
-- None
+- [#1563](https://github.com/paper-trail-gem/paper_trail/issues/1563) -
+  `Version#changeset`, `#next`, `#previous`, `#index` and
+  `#paper_trail_originator` no longer return stale values after `reload`, and
+  `#terminator` (`#version_author`) always returns the current `whodunnit`.
 
 ## 17.0.0 (2025-10-24)
 

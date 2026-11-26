@@ -96,11 +96,95 @@ module PaperTrail
       end
     end
 
+    describe "#reload", :versioning do
+      it "clears the memoized changeset" do
+        version = Widget.create!(name: "Alice").versions.last
+        expect(version.changeset["name"]).to eq([nil, "Alice"])
+
+        # e.g. a job that redacts personal data
+        described_class.where(id: version.id).update_all(
+          object_changes: PaperTrail.serializer.dump("name" => [nil, "[FILTERED]"])
+        )
+        expect(version.reload.changeset).to eq("name" => [nil, "[FILTERED]"])
+      end
+
+      it "returns the reloaded whodunnit from terminator and version_author" do
+        widget = PaperTrail.request(whodunnit: "alice") { Widget.create!(name: "A") }
+        version = widget.versions.last
+        expect(version.terminator).to eq("alice")
+
+        described_class.find(version.id).update!(whodunnit: "bob")
+        version.reload
+        expect(version.terminator).to eq("bob")
+        expect(version.version_author).to eq("bob")
+      end
+
+      it "clears memos that depend on item_id" do
+        keep = Widget.create!(name: "Keep")
+        dupe = Widget.create!(name: "Dupe")
+        dupe.update!(name: "Dupe 2")
+        version = dupe.versions.last
+        expect(version.index).to eq(1)
+
+        # e.g. merging duplicate records
+        described_class.where(item_type: "Widget", item_id: dupe.id).update_all(item_id: keep.id)
+        expect(version.reload.index).to eq(2)
+      end
+
+      context "when a sibling version is deleted" do
+        let(:widget) do
+          PaperTrail.request(whodunnit: "alice") { Widget.create!(name: "A") }.tap do |w|
+            PaperTrail.request(whodunnit: "bob") { w.update!(name: "B") }
+            PaperTrail.request(whodunnit: "carol") { w.update!(name: "C") }
+          end
+        end
+        let(:first_version) { widget.versions.first }
+        let(:middle_version) { widget.versions.second }
+        let(:last_version) { widget.versions.last }
+
+        # As in the README's "Deleting Old Versions"
+        def delete_middle_version
+          described_class.where(id: middle_version.id).delete_all
+        end
+
+        it "clears the memoized next" do
+          expect(first_version.next).to eq(middle_version)
+          delete_middle_version
+          expect(first_version.reload.next).to eq(last_version)
+        end
+
+        it "clears the memoized previous and paper_trail_originator" do
+          expect(last_version.previous).to eq(middle_version)
+          expect(last_version.paper_trail_originator).to eq("bob")
+          delete_middle_version
+          last_version.reload
+          expect(last_version.previous).to eq(first_version)
+          expect(last_version.paper_trail_originator).to eq("alice")
+        end
+
+        it "clears the memoized index" do
+          expect(last_version.index).to eq(2)
+          delete_middle_version
+          expect(last_version.reload.index).to eq(1)
+        end
+      end
+    end
+
     describe "#terminator" do
       it "is an alias for the `whodunnit` attribute" do
         attributes = { whodunnit: FFaker::Name.first_name }
         version = described_class.new(attributes)
         expect(version.terminator).to eq(attributes[:whodunnit])
+      end
+
+      it "returns the current whodunnit after it is updated", :versioning do
+        widget = PaperTrail.request(whodunnit: "alice") { Widget.create!(name: "A") }
+        version = widget.versions.last
+        expect(version.terminator).to eq("alice")
+
+        version.update!(whodunnit: "bob")
+        expect(version.terminator).to eq("bob")
+        expect(version.version_author).to eq("bob")
       end
     end
 
